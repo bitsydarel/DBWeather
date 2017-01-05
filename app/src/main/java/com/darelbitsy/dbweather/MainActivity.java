@@ -1,14 +1,12 @@
 package com.darelbitsy.dbweather;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,12 +23,16 @@ public class MainActivity extends Activity {
 
     private final String TAG = MainActivity.class.getSimpleName();
     private CurrentWeather mCurrentWeather;
+    private RelativeLayout mMainLayout;
+    private ColorManager mColorPicker = new ColorManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mMainLayout = (RelativeLayout) findViewById(R.id.activity_main);
+        mMainLayout.setBackgroundColor(mColorPicker.getColor());
         String apiKey = "07aadf598548d8bb35d6621d5e3b3c7b";
         double latitude = 37.8267;
         double longitude = -122.4233;
