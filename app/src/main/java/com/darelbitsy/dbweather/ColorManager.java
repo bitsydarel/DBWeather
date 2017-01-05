@@ -20,9 +20,7 @@ public class ColorManager {
             "#ff53bbb4", // aqua
             "#ff51b46d", // green
             "#ffe0ab18", // mustard
-            "#ff637a91", // dark gray
             "#fff092b0", // pink
-            "#ffb7c0c7", // light gray
             "#FFFC970B" // orange
     };
 
