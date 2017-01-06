@@ -19,7 +19,7 @@
         android:layout_centerVertical="true"
         android:id="@+id/temperatureLabel"
         android:textColor="@android:color/white"
-        android:text="100"
+        android:text="--"
         android:textSize="150sp"/>
 
     <ImageView
@@ -51,7 +51,7 @@
         android:layout_marginBottom="60dp"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        android:text="Alcatraz Island, CA"/>
+        android:text="Getting Location"/>
 
     <ImageView
         android:id="@+id/iconImageView"
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="0.88"
+                android:text="--"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"/>
 
@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="100"
+                android:text="--"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"/>
 
@@ -125,14 +125,29 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/summaryLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:layout_below="@id/lineaLayout"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/white"
-        android:text="Stormy with a chance of meatballs"
+        android:text="Getting current weather"
         android:gravity="center_horizontal"
         android:textSize="18dp"/>
+
+    <ImageButton
+        android:id="@+id/refreshImageView"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/refresh"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
 
 </RelativeLayout>
