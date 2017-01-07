@@ -1,4 +1,6 @@
-package com.darelbitsy.dbweather;
+package com.darelbitsy.dbweather.weather;
+
+import com.darelbitsy.dbweather.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +11,7 @@ import java.util.TimeZone;
  * Created by Darel Bitsy on 05/01/17.
  */
 
-public class CurrentWeather {
+public class Current {
 
     private String mIcon;
     private String mSummary;
