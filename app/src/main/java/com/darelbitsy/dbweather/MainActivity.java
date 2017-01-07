@@ -290,7 +290,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     // Create the LocationRequest Object to
                     mLocationRequest = LocationRequest.create()
                             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                            .setInterval(1200 * 1000) // 10 Seconds, in milliseconds
+                            .setInterval(1200 * 1000) // Seconds, in milliseconds
                             .setFastestInterval(1 * 1000); // 1 Seconds, in milliseconds
 
                     mRefreshButton.setOnClickListener((view) -> getLocation());
