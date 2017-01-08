@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,6 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,27 +68,41 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private boolean isGpsPermissionOn;
+    private boolean mIsGpsPermissionOn;
+    private String mCityName;
 
-    @BindView(R.id.activity_main) RelativeLayout mMainLayout;
+    @BindView(R.id.activity_main)
+    RelativeLayout mMainLayout;
 
-    @BindView(R.id.temperatureLabel) TextView mTemperatureLabel;
-    @BindView(R.id.timeLabel) TextView mTimeLabel;
-    @BindView(R.id.humidityValue) TextView mHumidityValue;
-    @BindView(R.id.locationLabel) TextView mLocationLabel;
-    @BindView(R.id.precipValue) TextView mPrecipValue;
-    @BindView(R.id.summaryLabel) TextView mSummaryLabel;
+    @BindView(R.id.temperatureLabel)
+    TextView mTemperatureLabel;
+    @BindView(R.id.timeLabel)
+    TextView mTimeLabel;
+    @BindView(R.id.humidityValue)
+    TextView mHumidityValue;
+    @BindView(R.id.locationLabel)
+    TextView mLocationLabel;
+    @BindView(R.id.precipValue)
+    TextView mPrecipValue;
+    @BindView(R.id.summaryLabel)
+    TextView mSummaryLabel;
 
-    @BindView(R.id.iconImageView) ImageView mIconImageView;
-    @BindView(R.id.degreeImageView) ImageView mDegreeImageView;
+    @BindView(R.id.iconImageView)
+    ImageView mIconImageView;
+    @BindView(R.id.degreeImageView)
+    ImageView mDegreeImageView;
 
-    @BindView(R.id.refreshImageView) ImageButton mRefreshButton;
+    @BindView(R.id.refreshImageView)
+    ImageButton mRefreshButton;
 
-    @BindView(R.id.progressBar) ProgressBar mProgressBar;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
 
-    @BindView(R.id.hourlyButton) Button mHourlyButton;
-    @BindView(R.id.dailyButton) Button mDailyButton;
+    @BindView(R.id.hourlyButton)
+    Button mHourlyButton;
+    @BindView(R.id.dailyButton)
+    Button mDailyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +110,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        isGpsPermissionOn = false;
+        mIsGpsPermissionOn = false;
 
         //Configuring the google api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -110,15 +128,20 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
-            isGpsPermissionOn = true;
+            mIsGpsPermissionOn = true;
         }
 
         mProgressBar.setVisibility(View.INVISIBLE);
         final double latitude = -4.7485; //-4.7485,11.8523
         final double longitude = 11.8523;
 
-        mRefreshButton.setOnClickListener((view) -> getWeather(latitude, longitude));
+        if (mIsGpsPermissionOn) {
+            mRefreshButton.setOnClickListener((view) -> getLocation());
+        } else {
+            mRefreshButton.setOnClickListener((view) -> getWeather(latitude, longitude));
+        }
         getWeather(latitude, longitude);
+        mCityName = getLocationName(latitude, longitude);
     }
 
     /*
@@ -126,17 +149,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * get the current weather with the forecast api
     */
     private void getWeather(double latitude, double longitude) {
-        int drawableId = mColorPicker.getDrawableForParent();
-        int color = mColorPicker.getColorButtons(drawableId);
-
-        mMainLayout.setBackgroundResource(drawableId);
-        mHourlyButton.setBackgroundColor(color);
-        mDailyButton.setBackgroundColor(color);
 
         String apiKey = "07aadf598548d8bb35d6621d5e3b3c7b";
-        String API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude;
+        String API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude + "?units=auto";
 
-        if(isNetworkAvailable()) {
+        if (isNetworkAvailable()) {
             toggleRefresh();
             OkHttpClient httpClient = new OkHttpClient();
             Request httpRequest = new Request.Builder()
@@ -150,6 +167,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     runOnUiThread(() -> toggleRefresh());
                     alertUserAboutError();
                 }
+
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     runOnUiThread(() -> toggleRefresh());
@@ -157,22 +175,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         String jsonData = response.body().string();
                         Log.v(TAG, jsonData);
 
-                        if(response.isSuccessful()) {
+                        if (response.isSuccessful()) {
                             mWeather = parseWeatherDetails(jsonData);
                             runOnUiThread(() -> updateDisplay());
-                        }
-                        else {
+                        } else {
                             alertUserAboutError();
                         }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Exception caught: ", e);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Exception caught: ", e);
                     }
-                    catch (IOException e) { Log.e(TAG, "Exception caught: ", e); }
-                    catch (JSONException e) { Log.e(TAG, "Exception caught: ", e); }
 
                 }
             });
 
-        }
-        else {
+        } else {
             alertUserAboutNetworkError();
         }
     }
@@ -182,7 +200,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * hide the refresh button or show the refresh button
     */
     private void toggleRefresh() {
-        if(mProgressBar.getVisibility() == View.INVISIBLE) {
+        if (mProgressBar.getVisibility() == View.INVISIBLE) {
             mRefreshButton.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
@@ -192,9 +210,16 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private void updateDisplay() {
+        int[] colors = mColorPicker.getDrawableForParent(mWeather.getCurrent());
+
+        mMainLayout.setBackgroundResource(colors[0]);
+        mHourlyButton.setTextColor(colors[1]);
+        mDailyButton.setTextColor(colors[1]);
+
         mTemperatureLabel.setText(mWeather.getCurrent().getTemperature() + "");
         mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + " it will be");
-        mLocationLabel.setText(mWeather.getCurrent().getTimeZone());
+//        mLocationLabel.setText(mWeather.getCurrent().getTimeZone());
+        mLocationLabel.setText(mCityName);
         mHumidityValue.setText(mWeather.getCurrent().getHumidity() + "");
         mPrecipValue.setText(mWeather.getCurrent().getPrecipChance() + "%");
         mSummaryLabel.setText(mWeather.getCurrent().getSummary());
@@ -203,7 +228,28 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mIconImageView.setImageDrawable(drawable);
     }
 
-    private WeatherApi parseWeatherDetails(String jsonData) throws JSONException{
+    private String getLocationName(double latitude, double longitude) {
+        StringBuilder cityInfoBuilder = new StringBuilder();
+        try {
+
+            Geocoder gcd = new Geocoder(this, Locale.getDefault());
+            List<android.location.Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
+            if (addresses.size() > 0) {
+                cityInfoBuilder.append(addresses.get(0)
+                        .getLocality()
+                        + ", "
+                        + addresses.get(0)
+                        .getCountryName());
+            }
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error message: " + e);
+        }
+
+        return cityInfoBuilder.toString();
+    }
+
+    private WeatherApi parseWeatherDetails(String jsonData) throws JSONException {
         WeatherApi weather = new WeatherApi();
 
         weather.setCurrent(getCurrentWeather(jsonData));
@@ -221,7 +267,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         String timeZone = forecastData.getString("timezone");
 
         Hour[] hours = new Hour[data.length()];
-        for(int i = 0; i < data.length(); i++) {
+        for (int i = 0; i < data.length(); i++) {
             JSONObject json = data.getJSONObject(i);
             Hour hour = new Hour();
             hour.setSummary(json.getString("summary"));
@@ -243,7 +289,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         String timeZone = forecastData.getString("timezone");
 
         Day[] days = new Day[data.length()];
-        for(int i = 0; i < data.length(); i++) {
+        for (int i = 0; i < data.length(); i++) {
             JSONObject json = data.getJSONObject(i);
 
             Day day = new Day();
@@ -271,6 +317,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         current.setPrecipChance(currently.getDouble("precipProbability"));
         current.setTemperature(currently.getDouble("temperature"));
         current.setHumidity(currently.getDouble("humidity"));
+        current.setCityName(mCityName);
 
         Log.d(TAG, current.getFormattedTime());
 
@@ -287,7 +334,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
         boolean isAvailable = false;
-        if(networkInfo != null && networkInfo.isConnected()) { isAvailable = true; }
+        if (networkInfo != null && networkInfo.isConnected()) {
+            isAvailable = true;
+        }
         return isAvailable;
     }
 
@@ -298,19 +347,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if(ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED && isGpsPermissionOn) {
-            getLocation();
+                == PackageManager.PERMISSION_GRANTED && mIsGpsPermissionOn) {
+            if(LocationServices.FusedLocationApi
+                    .getLocationAvailability(mGoogleApiClient)
+                    .isLocationAvailable()) { getLocation(); }
         }
     }
 
     private void getLocation() {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(location == null) {
+        if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         } else {
             getWeather(location.getLatitude(), location.getLongitude());
+            mCityName = getLocationName(location.getLatitude(), location.getLongitude());
         }
     }
 
@@ -343,6 +395,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         double currentLongitude = location.getLongitude();
 
         getWeather(currentLatitude, currentLongitude);
+        mCityName = getLocationName(currentLatitude, currentLongitude);
     }
 
     @Override
@@ -368,7 +421,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 if(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    isGpsPermissionOn = true;
+                    mIsGpsPermissionOn = true;
                     // Create the LocationRequest Object to
                     mLocationRequest = LocationRequest.create()
                             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)

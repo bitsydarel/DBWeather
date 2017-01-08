@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.darelbitsy.dbweather.ui.MainActivity"
-    android:background="@drawable/bg_four">
+    android:background="@drawable/bg_six">
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,12 +46,14 @@
         android:id="@+id/locationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:layout_above="@id/timeLabel"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="60dp"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        android:text="Getting Location"/>
+        android:text="Pointe-Noire, Republic of Congo"
+        android:padding="5dp"/>
 
     <ImageView
         android:id="@+id/iconImageView"
@@ -169,6 +171,7 @@
             android:layout_weight="50"
             android:layout_marginEnd="5dp"
             android:background="@android:color/white"
+            android:textColor="@color/themeColor"
             android:text="Hourly Weather" />
 
         <Button
@@ -178,6 +181,7 @@
             android:layout_weight="50"
             android:layout_marginStart="5dp"
             android:background="@android:color/white"
+            android:textColor="@color/themeColor"
             android:text="Daily Weather" />
 
     </LinearLayout>

@@ -4,7 +4,6 @@ import com.darelbitsy.dbweather.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 /**
@@ -27,6 +26,16 @@ public class Current {
     private String mTimeZone;
     private long mTime;
     private double mTemperature, mHumidity, mPrecipChance;
+
+    private String mCityName;
+
+    public String getCityName() {
+        return mCityName;
+    }
+
+    public void setCityName(String cityName) {
+        mCityName = cityName;
+    }
 
     public String getSummary() {
         return mSummary;

@@ -3,55 +3,72 @@ package com.darelbitsy.dbweather;
 import android.graphics.Color;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
+import com.darelbitsy.dbweather.weather.Current;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
  */
 
 public class ColorManager {
-    private HashMap<Integer, String> colors;
-    private int parentColor;
+    private HashMap<Integer, String> mColorsLight;
+    private HashMap<Integer, String> mColorsDark;
+
+    private int mDarkColorUsed;
+    private int mLightColorUsed;
 
     public ColorManager() {
-        colors = new HashMap<>();
+        mColorsLight = new HashMap<>();
+        mColorsDark = new HashMap<>();
         initialize();
 
     }
 
     private void initialize() {
-        colors.put(R.drawable.bg_one, "#FFFC970B");
-        colors.put(R.drawable.bg_two, "#FF3079AB");
-        colors.put(R.drawable.bg_three, "#ff7d669e");
-        colors.put(R.drawable.bg_four, "#FF19C28A");
+        mColorsDark.put(R.drawable.bg_two, "#FF3079AB");
+        mColorsDark.put(R.drawable.bg_three, "#ff729f98");
+        mColorsDark.put(R.drawable.bg_five, "#ff98dafc");
+
+        mColorsLight.put(R.drawable.bg_one, "#FFFC970B");
+        mColorsLight.put(R.drawable.bg_four, "#FF19C28A");
+        mColorsLight.put(R.drawable.bg_six, "#ff1b5e20");
+
     }
-    private String[] mColors = {
 
-            "#ffc25975", // mauve
-            "#ffe15258", // red
-            "#ff838cc7", // lavender
-            "#ff53bbb4", // aqua
-            "#ff51b46d", // green
-            "#ffe0ab18", // mustard
-            "#fff092b0", // pink// orange
-    };
-
-    public int getDrawableForParent() {
+    public int[] getDrawableForParent(Current currentWeather) {
         //TODO:db Try to to find a better way to implement it
-        int[] drawblePicker = new int[colors.size()];
-        int drawableId;
-        //Random colorSelector = new Random();
-        //int choosedColor = colorSelector.nextInt(mColors.length);
+        HashMap<Integer, String> colors = new HashMap<>();
 
-        drawableId = colors.keySet().stream()
-                .findAny()
-                .get();
+        if(currentWeather.getTemperature() > 0) {
+            if (currentWeather.getFormattedTime().contains("AM")) {
+                colors.putAll(mColorsLight);
+            }
+            else {
+                colors.putAll(mColorsDark);
+            }
+        } else { colors.putAll(mColorsDark); }
 
-        return drawableId;
+        int drawableId = R.drawable.bg_one;
+        Random colorSelector = new Random();
+        int choosedColor = colorSelector.nextInt(colors.size());
+
+
+        for(int i = 0; i < colors.size(); i++) {
+            int color = colors.keySet().iterator().next();
+            if(i == choosedColor) {
+                drawableId = color;
+                break;
+            }
+        }
+
+        int[] textAndBackgroun = new int[2];
+        textAndBackgroun[0] = drawableId;
+        textAndBackgroun[1] = getColorButtons(drawableId, colors);
+
+        return textAndBackgroun;
     }
 
-    public int getColorButtons(int drawableId) {
+    private int getColorButtons(int drawableId, HashMap<Integer, String> colors) {
         return Color.parseColor(colors.get(drawableId));
     }
 }
