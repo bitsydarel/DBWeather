@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -63,6 +64,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    private boolean isGpsPermissionOn;
+
     @BindView(R.id.activity_main) RelativeLayout mMainLayout;
 
     @BindView(R.id.temperatureLabel) TextView mTemperatureLabel;
@@ -80,11 +83,16 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
 
+    @BindView(R.id.hourlyButton) Button mHourlyButton;
+    @BindView(R.id.dailyButton) Button mDailyButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        isGpsPermissionOn = false;
 
         //Configuring the google api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -101,6 +109,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        } else {
+            isGpsPermissionOn = true;
         }
 
         mProgressBar.setVisibility(View.INVISIBLE);
@@ -116,7 +126,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * get the current weather with the forecast api
     */
     private void getWeather(double latitude, double longitude) {
-        mMainLayout.setBackgroundColor(mColorPicker.getColor());
+        int drawableId = mColorPicker.getDrawableForParent();
+        int color = mColorPicker.getColorButtons(drawableId);
+
+        mMainLayout.setBackgroundResource(drawableId);
+        mHourlyButton.setBackgroundColor(color);
+        mDailyButton.setBackgroundColor(color);
+
         String apiKey = "07aadf598548d8bb35d6621d5e3b3c7b";
         String API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude;
 
@@ -232,7 +248,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
             Day day = new Day();
             day.setSummary(json.getString("summary"));
-            day.setTemperatureMax(json.getDouble("temperature"));
+            day.setTemperatureMax(json.getDouble("temperatureMax"));
             day.setTimeZone(timeZone);
             day.setTime(json.getLong("time"));
             day.setIcon(json.getString("icon"));
@@ -284,7 +300,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public void onConnected(@Nullable Bundle bundle) {
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED && isGpsPermissionOn) {
             getLocation();
         }
     }
@@ -352,6 +368,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 if(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                    isGpsPermissionOn = true;
                     // Create the LocationRequest Object to
                     mLocationRequest = LocationRequest.create()
                             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
