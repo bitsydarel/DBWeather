@@ -3,8 +3,7 @@ package com.darelbitsy.dbweather;
 import android.graphics.Color;
 
 import java.util.HashMap;
-import java.util.Random;
-import com.darelbitsy.dbweather.weather.Current;
+import java.util.Iterator;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
@@ -13,9 +12,8 @@ import com.darelbitsy.dbweather.weather.Current;
 public class ColorManager {
     private HashMap<Integer, String> mColorsLight;
     private HashMap<Integer, String> mColorsDark;
-
-    private int mDarkColorUsed;
-    private int mLightColorUsed;
+    private static int mColorToUse = 0;
+    private static int mCurrentCOlor;
 
     public ColorManager() {
         mColorsLight = new HashMap<>();
@@ -35,37 +33,30 @@ public class ColorManager {
 
     }
 
-    public int[] getDrawableForParent(Current currentWeather) {
+    public int[] getDrawableForParent() {
         //TODO:db Try to to find a better way to implement it
-        HashMap<Integer, String> colors = new HashMap<>();
-
-        if(currentWeather.getTemperature() > 0) {
-            if (currentWeather.getFormattedTime().contains("AM")) {
-                colors.putAll(mColorsLight);
-            }
-            else {
-                colors.putAll(mColorsDark);
-            }
-        } else { colors.putAll(mColorsDark); }
+        HashMap<Integer, String> colors = new HashMap<>(mColorsDark);
+        colors.putAll(mColorsLight);
+        if(mColorToUse == 0) { mColorToUse = colors.size(); }
 
         int drawableId = R.drawable.bg_one;
-        Random colorSelector = new Random();
-        int choosedColor = colorSelector.nextInt(colors.size());
 
-
+        Iterator<Integer> iterator = colors.keySet().iterator();
         for(int i = 0; i < colors.size(); i++) {
-            int color = colors.keySet().iterator().next();
-            if(i == choosedColor) {
+            int color = iterator.next();
+            if(i == mColorToUse) {
                 drawableId = color;
                 break;
             }
         }
 
-        int[] textAndBackgroun = new int[2];
-        textAndBackgroun[0] = drawableId;
-        textAndBackgroun[1] = getColorButtons(drawableId, colors);
+        int[] textAndBackground = new int[2];
+        textAndBackground[0] = drawableId;
+        textAndBackground[1] = getColorButtons(drawableId, colors);
 
-        return textAndBackgroun;
+        mColorToUse--;
+
+        return textAndBackground;
     }
 
     private int getColorButtons(int drawableId, HashMap<Integer, String> colors) {

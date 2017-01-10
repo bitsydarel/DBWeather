@@ -1,5 +1,7 @@
 package com.darelbitsy.dbweather.weather;
 
+import com.darelbitsy.dbweather.WeatherApi;
+
 /**
  * Created by Darel Bitsy on 07/01/17.
  */
@@ -51,4 +53,6 @@ public class Hour {
     }
 
     private String mTimeZone;
+
+    public int getIconId() { return WeatherApi.getIconId(getIcon()); }
 }

@@ -3,10 +3,10 @@ package com.darelbitsy.dbweather.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
@@ -36,6 +37,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,58 +59,47 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    private final String TAG = MainActivity.class.getSimpleName();
     //private Current mCurrent;
-
-    private WeatherApi mWeather;
-
-    private ColorManager mColorPicker = new ColorManager();
+    public final String TAG = MainActivity.class.getSimpleName();
+    public static final String DAILY_WEATHER = "DAILY_WEATHER";
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
+
+    private WeatherApi mWeather;
+    private ColorManager mColorPicker = new ColorManager();
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-
     private boolean mIsGpsPermissionOn;
     private String mCityName;
 
-    @BindView(R.id.activity_main)
-    RelativeLayout mMainLayout;
+    //Defining all the Parent view needed
+    @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
 
-    @BindView(R.id.temperatureLabel)
-    TextView mTemperatureLabel;
-    @BindView(R.id.timeLabel)
-    TextView mTimeLabel;
-    @BindView(R.id.humidityValue)
-    TextView mHumidityValue;
-    @BindView(R.id.locationLabel)
-    TextView mLocationLabel;
-    @BindView(R.id.precipValue)
-    TextView mPrecipValue;
-    @BindView(R.id.summaryLabel)
-    TextView mSummaryLabel;
+    @BindView(R2.id.hourlyButton) Button mHourlyButton;
+    @BindView(R2.id.dailyButton) Button mDailyButton;
 
-    @BindView(R.id.iconImageView)
-    ImageView mIconImageView;
-    @BindView(R.id.degreeImageView)
-    ImageView mDegreeImageView;
+    //Defining TextView needed
+    @BindView(R2.id.temperatureLabel) TextView mTemperatureLabel;
+    @BindView(R2.id.timeLabel) TextView mTimeLabel;
+    @BindView(R2.id.humidityValue) TextView mHumidityValue;
+    @BindView(R2.id.locationLabel) TextView mLocationLabel;
+    @BindView(R2.id.precipValue) TextView mPrecipValue;
+    @BindView(R2.id.summaryLabel) TextView mSummaryLabel;
 
-    @BindView(R.id.refreshImageView)
-    ImageButton mRefreshButton;
+    //Defining ImageView and ImageButton to manipulate
+    @BindView(R2.id.iconImageView) ImageView mIconImageView;
+    @BindView(R2.id.degreeImageView) ImageView mDegreeImageView;
+    @BindView(R2.id.refreshImageView) ImageButton mRefreshButton;
 
-    @BindView(R.id.progressBar)
-    ProgressBar mProgressBar;
-    private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
-
-    @BindView(R.id.hourlyButton)
-    Button mHourlyButton;
-    @BindView(R.id.dailyButton)
-    Button mDailyButton;
+    @BindView(R2.id.progressBar) ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        AndroidThreeTen.init(this);
 
         mIsGpsPermissionOn = false;
 
@@ -118,6 +109,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        mLocationRequest = createLocationRequest();
 
         //Check if the user has already granted the permission if not, ask it
         if (ContextCompat.checkSelfPermission(this,
@@ -140,8 +133,16 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         } else {
             mRefreshButton.setOnClickListener((view) -> getWeather(latitude, longitude));
         }
+
+        mDailyButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, DailyForecastActivity.class);
+            intent.putExtra(DAILY_WEATHER, mWeather.getDay());
+            startActivity(intent);
+        });
+
         getWeather(latitude, longitude);
         mCityName = getLocationName(latitude, longitude);
+        Log.i(TAG, "City Name: "+mCityName);
     }
 
     /*
@@ -210,7 +211,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private void updateDisplay() {
-        int[] colors = mColorPicker.getDrawableForParent(mWeather.getCurrent());
+        int[] colors = mColorPicker.getDrawableForParent();
 
         mMainLayout.setBackgroundResource(colors[0]);
         mHourlyButton.setTextColor(colors[1]);
@@ -220,6 +221,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + " it will be");
 //        mLocationLabel.setText(mWeather.getCurrent().getTimeZone());
         mLocationLabel.setText(mCityName);
+        Log.i(TAG, "City Name: "+mCityName);
         mHumidityValue.setText(mWeather.getCurrent().getHumidity() + "");
         mPrecipValue.setText(mWeather.getCurrent().getPrecipChance() + "%");
         mSummaryLabel.setText(mWeather.getCurrent().getSummary());
@@ -302,7 +304,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             days[i] = day;
         }
 
-        return new Day[0];
+        return days;
     }
 
     private Current getCurrentWeather(String jsonData) throws JSONException {
@@ -319,7 +321,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         current.setHumidity(currently.getDouble("humidity"));
         current.setCityName(mCityName);
 
-        Log.d(TAG, current.getFormattedTime());
+        Log.i(TAG, "City Name: "+mCityName);
 
         return current;
     }
@@ -363,6 +365,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         } else {
             getWeather(location.getLatitude(), location.getLongitude());
             mCityName = getLocationName(location.getLatitude(), location.getLongitude());
+            Log.i(TAG, "City Name: "+mCityName);
         }
     }
 
@@ -396,6 +399,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         getWeather(currentLatitude, currentLongitude);
         mCityName = getLocationName(currentLatitude, currentLongitude);
+        Log.i(TAG, "City Name: "+mCityName);
     }
 
     @Override
@@ -423,10 +427,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
                     mIsGpsPermissionOn = true;
                     // Create the LocationRequest Object to
-                    mLocationRequest = LocationRequest.create()
-                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                            .setInterval(1200 * 1000) // Seconds, in milliseconds
-                            .setFastestInterval(1 * 1000); // 1 Seconds, in milliseconds
+                    mLocationRequest = createLocationRequest();
 
                     mRefreshButton.setOnClickListener((view) -> getLocation());
                     getLocation();
@@ -434,5 +435,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 } else {}
             }
         }
+    }
+
+    private LocationRequest createLocationRequest() {
+        return LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1200 * 1000) // Seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 Seconds, in milliseconds
     }
 }

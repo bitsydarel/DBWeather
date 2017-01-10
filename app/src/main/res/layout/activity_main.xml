@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.darelbitsy.dbweather.ui.MainActivity"
-    android:background="@drawable/bg_six">
+    android:background="@drawable/bg_one">
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:text="Pointe-Noire, Republic of Congo"
-        android:padding="5dp"/>
+        android:padding="10dp"/>
 
     <ImageView
         android:id="@+id/iconImageView"
@@ -161,7 +161,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="100"
-        android:padding="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -172,7 +171,8 @@
             android:layout_marginEnd="5dp"
             android:background="@android:color/white"
             android:textColor="@color/themeColor"
-            android:text="Hourly Weather" />
+            android:text="Hourly Weather"
+            android:filterTouchesWhenObscured="true"/>
 
         <Button
             android:id="@+id/dailyButton"
@@ -182,7 +182,8 @@
             android:layout_marginStart="5dp"
             android:background="@android:color/white"
             android:textColor="@color/themeColor"
-            android:text="Daily Weather" />
+            android:text="Daily Weather"
+            android:filterTouchesWhenObscured="true"/>
 
     </LinearLayout>
 

@@ -1,10 +1,10 @@
 package com.darelbitsy.dbweather.weather;
 
-import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.WeatherApi;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
@@ -54,41 +54,7 @@ public class Current {
     }
 
     public int getIconId() {
-        int iconId = R.drawable.clear_day;
-
-        switch (getIcon()) {
-            case "clear-night":
-                iconId = R.drawable.clear_night;
-                break;
-            case "rain":
-                iconId = R.drawable.rain;
-                break;
-            case "snow":
-                iconId = R.drawable.snow;
-                break;
-            case "sleet":
-                iconId = R.drawable.sleet;
-                break;
-            case "wind":
-                iconId = R.drawable.wind;
-                break;
-            case "fog":
-                iconId = R.drawable.fog;
-                break;
-            case "cloudy":
-                iconId = R.drawable.cloudy;
-                break;
-            case "partly-cloudy-day":
-                iconId = R.drawable.partly_cloudy;
-                break;
-            case "partly-cloudy-night":
-                iconId = R.drawable.cloudy_night;
-                break;
-            default:
-                iconId = R.drawable.clear_day;
-                break;
-        }
-        return iconId;
+        return WeatherApi.getIconId(getIcon());
     }
 
     public long getTime() {
@@ -120,12 +86,11 @@ public class Current {
     }
 
     public String getFormattedTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
-        formatter.setTimeZone(TimeZone.getTimeZone(getTimeZone()));
+        final DateTimeFormatter format =
+                DateTimeFormatter.ofPattern("h:mm a");
 
-        Date dateTime = new Date(getTime());
-        String formatedTime = formatter.format(dateTime);
-
-        return formatedTime;
+        return Instant.ofEpochSecond(getTime())
+                .atZone(ZoneId.of(getTimeZone()))
+                .format(format);
     }
 }

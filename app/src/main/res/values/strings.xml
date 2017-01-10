@@ -5,4 +5,5 @@
     <string name="error_positive_button_text">Ok</string>
     <string name="network_unavailable_message">Network is unavailable!</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoKnOw3xJFDUYkn72qKC8--DtJstej_tE</string>
+    <string name="no_daily_weather">There is no data to display\nPlease active your internet connection\nOr add location permission to the app</string>
 </resources>
