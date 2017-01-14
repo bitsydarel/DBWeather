@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,6 +63,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     //private Current mCurrent;
     public final String TAG = MainActivity.class.getSimpleName();
     public static final String DAILY_WEATHER = "DAILY_WEATHER";
+    public static final String HOURLY_WEATHER = "HOURLY_WEATHER";
+    public static final String CITYNAME = "LOCATION NAME";
+    public static final String HOURLY_INFO = "HOURLY_INFO";
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
@@ -72,6 +76,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private LocationRequest mLocationRequest;
     private boolean mIsGpsPermissionOn;
     private String mCityName;
+    private String mHourlySummary;
+    private String mHourlyIcon;
 
     //Defining all the Parent view needed
     @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
@@ -101,16 +107,18 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         ButterKnife.bind(this);
         AndroidThreeTen.init(this);
 
+        mWeather = new WeatherApi();
         mIsGpsPermissionOn = false;
 
         //Configuring the google api client
+        mLocationRequest = createLocationRequest();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
-        mLocationRequest = createLocationRequest();
 
         //Check if the user has already granted the permission if not, ask it
         if (ContextCompat.checkSelfPermission(this,
@@ -120,6 +128,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
         } else {
             mIsGpsPermissionOn = true;
         }
@@ -137,6 +146,18 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mDailyButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, DailyForecastActivity.class);
             intent.putExtra(DAILY_WEATHER, mWeather.getDay());
+            intent.putExtra(CITYNAME, mCityName);
+            startActivity(intent);
+        });
+
+        mHourlyButton.setOnClickListener(view -> {
+            String[] hourlyInfo = new String[2];
+            hourlyInfo[0] = mHourlyIcon;
+            hourlyInfo[1] = mHourlySummary;
+
+            Intent intent = new Intent(this, HourlyForecastActivity.class);
+            intent.putExtra(HOURLY_WEATHER, mWeather.getHour());
+            intent.putExtra(HOURLY_INFO, hourlyInfo);
             startActivity(intent);
         });
 
@@ -150,9 +171,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * get the current weather with the forecast api
     */
     private void getWeather(double latitude, double longitude) {
+        String[] langs = {"ar","az","be","bs","ca","cs","de","el","en","es",
+                "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
+                "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw"};
 
+        String API = "";
+        List<String> supportedLang = Arrays.asList(langs);
+        String userLang = Locale.getDefault().getLanguage();
+
+        //Checking if user device language is supported by the api if not english language will be used.
+        String language = supportedLang.contains(userLang) ? ("?lang="+userLang ) : null;
+
+        //Api Key
         String apiKey = "07aadf598548d8bb35d6621d5e3b3c7b";
-        String API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude + "?units=auto";
+
+        if(language == null) { API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude + "?units=auto"; }
+        else { API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude + language +"&units=auto"; }
 
         if (isNetworkAvailable()) {
             toggleRefresh();
@@ -177,7 +211,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         Log.v(TAG, jsonData);
 
                         if (response.isSuccessful()) {
-                            mWeather = parseWeatherDetails(jsonData);
+                            parseWeatherDetails(jsonData);
                             runOnUiThread(() -> updateDisplay());
                         } else {
                             alertUserAboutError();
@@ -219,9 +253,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         mTemperatureLabel.setText(mWeather.getCurrent().getTemperature() + "");
         mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + " it will be");
-//        mLocationLabel.setText(mWeather.getCurrent().getTimeZone());
+
+        //Setting the location to the current location of the device because the api only provide the timezone as location
         mLocationLabel.setText(mCityName);
         Log.i(TAG, "City Name: "+mCityName);
+
         mHumidityValue.setText(mWeather.getCurrent().getHumidity() + "");
         mPrecipValue.setText(mWeather.getCurrent().getPrecipChance() + "%");
         mSummaryLabel.setText(mWeather.getCurrent().getSummary());
@@ -231,13 +267,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private String getLocationName(double latitude, double longitude) {
-        StringBuilder cityInfoBuilder = new StringBuilder();
+        String cityInfoBuilder = "";
         try {
 
             Geocoder gcd = new Geocoder(this, Locale.getDefault());
             List<android.location.Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
             if (addresses.size() > 0) {
-                cityInfoBuilder.append(addresses.get(0)
+                cityInfoBuilder = (addresses.get(0)
                         .getLocality()
                         + ", "
                         + addresses.get(0)
@@ -248,22 +284,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             Log.e(TAG, "Error message: " + e);
         }
 
-        return cityInfoBuilder.toString();
+        return cityInfoBuilder;
     }
 
-    private WeatherApi parseWeatherDetails(String jsonData) throws JSONException {
-        WeatherApi weather = new WeatherApi();
+    private void parseWeatherDetails(String jsonData) throws JSONException {
 
-        weather.setCurrent(getCurrentWeather(jsonData));
-        weather.setHour(getHourlyWeather(jsonData));
-        weather.setDay(getDailyWeather(jsonData));
-
-        return weather;
+        mWeather.setCurrent(getCurrentWeather(jsonData));
+        mWeather.setHour(getHourlyWeather(jsonData));
+        mWeather.setDay(getDailyWeather(jsonData));
     }
 
     private Hour[] getHourlyWeather(String jsonData) throws JSONException {
         JSONObject forecastData = new JSONObject(jsonData);
         JSONObject hourly = forecastData.getJSONObject("hourly");
+        mHourlySummary = hourly.getString("summary");
+        mHourlyIcon = hourly.getString("icon");
         JSONArray data = hourly.getJSONArray("data");
 
         String timeZone = forecastData.getString("timezone");
@@ -277,6 +312,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             hour.setTimeZone(timeZone);
             hour.setTime(json.getLong("time"));
             hour.setIcon(json.getString("icon"));
+            hour.setCityName(mCityName);
+            hour.setHumidity(json.getDouble("humidity"));
+            hour.setPrecipChance(json.getDouble("precipProbability"));
             hours[i] = hour;
         }
 
@@ -293,13 +331,15 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         Day[] days = new Day[data.length()];
         for (int i = 0; i < data.length(); i++) {
             JSONObject json = data.getJSONObject(i);
-
             Day day = new Day();
             day.setSummary(json.getString("summary"));
             day.setTemperatureMax(json.getDouble("temperatureMax"));
             day.setTimeZone(timeZone);
             day.setTime(json.getLong("time"));
             day.setIcon(json.getString("icon"));
+            day.setCityName(mCityName);
+            day.setHumidity(json.getDouble("humidity"));
+            day.setPrecipChance(json.getDouble("precipProbability"));
 
             days[i] = day;
         }
@@ -394,11 +434,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onLocationChanged(Location location) {
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-
-        getWeather(currentLatitude, currentLongitude);
-        mCityName = getLocationName(currentLatitude, currentLongitude);
+        getWeather(location.getLatitude(), location.getLongitude());
+        mCityName = getLocationName(location.getLatitude(), location.getLongitude());
         Log.i(TAG, "City Name: "+mCityName);
     }
 

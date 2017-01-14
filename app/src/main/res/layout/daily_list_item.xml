@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/dailyListItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="64dp"
@@ -9,48 +10,47 @@
                 android:paddingBottom="4dp"
                 tools:background="#ffaa00">
 
-    <ImageButton
-        android:id="@+id/circleImageView"
-        android:src="@drawable/bg_temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/transButton"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/circleImageView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/bg_temperature"/>
 
-    <ImageButton
-        android:id="@+id/dailyIconImageView"
-        android:src="@drawable/clear_day"
-        android:layout_toEndOf="@id/circleImageView"
-        android:layout_toRightOf="@+id/circleImageView"
-        android:layout_centerVertical="true"
-        android:paddingStart="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/transButton"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dailyIconImageView"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/circleImageView"
+            android:layout_toEndOf="@+id/circleImageView"
+            android:paddingLeft="10dp"
+            android:src="@drawable/clear_day"/>
 
-    <TextView
-        android:id="@+id/dayNameLabel"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/dailyIconImageView"
-        android:layout_toRightOf="@id/dailyIconImageView"
-        android:paddingStart="10dp"
-        tools:text="Wednesday"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dayNameLabelText"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/dailyIconImageView"
+            android:layout_toEndOf="@+id/dailyIconImageView"
+            android:paddingLeft="10dp"
+            android:textColor="#ffffffff"
+            android:textSize="20sp"
+            tools:text="Wednesday"/>
 
-    <TextView
-        android:id="@+id/dailytemperatureLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="75"
-        android:layout_alignTop="@id/circleImageView"
-        android:layout_alignBottom="@id/circleImageView"
-        android:layout_alignLeft="@id/circleImageView"
-        android:layout_alignRight="@id/circleImageView"
-        android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dailytemperatureLabel"
+            android:layout_alignTop="@+id/circleImageView"
+            android:layout_alignBottom="@+id/circleImageView"
+            android:layout_alignLeft="@+id/circleImageView"
+            android:layout_alignRight="@+id/circleImageView"
+            android:gravity="center"
+            android:textColor="@color/themeColor"
+            tools:text="100"/>
 
 </RelativeLayout>

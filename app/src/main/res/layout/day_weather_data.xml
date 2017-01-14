@@ -2,52 +2,53 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    android:id="@+id/dayWeatherData"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.darelbitsy.dbweather.ui.MainActivity"
+    tools:context="com.darelbitsy.dbweather.ui.DayWeatherData"
     android:background="@drawable/bg_one">
 
     <TextView
+        android:id="@+id/dayTemperatureLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:id="@+id/temperatureLabel"
         android:textColor="@android:color/white"
         android:text="--"
         android:textSize="150sp"/>
 
     <ImageView
+        android:id="@+id/degreeImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/degreeImageView"
         android:src="@drawable/degree"
         android:layout_marginTop="50dp"
-        android:layout_alignTop="@id/temperatureLabel"
-        android:layout_toRightOf="@id/temperatureLabel"
-        android:layout_toEndOf="@id/temperatureLabel" />
+        android:layout_alignTop="@id/dayTemperatureLabel"
+        android:layout_toRightOf="@id/dayTemperatureLabel"
+        android:layout_toEndOf="@id/dayTemperatureLabel" />
     <TextView
-        android:id="@+id/timeLabel"
+        android:id="@+id/dayNameLabelText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/dayTemperatureLabel"
         android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:layout_above="@id/temperatureLabel"
-        android:textColor="@color/transparentWhite"
-        android:text="At 5:00 PM it will be"
-        android:textSize="18sp"/>
+        android:layout_marginBottom="5dp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="35dp"
+        tools:text="Monday"/>
 
     <TextView
-        android:id="@+id/locationLabel"
+        android:id="@+id/dayLocationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_above="@id/timeLabel"
+        android:layout_above="@id/dayNameLabelText"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
         android:textColor="@android:color/white"
@@ -56,20 +57,20 @@
         android:padding="10dp"/>
 
     <ImageView
-        android:id="@+id/iconImageView"
+        android:id="@+id/dayIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/locationLabel"
+        android:layout_alignBottom="@id/dayLocationLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:src="@drawable/cloudy_night"/>
 
     <LinearLayout
-        android:id="@+id/lineaLayout"
+        android:id="@+id/dayLineaLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/temperatureLabel"
+        android:layout_below="@id/dayTemperatureLabel"
         android:layout_marginTop="10dp"
         android:weightSum="100"
         android:orientation="horizontal">
@@ -81,7 +82,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/humidityLabel"
+                android:id="@+id/dayHumidityLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -89,7 +90,7 @@
                 android:textColor="@color/transparentWhite"/>
 
             <TextView
-                android:id="@+id/humidityValue"
+                android:id="@+id/dayHumidityValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -106,7 +107,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/precipLabel"
+                android:id="@+id/dayPrecipLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -114,7 +115,7 @@
                 android:textColor="@color/transparentWhite"/>
 
             <TextView
-                android:id="@+id/precipValue"
+                android:id="@+id/dayPrecipValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -127,65 +128,15 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/summaryLabel"
+        android:id="@+id/daySummaryLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:layout_below="@id/lineaLayout"
+        android:layout_below="@id/dayLineaLayout"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/white"
         android:text="Getting current weather"
         android:gravity="center_horizontal"
         android:textSize="18dp"/>
-
-    <ImageButton
-        android:id="@+id/refreshImageView"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/refresh"
-        android:background="#00000000"/>
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:filterTouchesWhenObscured="true"
-        android:visibility="invisible"/>
-
-    <LinearLayout
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="100"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/hourlyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:layout_marginEnd="5dp"
-            android:background="@android:color/white"
-            android:textColor="@color/themeColor"
-            android:text="Hourly Weather"
-            android:filterTouchesWhenObscured="true"/>
-
-        <Button
-            android:id="@+id/dailyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:layout_marginStart="5dp"
-            android:background="@android:color/white"
-            android:textColor="@color/themeColor"
-            android:text="Daily Weather"
-            android:filterTouchesWhenObscured="true"/>
-
-    </LinearLayout>
 
 </RelativeLayout>

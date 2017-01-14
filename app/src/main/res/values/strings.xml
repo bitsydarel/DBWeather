@@ -3,7 +3,9 @@
     <string name="error_title">Oops! Sorry</string>
     <string name="error_message">There was an error. Please try again.</string>
     <string name="error_positive_button_text">Ok</string>
+    <string name="today_lobel">Today</string>
     <string name="network_unavailable_message">Network is unavailable!</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoKnOw3xJFDUYkn72qKC8--DtJstej_tE</string>
     <string name="no_daily_weather">There is no data to display\nPlease active your internet connection\nOr add location permission to the app</string>
+    <string name="title_activity_hourly_forecast">Hourly Weather</string>
 </resources>

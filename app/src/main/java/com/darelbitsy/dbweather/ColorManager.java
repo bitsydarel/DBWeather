@@ -1,19 +1,20 @@
 package com.darelbitsy.dbweather;
 
 import android.graphics.Color;
+import com.darelbitsy.dbweather.R;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
  */
 
 public class ColorManager {
-    private HashMap<Integer, String> mColorsLight;
-    private HashMap<Integer, String> mColorsDark;
+    private Map<Integer, String> mColorsLight;
+    private Map<Integer, String> mColorsDark;
     private static int mColorToUse = 0;
-    private static int mCurrentCOlor;
 
     public ColorManager() {
         mColorsLight = new HashMap<>();
@@ -26,10 +27,14 @@ public class ColorManager {
         mColorsDark.put(R.drawable.bg_two, "#FF3079AB");
         mColorsDark.put(R.drawable.bg_three, "#ff729f98");
         mColorsDark.put(R.drawable.bg_five, "#ff98dafc");
+        mColorsDark.put(R.drawable.bg_ten, "#0D47A1");
+        mColorsDark.put(R.drawable.bg_eleven, "#FF7043");
 
         mColorsLight.put(R.drawable.bg_one, "#FFFC970B");
         mColorsLight.put(R.drawable.bg_four, "#FF19C28A");
         mColorsLight.put(R.drawable.bg_six, "#ff1b5e20");
+        mColorsLight.put(R.drawable.bg_eight, "#64FFDA");
+        mColorsLight.put(R.drawable.bg_seven, "#0011ff");
 
     }
 
@@ -59,7 +64,7 @@ public class ColorManager {
         return textAndBackground;
     }
 
-    private int getColorButtons(int drawableId, HashMap<Integer, String> colors) {
+    private int getColorButtons(int drawableId, Map<Integer, String> colors) {
         return Color.parseColor(colors.get(drawableId));
     }
 }

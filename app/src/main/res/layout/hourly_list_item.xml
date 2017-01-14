@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                tools:background="@drawable/bg_one">
+
+    <TextView
+        android:id="@+id/hourlyTimeLabel"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        tools:text="12 PM"
+        android:textSize="24sp"/>
+
+    <ImageView
+        android:id="@+id/hourlyIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/hourlyTimeLabel"
+        android:layout_centerInParent="true"
+        android:src="@drawable/partly_cloudy"/>
+
+    <TextView
+        android:id="@+id/hourlyTemperatureLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        tools:text="100°"
+        android:paddingRight="10dp"/>
+
+    <TextView
+        android:id="@+id/hourlySummaryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/hourlyIconImageView"
+        android:layout_toEndOf="@id/hourlyIconImageView"
+        android:layout_toLeftOf="@id/hourlyTemperatureLabel"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        android:textColor="@android:color/white"
+        tools:text="Partly Cloudly"/>
+
+</RelativeLayout>

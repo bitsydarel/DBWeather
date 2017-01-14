@@ -1,58 +1,60 @@
 package com.darelbitsy.dbweather.weather;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.darelbitsy.dbweather.WeatherApi;
+
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
 
 /**
  * Created by Darel Bitsy on 07/01/17.
  */
 
-public class Hour {
-    private long mTime;
-    private String mSummary;
-    private double mTemperature;
-    private String mIcon;
+public class Hour extends WeatherData implements Parcelable {
 
-    public long getTime() {
-        return mTime;
+
+    public Hour() {}
+
+    public static final Creator<Hour> CREATOR = new Creator<Hour>() {
+        @Override
+        public Hour createFromParcel(Parcel in) { return new Hour(in); }
+        @Override
+        public Hour[] newArray(int size) { return new Hour[size]; }
+    };
+
+
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setTime(long time) {
-        mTime = time;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(getTemperature());
+        dest.writeLong(getTime());
+        dest.writeString(getSummary());
+        dest.writeString(getIcon());
+        dest.writeString(getTimeZone());
     }
 
-    public String getSummary() {
-        return mSummary;
+    private Hour(Parcel in) {
+        setTemperature(in.readDouble());
+        setTime(in.readLong());
+        setSummary(in.readString());
+        setIcon(in.readString());
+        setTimeZone(in.readString());
     }
 
-    public void setSummary(String summary) {
-        mSummary = summary;
+    public String getHour() {
+        final DateTimeFormatter format =
+                DateTimeFormatter.ofPattern("h a");
+
+        return Instant.ofEpochSecond(getTime())
+                .atZone(ZoneId.of(getTimeZone()))
+                .format(format);
     }
-
-    public double getTemperature() {
-        return mTemperature;
-    }
-
-    public void setTemperature(double temperature) {
-        mTemperature = temperature;
-    }
-
-    public String getIcon() {
-        return mIcon;
-    }
-
-    public void setIcon(String icon) {
-        mIcon = icon;
-    }
-
-    public String getTimeZone() {
-        return mTimeZone;
-    }
-
-    public void setTimeZone(String timeZone) {
-        mTimeZone = timeZone;
-    }
-
-    private String mTimeZone;
-
-    public int getIconId() { return WeatherApi.getIconId(getIcon()); }
 }

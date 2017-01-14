@@ -21,7 +21,6 @@ public class NetworkAlertDialogFragment extends DialogFragment {
                 .setMessage(R.string.network_unavailable_message)
                 .setPositiveButton(R.string.error_positive_button_text, null);
 
-        AlertDialog alertBox = alertBuilder.create();
-        return alertBox;
+        return alertBuilder.create();
     }
 }

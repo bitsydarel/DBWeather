@@ -12,18 +12,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.darelbitsy.dbweather.ui.DailyForecastActivity">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true">
-
-    </ListView>
-
     <TextView
-        android:id="@android:id/empty"
+        android:id="@+id/checkEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -31,6 +21,39 @@
         android:layout_centerVertical="true"
         android:textColor="@android:color/white"
         android:textStyle="bold"
+        android:visibility="invisible"
         android:text="@string/no_daily_weather"/>
+
+    <TextView
+        android:id="@+id/thisWeekLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This week weather"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/locationDaily"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:text="Pointe-noire Republic of Congo"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/dailyRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/thisWeekLabel"
+        android:layout_above="@+id/locationDaily"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

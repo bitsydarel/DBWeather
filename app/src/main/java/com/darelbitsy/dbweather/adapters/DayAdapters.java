@@ -1,80 +1,83 @@
 package com.darelbitsy.dbweather.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.ui.DayWeatherData;
 import com.darelbitsy.dbweather.weather.Day;
 
 /**
- * Created by Darel Bitsy on 09/01/17.
+ * Created by Darel Bitsy on 13/01/17.
  */
 
-public class DayAdapters extends BaseAdapter {
-    private Context mContext;
+public class DayAdapters extends RecyclerView.Adapter<DayAdapters.DayViewHolder> {
+    public static final String DAY_WEATHER = "the_day";
     private Day[] mDays;
-    private ColorManager mColorManager;
     private int mColor;
+    private Context mContext;
 
-    public DayAdapters(Context context, Day[] days) {
-        mContext = context;
+    public DayAdapters(Day[] days, Context context) {
+        ColorManager colorManager = new ColorManager();
         mDays = days;
-        mColorManager = new ColorManager();
-        mColor = mColorManager.getDrawableForParent()[1];
+        mContext = context;
+        mColor = colorManager.getDrawableForParent()[1];
     }
 
-    @Override
-    public int getCount() {
-        return mDays.length;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mDays[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-
-        if(convertView == null) {
-            convertView = LayoutInflater
-                    .from(mContext)
-                    .inflate(R.layout.daily_list_item, null);
-
-            holder = new ViewHolder();
-
-            holder.dailyIconImageView = (ImageView) convertView.findViewById(R.id.dailyIconImageView);
-            holder.dailytemperatureLabel = (TextView) convertView.findViewById(R.id.dailytemperatureLabel);
-            holder.dayNameLabel = (TextView) convertView.findViewById(R.id.dayNameLabel);
-
-            convertView.setTag(holder);
-
-        } else { holder = (ViewHolder) convertView.getTag(); }
-
-        Day day = mDays[position];
-        holder.dailyIconImageView.setImageResource(day.getIconId());
-        holder.dailytemperatureLabel.setText(day.getTemperatureMax() + "");
-        holder.dailytemperatureLabel.setTextColor(mColor);
-        holder.dayNameLabel.setText(day.getDayOfTheWeek());
-
-        return convertView;
-    }
-
-    private static class ViewHolder {
+    public class DayViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
+        Day theDay;
         ImageView dailyIconImageView;
         TextView dailytemperatureLabel;
         TextView dayNameLabel;
+
+        public DayViewHolder(View itemView) {
+            super(itemView);
+            dailyIconImageView = (ImageView) itemView.findViewById(R.id.dailyIconImageView);
+            dailytemperatureLabel = (TextView) itemView.findViewById(R.id.dailytemperatureLabel);
+            dayNameLabel = (TextView) itemView.findViewById(R.id.dayNameLabelText);
+            itemView.setOnClickListener(this);
+        }
+
+        public void bindDay(Day day, boolean startPosition) {
+            theDay = day;
+            dailyIconImageView.setImageResource(day.getIconId());
+            dailytemperatureLabel.setText(day.getTemperatureMax() + "");
+            dailytemperatureLabel.setTextColor(mColor);
+            if(startPosition) { dayNameLabel.setText(R.string.today_lobel); }
+            else { dayNameLabel.setText(day.getDayOfTheWeek()); }
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(mContext, DayWeatherData.class);
+            intent.putExtra(DAY_WEATHER, theDay);
+            mContext.startActivity(intent);
+        }
+    }
+
+    @Override
+    public DayAdapters.DayViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        //Returning a DayViewHolder with the view passed in
+        return new DayViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.daily_list_item, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(DayAdapters.DayViewHolder holder, int position) {
+        if(position == 0) { holder.bindDay(mDays[position], true); }
+        else { holder.bindDay(mDays[position], false); }
+    }
+
+    @Override
+    public int getItemCount() {
+        return (mDays != null && mDays.length > 0) ? mDays.length: 0;
     }
 }
