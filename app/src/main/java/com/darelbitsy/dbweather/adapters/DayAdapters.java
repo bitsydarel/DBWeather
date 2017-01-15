@@ -14,6 +14,8 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.ui.DayWeatherData;
 import com.darelbitsy.dbweather.weather.Day;
 
+import java.util.Arrays;
+
 /**
  * Created by Darel Bitsy on 13/01/17.
  */
@@ -26,7 +28,7 @@ public class DayAdapters extends RecyclerView.Adapter<DayAdapters.DayViewHolder>
 
     public DayAdapters(Day[] days, Context context) {
         ColorManager colorManager = new ColorManager();
-        mDays = days;
+        mDays = Arrays.copyOf(days, days.length);
         mContext = context;
         mColor = colorManager.getDrawableForParent()[1];
     }

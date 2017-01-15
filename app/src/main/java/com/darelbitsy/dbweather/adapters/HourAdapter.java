@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.weather.Hour;
 
+import java.util.Arrays;
+
 /**
  * Created by Darel Bitsy on 12/01/17.
  */
@@ -18,7 +20,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
     private Hour[] mHours;
 
     public HourAdapter(Hour[] hours) {
-        mHours = hours;
+        mHours = Arrays.copyOf(hours, hours.length);
     }
 
     @Override

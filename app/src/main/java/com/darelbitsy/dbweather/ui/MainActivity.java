@@ -67,6 +67,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static final String CITYNAME = "LOCATION NAME";
     public static final String HOURLY_INFO = "HOURLY_INFO";
 
+    String[] mLangs = {"ar","az","be","bs","ca","cs","de","el","en","es",
+            "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
+            "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw"};
+    List<String> supportedLang = Arrays.asList(mLangs);
+
+
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
 
@@ -171,12 +177,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * get the current weather with the forecast api
     */
     private void getWeather(double latitude, double longitude) {
-        String[] langs = {"ar","az","be","bs","ca","cs","de","el","en","es",
-                "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
-                "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw"};
-
         String API = "";
-        List<String> supportedLang = Arrays.asList(langs);
+
         String userLang = Locale.getDefault().getLanguage();
 
         //Checking if user device language is supported by the api if not english language will be used.

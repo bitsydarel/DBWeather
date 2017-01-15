@@ -24,12 +24,12 @@ public class WeatherApi {
     }
 
     public Hour[] getHour() {
-        return mHour;
+        return Arrays.copyOf(mHour, mHour.length);
     }
 
-    public void setHour(final Hour[] hour) { mHour = (hour != null) ? Arrays.copyOf(hour, hour.length) : null; }
+    public void setHour(final Hour[] hour) { mHour = Arrays.copyOf(hour, hour.length) ; }
 
-    public Day[] getDay() { return mDay; }
+    public Day[] getDay() { return Arrays.copyOf(mDay, mDay.length); }
 
     public void setDay(final Day[] day) { mDay = Arrays.copyOf(day, day.length); }
 }
