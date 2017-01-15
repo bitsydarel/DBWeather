@@ -1,7 +1,6 @@
 package com.darelbitsy.dbweather.weather;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.WeatherApi;
 
 /**
  * Created by Darel Bitsy on 13/01/17.
@@ -19,7 +18,7 @@ public class WeatherData {
     public String getTimeZone() {
         return mTimeZone;
     }
-    public void setTimeZone(String timeZone) {
+    public void setTimeZone(final String timeZone) {
         mTimeZone = timeZone;
     }
 
@@ -27,19 +26,19 @@ public class WeatherData {
         return mCityName;
     }
 
-    public void setCityName(String cityName) { mCityName = cityName; }
+    public void setCityName(final String cityName) { mCityName = cityName; }
 
     public String getSummary() {
         return mSummary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         mSummary = summary;
     }
 
     public String getIcon() { return mIcon; }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         mIcon = icon;
     }
 
@@ -47,13 +46,13 @@ public class WeatherData {
         return mTime;
     }
 
-    public void setTime(long time) {
+    public void setTime(final long time) {
         mTime = time;
     }
 
     public int getTemperature() { return (int) Math.round(mTemperature); }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(final double temperature) {
         mTemperature = temperature;
     }
 
@@ -61,13 +60,13 @@ public class WeatherData {
         return mHumidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(final double humidity) {
         mHumidity = humidity;
     }
 
     public int getPrecipChance() { return (int) Math.round(mPrecipChance * 100); }
 
-    public void setPrecipChance(double precipChance) {
+    public void setPrecipChance(final double precipChance) {
         mPrecipChance = precipChance;
     }
 
@@ -107,7 +106,7 @@ public class WeatherData {
         return iconId;
     }
 
-    public int getIconId(String iconName) {
+    public int getIconId(final String iconName) {
         setIcon(iconName);
         return getIconId();
     }
