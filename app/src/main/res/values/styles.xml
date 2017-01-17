@@ -7,5 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="Theme_for_about_us" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="colorPrimary">#f9d34c</item>
+        <item name="colorPrimaryDark">#fff</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
 
 </resources>

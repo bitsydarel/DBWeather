@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.ui;
+package com.darelbitsy.dbweather.alert;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

@@ -8,4 +8,6 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoKnOw3xJFDUYkn72qKC8--DtJstej_tE</string>
     <string name="no_daily_weather">There is no data to display\nPlease active your internet connection\nOr add location permission to the app</string>
     <string name="title_activity_hourly_forecast">Hourly Weather</string>
+    <string name="default_weather_summary">Getting current weather</string>
+    <string name="action_about_us">About Us</string>
 </resources>

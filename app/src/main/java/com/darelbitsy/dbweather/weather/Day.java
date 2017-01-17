@@ -23,6 +23,8 @@ public class Day extends WeatherData implements Parcelable {
         setIcon(in.readString());
         setTimeZone(in.readString());
         setCityName(in.readString());
+        setHumidity(in.readDouble());
+        setPrecipChance(in.readInt());
     }
 
     @Override
@@ -33,6 +35,8 @@ public class Day extends WeatherData implements Parcelable {
         dest.writeString(getIcon());
         dest.writeString(getTimeZone());
         dest.writeString(getCityName());
+        dest.writeDouble(getHumidity());
+        dest.writeInt(getPrecipChance());
     }
 
     @Override

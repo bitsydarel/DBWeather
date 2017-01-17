@@ -8,7 +8,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.darelbitsy.dbweather.ui.MainActivity"
     android:background="@drawable/bg_one">
 
@@ -134,7 +133,7 @@
         android:layout_below="@id/lineaLayout"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/white"
-        android:text="Getting current weather"
+        android:text="@string/default_weather_summary"
         android:gravity="center_horizontal"
         android:textSize="18dp"/>
 
@@ -144,10 +143,12 @@
         android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:src="@drawable/refresh"
         android:background="#00000000"/>
     <ProgressBar
         android:id="@+id/progressBar"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -187,5 +188,17 @@
             android:filterTouchesWhenObscured="true"/>
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/main_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="A menu to the about us page"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@android:color/transparent"
+        android:src="@drawable/menu"
+        android:onClick="showPopup" />
 
 </RelativeLayout>

@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.ColorManager;
@@ -20,31 +19,27 @@ import java.util.Arrays;
 
 public class DailyForecastActivity extends Activity {
 
-    private RelativeLayout mActivityDailyForecast;
+    private static final String COLOR_BACKGROUND = "COLOR_BACKGROUND";
     private RecyclerView mDailyRecyclerView;
     private TextView mLocationDaily;
     private TextView mCheckEmpty;
-    private ColorManager mColorManager;
+    private int mBackgroundColor = new ColorManager().getDrawableForParent()[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_forecast);
         AndroidThreeTen.init(this);
-        mColorManager = new ColorManager();
 
-        mActivityDailyForecast = (RelativeLayout) findViewById(R.id.activity_daily_forecast);
         mDailyRecyclerView = (RecyclerView) findViewById(R.id.dailyRecyclerView);
         mLocationDaily = (TextView) findViewById(R.id.locationDaily);
         mCheckEmpty = (TextView) findViewById(R.id.checkEmpty);
 
-        mActivityDailyForecast.setBackgroundResource(mColorManager.getDrawableForParent()[0]);
-
         Intent intent = getIntent();
         Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.DAILY_WEATHER);
-        Day[] mDays = Arrays.copyOf(parcelables, parcelables.length, Day[].class);
+        Day[] days = Arrays.copyOf(parcelables, parcelables.length, Day[].class);
 
-        DayAdapters adapters = new DayAdapters(mDays, this);
+        DayAdapters adapters = new DayAdapters(days, this);
 
         if(adapters.getItemCount() > 0) {
             mDailyRecyclerView.setAdapter(adapters);
@@ -56,8 +51,18 @@ public class DailyForecastActivity extends Activity {
             mCheckEmpty.setVisibility(View.VISIBLE);
         }
 
-
         mLocationDaily.setText(intent.getStringExtra(MainActivity.CITYNAME));
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mBackgroundColor = savedInstanceState.getInt(COLOR_BACKGROUND);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(COLOR_BACKGROUND, mBackgroundColor);
     }
 }

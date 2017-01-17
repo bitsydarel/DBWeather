@@ -13,7 +13,8 @@ public class WeatherData {
     private String mCityName;
 
     private long mTime;
-    private double mTemperature, mHumidity, mPrecipChance;
+    private double mTemperature, mHumidity;
+    private  int mPrecipChance;
 
     public String getTimeZone() {
         return mTimeZone;
@@ -64,11 +65,13 @@ public class WeatherData {
         mHumidity = humidity;
     }
 
-    public int getPrecipChance() { return (int) Math.round(mPrecipChance * 100); }
+    public int getPrecipChance() { return mPrecipChance; }
 
     public void setPrecipChance(final double precipChance) {
-        mPrecipChance = precipChance;
+        mPrecipChance = (int) Math.round(precipChance * 100);
     }
+
+    public void setPrecipChance(final int precipChance) { mPrecipChance = precipChance; }
 
     public int getIconId() {
         int iconId = R.drawable.clear_day;

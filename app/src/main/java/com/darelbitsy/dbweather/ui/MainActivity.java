@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
@@ -17,10 +18,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,9 +33,12 @@ import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
+import com.darelbitsy.dbweather.alert.AlertDialogFragment;
+import com.darelbitsy.dbweather.alert.NetworkAlertDialogFragment;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
+import com.darelbitsy.dbweather.widgets.SnowFallView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -60,18 +67,26 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    //private Current mCurrent;
     public final String TAG = MainActivity.class.getSimpleName();
+    private static final String KEY_SUMMARY = "KEY_SUMMARY";
+    private static final String ICON_KEY = "ICON_KEY";
+    private static final String HUMIDITY_KEY = "HUMIDITY_KEY";
+    private static final String PRECIP_KEY = "PRECIP_KEY";
+    private static final String LAST_KNOW_TEMPERATURE = "LAST_KNOW_TEMPERATURE";
+    private static final String TIME_OF_LAST_KNOW_TEMP = "TIME_OF_LAST_KNOW_TEMP";
+    private static final String LAST_KNOW_LONGITUDE = "LAST_KNOW_LONGITUDE";
+    private static final String LAST_KNOW_LATITUDE = "LAST_KNOW_LATITUDE";
+    private static final String LAST_KNOW_LOCATION = "LAST_KNOW_LOCATION";
+    static final String PREFS_FILE = "com.darelbitsy.dbweather.preferences";
     public static final String DAILY_WEATHER = "DAILY_WEATHER";
     public static final String HOURLY_WEATHER = "HOURLY_WEATHER";
     public static final String CITYNAME = "LOCATION NAME";
     public static final String HOURLY_INFO = "HOURLY_INFO";
 
-    String[] mLangs = {"ar","az","be","bs","ca","cs","de","el","en","es",
+    private String[] mLangs = {"ar","az","be","bs","ca","cs","de","el","en","es",
             "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
             "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw"};
-    List<String> supportedLang = Arrays.asList(mLangs);
-
+    private List<String> supportedLang = Arrays.asList(mLangs);
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
@@ -85,8 +100,15 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private String mHourlySummary;
     private String mHourlyIcon;
 
+    private double mLatitude;
+    private double mLongitude;
+
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mPreferenceEditor;
+
     //Defining all the Parent view needed
     @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
+    @BindView(R2.id.main_menu) ImageButton mMain_menu;
 
     @BindView(R2.id.hourlyButton) Button mHourlyButton;
     @BindView(R2.id.dailyButton) Button mDailyButton;
@@ -106,6 +128,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @BindView(R2.id.progressBar) ProgressBar mProgressBar;
 
+    private SnowFallView mSnowFallView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,8 +137,18 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         ButterKnife.bind(this);
         AndroidThreeTen.init(this);
 
+        mSnowFallView = new SnowFallView(this);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        mMainLayout.addView(mSnowFallView, params);
         mWeather = new WeatherApi();
         mIsGpsPermissionOn = false;
+        mSharedPreferences = getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+        mPreferenceEditor = mSharedPreferences.edit();
+        mLongitude = getLongitude();
+        mLatitude = getLatitude();
 
         //Configuring the google api client
         mLocationRequest = createLocationRequest();
@@ -140,13 +174,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         mProgressBar.setVisibility(View.INVISIBLE);
-        final double latitude = -4.7485; //-4.7485,11.8523
-        final double longitude = 11.8523;
-
         if (mIsGpsPermissionOn) {
             mRefreshButton.setOnClickListener((view) -> getLocation());
         } else {
-            mRefreshButton.setOnClickListener((view) -> getWeather(latitude, longitude));
+            mRefreshButton.setOnClickListener((view) -> getWeather(mLatitude, mLongitude));
         }
 
         mDailyButton.setOnClickListener(view -> {
@@ -167,9 +198,41 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             startActivity(intent);
         });
 
-        getWeather(latitude, longitude);
-        mCityName = getLocationName(latitude, longitude);
+        mMain_menu.setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+            MenuInflater menuInflater = popupMenu.getMenuInflater();
+            menuInflater.inflate(R.menu.menu_main, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(item -> {
+                Intent intent = new Intent(MainActivity.this, AboutUs.class);
+                startActivity(intent);
+                return false;
+            });
+            popupMenu.show();
+        });
+
+
+        getWeather(mLatitude, mLongitude);
+        mCityName = mSharedPreferences.getString(LAST_KNOW_LOCATION, getLocationName(mLatitude, mLongitude));
         Log.i(TAG, "City Name: "+mCityName);
+        initializeField();
+    }
+
+    public void showPopup(View v) {
+
+    }
+
+    //Get the last know latitude or give a default value
+    private double getLatitude() {
+        return mSharedPreferences.contains(LAST_KNOW_LATITUDE)
+                ? Double.longBitsToDouble(mSharedPreferences.getLong(LAST_KNOW_LATITUDE, 0))
+                : -4.7485;
+    }
+
+    //Get the last know longitude or give a default value
+    private double getLongitude() {
+        return mSharedPreferences.contains(LAST_KNOW_LONGITUDE)
+                ? Double.longBitsToDouble(mSharedPreferences.getLong(LAST_KNOW_LONGITUDE, 0))
+                : 11.8523;
     }
 
     /*
@@ -177,7 +240,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * get the current weather with the forecast api
     */
     private void getWeather(double latitude, double longitude) {
-        String API = "";
+        String API;
 
         String userLang = Locale.getDefault().getLanguage();
 
@@ -260,7 +323,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mLocationLabel.setText(mCityName);
         Log.i(TAG, "City Name: "+mCityName);
 
-        mHumidityValue.setText(mWeather.getCurrent().getHumidity() + "");
+        mHumidityValue.setText(mWeather.getCurrent().getHumidity() + "%");
         mPrecipValue.setText(mWeather.getCurrent().getPrecipChance() + "%");
         mSummaryLabel.setText(mWeather.getCurrent().getSummary());
 
@@ -454,6 +517,32 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
+        mPreferenceEditor.putString(LAST_KNOW_LOCATION, mCityName);
+        mPreferenceEditor.putLong(LAST_KNOW_LATITUDE, Double.doubleToRawLongBits(mLatitude));
+        mPreferenceEditor.putLong(LAST_KNOW_LONGITUDE, Double.doubleToRawLongBits(mLongitude));
+        mPreferenceEditor.putString(LAST_KNOW_TEMPERATURE, mTemperatureLabel.getText().toString());
+        mPreferenceEditor.putString(KEY_SUMMARY, mSummaryLabel.getText().toString());
+        if(mWeather.getCurrent() != null) {mPreferenceEditor.putInt(ICON_KEY, mWeather.getCurrent().getIconId()); }
+        mPreferenceEditor.putString(HUMIDITY_KEY, mHumidityValue.getText().toString());
+        mPreferenceEditor.putString(PRECIP_KEY, mPrecipValue.getText().toString());
+        mPreferenceEditor.putString(TIME_OF_LAST_KNOW_TEMP, mTimeLabel.getText().toString());
+        mPreferenceEditor.apply();
+    }
+
+    private void initializeField() {
+        mLocationLabel.setText(mSharedPreferences.getString(LAST_KNOW_LOCATION,
+                getLocationName(mLatitude, mLongitude)));
+
+        mTemperatureLabel.setText(mSharedPreferences.getString(LAST_KNOW_TEMPERATURE, "--"));
+
+        mSummaryLabel.setText(mSharedPreferences.getString(KEY_SUMMARY,
+                getResources().getString(R.string.default_weather_summary)));
+
+        if (mSharedPreferences.contains(ICON_KEY)) { mIconImageView.setImageResource(mSharedPreferences.getInt(ICON_KEY, 0)); }
+
+        mHumidityValue.setText(mSharedPreferences.getString(HUMIDITY_KEY, "--"));
+        mPrecipValue.setText(mSharedPreferences.getString(PRECIP_KEY, "--"));
+        mTimeLabel.setText(mSharedPreferences.getString(TIME_OF_LAST_KNOW_TEMP, "---"));
     }
 
     @Override

@@ -20,8 +20,6 @@ import com.darelbitsy.dbweather.weather.Hour;
 import java.util.Arrays;
 
 public class HourlyForecastActivity extends Activity {
-
-    private RelativeLayout mActivityHourlyForecast;
     private RecyclerView mHourlyForecastRecyclerView;
     private ImageView mHourlyIcon;
     private TextView mHourlySummary;
@@ -29,13 +27,13 @@ public class HourlyForecastActivity extends Activity {
 
 
     private Hour[] mHours;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ColorManager colorSwicher = new ColorManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hourly_forecast);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
-        mActivityHourlyForecast = (RelativeLayout) findViewById(R.id.activity_hourly_forecast);
+
         mHourlyForecastRecyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
 
         Intent intent = getIntent();
@@ -63,7 +61,6 @@ public class HourlyForecastActivity extends Activity {
 
             mHourlyForecastRecyclerView.setHasFixedSize(true);
         }
-        mActivityHourlyForecast.setBackgroundResource(colorSwicher.getDrawableForParent()[0]);
     }
 
 }

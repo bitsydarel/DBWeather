@@ -51,7 +51,7 @@ public class DayWeatherData extends Activity {
         mLocationLabel.setText(day.getCityName());
         mIconImageView.setImageResource(day.getIconId());
         mDayNameLabel.setText(day.getDayOfTheWeek());
-        mHumidityValue.setText(day.getHumidity() + "");
+        mHumidityValue.setText(day.getHumidity() + "%");
         mSummaryLabel.setText(day.getSummary());
         mPrecipValue.setText(day.getPrecipChance() + "%");
     }

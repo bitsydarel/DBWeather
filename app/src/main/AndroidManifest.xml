@@ -27,11 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.DailyForecastActivity"
-                  android:parentActivityName=".ui.MainActivity">
+        <activity
+            android:name=".ui.DailyForecastActivity"
+            android:parentActivityName=".ui.MainActivity">
         </activity>
-
         <activity
             android:name=".ui.HourlyForecastActivity"
             android:label="@string/title_activity_hourly_forecast"
@@ -40,15 +39,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.darelbitsy.dbweather.ui.MainActivity"/>
         </activity>
-
-        <activity android:name=".ui.DayWeatherData"
+        <activity
+            android:name=".ui.DayWeatherData"
             android:parentActivityName=".ui.DailyForecastActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.darelbitsy.dbweather.ui.DailyForecastActivity"/>
         </activity>
-
+        <activity
+            android:name=".ui.AboutUs"
+            android:theme="@style/Theme_for_about_us">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity"/>
+        </activity>
+        <activity android:name=".alert.NotifAdvice">
+        </activity>
     </application>
 
 </manifest>

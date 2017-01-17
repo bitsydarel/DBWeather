@@ -50,7 +50,7 @@
             android:layout_alignLeft="@+id/circleImageView"
             android:layout_alignRight="@+id/circleImageView"
             android:gravity="center"
-            android:textColor="@color/themeColor"
+            android:textColor="@android:color/black"
             tools:text="100"/>
 
 </RelativeLayout>

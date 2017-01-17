@@ -23,14 +23,11 @@ import java.util.Arrays;
 public class DayAdapters extends RecyclerView.Adapter<DayAdapters.DayViewHolder> {
     public static final String DAY_WEATHER = "the_day";
     private Day[] mDays;
-    private int mColor;
     private Context mContext;
 
     public DayAdapters(Day[] days, Context context) {
-        ColorManager colorManager = new ColorManager();
         mDays = Arrays.copyOf(days, days.length);
         mContext = context;
-        mColor = colorManager.getDrawableForParent()[1];
     }
 
     public class DayViewHolder extends RecyclerView.ViewHolder
@@ -52,7 +49,6 @@ public class DayAdapters extends RecyclerView.Adapter<DayAdapters.DayViewHolder>
             theDay = day;
             dailyIconImageView.setImageResource(day.getIconId());
             dailytemperatureLabel.setText(day.getTemperatureMax() + "");
-            dailytemperatureLabel.setTextColor(mColor);
             if(startPosition) { dayNameLabel.setText(R.string.today_lobel); }
             else { dayNameLabel.setText(day.getDayOfTheWeek()); }
         }
