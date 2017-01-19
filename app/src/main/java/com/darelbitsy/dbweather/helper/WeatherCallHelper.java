@@ -6,19 +6,14 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.view.View;
 
 import com.darelbitsy.dbweather.alert.AlertDialogFragment;
 import com.darelbitsy.dbweather.alert.NetworkAlertDialogFragment;
-import com.darelbitsy.dbweather.ui.MainActivity;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,14 +28,14 @@ import static com.darelbitsy.dbweather.ui.MainActivity.LAST_KNOW_LONGITUDE;
  * Created by Darel Bitsy on 19/01/17.
  */
 
-public class WeatherCallHelper implements Callable<String> {
+public class WeatherCallHelper {
     private static final String PREFS_FILE = "com.darelbitsy.dbweather.preferences";
     private List<String> supportedLang = Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
             "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
             "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw");
 
-    public static final String TAG = "WeatherApiCall";
-    private String jsonData;
+    private static final String TAG = "WeatherApiCall";
+    private String mJsonData;
 
     private double mLatitude, mLongitude;
     private Activity mActivity;
@@ -53,7 +48,11 @@ public class WeatherCallHelper implements Callable<String> {
         mSharedPreferences = mActivity.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
         mLatitude = getLatitude();
         mLongitude = getLongitude();
+        mJsonData = "";
+        call();
     }
+
+    public String getJsonData() { return mJsonData; }
 
     private String getUserLang() {
         String api;
@@ -62,11 +61,11 @@ public class WeatherCallHelper implements Callable<String> {
         //Api Key
         String apiKey = "07aadf598548d8bb35d6621d5e3b3c7b";
         if(language == null) {
-            api = String.format(Locale.ENGLISH, "https://api.darksky.net/forecast/%s/%d,%d?units=auto", apiKey,
+            api = String.format(Locale.ENGLISH, "https://api.darksky.net/forecast/%s/%f,%f?units=auto", apiKey,
                     mLatitude,
                     mLongitude);
         } else {
-            api = String.format(Locale.ENGLISH, "https://api.darksky.net/forecast/%s/%d,%d%s&units=auto" , apiKey,
+            api = String.format(Locale.ENGLISH, "https://api.darksky.net/forecast/%s/%f,%f%s&units=auto" , apiKey,
                     mLatitude,
                     mLongitude,
                     language);
@@ -112,8 +111,7 @@ public class WeatherCallHelper implements Callable<String> {
         dialog.show(mActivity.getFragmentManager(), "error_dialog");
     }
 
-    @Override
-    public String call() throws Exception {
+    public String call() {
             if (isNetworkAvailable()) {
                 OkHttpClient httpClient = new OkHttpClient();
                 Request httpRequest = new Request.Builder()
@@ -124,33 +122,26 @@ public class WeatherCallHelper implements Callable<String> {
                 apiCall.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        //runOnUiThread(() -> toggleRefresh());
                         alertUserAboutError();
                     }
-
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        //runOnUiThread(() -> toggleRefresh());
                         try {
-
                             if (response.isSuccessful()) {
-                                jsonData = response.body().string();
-                                Log.v(TAG, jsonData);
-                                //parseWeatherDetails(jsonData);
-                                //runOnUiThread(() -> updateDisplay());
+                                mJsonData = response.body().string();
+                                Log.v(TAG, mJsonData);
                             } else {
                                 alertUserAboutError();
                             }
                         } catch (IOException e) {
                             Log.e(TAG, "Exception caught: ", e);
                         }
-
                     }
                 });
 
             } else {
                 alertUserAboutNetworkError();
             }
-        return jsonData;
+        return mJsonData;
     }
 }
