@@ -35,6 +35,7 @@ import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
 import com.darelbitsy.dbweather.alert.AlertDialogFragment;
 import com.darelbitsy.dbweather.alert.NetworkAlertDialogFragment;
+import com.darelbitsy.dbweather.helper.WeatherCallHelper;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
@@ -54,6 +55,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,8 +81,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private static final String PRECIP_KEY = "PRECIP_KEY";
     private static final String LAST_KNOW_TEMPERATURE = "LAST_KNOW_TEMPERATURE";
     private static final String TIME_OF_LAST_KNOW_TEMP = "TIME_OF_LAST_KNOW_TEMP";
-    private static final String LAST_KNOW_LONGITUDE = "LAST_KNOW_LONGITUDE";
-    private static final String LAST_KNOW_LATITUDE = "LAST_KNOW_LATITUDE";
+    public static final String LAST_KNOW_LONGITUDE = "LAST_KNOW_LONGITUDE";
+    public static final String LAST_KNOW_LATITUDE = "LAST_KNOW_LATITUDE";
     private static final String LAST_KNOW_LOCATION = "LAST_KNOW_LOCATION";
     static final String PREFS_FILE = "com.darelbitsy.dbweather.preferences";
     public static final String DAILY_WEATHER = "DAILY_WEATHER";
@@ -83,13 +90,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static final String CITYNAME = "LOCATION NAME";
     public static final String HOURLY_INFO = "HOURLY_INFO";
 
-    private String[] mLangs = {"ar","az","be","bs","ca","cs","de","el","en","es",
-            "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
-            "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw"};
-    private List<String> supportedLang = Arrays.asList(mLangs);
-
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
 
     private WeatherApi mWeather;
     private ColorManager mColorPicker = new ColorManager();
@@ -100,12 +102,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private String mHourlySummary;
     private String mHourlyIcon;
 
-    private double mLatitude;
-    private double mLongitude;
-
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mPreferenceEditor;
-
+    private ExecutorService mExecutorService;
     //Defining all the Parent view needed
     @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
     @BindView(R2.id.main_menu) ImageButton mMain_menu;
@@ -129,6 +128,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @BindView(R2.id.progressBar) ProgressBar mProgressBar;
 
     private SnowFallView mSnowFallView;
+    private double mLongitude, mLatitude;
+    private WeatherCallHelper mCallHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +139,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         AndroidThreeTen.init(this);
 
         mSnowFallView = new SnowFallView(this);
+        mCallHelper = new WeatherCallHelper(this);
+        mExecutorService = Executors.newCachedThreadPool();
+
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -147,8 +151,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mIsGpsPermissionOn = false;
         mSharedPreferences = getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
         mPreferenceEditor = mSharedPreferences.edit();
-        mLongitude = getLongitude();
-        mLatitude = getLatitude();
+        mLongitude = mCallHelper.getLongitude();
+        mLatitude = mCallHelper.getLatitude();
 
         //Configuring the google api client
         mLocationRequest = createLocationRequest();
@@ -221,18 +225,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     }
 
-    //Get the last know latitude or give a default value
-    private double getLatitude() {
-        return mSharedPreferences.contains(LAST_KNOW_LATITUDE)
-                ? Double.longBitsToDouble(mSharedPreferences.getLong(LAST_KNOW_LATITUDE, 0))
-                : -4.7485;
-    }
-
-    //Get the last know longitude or give a default value
-    private double getLongitude() {
-        return mSharedPreferences.contains(LAST_KNOW_LONGITUDE)
-                ? Double.longBitsToDouble(mSharedPreferences.getLong(LAST_KNOW_LONGITUDE, 0))
-                : 11.8523;
+    private void parseWeatherDetails(String jsonData) throws JSONException {
+        mWeather.setCurrent(getCurrentWeather(jsonData));
+        mWeather.setHour(getHourlyWeather(jsonData));
+        mWeather.setDay(getDailyWeather(jsonData));
     }
 
     /*
@@ -240,73 +236,31 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     * get the current weather with the forecast api
     */
     private void getWeather(double latitude, double longitude) {
-        String API;
-
-        String userLang = Locale.getDefault().getLanguage();
-
-        //Checking if user device language is supported by the api if not english language will be used.
-        String language = supportedLang.contains(userLang) ? ("?lang="+userLang ) : null;
-
-        //Api Key
-        String apiKey = "07aadf598548d8bb35d6621d5e3b3c7b";
-
-        if(language == null) { API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude + "?units=auto"; }
-        else { API = "https://api.darksky.net/forecast/" + apiKey + "/" + latitude + "," + longitude + language +"&units=auto"; }
-
-        if (isNetworkAvailable()) {
-            toggleRefresh();
-            OkHttpClient httpClient = new OkHttpClient();
-            Request httpRequest = new Request.Builder()
-                    .url(API)
-                    .build();
-
-            Call call = httpClient.newCall(httpRequest);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    runOnUiThread(() -> toggleRefresh());
-                    alertUserAboutError();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    runOnUiThread(() -> toggleRefresh());
-                    try {
-                        String jsonData = response.body().string();
-                        Log.v(TAG, jsonData);
-
-                        if (response.isSuccessful()) {
-                            parseWeatherDetails(jsonData);
-                            runOnUiThread(() -> updateDisplay());
-                        } else {
-                            alertUserAboutError();
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception caught: ", e);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Exception caught: ", e);
-                    }
-
-                }
-            });
-
-        } else {
-            alertUserAboutNetworkError();
+        mCallHelper.setLatitude(latitude);
+        mCallHelper.setLongitude(longitude);
+        runOnUiThread(toggleRefresh());
+        try {
+            parseWeatherDetails(mExecutorService.submit(mCallHelper).get());
+        }  catch (JSONException  | InterruptedException | ExecutionException e) {
+            Log.e(TAG, "Exception: "+ e);
         }
+
     }
 
     /*
     *This function
     * hide the refresh button or show the refresh button
     */
-    private void toggleRefresh() {
-        if (mProgressBar.getVisibility() == View.INVISIBLE) {
-            mRefreshButton.setVisibility(View.INVISIBLE);
-            mProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            mRefreshButton.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
+    private Runnable toggleRefresh() {
+        return () -> {
+            if (mProgressBar.getVisibility() == View.INVISIBLE) {
+                mRefreshButton.setVisibility(View.INVISIBLE);
+                mProgressBar.setVisibility(View.VISIBLE);
+            } else {
+                mRefreshButton.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+        };
     }
 
     private void updateDisplay() {
@@ -350,13 +304,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         return cityInfoBuilder;
-    }
-
-    private void parseWeatherDetails(String jsonData) throws JSONException {
-
-        mWeather.setCurrent(getCurrentWeather(jsonData));
-        mWeather.setHour(getHourlyWeather(jsonData));
-        mWeather.setDay(getDailyWeather(jsonData));
     }
 
     private Hour[] getHourlyWeather(String jsonData) throws JSONException {
@@ -431,26 +378,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         return current;
     }
 
-    private void alertUserAboutNetworkError() {
-        NetworkAlertDialogFragment dialog = new NetworkAlertDialogFragment();
-        dialog.show(getFragmentManager(), "network_error_dialog");
-    }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-        if (networkInfo != null && networkInfo.isConnected()) {
-            isAvailable = true;
-        }
-        return isAvailable;
-    }
-
-    private void alertUserAboutError() {
-        AlertDialogFragment dialog = new AlertDialogFragment();
-        dialog.show(getFragmentManager(), "error_dialog");
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
