@@ -1,0 +1,87 @@
+package com.darelbitsy.dbweather.widgets;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
+
+import com.darelbitsy.dbweather.R;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Created by Darel Bitsy on 20/01/17.
+ */
+
+public class RainFallView extends View {
+    private int snow_flake_count = 10;
+    private final List<Drawable> drawables = new ArrayList<>();
+    private int[][] coords;
+    private final Drawable mRainDrop;
+    private final Drawable mRainDrop2;
+
+    public RainFallView(Context context) {
+        super(context);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+
+        mRainDrop = ContextCompat.getDrawable(context, R.drawable.raindrop);
+        mRainDrop.setBounds(0, 0,
+                mRainDrop.getIntrinsicWidth(),
+                mRainDrop.getIntrinsicHeight());
+
+        mRainDrop2 = ContextCompat.getDrawable(context, R.drawable.raindrop);
+        mRainDrop2.setBounds(0, 0,
+                mRainDrop.getIntrinsicWidth()/2,
+                mRainDrop.getIntrinsicHeight()/2);
+    }
+
+    @Override
+    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
+        super.onSizeChanged(width, height, oldWidth, oldHeight);
+        Random random = new SecureRandom();
+        Interpolator interpolator = new LinearInterpolator();
+
+        snow_flake_count = Math.max(width, height) / 20;
+        coords = new int[snow_flake_count][];
+        drawables.clear();
+        for (int i = 0; i < snow_flake_count; i++) {
+            Animation animation = new TranslateAnimation(0, height / 10
+                    - random.nextInt(height / 5), 0, height + 30);
+            animation.setDuration(10 * height + random.nextInt(5 * height));
+            animation.setRepeatCount(-1);
+            animation.initialize(10, 10, 10, 10);
+            animation.setInterpolator(interpolator);
+
+            coords[i] = new int[] { random.nextInt(width - 30), -30 };
+
+            drawables.add(new AnimateDrawable(mRainDrop, animation));
+            animation.setStartOffset(random.nextInt(20 * height));
+            animation.startNow();
+            int y;
+            y = random.nextInt(2);
+            if (y==0) { drawables.add(new AnimateDrawable(mRainDrop, animation)); }
+            else { drawables.add(new AnimateDrawable(mRainDrop)); }
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        for (int i = 0; i < snow_flake_count; i++) {
+            Drawable drawable = drawables.get(i);
+            canvas.save();
+            canvas.translate(coords[i][0], coords[i][1]);
+            drawable.draw(canvas);
+            canvas.restore();
+        }
+        invalidate();
+    }
+}

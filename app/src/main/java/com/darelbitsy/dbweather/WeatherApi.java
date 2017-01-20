@@ -23,13 +23,11 @@ public class WeatherApi {
         mCurrent = current;
     }
 
-    public Hour[] getHour() {
-        return Arrays.copyOf(mHour, mHour.length);
-    }
+    public Hour[] getHour() { return mDay != null ? Arrays.copyOf(mHour, mHour.length) : new Hour[0]; }
 
     public void setHour(final Hour[] hour) { mHour = Arrays.copyOf(hour, hour.length) ; }
 
-    public Day[] getDay() { return Arrays.copyOf(mDay, mDay.length); }
+    public Day[] getDay() { return mDay != null ? Arrays.copyOf(mDay, mDay.length) : new Day[0]; }
 
     public void setDay(final Day[] day) { mDay = Arrays.copyOf(day, day.length); }
 }

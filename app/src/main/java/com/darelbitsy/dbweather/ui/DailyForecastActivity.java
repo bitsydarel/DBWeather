@@ -39,16 +39,17 @@ public class DailyForecastActivity extends Activity {
         Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.DAILY_WEATHER);
         Day[] days = Arrays.copyOf(parcelables, parcelables.length, Day[].class);
 
-        DayAdapters adapters = new DayAdapters(days, this);
 
-        if(adapters.getItemCount() > 0) {
+        if(days == null || days.length == 0 ) {
+            mDailyRecyclerView.setVisibility(View.GONE);
+            mCheckEmpty.setVisibility(View.VISIBLE);
+
+        } else {
+            DayAdapters adapters = new DayAdapters(days, this);
             mDailyRecyclerView.setAdapter(adapters);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             mDailyRecyclerView.setLayoutManager(layoutManager);
             mDailyRecyclerView.setHasFixedSize(true);
-        } else {
-            mDailyRecyclerView.setVisibility(View.INVISIBLE);
-            mCheckEmpty.setVisibility(View.VISIBLE);
         }
 
         mLocationDaily.setText(intent.getStringExtra(MainActivity.CITYNAME));

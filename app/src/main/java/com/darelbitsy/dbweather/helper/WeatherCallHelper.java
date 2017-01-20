@@ -53,7 +53,7 @@ public class WeatherCallHelper {
     }
 
     public String getJsonData() { return mJsonData; }
-
+    private void setJsonData(String jsonData) { this.mJsonData = jsonData; }
     private String getUserLang() {
         String api;
         //Checking if user device language is supported by the api if not english language will be used.
@@ -128,7 +128,7 @@ public class WeatherCallHelper {
                     public void onResponse(Call call, Response response) throws IOException {
                         try {
                             if (response.isSuccessful()) {
-                                mJsonData = response.body().string();
+                                setJsonData(response.body().string());
                                 Log.v(TAG, mJsonData);
                             } else {
                                 alertUserAboutError();
@@ -138,7 +138,6 @@ public class WeatherCallHelper {
                         }
                     }
                 });
-
             } else {
                 alertUserAboutNetworkError();
             }

@@ -20,46 +20,38 @@ import com.darelbitsy.dbweather.weather.Hour;
 import java.util.Arrays;
 
 public class HourlyForecastActivity extends Activity {
-    private RecyclerView mHourlyForecastRecyclerView;
-    private ImageView mHourlyIcon;
-    private TextView mHourlySummary;
-    private TextView mCheckEmpty;
 
-
-    private Hour[] mHours;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hourly_forecast);
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mHourlyForecastRecyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
+        RecyclerView hourlyForecastRecyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
+        TextView hourlySummary = (TextView) findViewById(R.id.hourlySummary);
+        TextView checkEmpty = (TextView) findViewById(R.id.checkEmpty);
 
         Intent intent = getIntent();
         Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.HOURLY_WEATHER);
         String[] hourlyInfo = intent.getStringArrayExtra(MainActivity.HOURLY_INFO);
 
-        mHours = Arrays.copyOf(parcelables, parcelables.length, Hour[].class);
-        mHourlyIcon = (ImageView) findViewById(R.id.hourlyIcon);
-        mHourlyIcon.setImageResource(mHours[0].getIconId(hourlyInfo[0]));
+        Hour[] hours = Arrays.copyOf(parcelables, parcelables.length, Hour[].class);
 
-        mHourlySummary = (TextView) findViewById(R.id.hourlySummary);
-        mCheckEmpty = (TextView) findViewById(R.id.checkEmpty);
-        mHourlySummary.setText(hourlyInfo[1]);
-
-        HourAdapter adapter = new HourAdapter(mHours);
-        if(adapter.getItemCount() == 0) {
-            mCheckEmpty.setVisibility(View.VISIBLE);
-            mHourlyForecastRecyclerView.setVisibility(View.INVISIBLE);
+        if(hours == null || hours.length == 0) {
+            checkEmpty.setVisibility(View.VISIBLE);
+            hourlyForecastRecyclerView.setVisibility(View.GONE);
 
         } else {
-            mHourlyForecastRecyclerView.setAdapter(adapter);
+            ImageView hourlyIcon = (ImageView) findViewById(R.id.hourlyIcon);
+            hourlyIcon.setImageResource(hours[0].getIconId(hourlyInfo[0]));
+            hourlySummary.setText(hourlyInfo[1]);
+
+            HourAdapter adapter = new HourAdapter(hours);
+            hourlyForecastRecyclerView.setAdapter(adapter);
 
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-            mHourlyForecastRecyclerView.setLayoutManager(layoutManager);
-
-            mHourlyForecastRecyclerView.setHasFixedSize(true);
+            hourlyForecastRecyclerView.setLayoutManager(layoutManager);
+            hourlyForecastRecyclerView.setHasFixedSize(true);
         }
     }
 
