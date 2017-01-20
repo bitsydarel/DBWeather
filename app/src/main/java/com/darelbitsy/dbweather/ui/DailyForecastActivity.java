@@ -20,9 +20,6 @@ import java.util.Arrays;
 public class DailyForecastActivity extends Activity {
 
     private static final String COLOR_BACKGROUND = "COLOR_BACKGROUND";
-    private RecyclerView mDailyRecyclerView;
-    private TextView mLocationDaily;
-    private TextView mCheckEmpty;
     private int mBackgroundColor = new ColorManager().getDrawableForParent()[0];
 
     @Override
@@ -31,9 +28,9 @@ public class DailyForecastActivity extends Activity {
         setContentView(R.layout.activity_daily_forecast);
         AndroidThreeTen.init(this);
 
-        mDailyRecyclerView = (RecyclerView) findViewById(R.id.dailyRecyclerView);
-        mLocationDaily = (TextView) findViewById(R.id.locationDaily);
-        mCheckEmpty = (TextView) findViewById(R.id.checkEmpty);
+        RecyclerView dailyRecyclerView = (RecyclerView) findViewById(R.id.dailyRecyclerView);
+        TextView locationDaily = (TextView) findViewById(R.id.locationDaily);
+        TextView checkEmpty = (TextView) findViewById(R.id.checkEmpty);
 
         Intent intent = getIntent();
         Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.DAILY_WEATHER);
@@ -41,18 +38,18 @@ public class DailyForecastActivity extends Activity {
 
 
         if(days == null || days.length == 0 ) {
-            mDailyRecyclerView.setVisibility(View.GONE);
-            mCheckEmpty.setVisibility(View.VISIBLE);
+            dailyRecyclerView.setVisibility(View.GONE);
+            checkEmpty.setVisibility(View.VISIBLE);
 
         } else {
             DayAdapters adapters = new DayAdapters(days, this);
-            mDailyRecyclerView.setAdapter(adapters);
+            dailyRecyclerView.setAdapter(adapters);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-            mDailyRecyclerView.setLayoutManager(layoutManager);
-            mDailyRecyclerView.setHasFixedSize(true);
+            dailyRecyclerView.setLayoutManager(layoutManager);
+            dailyRecyclerView.setHasFixedSize(true);
         }
 
-        mLocationDaily.setText(intent.getStringExtra(MainActivity.CITYNAME));
+        locationDaily.setText(intent.getStringExtra(MainActivity.CITYNAME));
     }
 
     @Override

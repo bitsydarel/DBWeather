@@ -26,7 +26,6 @@ public class RainFallView extends View {
     private final List<Drawable> drawables = new ArrayList<>();
     private int[][] coords;
     private final Drawable mRainDrop;
-    private final Drawable mRainDrop2;
 
     public RainFallView(Context context) {
         super(context);
@@ -37,11 +36,6 @@ public class RainFallView extends View {
         mRainDrop.setBounds(0, 0,
                 mRainDrop.getIntrinsicWidth(),
                 mRainDrop.getIntrinsicHeight());
-
-        mRainDrop2 = ContextCompat.getDrawable(context, R.drawable.raindrop);
-        mRainDrop2.setBounds(0, 0,
-                mRainDrop.getIntrinsicWidth()/2,
-                mRainDrop.getIntrinsicHeight()/2);
     }
 
     @Override

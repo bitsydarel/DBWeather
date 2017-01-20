@@ -22,37 +22,29 @@ import butterknife.ButterKnife;
 
 public class DayWeatherData extends Activity {
 
-    private TextView mTemperatureLabel;
-    private TextView mLocationLabel;
-    private ImageView mIconImageView;
-    private TextView mDayNameLabel;
-    private TextView mHumidityValue;
-    private TextView mSummaryLabel;
-    private TextView mPrecipValue;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.day_weather_data);
         AndroidThreeTen.init(this);
 
-        mTemperatureLabel = (TextView) findViewById(R.id.dayTemperatureLabel);
-        mLocationLabel = (TextView) findViewById(R.id.dayLocationLabel);
-        mIconImageView = (ImageView) findViewById(R.id.dayIconImageView);
-        mDayNameLabel = (TextView) findViewById(R.id.dayNameLabelText);
-        mHumidityValue = (TextView) findViewById(R.id.dayHumidityValue);
-        mSummaryLabel = (TextView) findViewById(R.id.daySummaryLabel);
-        mPrecipValue = (TextView) findViewById(R.id.dayPrecipValue);
+        TextView temperatureLabel = (TextView) findViewById(R.id.dayTemperatureLabel);
+        TextView locationLabel = (TextView) findViewById(R.id.dayLocationLabel);
+        ImageView iconImageView = (ImageView) findViewById(R.id.dayIconImageView);
+        TextView dayNameLabel = (TextView) findViewById(R.id.dayNameLabelText);
+        TextView humidityValue = (TextView) findViewById(R.id.dayHumidityValue);
+        TextView summaryLabel = (TextView) findViewById(R.id.daySummaryLabel);
+        TextView precipValue = (TextView) findViewById(R.id.dayPrecipValue);
 
         Intent intent = getIntent();
         Day day = intent.getParcelableExtra(DayAdapters.DAY_WEATHER);
 
-        mTemperatureLabel.setText(day.getTemperatureMax() + "");
-        mLocationLabel.setText(day.getCityName());
-        mIconImageView.setImageResource(day.getIconId());
-        mDayNameLabel.setText(day.getDayOfTheWeek());
-        mHumidityValue.setText(day.getHumidity() + "%");
-        mSummaryLabel.setText(day.getSummary());
-        mPrecipValue.setText(day.getPrecipChance() + "%");
+        temperatureLabel.setText(day.getTemperatureMax() + "");
+        locationLabel.setText(day.getCityName());
+        iconImageView.setImageResource(day.getIconId());
+        dayNameLabel.setText(day.getDayOfTheWeek());
+        humidityValue.setText(day.getHumidity() + "%");
+        summaryLabel.setText(day.getSummary());
+        precipValue.setText(day.getPrecipChance() + "%");
     }
 }

@@ -26,7 +26,6 @@ public class SnowFallView extends View {
     private final List<Drawable> drawables = new ArrayList<>();
     private int[][] coords;
     private final Drawable snow_flake;
-    private final Drawable snow_flake2;
 
     public SnowFallView(Context context) {
         super(context);
@@ -37,11 +36,6 @@ public class SnowFallView extends View {
         snow_flake.setBounds(0, 0,
                 snow_flake.getIntrinsicWidth(),
                 snow_flake.getIntrinsicHeight());
-
-        snow_flake2 = ContextCompat.getDrawable(context, R.drawable.snow_fall);
-        snow_flake2.setBounds(0, 0,
-                snow_flake.getIntrinsicWidth()/2,
-                snow_flake.getIntrinsicHeight()/2);
     }
 
     @Override

@@ -364,10 +364,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         return cityInfoBuilder;
     }
 
-
-
-
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ContextCompat.checkSelfPermission(this,
