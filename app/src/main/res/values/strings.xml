@@ -10,4 +10,5 @@
     <string name="title_activity_hourly_forecast">Hourly Weather</string>
     <string name="default_weather_summary">Getting current weather</string>
     <string name="action_about_us">About Us</string>
+    <string name="the_about_us_page">A menu to the about us page</string>
 </resources>

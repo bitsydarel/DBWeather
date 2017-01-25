@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.darelbitsy.dbweather.ui.HourlyForecastActivity"
-    android:background="@drawable/bg_four">
+    android:background="@drawable/cloudy_background">
 
     <LinearLayout
         android:id="@+id/hourlyHeader"

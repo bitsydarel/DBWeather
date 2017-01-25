@@ -48,6 +48,7 @@ public class WeatherCallHelper {
         mSharedPreferences = mActivity.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
         mLatitude = getLatitude();
         mLongitude = getLongitude();
+        mJsonData = "";
         call();
     }
 

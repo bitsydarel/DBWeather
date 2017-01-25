@@ -7,24 +7,28 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,9 +37,11 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
+import com.darelbitsy.dbweather.helper.OnSwipeTouchListener;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
+import com.darelbitsy.dbweather.widgets.RainFallView;
 import com.darelbitsy.dbweather.widgets.SnowFallView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,6 +55,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -86,14 +95,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private String mCityName;
     private String mHourlySummary;
     private String mHourlyIcon;
+    private Hour[] mHours;
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mPreferenceEditor;
     @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
     @BindView(R2.id.main_menu) ImageButton mMain_menu;
-
-    @BindView(R2.id.hourlyButton) Button mHourlyButton;
-    @BindView(R2.id.dailyButton) Button mDailyButton;
 
     //Defining TextView needed
     @BindView(R2.id.temperatureLabel) TextView mTemperatureLabel;
@@ -102,17 +109,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @BindView(R2.id.locationLabel) TextView mLocationLabel;
     @BindView(R2.id.precipValue) TextView mPrecipValue;
     @BindView(R2.id.summaryLabel) TextView mSummaryLabel;
+    @BindView(R2.id.weekSummary) TextView mWeekSummary;
 
     //Defining ImageView and ImageButton to manipulate
     @BindView(R2.id.iconImageView) ImageView mIconImageView;
     @BindView(R2.id.degreeImageView) ImageView mDegreeImageView;
-    @BindView(R2.id.refreshImageView) ImageButton mRefreshButton;
 
-    @BindView(R2.id.progressBar) ProgressBar mProgressBar;
+    private Button currentFocusedButton;
+    private HorizontalScrollView mScrollView;
+    private Handler mHandler;
+    private Button currentDayButton;
 
     private double mLongitude;
     private double mLatitude;
+    private String[] mHourlyInfo = new String[2];
     private WeatherCallHelper mCallHelper;
+    private RelativeLayout.LayoutParams mParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,14 +133,39 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         ButterKnife.bind(this);
         AndroidThreeTen.init(this);
 
-        SnowFallView snowFallView = new SnowFallView(this);
+        Log.i("LIFECYCLE", "OnCreate METHOD");
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
+        refreshLayout.setColorSchemeColors(Color.parseColor("#ff0099cc"),
+                Color.parseColor("#ff33b5e5"),
+                Color.parseColor("#ff99cc00"),
+                Color.parseColor("#ff669900"));
+
+        refreshLayout.setOnRefreshListener(() -> {
+            refreshLayout.setRefreshing(true);
+            new GetWeather().execute();
+            refreshLayout.setRefreshing(false);
+        });
         mCallHelper = new WeatherCallHelper(this);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+        mParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        mMainLayout.addView(snowFallView, params);
+        mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+
+        mMainLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                if(mHourlyIcon != null && !mHourlyIcon.isEmpty()) { mHourlyInfo[0] = mHourlyIcon; }
+                if(mHourlySummary != null && !mHourlySummary.isEmpty()) { mHourlyInfo[1] = mHourlySummary; }
+
+                Intent intent = new Intent(MainActivity.this, HourlyForecastActivity.class);
+                intent.putExtra(HOURLY_WEATHER, mWeather.getHour().length > 0 ? mWeather.getHour() : mHours);
+                intent.putExtra(HOURLY_INFO, mHourlyInfo);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         mWeather = new WeatherApi();
         mIsGpsPermissionOn = false;
         mSharedPreferences = getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
@@ -163,31 +200,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             mIsGpsPermissionOn = true;
         }
 
-        mProgressBar.setVisibility(View.INVISIBLE);
-        if (mIsGpsPermissionOn) {
-            mRefreshButton.setOnClickListener(view -> new Thread(this::getLocation).start());
-        } else {
-            mRefreshButton.setOnClickListener(view -> new GetWeather().execute());
-        }
-
-        mDailyButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, DailyForecastActivity.class);
-            intent.putExtra(DAILY_WEATHER, mWeather.getDay());
-            intent.putExtra(CITYNAME, mCityName);
-            startActivity(intent);
-        });
-
-        mHourlyButton.setOnClickListener(view -> {
-            String[] hourlyInfo = new String[2];
-            hourlyInfo[0] = mHourlyIcon;
-            hourlyInfo[1] = mHourlySummary;
-
-            Intent intent = new Intent(this, HourlyForecastActivity.class);
-            intent.putExtra(HOURLY_WEATHER, mWeather.getHour());
-            intent.putExtra(HOURLY_INFO, hourlyInfo);
-            startActivity(intent);
-        });
-
         mMain_menu.setOnClickListener(view -> {
             PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
             MenuInflater menuInflater = popupMenu.getMenuInflater();
@@ -200,7 +212,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             popupMenu.show();
         });
 
-        runOnUiThread(() -> new GetWeather().execute());
         mCityName = mSharedPreferences.getString(LAST_KNOW_LOCATION, getLocationName(mLatitude, mLongitude));
         Log.i(TAG, "the City Name: "+mCityName);
         initializeField();
@@ -241,6 +252,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             JSONObject daily = forecastData.getJSONObject("daily");
             JSONArray data = daily.getJSONArray("data");
             String timeZone = forecastData.getString("timezone");
+            mWeekSummary.setText(daily.getString("summary"));
 
             Day[] days = new Day[data.length()];
             for (int i = 0; i < data.length(); i++) {
@@ -273,19 +285,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             current.setTemperature(currently.getDouble("temperature"));
             current.setHumidity(currently.getDouble("humidity"));
             current.setCityName(mCityName);
-
-            Log.i(TAG, "the City Name: "+mCityName);
+            if("snow".equalsIgnoreCase(currently.getString("icon")))
+                { mMainLayout.addView(new SnowFallView(MainActivity.this), mParams); }
+            else if("rain".equalsIgnoreCase(currently.getString("icon")))
+                { mMainLayout.addView(new RainFallView(MainActivity.this), mParams); }
 
             return current;
         }
+
         private void updateDisplay() {
-            int[] colors = mColorPicker.getDrawableForParent();
-            mMainLayout.setBackgroundResource(colors[0]);
-            mHourlyButton.setTextColor(colors[1]);
-            mDailyButton.setTextColor(colors[1]);
+            currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
+            scrollToFunc(mHandler, mScrollView, currentDayButton);
 
             mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getTemperature()));
             mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + " it will be");
+            mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(mWeather.getCurrent().getIcon()));
 
             //Setting the location to the current location of the device because the api only provide the timezone as location
             mLocationLabel.setText(mCityName);
@@ -306,25 +320,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             updateDisplay();
         }
 
-        /*
-        *This function
-        * hide the refresh button or show the refresh button
-        */
-        private void toggleRefresh() {
-            if (mProgressBar.getVisibility() == View.INVISIBLE) {
-                    mRefreshButton.setVisibility(View.INVISIBLE);
-                    mProgressBar.setVisibility(View.VISIBLE);
-            } else {
-                    mRefreshButton.setVisibility(View.VISIBLE);
-                    mProgressBar.setVisibility(View.INVISIBLE);
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            toggleRefresh();
-        }
-
         @Override
         protected String doInBackground(Object[] params) {
             mCallHelper.call();
@@ -333,7 +328,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         @Override
         protected void onPostExecute(String jsonData) {
-            toggleRefresh();
             if(!jsonData.isEmpty()) {
                 try {
                     updateDisplay(jsonData);
@@ -350,11 +344,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             Geocoder gcd = new Geocoder(this, Locale.getDefault());
             List<android.location.Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
             if (!addresses.isEmpty()) {
-                cityInfoBuilder = addresses.get(0)
-                        .getLocality()
-                        + ", "
-                        + addresses.get(0)
-                        .getCountryName();
+                cityInfoBuilder = String.format(Locale.getDefault(), "%s, %s",
+                        addresses.get(0).getLocality(),
+                        addresses.get(0).getCountryName());
             }
 
         } catch (IOException e) {
@@ -425,6 +417,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     protected void onResume() {
         super.onResume();
         mGoogleApiClient.connect();
+        runOnUiThread(() -> new GetWeather().execute());
+        Log.i("LIFECYCLE", "OnResume METHOD");
     }
 
     @Override
@@ -444,6 +438,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mPreferenceEditor.putString(PRECIP_KEY, mPrecipValue.getText().toString());
         mPreferenceEditor.putString(TIME_OF_LAST_KNOW_TEMP, mTimeLabel.getText().toString());
         mPreferenceEditor.apply();
+
+        Log.i("LIFECYCLE", "OnPause METHOD");
     }
 
     private void initializeField() {
@@ -462,6 +458,139 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mHumidityValue.setText(mSharedPreferences.getString(HUMIDITY_KEY, "--"));
         mPrecipValue.setText(mSharedPreferences.getString(PRECIP_KEY, "--"));
         mTimeLabel.setText(mSharedPreferences.getString(TIME_OF_LAST_KNOW_TEMP, "---"));
+
+        setupScrollView();
+
+        Intent intentFromHourly = getIntent();
+        Parcelable[] parcelables = intentFromHourly.getParcelableArrayExtra(MainActivity.HOURLY_WEATHER);
+
+        if(parcelables != null) {
+            Log.i("HOUR", "" + parcelables.length);
+            mHours = Arrays.copyOf(parcelables, parcelables.length, Hour[].class);
+            mHourlyInfo[0] = intentFromHourly.getStringArrayExtra(MainActivity.HOURLY_INFO)[0];
+            mHourlyInfo[1] = intentFromHourly.getStringArrayExtra(MainActivity.HOURLY_INFO)[1];
+        }
+    }
+
+    private void scrollToFunc(Handler handler, HorizontalScrollView scrollView, Button button) {
+        handler.post(() -> {
+            scrollView.scrollTo(button.getLeft(), button.getTop());
+            scrollView.setSmoothScrollingEnabled(true);
+            button.setBackgroundColor(Color.parseColor("#80ffffff"));
+            currentFocusedButton = button;
+        });
+    }
+
+    private void setupScrollView() {
+        mScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScroll);
+        final Button mondayButton = (Button) findViewById(R.id.monday);
+        final Button tuesdayButton = (Button) findViewById(R.id.tuesday);
+        final Button wednesdayButton = (Button) findViewById(R.id.wednesday);
+        final Button thursdayButton = (Button) findViewById(R.id.thursday);
+        final Button fridayButton = (Button) findViewById(R.id.friday);
+        final Button saturdayButton = (Button) findViewById(R.id.saturday);
+        final Button sundayButton = (Button) findViewById(R.id.sunday);
+
+        mHandler = new Handler();
+        Calendar calendar = Calendar.getInstance();
+        HashMap<String, Integer> dayOfTheWeek = (HashMap) calendar.getDisplayNames(Calendar.DAY_OF_WEEK,
+                Calendar.LONG,
+                Locale.getDefault());
+
+        String currentDay = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+
+        final View.OnClickListener buttonListener = (view) -> {
+            currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
+            view.setBackgroundColor(Color.parseColor("#80ffffff"));
+            currentFocusedButton = (Button) view;
+            showWeatherByDay(((Button) view).getText().toString());
+        };
+
+        for (String dayName : dayOfTheWeek.keySet()) {
+            if(dayOfTheWeek.get(dayName) == Calendar.MONDAY) {
+                mondayButton.setText(dayName);
+                mondayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, mondayButton);
+                    mondayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = mondayButton;
+                }
+            }
+            if(dayOfTheWeek.get(dayName) == Calendar.TUESDAY) {
+                tuesdayButton.setText(dayName);
+                tuesdayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, tuesdayButton);
+                    tuesdayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = tuesdayButton;
+                }
+            }
+            if(dayOfTheWeek.get(dayName) == Calendar.WEDNESDAY) {
+                wednesdayButton.setText(dayName);
+                wednesdayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, wednesdayButton);
+                    wednesdayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = wednesdayButton;
+                }
+            }
+
+            if(dayOfTheWeek.get(dayName) == Calendar.THURSDAY) {
+                thursdayButton.setText(dayName);
+                thursdayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, thursdayButton);
+                    thursdayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = thursdayButton;
+                }
+            }
+            if(dayOfTheWeek.get(dayName) == Calendar.FRIDAY) {
+                fridayButton.setText(dayName);
+                fridayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, fridayButton);
+                    fridayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = fridayButton;
+                }
+            }
+            if(dayOfTheWeek.get(dayName) == Calendar.SATURDAY) {
+                saturdayButton.setText(dayName);
+                saturdayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, saturdayButton);
+                    saturdayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = saturdayButton;
+                }
+            }
+            if(dayOfTheWeek.get(dayName) == Calendar.SUNDAY) {
+                sundayButton.setText(dayName);
+                sundayButton.setOnClickListener(buttonListener);
+                if(dayName.equalsIgnoreCase(currentDay)) {
+                    scrollToFunc(mHandler, mScrollView, sundayButton);
+                    sundayButton.setText(getResources().getString(R.string.today_lobel));
+                    currentDayButton = sundayButton;
+                }
+            }
+        }
+
+    }
+
+    private void showWeatherByDay(String dayName) {
+        if(mWeather.getDay().length > 0) {
+            for(Day day : mWeather.getDay()) {
+                if(day.getDayOfTheWeek().equalsIgnoreCase(dayName)) {
+                    mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", day.getTemperatureMax()));
+                    mTimeLabel.setText(dayName);
+                    mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", day.getHumidity()));
+                    mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", day.getPrecipChance()));
+                    mSummaryLabel.setText(day.getSummary());
+
+                    Drawable drawable = ContextCompat.getDrawable(MainActivity.this, day.getIconId());
+                    mIconImageView.setImageDrawable(drawable);
+                    mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
+                }
+            }
+        }
     }
 
     @Override
@@ -473,7 +602,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mIsGpsPermissionOn = true;
                     mLocationRequest = createLocationRequest();
-                    mRefreshButton.setOnClickListener(view -> getLocation());
                     getLocation();
                 }
             }

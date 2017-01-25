@@ -6,10 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context="com.darelbitsy.dbweather.ui.MainActivity"
-    android:background="@drawable/bg_one">
+    android:background="@drawable/snow_background">
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,14 +39,17 @@
         android:text="At 5:00 PM it will be"
         android:textSize="18sp"/>
 
+
+
     <TextView
         android:id="@+id/locationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center_horizontal|center_vertical"
         android:layout_above="@id/timeLabel"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="60dp"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:text="Pointe-Noire, Republic of Congo"
@@ -61,7 +62,9 @@
         android:layout_alignBottom="@id/locationLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/cloudy_night"/>
+        android:padding="5dp"
+        android:layout_marginEnd="5dp"
+        android:src="@drawable/snow"/>
 
     <LinearLayout
         android:id="@+id/lineaLayout"
@@ -137,68 +140,103 @@
         android:gravity="center_horizontal"
         android:textSize="18dp"/>
 
-    <ImageButton
-        android:id="@+id/refreshImageView"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:src="@drawable/refresh"
-        android:background="#00000000"/>
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:filterTouchesWhenObscured="true"
-        android:visibility="invisible"/>
 
-    <LinearLayout
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="100"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/hourlyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:layout_marginEnd="5dp"
-            android:background="@android:color/white"
-            android:textColor="@color/themeColor"
-            android:text="Hourly Weather"
-            android:filterTouchesWhenObscured="true"/>
-
-        <Button
-            android:id="@+id/dailyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
-            android:layout_marginStart="5dp"
-            android:background="@android:color/white"
-            android:textColor="@color/themeColor"
-            android:text="Daily Weather"
-            android:filterTouchesWhenObscured="true"/>
-
-    </LinearLayout>
 
     <ImageButton
         android:id="@+id/main_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="A menu to the about us page"
+        android:contentDescription="@string/the_about_us_page"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@android:color/transparent"
-        android:src="@drawable/menu"
-        android:onClick="showPopup" />
+        android:src="@drawable/menu" />
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_above="@id/lineaLayout">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:id="@+id/horizontalScroll"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:layout_alignParentTop="true">
+            <LinearLayout
+                android:id="@+id/dayLineaLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:weightSum="100"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/monday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Monday"/>
+                <Button
+                    android:id="@+id/tuesday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Tuesday"/>
+                <Button
+                    android:id="@+id/wednesday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Wednesday"/>
+                <Button
+                    android:id="@+id/thursday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Thursday"/>
+                <Button
+                    android:id="@+id/friday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Friday"/>
+                <Button
+                    android:id="@+id/saturday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Saturday"/>
+                <Button
+                    android:id="@+id/sunday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:filterTouchesWhenObscured="true"
+                    style="@style/buttonScroll"
+                    android:text="Sundy"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/weekSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:layout_above="@id/locationLabel"
+        android:padding="5dp"
+        android:text="--"
+        tools:text="Averses de neige mercredi et lundi, avec des temperature atteignant 0 degres mercredi"
+        android:textColor="@android:color/white"/>
 
 </RelativeLayout>

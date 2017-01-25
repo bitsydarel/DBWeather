@@ -6,11 +6,19 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
     <style name="Theme_for_about_us" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="colorPrimary">#f9d34c</item>
         <item name="colorPrimaryDark">#fff</item>
+        <item name="android:background">#A9A9A9</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
-
+    <style name="buttonScroll" parent="android:Widget.Holo.Button">
+        <item name="android:layout_weight">14</item>
+        <item name="android:background">#30ffffff</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
 </resources>
