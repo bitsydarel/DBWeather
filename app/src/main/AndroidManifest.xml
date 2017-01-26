@@ -31,14 +31,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.HourlyForecastActivity"
-            android:label="@string/title_activity_hourly_forecast"
-            android:parentActivityName=".ui.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.darelbitsy.dbweather.ui.MainActivity"/>
-        </activity>
-        <activity
             android:name=".ui.AboutUs"
             android:theme="@style/Theme_for_about_us">
             <meta-data

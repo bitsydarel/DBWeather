@@ -3,7 +3,6 @@ package com.darelbitsy.dbweather.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,21 +13,19 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,8 +33,8 @@ import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
+import com.darelbitsy.dbweather.adapters.HourAdapter;
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
-import com.darelbitsy.dbweather.helper.OnSwipeTouchListener;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
@@ -79,9 +76,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static final String LAST_KNOW_LATITUDE = "LAST_KNOW_LATITUDE";
     private static final String LAST_KNOW_LOCATION = "LAST_KNOW_LOCATION";
     static final String PREFS_FILE = "com.darelbitsy.dbweather.preferences";
-    public static final String DAILY_WEATHER = "DAILY_WEATHER";
     public static final String HOURLY_WEATHER = "HOURLY_WEATHER";
-    public static final String CITYNAME = "LOCATION NAME";
     public static final String HOURLY_INFO = "HOURLY_INFO";
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -93,14 +88,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private LocationRequest mLocationRequest;
     private boolean mIsGpsPermissionOn;
     private String mCityName;
-    private String mHourlySummary;
-    private String mHourlyIcon;
-    private Hour[] mHours;
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mPreferenceEditor;
     @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
-    @BindView(R2.id.main_menu) ImageButton mMain_menu;
 
     //Defining TextView needed
     @BindView(R2.id.temperatureLabel) TextView mTemperatureLabel;
@@ -125,6 +116,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private String[] mHourlyInfo = new String[2];
     private WeatherCallHelper mCallHelper;
     private RelativeLayout.LayoutParams mParams;
+    private String currentDayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,20 +143,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-
-        mMainLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
-            @Override
-            public void onSwipeLeft() {
-                if(mHourlyIcon != null && !mHourlyIcon.isEmpty()) { mHourlyInfo[0] = mHourlyIcon; }
-                if(mHourlySummary != null && !mHourlySummary.isEmpty()) { mHourlyInfo[1] = mHourlySummary; }
-
-                Intent intent = new Intent(MainActivity.this, HourlyForecastActivity.class);
-                intent.putExtra(HOURLY_WEATHER, mWeather.getHour().length > 0 ? mWeather.getHour() : mHours);
-                intent.putExtra(HOURLY_INFO, mHourlyInfo);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         mWeather = new WeatherApi();
         mIsGpsPermissionOn = false;
@@ -200,18 +178,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             mIsGpsPermissionOn = true;
         }
 
-        mMain_menu.setOnClickListener(view -> {
-            PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
-            MenuInflater menuInflater = popupMenu.getMenuInflater();
-            menuInflater.inflate(R.menu.menu_main, popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(item -> {
-                Intent intent = new Intent(MainActivity.this, AboutUs.class);
-                startActivity(intent);
-                return false;
-            });
-            popupMenu.show();
-        });
-
         mCityName = mSharedPreferences.getString(LAST_KNOW_LOCATION, getLocationName(mLatitude, mLongitude));
         Log.i(TAG, "the City Name: "+mCityName);
         initializeField();
@@ -225,8 +191,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         private Hour[] getHourlyWeather(String jsonData) throws JSONException {
             JSONObject forecastData = new JSONObject(jsonData);
             JSONObject hourly = forecastData.getJSONObject("hourly");
-            mHourlySummary = hourly.getString("summary");
-            mHourlyIcon = hourly.getString("icon");
             JSONArray data = hourly.getJSONArray("data");
             String timeZone = forecastData.getString("timezone");
 
@@ -294,6 +258,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         private void updateDisplay() {
+            if (mWeather.getDay().length > 0) { setupDayScrollView(); }
+            if(mWeather.getHour().length > 0) { setupHourScrollView(); }
             currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
             scrollToFunc(mHandler, mScrollView, currentDayButton);
 
@@ -459,17 +425,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mPrecipValue.setText(mSharedPreferences.getString(PRECIP_KEY, "--"));
         mTimeLabel.setText(mSharedPreferences.getString(TIME_OF_LAST_KNOW_TEMP, "---"));
 
-        setupScrollView();
-
-        Intent intentFromHourly = getIntent();
-        Parcelable[] parcelables = intentFromHourly.getParcelableArrayExtra(MainActivity.HOURLY_WEATHER);
-
-        if(parcelables != null) {
-            Log.i("HOUR", "" + parcelables.length);
-            mHours = Arrays.copyOf(parcelables, parcelables.length, Hour[].class);
-            mHourlyInfo[0] = intentFromHourly.getStringArrayExtra(MainActivity.HOURLY_INFO)[0];
-            mHourlyInfo[1] = intentFromHourly.getStringArrayExtra(MainActivity.HOURLY_INFO)[1];
-        }
+        setupDayScrollView();
+        setupHourScrollView();
     }
 
     private void scrollToFunc(Handler handler, HorizontalScrollView scrollView, Button button) {
@@ -481,7 +438,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         });
     }
 
-    private void setupScrollView() {
+    private void setupHourScrollView() {
+        final RecyclerView hourlyForecastRecyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
+        final TextView checkEmpty = (TextView) findViewById(R.id.checkEmpty);
+
+        if(mWeather.getHour().length > 0) {
+            HourAdapter hourAdapter = new HourAdapter(Arrays.copyOf(mWeather.getHour(),
+                    mWeather.getHour().length,
+                    Hour[].class));
+            hourlyForecastRecyclerView.setAdapter(hourAdapter);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            hourlyForecastRecyclerView.setLayoutManager(layoutManager);
+            hourlyForecastRecyclerView.setHasFixedSize(true);
+        }
+    }
+
+    private void setupDayScrollView() {
         mScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScroll);
         final Button mondayButton = (Button) findViewById(R.id.monday);
         final Button tuesdayButton = (Button) findViewById(R.id.tuesday);
@@ -493,11 +465,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         mHandler = new Handler();
         Calendar calendar = Calendar.getInstance();
-        HashMap<String, Integer> dayOfTheWeek = (HashMap) calendar.getDisplayNames(Calendar.DAY_OF_WEEK,
-                Calendar.LONG,
-                Locale.getDefault());
 
-        String currentDay = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+        currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
 
         final View.OnClickListener buttonListener = (view) -> {
             currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
@@ -506,79 +475,146 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             showWeatherByDay(((Button) view).getText().toString());
         };
 
-        for (String dayName : dayOfTheWeek.keySet()) {
-            if(dayOfTheWeek.get(dayName) == Calendar.MONDAY) {
-                mondayButton.setText(dayName);
-                mondayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, mondayButton);
-                    mondayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = mondayButton;
-                }
-            }
-            if(dayOfTheWeek.get(dayName) == Calendar.TUESDAY) {
-                tuesdayButton.setText(dayName);
-                tuesdayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, tuesdayButton);
-                    tuesdayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = tuesdayButton;
-                }
-            }
-            if(dayOfTheWeek.get(dayName) == Calendar.WEDNESDAY) {
-                wednesdayButton.setText(dayName);
-                wednesdayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, wednesdayButton);
-                    wednesdayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = wednesdayButton;
-                }
-            }
+        if(mWeather.getDay().length > 0) {
+            int count = 0;
+            Button[] listOfButton = {mondayButton,
+                    tuesdayButton,
+                    wednesdayButton,
+                    thursdayButton,
+                    fridayButton,
+                    saturdayButton,
+                    sundayButton};
 
-            if(dayOfTheWeek.get(dayName) == Calendar.THURSDAY) {
-                thursdayButton.setText(dayName);
-                thursdayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, thursdayButton);
-                    thursdayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = thursdayButton;
+            for(Day day : mWeather.getDay()) {
+                if(count < 7)  {
+                    listOfButton[count].setOnClickListener(buttonListener);
+                    if (count == 1) {
+                        listOfButton[count].setText(getResources()
+                                .getString(R.string.tomorrow_label));
+                        count++;
+                        continue;
+                    }
+                    if (currentDayName.equalsIgnoreCase(day.getDayOfTheWeek())) {
+                        scrollToFunc(mHandler,
+                                mScrollView,
+                                listOfButton[count]);
+                        currentDayButton = listOfButton[count];
+                        listOfButton[count].setText(getResources().getString(R.string.today_label));
+                        count++;
+                        continue;
+                    }
+                    else {
+                        listOfButton[count].setText(day.getDayOfTheWeek());
+                        count++;
+                        continue;
+                    }
                 }
+                else { break; }
             }
-            if(dayOfTheWeek.get(dayName) == Calendar.FRIDAY) {
-                fridayButton.setText(dayName);
-                fridayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, fridayButton);
-                    fridayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = fridayButton;
+        } else {
+            HashMap<String, Integer> dayOfTheWeek = (HashMap) calendar.getDisplayNames(Calendar.DAY_OF_WEEK,
+                    Calendar.LONG,
+                    Locale.getDefault());
+
+            for (String dayName : dayOfTheWeek.keySet()) {
+                if(dayOfTheWeek.get(dayName) == Calendar.MONDAY) {
+                    mondayButton.setText(dayName);
+                    mondayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, mondayButton);
+                        mondayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = mondayButton;
+                    }
                 }
-            }
-            if(dayOfTheWeek.get(dayName) == Calendar.SATURDAY) {
-                saturdayButton.setText(dayName);
-                saturdayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, saturdayButton);
-                    saturdayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = saturdayButton;
+                if(dayOfTheWeek.get(dayName) == Calendar.TUESDAY) {
+                    tuesdayButton.setText(dayName);
+                    tuesdayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, tuesdayButton);
+                        tuesdayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = tuesdayButton;
+                    }
                 }
-            }
-            if(dayOfTheWeek.get(dayName) == Calendar.SUNDAY) {
-                sundayButton.setText(dayName);
-                sundayButton.setOnClickListener(buttonListener);
-                if(dayName.equalsIgnoreCase(currentDay)) {
-                    scrollToFunc(mHandler, mScrollView, sundayButton);
-                    sundayButton.setText(getResources().getString(R.string.today_lobel));
-                    currentDayButton = sundayButton;
+                if(dayOfTheWeek.get(dayName) == Calendar.WEDNESDAY) {
+                    wednesdayButton.setText(dayName);
+                    wednesdayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, wednesdayButton);
+                        wednesdayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = wednesdayButton;
+                    }
+                }
+                if(dayOfTheWeek.get(dayName) == Calendar.THURSDAY) {
+                    thursdayButton.setText(dayName);
+                    thursdayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, thursdayButton);
+                        thursdayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = thursdayButton;
+                    }
+                }
+                if(dayOfTheWeek.get(dayName) == Calendar.FRIDAY) {
+                    fridayButton.setText(dayName);
+                    fridayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, fridayButton);
+                        fridayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = fridayButton;
+                    }
+                }
+                if(dayOfTheWeek.get(dayName) == Calendar.SATURDAY) {
+                    saturdayButton.setText(dayName);
+                    saturdayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, saturdayButton);
+                        saturdayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = saturdayButton;
+                    }
+                }
+                if(dayOfTheWeek.get(dayName) == Calendar.SUNDAY) {
+                    sundayButton.setText(dayName);
+                    sundayButton.setOnClickListener(buttonListener);
+                    if(dayName.equalsIgnoreCase(currentDayName)) {
+                        scrollToFunc(mHandler, mScrollView, sundayButton);
+                        sundayButton.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = sundayButton;
+                    }
                 }
             }
         }
-
     }
 
     private void showWeatherByDay(String dayName) {
         if(mWeather.getDay().length > 0) {
             for(Day day : mWeather.getDay()) {
-                if(day.getDayOfTheWeek().equalsIgnoreCase(dayName)) {
+                if (dayName.equalsIgnoreCase(getResources()
+                        .getString(R.string.today_label))) {
+
+                    mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getTemperature()));
+                    mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + " it will be");
+                    mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", mWeather.getCurrent().getHumidity()));
+                    mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getCurrent().getPrecipChance()));
+                    mSummaryLabel.setText(mWeather.getCurrent().getSummary());
+
+                    Drawable drawable = ContextCompat.getDrawable(MainActivity.this, mWeather.getCurrent().getIconId());
+                    mIconImageView.setImageDrawable(drawable);
+                    mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(mWeather.getCurrent().getIcon()));
+                }
+
+                if(dayName.equalsIgnoreCase(getResources().getString(R.string.tomorrow_label))) {
+                    mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getDay()[1].getTemperatureMax()));
+                    mTimeLabel.setText(dayName);
+                    mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", mWeather.getDay()[1].getHumidity()));
+                    mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getDay()[1].getPrecipChance()));
+                    mSummaryLabel.setText(mWeather.getDay()[1].getSummary());
+
+                    Drawable drawable = ContextCompat.getDrawable(MainActivity.this, mWeather.getDay()[1].getIconId());
+                    mIconImageView.setImageDrawable(drawable);
+                    mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(mWeather.getDay()[1].getIcon()));
+                }
+
+                if(day.getDayOfTheWeek().equalsIgnoreCase(dayName)
+                        && !day.getDayOfTheWeek().equalsIgnoreCase(currentDayName)) {
                     mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", day.getTemperatureMax()));
                     mTimeLabel.setText(dayName);
                     mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", day.getHumidity()));
@@ -588,6 +624,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     Drawable drawable = ContextCompat.getDrawable(MainActivity.this, day.getIconId());
                     mIconImageView.setImageDrawable(drawable);
                     mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
+
                 }
             }
         }
@@ -596,15 +633,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // Checking if the user cancelled, the permission
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                if(grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mIsGpsPermissionOn = true;
-                    mLocationRequest = createLocationRequest();
-                    getLocation();
-                }
-            }
+        if(requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+                && (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            mIsGpsPermissionOn = true;
+            mLocationRequest = createLocationRequest();
+            getLocation();
         }
     }
 
