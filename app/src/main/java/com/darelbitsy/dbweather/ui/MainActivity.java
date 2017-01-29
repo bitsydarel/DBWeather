@@ -131,10 +131,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
         mWeather = new WeatherApi();
-        mIsGpsPermissionOn = false;
-        mLongitude = mCallHelper.getLongitude();
-        mLatitude = mCallHelper.getLatitude();
-
         //Configuring the google api client
         mLocationRequest = createLocationRequest();
 
@@ -143,6 +139,20 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        mIsGpsPermissionOn = false;
+
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+        } else { mIsGpsPermissionOn = true; }
+
+        mLongitude = mCallHelper.getLongitude();
+        mLatitude = mCallHelper.getLatitude();
 
 
         if((mLatitude > 0) && (mLongitude > 0) ) {
@@ -266,21 +276,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         @Override
-        protected void onPreExecute() {
-            //Check if the user has already granted the permission if not, ask it
-            if (ContextCompat.checkSelfPermission(MainActivity.this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-            } else { mIsGpsPermissionOn = true; }
-            mGoogleApiClient.connect();
-        }
-
-        @Override
         protected String doInBackground(Object[] params) {
             mCallHelper.call();
             return mCallHelper.getJsonData();
@@ -380,7 +375,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     protected void onResume() {
         super.onResume();
-        //Check if the user has already granted the permission if not, ask it
+        mGoogleApiClient.connect();
         Log.i("LIFECYCLE", "OnResume METHOD");
     }
 
