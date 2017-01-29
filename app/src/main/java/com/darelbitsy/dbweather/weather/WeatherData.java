@@ -13,7 +13,7 @@ public class WeatherData {
     private String mCityName;
 
     private long mTime;
-    private double mTemperature, mHumidity;
+    private int mTemperature, mHumidity;
     private  int mPrecipChance;
 
     public String getTimeZone() {
@@ -37,7 +37,7 @@ public class WeatherData {
         mSummary = summary;
     }
 
-    public String getIcon() { return mIcon; }
+    public String getIcon() { return mIcon == null ? "clear-day" : mIcon; }
 
     public void setIcon(final String icon) {
         mIcon = icon;
@@ -51,27 +51,24 @@ public class WeatherData {
         mTime = time;
     }
 
-    public int getTemperature() { return (int) Math.round(mTemperature); }
+    public int getTemperature() { return mTemperature; }
 
-    public void setTemperature(final double temperature) {
-        mTemperature = temperature;
-    }
+    public void setTemperature(final int temperature) { mTemperature = temperature; }
+    public void setTemperature(final double temperature) { setTemperature((int) Math.round(temperature)); }
 
-    public double getHumidity() {
+    public int getHumidity() {
         return mHumidity;
     }
 
+    public void setHumidity(final int humidity) { mHumidity = humidity; }
     public void setHumidity(final double humidity) {
-        mHumidity = humidity;
+        setHumidity((int) Math.round(humidity));
     }
 
     public int getPrecipChance() { return mPrecipChance; }
 
-    public void setPrecipChance(final double precipChance) {
-        mPrecipChance = (int) Math.round(precipChance * 100);
-    }
-
     public void setPrecipChance(final int precipChance) { mPrecipChance = precipChance; }
+    public void setPrecipChance(final double precipChance) { setPrecipChance((int) Math.round(precipChance)); }
 
     public int getIconId() {
         int iconId = R.drawable.clear_day;

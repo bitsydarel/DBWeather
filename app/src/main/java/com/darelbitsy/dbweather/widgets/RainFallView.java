@@ -26,11 +26,13 @@ public class RainFallView extends View {
     private final List<Drawable> drawables = new ArrayList<>();
     private int[][] coords;
     private final Drawable mRainDrop;
+    public static final int VIEW_ID = RainFallView.generateViewId();
 
     public RainFallView(Context context) {
         super(context);
         setFocusable(true);
         setFocusableInTouchMode(true);
+        this.setId(VIEW_ID);
 
         mRainDrop = ContextCompat.getDrawable(context, R.drawable.raindrop);
         mRainDrop.setBounds(0, 0,

@@ -2,11 +2,11 @@ package com.darelbitsy.dbweather.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.alert.AlertDialogFragment;
 import com.darelbitsy.dbweather.alert.NetworkAlertDialogFragment;
 
@@ -21,31 +21,26 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.darelbitsy.dbweather.ui.MainActivity.LAST_KNOW_LATITUDE;
-import static com.darelbitsy.dbweather.ui.MainActivity.LAST_KNOW_LONGITUDE;
-
 /**
  * Created by Darel Bitsy on 19/01/17.
  */
 
 public class WeatherCallHelper {
-    private static final String PREFS_FILE = "com.darelbitsy.dbweather.preferences";
     private List<String> supportedLang = Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
             "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
             "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw");
 
     private static final String TAG = "WeatherApiCall";
+    private DatabaseOperation mDatabase;
     private String mJsonData;
 
-    private double mLatitude, mLongitude;
+    private Double mLatitude, mLongitude;
     private Activity mActivity;
-
-    private SharedPreferences mSharedPreferences;
     private String userLang = Locale.getDefault().getLanguage();
 
-    public WeatherCallHelper(Activity activity) {
+    public WeatherCallHelper(Activity activity, DatabaseOperation database) {
         mActivity = activity;
-        mSharedPreferences = mActivity.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+        mDatabase = database;
         mLatitude = getLatitude();
         mLongitude = getLongitude();
         mJsonData = "";
@@ -53,7 +48,9 @@ public class WeatherCallHelper {
     }
 
     public String getJsonData() { return mJsonData; }
-    private void setJsonData(String jsonData) { this.mJsonData = jsonData; }
+    private void setJsonData(String jsonData) {
+        this.mJsonData = jsonData;
+    }
     private String getUserLang() {
         String api;
         //Checking if user device language is supported by the api if not english language will be used.
@@ -78,16 +75,18 @@ public class WeatherCallHelper {
 
     //Get the last know latitude or give a default value
     public double getLatitude() {
-        return mSharedPreferences.contains(LAST_KNOW_LATITUDE)
-                ? Double.longBitsToDouble(mSharedPreferences.getLong(LAST_KNOW_LATITUDE, 0))
-                : -4.7485;
+        if(mLatitude == null && mDatabase.getCoordinates()[0] == null) {
+            return -4.8062;
+        }
+        return mLatitude == null ? mDatabase.getCoordinates()[0] : mLatitude;
     }
 
     //Get the last know longitude or give a default value
     public double getLongitude() {
-        return mSharedPreferences.contains(LAST_KNOW_LONGITUDE)
-                ? Double.longBitsToDouble(mSharedPreferences.getLong(LAST_KNOW_LONGITUDE, 0))
-                : 11.8523;
+        if(mLongitude == null && mDatabase.getCoordinates()[1] == null) {
+            return -11.8319;
+        }
+        return mLongitude == null ? mDatabase.getCoordinates()[1] : mLongitude;
     }
 
     private boolean isNetworkAvailable() {

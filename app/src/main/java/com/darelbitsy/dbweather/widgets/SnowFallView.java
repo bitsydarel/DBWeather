@@ -26,11 +26,14 @@ public class SnowFallView extends View {
     private final List<Drawable> drawables = new ArrayList<>();
     private int[][] coords;
     private final Drawable snow_flake;
+    public static final int VIEW_ID = SnowFallView.generateViewId();
+
 
     public SnowFallView(Context context) {
         super(context);
         setFocusable(true);
         setFocusableInTouchMode(true);
+        this.setId(VIEW_ID);
 
         snow_flake = ContextCompat.getDrawable(context, R.drawable.snow_fall);
         snow_flake.setBounds(0, 0,

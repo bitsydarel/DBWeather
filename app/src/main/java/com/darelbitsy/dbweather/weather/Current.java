@@ -9,6 +9,7 @@ import org.threeten.bp.format.DateTimeFormatter;
  */
 
 public class Current extends WeatherData {
+    private String mWeekSummary;
 
     public String getFormattedTime() {
         final DateTimeFormatter format =
@@ -18,4 +19,7 @@ public class Current extends WeatherData {
                 .atZone(ZoneId.of(getTimeZone()))
                 .format(format);
     }
+    public void setWeekSummary(String weekSummary) { mWeekSummary = weekSummary; }
+
+    public String getWeekSummary() { return mWeekSummary != null ? mWeekSummary : "--"; }
 }

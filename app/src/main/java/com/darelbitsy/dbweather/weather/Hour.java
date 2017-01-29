@@ -9,6 +9,8 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
 
+import java.util.Locale;
+
 /**
  * Created by Darel Bitsy on 07/01/17.
  */
@@ -47,6 +49,17 @@ public class Hour extends WeatherData implements Parcelable {
         setSummary(in.readString());
         setIcon(in.readString());
         setTimeZone(in.readString());
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(),
+                "HOUR{ICON:%s ; SUMMARY:%s ; TIME:%d ; TIMEZONE: %s; TEMPERATURE:%d}",
+                getIcon(),
+                getSummary(),
+                getTime(),
+                getTimeZone(),
+                getTemperature());
     }
 
     public String getHour() {

@@ -7,22 +7,23 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
 
+import java.util.Locale;
+
 /**
  * Created by Darel Bitsy on 07/01/17.
  */
 
 public class Day extends WeatherData implements Parcelable {
-    private double mTemperatureMax;
+    private int mTemperatureMax;
 
     public Day() { }
 
     private Day(Parcel in) {
         setTime(in.readLong());
         setSummary(in.readString());
-        mTemperatureMax = in.readDouble();
+        mTemperatureMax = in.readInt();
         setIcon(in.readString());
         setTimeZone(in.readString());
-        setCityName(in.readString());
         setHumidity(in.readDouble());
         setPrecipChance(in.readInt());
     }
@@ -31,11 +32,10 @@ public class Day extends WeatherData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(getTime());
         dest.writeString(getSummary());
-        dest.writeDouble(getTemperatureMax());
+        dest.writeInt(getTemperatureMax());
         dest.writeString(getIcon());
         dest.writeString(getTimeZone());
-        dest.writeString(getCityName());
-        dest.writeDouble(getHumidity());
+        dest.writeInt(getHumidity());
         dest.writeInt(getPrecipChance());
     }
 
@@ -56,10 +56,21 @@ public class Day extends WeatherData implements Parcelable {
         }
     };
 
-    public int getTemperatureMax() { return (int) Math.round(mTemperatureMax); }
+    public int getTemperatureMax() { return mTemperatureMax; }
 
-    public void setTemperatureMax(double temperatureMax) {
-        mTemperatureMax = temperatureMax;
+    public void setTemperatureMax(final double temperatureMax) {
+        setTemperatureMax((int) Math.round(temperatureMax));
+    }
+    public void setTemperatureMax(final int temperatureMax) { mTemperatureMax = temperatureMax; }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(),
+                "DAY{ SUMMARY:%s; TIMEZONE:%s TEMPERATURE:%d; TIME:%d}",
+                getSummary(),
+                getTimeZone(),
+                getTemperatureMax(),
+                getTime());
     }
 
     public String getDayOfTheWeek() {

@@ -220,6 +220,8 @@
         android:gravity="center_horizontal|center_vertical"
         android:layout_above="@id/locationLabel"
         android:paddingTop="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="--"
         tools:text="Meteo de cette semaine avec des prevision formidable , et de bonne prediction , avec le meilleurs des conditions . Averses de neige mercredi et lundi, avec des temperature atteignant 0 degres mercredi"
         android:textColor="@android:color/white"/>

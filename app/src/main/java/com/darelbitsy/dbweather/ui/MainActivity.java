@@ -2,9 +2,7 @@ package com.darelbitsy.dbweather.ui;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -33,6 +31,7 @@ import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
+import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.adapters.HourAdapter;
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
 import com.darelbitsy.dbweather.weather.Current;
@@ -66,18 +65,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         LocationListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    private static final String KEY_SUMMARY = "KEY_SUMMARY";
-    private static final String ICON_KEY = "ICON_KEY";
-    private static final String HUMIDITY_KEY = "HUMIDITY_KEY";
-    private static final String PRECIP_KEY = "PRECIP_KEY";
-    private static final String LAST_KNOW_TEMPERATURE = "LAST_KNOW_TEMPERATURE";
-    private static final String TIME_OF_LAST_KNOW_TEMP = "TIME_OF_LAST_KNOW_TEMP";
-    public static final String LAST_KNOW_LONGITUDE = "LAST_KNOW_LONGITUDE";
-    public static final String LAST_KNOW_LATITUDE = "LAST_KNOW_LATITUDE";
-    private static final String LAST_KNOW_LOCATION = "LAST_KNOW_LOCATION";
-    static final String PREFS_FILE = "com.darelbitsy.dbweather.preferences";
-    public static final String HOURLY_WEATHER = "HOURLY_WEATHER";
-    public static final String HOURLY_INFO = "HOURLY_INFO";
+
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
@@ -89,8 +77,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private boolean mIsGpsPermissionOn;
     private String mCityName;
 
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mPreferenceEditor;
     @BindView(R2.id.activity_main) RelativeLayout mMainLayout;
 
     //Defining TextView needed
@@ -113,10 +99,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private double mLongitude;
     private double mLatitude;
-    private String[] mHourlyInfo = new String[2];
     private WeatherCallHelper mCallHelper;
     private RelativeLayout.LayoutParams mParams;
     private String currentDayName;
+    private DatabaseOperation mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +110,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         AndroidThreeTen.init(this);
-
+        mDatabase = new DatabaseOperation(this);
         Log.i("LIFECYCLE", "OnCreate METHOD");
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
         refreshLayout.setColorSchemeColors(Color.parseColor("#ff0099cc"),
@@ -137,7 +123,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             new GetWeather().execute();
             refreshLayout.setRefreshing(false);
         });
-        mCallHelper = new WeatherCallHelper(this);
+        mCallHelper = new WeatherCallHelper(this, mDatabase);
 
         mParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -146,14 +132,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         mWeather = new WeatherApi();
         mIsGpsPermissionOn = false;
-        mSharedPreferences = getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
-        mPreferenceEditor = mSharedPreferences.edit();
         mLongitude = mCallHelper.getLongitude();
         mLatitude = mCallHelper.getLatitude();
-
-        mCityName = mSharedPreferences.contains(LAST_KNOW_LATITUDE)
-                ? mSharedPreferences.getString(LAST_KNOW_LOCATION, getLocationName(mLatitude, mLongitude))
-                : getLocationName(mLatitude, mLongitude);
 
         //Configuring the google api client
         mLocationRequest = createLocationRequest();
@@ -165,20 +145,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 .build();
 
 
-        //Check if the user has already granted the permission if not, ask it
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-        } else {
-            mIsGpsPermissionOn = true;
+        if((mLatitude > 0) && (mLongitude > 0) ) {
+            mCityName = getLocationName(mLatitude, mLongitude);
         }
-
-        mCityName = mSharedPreferences.getString(LAST_KNOW_LOCATION, getLocationName(mLatitude, mLongitude));
         Log.i(TAG, "the City Name: "+mCityName);
         initializeField();
     }
@@ -194,8 +163,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             JSONArray data = hourly.getJSONArray("data");
             String timeZone = forecastData.getString("timezone");
 
-            Hour[] hours = new Hour[data.length()];
-            for (int i = 0; i < data.length(); i++) {
+            Hour[] hours = new Hour[48];
+            for (int i = 0; i < hours.length; i++) {
                 JSONObject json = data.getJSONObject(i);
                 Hour hour = new Hour();
                 hour.setSummary(json.getString("summary"));
@@ -203,7 +172,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 hour.setTimeZone(timeZone);
                 hour.setTime(json.getLong("time"));
                 hour.setIcon(json.getString("icon"));
-                hour.setCityName(mCityName);
                 hour.setHumidity(json.getDouble("humidity"));
                 hour.setPrecipChance(json.getDouble("precipProbability"));
                 hours[i] = hour;
@@ -213,13 +181,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         private Day[] getDailyWeather(String jsonData) throws JSONException {
             JSONObject forecastData = new JSONObject(jsonData);
-            JSONObject daily = forecastData.getJSONObject("daily");
-            JSONArray data = daily.getJSONArray("data");
+            JSONArray data = forecastData.getJSONObject("daily").getJSONArray("data");
             String timeZone = forecastData.getString("timezone");
-            mWeekSummary.setText(daily.getString("summary"));
 
-            Day[] days = new Day[data.length()];
-            for (int i = 0; i < data.length(); i++) {
+            Day[] days = new Day[8];
+            for (int i = 0; i < days.length; i++) {
                 JSONObject json = data.getJSONObject(i);
                 Day day = new Day();
                 day.setSummary(json.getString("summary"));
@@ -227,7 +193,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 day.setTimeZone(timeZone);
                 day.setTime(json.getLong("time"));
                 day.setIcon(json.getString("icon"));
-                day.setCityName(mCityName);
                 day.setHumidity(json.getDouble("humidity"));
                 day.setPrecipChance(json.getDouble("precipProbability"));
 
@@ -249,11 +214,25 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             current.setTemperature(currently.getDouble("temperature"));
             current.setHumidity(currently.getDouble("humidity"));
             current.setCityName(mCityName);
-            if("snow".equalsIgnoreCase(currently.getString("icon")))
-                { mMainLayout.addView(new SnowFallView(MainActivity.this), mParams); }
-            else if("rain".equalsIgnoreCase(currently.getString("icon")))
-                { mMainLayout.addView(new RainFallView(MainActivity.this), mParams); }
-
+            current.setWeekSummary(forecastData.getJSONObject("daily").getString("summary"));
+            if("snow".equalsIgnoreCase(currently.getString("icon"))) {
+                if(mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new SnowFallView(MainActivity.this), mParams);
+                }
+            }
+            else if("rain".equalsIgnoreCase(currently.getString("icon"))) {
+                if(mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new RainFallView(MainActivity.this), mParams);
+                }
+            } else {
+                if(mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
+                    mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
+                }
+                if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
+                    mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
+                }
+            }
+            mWeekSummary.setText(current.getWeekSummary());
             return current;
         }
 
@@ -271,7 +250,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             mLocationLabel.setText(mCityName);
             Log.i(TAG, "the City Name: "+mCityName);
 
-            mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", mWeather.getCurrent().getHumidity()));
+            mHumidityValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getCurrent().getHumidity()));
             mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getCurrent().getPrecipChance()));
             mSummaryLabel.setText(mWeather.getCurrent().getSummary());
 
@@ -287,6 +266,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         @Override
+        protected void onPreExecute() {
+            //Check if the user has already granted the permission if not, ask it
+            if (ContextCompat.checkSelfPermission(MainActivity.this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+            } else { mIsGpsPermissionOn = true; }
+            mGoogleApiClient.connect();
+        }
+
+        @Override
         protected String doInBackground(Object[] params) {
             mCallHelper.call();
             return mCallHelper.getJsonData();
@@ -294,9 +288,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if(!jsonData.isEmpty()) {
+            String json = jsonData.isEmpty() ? mDatabase.getJsonData() : jsonData;
+            if(json != null && !json.isEmpty()) {
                 try {
-                    updateDisplay(jsonData);
+                    updateDisplay(json);
+                    if(!jsonData.isEmpty()) {
+                        mDatabase.setJsonData(jsonData);
+                    }
                 } catch (JSONException e) {
                     Log.e(TAG, "Exception: "+ e);
                 }
@@ -382,8 +380,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     protected void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
-        runOnUiThread(() -> new GetWeather().execute());
+        //Check if the user has already granted the permission if not, ask it
         Log.i("LIFECYCLE", "OnResume METHOD");
     }
 
@@ -394,36 +391,37 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-        mPreferenceEditor.putString(LAST_KNOW_LOCATION, mCityName);
-        mPreferenceEditor.putLong(LAST_KNOW_LATITUDE, Double.doubleToRawLongBits(mLatitude));
-        mPreferenceEditor.putLong(LAST_KNOW_LONGITUDE, Double.doubleToRawLongBits(mLongitude));
-        mPreferenceEditor.putString(LAST_KNOW_TEMPERATURE, mTemperatureLabel.getText().toString());
-        mPreferenceEditor.putString(KEY_SUMMARY, mSummaryLabel.getText().toString());
-        if(mWeather.getCurrent() != null) {mPreferenceEditor.putInt(ICON_KEY, mWeather.getCurrent().getIconId()); }
-        mPreferenceEditor.putString(HUMIDITY_KEY, mHumidityValue.getText().toString());
-        mPreferenceEditor.putString(PRECIP_KEY, mPrecipValue.getText().toString());
-        mPreferenceEditor.putString(TIME_OF_LAST_KNOW_TEMP, mTimeLabel.getText().toString());
-        mPreferenceEditor.apply();
-
+        if(mWeather.getCurrent() != null) {
+            mDatabase.saveCurrentWeather(mWeather.getCurrent(), mCallHelper);
+        }
+        if (mWeather.getDay()[7] != null) {
+            mDatabase.saveDailyWeather(mWeather.getDay());
+        }
+        if (mWeather.getHour()[47] != null) {
+            mDatabase.saveHourlyWeather(mWeather.getHour());
+        }
         Log.i("LIFECYCLE", "OnPause METHOD");
     }
 
     private void initializeField() {
-        mLocationLabel.setText(mSharedPreferences.getString(LAST_KNOW_LOCATION,
-                getLocationName(mLatitude, mLongitude)));
+        mWeather.setCurrent(mDatabase.getCurrentWeatherFromDatabase());
+        mWeather.setDay(mDatabase.getDailyWeatherFromDatabase());
+        mWeather.setHour(mDatabase.getHourlyWeatherFromDatabase());
 
-        mTemperatureLabel.setText(mSharedPreferences.getString(LAST_KNOW_TEMPERATURE, "--"));
+        mLocationLabel.setText(mWeather.getCurrent().getCityName() == null ? getLocationName(mLatitude, mLongitude)
+                : mWeather.getCurrent().getCityName());
 
-        mSummaryLabel.setText(mSharedPreferences.getString(KEY_SUMMARY,
-                getResources().getString(R.string.default_weather_summary)));
+        mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getTemperature()));
+        mSummaryLabel.setText(mWeather.getCurrent().getSummary());
+        mWeekSummary.setText(mWeather.getCurrent().getWeekSummary());
 
-        if (mSharedPreferences.contains(ICON_KEY)) {
-            mIconImageView.setImageResource(mSharedPreferences.getInt(ICON_KEY, 0));
+        mIconImageView.setImageResource(mWeather.getCurrent().getIconId());
+
+        mHumidityValue.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getHumidity()));
+        mPrecipValue.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getPrecipChance()));
+        if(mWeather.getCurrent().getTime() > 0) {
+            mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + ", it was");
         }
-
-        mHumidityValue.setText(mSharedPreferences.getString(HUMIDITY_KEY, "--"));
-        mPrecipValue.setText(mSharedPreferences.getString(PRECIP_KEY, "--"));
-        mTimeLabel.setText(mSharedPreferences.getString(TIME_OF_LAST_KNOW_TEMP, "---"));
 
         setupDayScrollView();
         setupHourScrollView();
@@ -440,9 +438,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private void setupHourScrollView() {
         final RecyclerView hourlyForecastRecyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
-        final TextView checkEmpty = (TextView) findViewById(R.id.checkEmpty);
 
-        if(mWeather.getHour().length > 0) {
+        if(mWeather.getHour()[47] != null) {
             HourAdapter hourAdapter = new HourAdapter(Arrays.copyOf(mWeather.getHour(),
                     mWeather.getHour().length,
                     Hour[].class));
@@ -475,7 +472,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             showWeatherByDay(((Button) view).getText().toString());
         };
 
-        if(mWeather.getDay().length > 0) {
+        if(mWeather.getDay()[7] != null) {
             int count = 0;
             Button[] listOfButton = {mondayButton,
                     tuesdayButton,
@@ -592,7 +589,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
                     mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getTemperature()));
                     mTimeLabel.setText("At " + mWeather.getCurrent().getFormattedTime() + " it will be");
-                    mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", mWeather.getCurrent().getHumidity()));
+                    mHumidityValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getCurrent().getHumidity()));
                     mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getCurrent().getPrecipChance()));
                     mSummaryLabel.setText(mWeather.getCurrent().getSummary());
 
@@ -604,7 +601,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 if(dayName.equalsIgnoreCase(getResources().getString(R.string.tomorrow_label))) {
                     mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getDay()[1].getTemperatureMax()));
                     mTimeLabel.setText(dayName);
-                    mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", mWeather.getDay()[1].getHumidity()));
+                    mHumidityValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getDay()[1].getHumidity()));
                     mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", mWeather.getDay()[1].getPrecipChance()));
                     mSummaryLabel.setText(mWeather.getDay()[1].getSummary());
 
@@ -617,7 +614,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         && !day.getDayOfTheWeek().equalsIgnoreCase(currentDayName)) {
                     mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", day.getTemperatureMax()));
                     mTimeLabel.setText(dayName);
-                    mHumidityValue.setText(String.format(Locale.getDefault(), "%.2f%%", day.getHumidity()));
+                    mHumidityValue.setText(String.format(Locale.getDefault(), "%d%%", day.getHumidity()));
                     mPrecipValue.setText(String.format(Locale.getDefault(), "%d%%", day.getPrecipChance()));
                     mSummaryLabel.setText(day.getSummary());
 

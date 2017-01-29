@@ -23,7 +23,7 @@ public class WeatherApi {
         mCurrent = current;
     }
 
-    public Hour[] getHour() { return mDay == null ? new Hour[0] : Arrays.copyOf(mHour, mHour.length); }
+    public Hour[] getHour() { return mHour == null ? new Hour[0] : Arrays.copyOf(mHour, mHour.length); }
 
     public void setHour(final Hour[] hour) { mHour = Arrays.copyOf(hour, hour.length) ; }
 
