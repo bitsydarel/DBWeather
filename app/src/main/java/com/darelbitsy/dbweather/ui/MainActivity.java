@@ -2,6 +2,8 @@ package com.darelbitsy.dbweather.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -32,8 +34,12 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.WeatherApi;
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
+import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
 import com.darelbitsy.dbweather.adapters.HourAdapter;
+import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
+import com.darelbitsy.dbweather.receiver.AlarmWeatherReceiver;
+import com.darelbitsy.dbweather.receiver.SyncDataReceiver;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
@@ -69,6 +75,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
+    public static final String IS_ALARM_ON = "is_alarm_set";
 
     private WeatherApi mWeather;
     private ColorManager mColorPicker = new ColorManager();
@@ -121,8 +128,19 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
             new GetWeather().execute();
+            if (!isAlarmSet()) {
+                new Handler().post(new AlarmConfigHelper(MainActivity.this)::setClothingNotificationAlarm);
+                Log.i("Feed_Data", "Setted the alarm from MainActivity");
+                FeedDataInForeground.setNextSync(getApplicationContext());
+                Log.i("Feed_Data", "Setted the hourly sync from MainActivity");
+                getSharedPreferences(DatabaseOperation.PREFS_NAME, getApplicationContext().MODE_PRIVATE)
+                        .edit()
+                        .putBoolean(IS_ALARM_ON, true)
+                        .apply();
+            }
             refreshLayout.setRefreshing(false);
         });
+
         mCallHelper = new WeatherCallHelper(this, mDatabase);
 
         mParams = new RelativeLayout.LayoutParams(
@@ -131,9 +149,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
         mWeather = new WeatherApi();
-        //Configuring the google api client
         mLocationRequest = createLocationRequest();
 
+        //Configuring the google api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -162,11 +180,25 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         initializeField();
     }
 
-    /*
-    * The GetWeather function
-    * get the current weather with the forecast api
-    */
+    private boolean isAlarmSet() {
+        return getSharedPreferences(DatabaseOperation.PREFS_NAME, getApplicationContext().MODE_PRIVATE)
+                .getBoolean(IS_ALARM_ON, false);
+    }
+
+
+    /**
+     * Class GetWeather is a helper class
+     * that get the json data from api
+     * parse json data
+     * fetch the data on the layout
+     */
     private class GetWeather extends AsyncTask<Object, Boolean, String> {
+        /**
+         * parse json data to extract hourly weather
+         * @param jsonData (json response from the api)
+         * @return Return a Hour Arrays (weather by hours)
+         * @throws JSONException
+         */
         private Hour[] getHourlyWeather(String jsonData) throws JSONException {
             JSONObject forecastData = new JSONObject(jsonData);
             JSONObject hourly = forecastData.getJSONObject("hourly");
@@ -189,6 +221,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             return hours;
         }
 
+        /**
+         * parse json data to extract daily weather
+         * @param jsonData (json response from the api)
+         * @return Return a Day Arrays (weather by days)
+         * @throws JSONException
+         */
         private Day[] getDailyWeather(String jsonData) throws JSONException {
             JSONObject forecastData = new JSONObject(jsonData);
             JSONArray data = forecastData.getJSONObject("daily").getJSONArray("data");
@@ -211,6 +249,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             return days;
         }
 
+        /**
+         * parse json data to extract current weather
+         * @param jsonData (json response from the api)
+         * @return Return a Current weather
+         * @throws JSONException
+         */
         private Current getCurrentWeather(String jsonData) throws JSONException {
             JSONObject forecastData = new JSONObject(jsonData);
             JSONObject currently = forecastData.getJSONObject("currently");
@@ -225,6 +269,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             current.setHumidity(currently.getDouble("humidity"));
             current.setCityName(mCityName);
             current.setWeekSummary(forecastData.getJSONObject("daily").getString("summary"));
+
             if("snow".equalsIgnoreCase(currently.getString("icon"))) {
                 if(mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
                     mMainLayout.addView(new SnowFallView(MainActivity.this), mParams);
@@ -234,6 +279,14 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 if(mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
                     mMainLayout.addView(new RainFallView(MainActivity.this), mParams);
                 }
+            } else if ("sleet".equalsIgnoreCase(currently.getString("icon"))) {
+                if (mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new RainFallView(MainActivity.this), mParams);
+                }
+                if (mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new SnowFallView(MainActivity.this), mParams);
+                }
+
             } else {
                 if(mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
                     mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
@@ -246,10 +299,15 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             return current;
         }
 
+        /**
+         * this function Fetch the layout with the new data
+         */
         private void updateDisplay() {
             if (mWeather.getDay().length > 0) { setupDayScrollView(); }
             if(mWeather.getHour().length > 0) { setupHourScrollView(); }
-            currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
+            if(currentFocusedButton != null) {
+                currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
+            }
             scrollToFunc(mHandler, mScrollView, currentDayButton);
 
             mTemperatureLabel.setText(String.format(Locale.getDefault(), "%d", mWeather.getCurrent().getTemperature()));
@@ -268,10 +326,16 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             mIconImageView.setImageDrawable(drawable);
         }
 
+        /**
+         * this function fetch the new data
+         * @param jsonData json data from api
+         * @throws JSONException
+         */
         private void updateDisplay(String jsonData) throws JSONException {
             mWeather.setCurrent(getCurrentWeather(jsonData));
             mWeather.setDay(getDailyWeather(jsonData));
             mWeather.setHour(getHourlyWeather(jsonData));
+
             updateDisplay();
         }
 
@@ -297,6 +361,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
     }
 
+    /**
+     * Get Location name based on latitude and longitude
+     * @param latitude
+     * @param longitude
+     * @return the location in format (City, Country)
+     */
     private String getLocationName(double latitude, double longitude) {
         String cityInfoBuilder = "";
         try {
@@ -326,6 +396,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
     }
 
+    /**
+     * get last know location
+     * if not available request location update
+     */
     private void getLocation() {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
@@ -333,7 +407,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         } else {
             mCallHelper.setLatitude(location.getLatitude());
             mCallHelper.setLongitude(location.getLongitude());
-            runOnUiThread(() -> new GetWeather().execute());
+            runOnUiThread(new GetWeather()::execute);
             mCityName = getLocationName(location.getLatitude(), location.getLongitude());
             Log.i(TAG, "City Name: "+mCityName);
         }
@@ -366,7 +440,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public void onLocationChanged(Location location) {
         mCallHelper.setLatitude(location.getLatitude());
         mCallHelper.setLongitude(location.getLongitude());
-        runOnUiThread(() -> new GetWeather().execute());
+        runOnUiThread(new GetWeather()::execute);
 
         mCityName = getLocationName(location.getLatitude(), location.getLongitude());
         Log.i(TAG, "City Name: "+mCityName);
@@ -398,6 +472,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         Log.i("LIFECYCLE", "OnPause METHOD");
     }
 
+    /**
+     * When the activity launched by the user
+     * this function show the last saved from the db
+     */
     private void initializeField() {
         mWeather.setCurrent(mDatabase.getCurrentWeatherFromDatabase());
         mWeather.setDay(mDatabase.getDailyWeatherFromDatabase());
@@ -422,15 +500,25 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         setupHourScrollView();
     }
 
+    /**
+     * @param handler to process the action
+     * @param scrollView where to apply the function
+     * @param button clicked button
+     */
     private void scrollToFunc(Handler handler, HorizontalScrollView scrollView, Button button) {
-        handler.post(() -> {
-            scrollView.scrollTo(button.getLeft(), button.getTop());
-            scrollView.setSmoothScrollingEnabled(true);
-            button.setBackgroundColor(Color.parseColor("#80ffffff"));
-            currentFocusedButton = button;
-        });
+        if(button != null) {
+            handler.post(() -> {
+                scrollView.scrollTo(button.getLeft(), button.getTop());
+                scrollView.setSmoothScrollingEnabled(true);
+                button.setBackgroundColor(Color.parseColor("#80ffffff"));
+                currentFocusedButton = button;
+            });
+        }
     }
 
+    /**
+     * Setup the hourly scroll view and fetch it with data if available
+     */
     private void setupHourScrollView() {
         final RecyclerView hourlyForecastRecyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
 
@@ -445,6 +533,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
     }
 
+    /**
+     * Setup the daily scroll view and fetch it with data if available
+     */
     private void setupDayScrollView() {
         mScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScroll);
         final Button mondayButton = (Button) findViewById(R.id.monday);
@@ -460,7 +551,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
 
-        final View.OnClickListener buttonListener = (view) -> {
+        final View.OnClickListener buttonListener = view -> {
             currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
             view.setBackgroundColor(Color.parseColor("#80ffffff"));
             currentFocusedButton = (Button) view;
@@ -576,6 +667,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
     }
 
+    /**
+     * Show the weather of the choosed day
+     * @param dayName
+     */
     private void showWeatherByDay(String dayName) {
         if(mWeather.getDay().length > 0) {
             for(Day day : mWeather.getDay()) {

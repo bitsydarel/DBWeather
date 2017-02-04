@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.helper;
+package com.darelbitsy.dbweather.weather;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

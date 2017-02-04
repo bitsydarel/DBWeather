@@ -14,4 +14,30 @@
     <string name="the_about_us_page">A menu to the about us page</string>
     <string name="precipeChanceLabel">RAIN/SNOW</string>
     <string name="humidity_label">HUMIDITY</string>
+    <string name="title_activity_main_menu">DB Weather</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="rain_title">Take an umbrella!</string>
+    <string name="clear_night_title">Clear night with a beautiful sky!</string>
+    <string name="clear_day_title">Wonderful day in sight!</string>
+    <string name="snow_title">It\'s snowing!</string>
+    <string name="sleet_title">Watch out slippery floor!</string>
+    <string name="wind_title">Beware of winds!</string>
+    <string name="fog_title">Watch out for the fog!</string>
+    <string name="cloudy_title">Cloudy weather</string>
+    <string name="partly_cloudy_day_title">Partly cloudy today</string>
+    <string name="partly_cloudy_night_title">Partly cloudy this evening</string>
+
+    <string name="clear_day_desc">The temperature outside is %1$d°\nI suggest getting dressed not to light and not heavy .\n\nEvery day is a good day to be alive, whether the sun\'s shining or not.</string>
+    <string name="snow_desc">The temperature outside is %1$d°\nI suggest getting dressed heavy and take an umbrella if you plan going outside.\n\nA snowball in the face is surely the perfect beginning to a lasting friendship.</string>
+    <string name="sleet_desc">The temperature outside is %1$d°\nWith the weather outside watch out for slippery floor!\n\nSometimes it takes a good fall to really know where you stand :)</string>
+    <string name="wind_desc">The temperature outside is %1$d°\nBeware of winds and take a scarf.\n\nLife is like sailing. You can use any wind to go in any direction</string>
+    <string name="fog_desc">The temperature outside is %1$d°\n\nDon’t let the agony, regret, or fog of yesterday blind you to the fact that each new day carries with it a plethora of opportunities to move your life into the right direction.</string>
+    <string name="cloudy">The temperature outside is %1$d°\n\nOur mind is like a cloudy sky: in essence clear and pure, but overcast by clouds of delusions. Just as the thickest clouds can disperse, so, too, even the heaviest delusions can be removed from our mind.</string>
+    <string name="partly_cloudy_day_desc">The temperature outside is %1$d°\n\nA cloudy day or a little sunshine have as great an influence on many constitutions as the most recent blessings or misfortunes.</string>
+    <string name="partly_cloudy_night_desc">The temperature outside is %1$d°\n\nAll shadows of clouds the sun cannot hide like the moon cannot stop oceanic tide but a hidden star can still be smiling at night\'s black spell on darkness, beguiling</string>
 </resources>

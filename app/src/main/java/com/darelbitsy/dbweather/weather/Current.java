@@ -19,7 +19,7 @@ public class Current extends WeatherData {
                 .atZone(ZoneId.of(getTimeZone()))
                 .format(format);
     }
-    public void setWeekSummary(String weekSummary) { mWeekSummary = weekSummary; }
+    public void setWeekSummary(final String weekSummary) { mWeekSummary = weekSummary; }
 
-    public String getWeekSummary() { return mWeekSummary != null ? mWeekSummary : "--"; }
+    public String getWeekSummary() { return mWeekSummary == null ? "--" : mWeekSummary ; }
 }

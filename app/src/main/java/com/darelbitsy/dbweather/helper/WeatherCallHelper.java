@@ -26,6 +26,7 @@ import okhttp3.Response;
  */
 
 public class WeatherCallHelper {
+    private Context mContext;
     private List<String> supportedLang = Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
             "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
             "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw");
@@ -40,6 +41,15 @@ public class WeatherCallHelper {
 
     public WeatherCallHelper(Activity activity, DatabaseOperation database) {
         mActivity = activity;
+        mDatabase = database;
+        mLatitude = getLatitude();
+        mLongitude = getLongitude();
+        mJsonData = "";
+        call();
+    }
+
+    public WeatherCallHelper(Context context, DatabaseOperation database) {
+        mContext = context;
         mDatabase = database;
         mLatitude = getLatitude();
         mLongitude = getLongitude();
@@ -90,9 +100,16 @@ public class WeatherCallHelper {
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager)
-                mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        NetworkInfo networkInfo;
+        if (mActivity != null) {
+            ConnectivityManager manager = (ConnectivityManager)
+                    mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            networkInfo = manager.getActiveNetworkInfo();
+        } else {
+            ConnectivityManager manager = (ConnectivityManager)
+                    mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            networkInfo = manager.getActiveNetworkInfo();
+        }
         boolean isAvailable = false;
         if (networkInfo != null && networkInfo.isConnected()) {
             isAvailable = true;
@@ -122,6 +139,7 @@ public class WeatherCallHelper {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         alertUserAboutError();
+                        Log.i("dbweather", e.getMessage() + " this error happened during the call");
                     }
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {

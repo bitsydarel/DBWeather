@@ -1,9 +1,6 @@
 package com.darelbitsy.dbweather;
 
-import android.graphics.Color;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

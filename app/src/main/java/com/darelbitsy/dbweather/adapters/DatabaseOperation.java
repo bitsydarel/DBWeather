@@ -8,42 +8,42 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
-import com.darelbitsy.dbweather.helper.WeatherDatabase;
+import com.darelbitsy.dbweather.weather.WeatherDatabase;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_CITYNAME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_HUMIDITY;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_ICON;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_PRECIPCHANCE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_SUMMARY;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_TABLE_NAME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_TEMPERATURE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_TIME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.CURRENT_TIMEZONE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAYS_TABLE_NAME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_HUMIDITY;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_ICON;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_ID;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_PRECIPCHANCE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_SUMMARY;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_TEMPERATURE_MAX;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_TIME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.DAY_TIMEZONE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOURS_TABLE_NAME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOUR_ICON;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOUR_ID;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOUR_SUMMARY;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOUR_TEMPERATURE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOUR_TIME;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.HOUR_TIMEZONE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.LAST_JSON_DATA;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.LAST_KNOW_LATITUDE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.LAST_KNOW_LONGITUDE;
-import static com.darelbitsy.dbweather.helper.WeatherDatabase.WEEK_SUMMARY;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_CITYNAME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_HUMIDITY;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_ICON;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_PRECIPCHANCE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_SUMMARY;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_TABLE_NAME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_TEMPERATURE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_TIME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_TIMEZONE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAYS_TABLE_NAME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_HUMIDITY;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_ICON;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_ID;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_PRECIPCHANCE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_SUMMARY;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_TEMPERATURE_MAX;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_TIME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.DAY_TIMEZONE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOURS_TABLE_NAME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_ICON;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_ID;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_SUMMARY;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_TEMPERATURE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_TIME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_TIMEZONE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_JSON_DATA;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_KNOW_LATITUDE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_KNOW_LONGITUDE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.WEEK_SUMMARY;
 
 /**
  * Created by Darel Bitsy on 26/01/17.
@@ -51,12 +51,11 @@ import static com.darelbitsy.dbweather.helper.WeatherDatabase.WEEK_SUMMARY;
 
 public class DatabaseOperation {
     private static WeatherDatabase mDatabase;
-    private static final String PREFS_NAME = "db_weather_prefs";
+    public static final String PREFS_NAME = "db_weather_prefs";
     private SharedPreferences.Editor mEditor;
     private static final String CURRENT_INSERTED = "current_inserted";
     private static final String DAYS_INSERTED = "days_inserted";
     private static final String HOURLY_INSERTED = "hourly_inserted";
-    private Context mContext;
     private boolean isDaysInserted;
     private boolean isHourInserted;
     private boolean iSCurrentInserted;
@@ -65,7 +64,6 @@ public class DatabaseOperation {
         if (mDatabase == null) {
             mDatabase = new WeatherDatabase(context);
         }
-        mContext = context;
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
         mEditor = sharedPreferences.edit();
         iSCurrentInserted = sharedPreferences.getBoolean(CURRENT_INSERTED, false);
@@ -73,7 +71,7 @@ public class DatabaseOperation {
         isHourInserted = sharedPreferences.getBoolean(HOURLY_INSERTED, false);
     }
 
-    public void saveCurrentWeather(Current current, WeatherCallHelper weatherApi) {
+    public void saveCurrentWeather(final Current current, final WeatherCallHelper weatherApi) {
         ContentValues databaseInsert = new ContentValues();
         SQLiteDatabase sqLiteDatabase = mDatabase.getWritableDatabase();
 
@@ -107,7 +105,7 @@ public class DatabaseOperation {
         }
     }
 
-    public void saveDailyWeather(Day[] days) {
+    public void saveDailyWeather(final Day[] days) {
         ContentValues databaseInsert = new ContentValues();
         SQLiteDatabase sqLiteDatabase = mDatabase.getWritableDatabase();
         AtomicInteger index = new AtomicInteger(1);
@@ -143,7 +141,7 @@ public class DatabaseOperation {
         }
     }
 
-    public void saveHourlyWeather(Hour[] hours) {
+    public void saveHourlyWeather(final Hour[] hours) {
         ContentValues databaseInsert = new ContentValues();
         SQLiteDatabase sqLiteDatabase = mDatabase.getWritableDatabase();
         AtomicInteger index = new AtomicInteger(1);
@@ -287,5 +285,28 @@ public class DatabaseOperation {
             databaseCursor.close();
         }
         return hours;
+    }
+
+    public Hour getNotificationHour(final long systemTime) {
+        Hour hour = new Hour();
+        SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " +
+                HOURS_TABLE_NAME, null);
+
+        if(cursor != null) {
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                if(hour.getHour(systemTime).equalsIgnoreCase(hour.getHour(cursor.getLong(cursor.getColumnIndex(HOUR_TIME)))))
+                {
+                    hour.setTime(cursor.getLong(cursor.getColumnIndex(HOUR_TIME)));
+                    hour.setTemperature(cursor.getInt(cursor.getColumnIndex(HOUR_TEMPERATURE)));
+                    hour.setTimeZone(cursor.getString(cursor.getColumnIndex(HOUR_TIMEZONE)));
+                    hour.setIcon(cursor.getString(cursor.getColumnIndex(HOUR_ICON)));
+                    hour.setSummary(cursor.getString(cursor.getColumnIndex(HOUR_SUMMARY)));
+                    break;
+                }
+            }
+            cursor.close();
+        }
+        return hour;
     }
 }
