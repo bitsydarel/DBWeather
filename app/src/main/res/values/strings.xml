@@ -40,4 +40,12 @@
     <string name="cloudy">The temperature outside is %1$d°\n\nOur mind is like a cloudy sky: in essence clear and pure, but overcast by clouds of delusions. Just as the thickest clouds can disperse, so, too, even the heaviest delusions can be removed from our mind.</string>
     <string name="partly_cloudy_day_desc">The temperature outside is %1$d°\n\nA cloudy day or a little sunshine have as great an influence on many constitutions as the most recent blessings or misfortunes.</string>
     <string name="partly_cloudy_night_desc">The temperature outside is %1$d°\n\nAll shadows of clouds the sun cannot hide like the moon cannot stop oceanic tide but a hidden star can still be smiling at night\'s black spell on darkness, beguiling</string>
+    <string name="unknown_location">Unknown Location</string>
+    <string name="time_label">At %1$s, it was</string>
+    <string name="windSpeedLabel">WindSpeed</string>
+    <string name="news_from">From : %1$s</string>
+    <string name="windSpeedValue">%1$d m/s</string>
+    <string name="humidity_value">%1$d %%</string>
+    <string name="cloudCover_label">cloudCover</string>
+    <string name="cloudCoverValue">%1$d %%</string>
 </resources>

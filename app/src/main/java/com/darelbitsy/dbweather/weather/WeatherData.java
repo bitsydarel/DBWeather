@@ -15,6 +15,13 @@ public class WeatherData {
     private long mTime;
     private int mTemperature, mHumidity;
     private  int mPrecipChance;
+    private String mPrecipType;
+    private int mCloudCover;
+    private int mWindSpeed;
+
+    String getPrecipType() { return mPrecipType; }
+
+    public void setPrecipType(String precipType) { mPrecipType = precipType; }
 
     public String getTimeZone() {
         return mTimeZone;
@@ -56,19 +63,27 @@ public class WeatherData {
     public void setTemperature(final int temperature) { mTemperature = temperature; }
     public void setTemperature(final double temperature) { setTemperature((int) Math.round(temperature)); }
 
+    int getWindSpeed() { return mWindSpeed; }
+
+    void setWindSpeed(final int windSpeed) { mWindSpeed = windSpeed; }
+    public void setWindSpeed(final double windSpeed) { setWindSpeed((int) Math.round(windSpeed)); }
+
     public int getHumidity() {
         return mHumidity;
     }
 
     public void setHumidity(final int humidity) { mHumidity = humidity; }
-    public void setHumidity(final double humidity) {
-        setHumidity((int) Math.round(humidity));
-    }
+    public void setHumidity(final double humidity) { setHumidity((int) (humidity * 100)); }
 
     public int getPrecipChance() { return mPrecipChance; }
 
-    public void setPrecipChance(final int precipChance) { mPrecipChance = precipChance; }
-    public void setPrecipChance(final double precipChance) { setPrecipChance((int) Math.round(precipChance)); }
+    private void setPrecipChance(final int precipChance) { mPrecipChance = precipChance; }
+    public void setPrecipChance(final double precipChance) { setPrecipChance((int) (precipChance * 100)); }
+
+    int getCloudCover() { return mCloudCover; }
+
+    void setCloudCover(final int cloudCover) { mCloudCover = cloudCover; }
+    public void setCloudCover(final double cloudCover) { setCloudCover((int) (cloudCover * 100)); }
 
     public int getIconId() {
         int iconId = R.drawable.clear_day;

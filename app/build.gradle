@@ -30,6 +30,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    configurations.all() {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:+'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/io.netty.versions.properties'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -37,16 +47,20 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.google.android.gms:play-services:10.0.1'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.android.support:support-core-utils:25.1.0'
-    compile 'com.google.android.gms:play-services:10.0.1'
-    compile 'com.squareup.okhttp3:okhttp:3.5.0'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'com.jakewharton.threetenabp:threetenabp:1.0.4'
+
+    compile 'com.google.android.gms:play-services-location:10.2.0'
+    compile 'com.google.apis:google-api-services-translate:v2-rev48-1.22.0'
+    compile 'com.google.http-client:google-http-client-gson:1.22.0'
+    compile 'com.google.api-client:google-api-client-android:1.22.0'
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:recyclerview-v7:25.1.1'
+    compile "com.android.support:support-v13:25.1.1"
+    compile 'com.android.support:support-core-utils:25.1.1'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:design:25.1.1'
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

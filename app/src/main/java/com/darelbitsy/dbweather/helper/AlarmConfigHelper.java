@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.receiver.AlarmWeatherReceiver;
+import com.darelbitsy.dbweather.ui.MainActivity;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -20,6 +22,9 @@ import java.util.TimeZone;
  */
 
 public class AlarmConfigHelper {
+    public static final String MY_ACTION = "com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION";
+    public static final String LAST_NOTIFICATION_PENDING_INTENT_ID = "last_pending_intent_id";
+
     private final AlarmManager mAlarmManagerMorning;
     private final AlarmManager mAlarmManagerAfternoon;
     private final AlarmManager mAlarmManagerNight;
@@ -30,6 +35,10 @@ public class AlarmConfigHelper {
     private Calendar calendarMorning;
     private Calendar calendarAfternoon;
     private Calendar calendarNight;
+
+    private Calendar currentCalendar;
+    private PendingIntent currentPendingIntent;
+
     private final Context mContext;
 
     public AlarmConfigHelper(final Context context) {
@@ -38,80 +47,96 @@ public class AlarmConfigHelper {
         mAlarmManagerAfternoon = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         mAlarmManagerNight = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
+        Intent notificationLIntent = new Intent(context, AlarmWeatherReceiver.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            notificationLIntent.setFlags(0);
+        } else {
+            notificationLIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        notificationLIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        notificationLIntent.setAction(MY_ACTION);
+
         mPendingIntentMorning = PendingIntent.getBroadcast(context,
                 7124,
-                new Intent(context, AlarmWeatherReceiver.class),
+                notificationLIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         mPendingIntentAfternoon = PendingIntent.getBroadcast(context,
                 7125,
-                new Intent(context, AlarmWeatherReceiver.class),
+                notificationLIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         mPendingIntentNight = PendingIntent.getBroadcast(context,
                 7126,
-                new Intent(context, AlarmWeatherReceiver.class),
+                notificationLIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-
-        setCalendars();
+        AndroidThreeTen.init(context);
     }
 
-    public void setClothingNotificationAlarm() {
-        setAlarm();
-        Log.i("Feed", "ALARM DONE AT "+System.currentTimeMillis());
+    private AlarmManager getCurrentAlarm() {
+        Date currentDate = new Date();
+
+        if (calendarMorning.getTime().compareTo(currentDate) > 0) {
+            currentCalendar = calendarMorning;
+            currentPendingIntent = mPendingIntentMorning;
+            mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+                    .edit()
+                    .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7124)
+                    .apply();
+            return mAlarmManagerMorning;
+        }
+
+        if (calendarAfternoon.getTime().compareTo(currentDate) > 0) {
+            currentCalendar = calendarAfternoon;
+            currentPendingIntent = mPendingIntentAfternoon;
+            mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+                    .edit()
+                    .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7125)
+                    .apply();
+            return mAlarmManagerAfternoon;
+        }
+        if (calendarNight.getTime().compareTo(currentDate) > 0) {
+            currentCalendar = calendarNight;
+            currentPendingIntent = mPendingIntentNight;
+            mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+                    .edit()
+                    .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7126)
+                    .apply();
+            return mAlarmManagerNight;
+        }
+
+        calendarMorning.add(Calendar.DATE, +1);
+        currentCalendar = calendarMorning;
+        currentPendingIntent = mPendingIntentMorning;
+        mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+                .edit()
+                .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7124)
+                .apply();
+        return mAlarmManagerMorning;
     }
 
     private void setAlarm() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mAlarmManagerMorning.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    calendarMorning.getTimeInMillis(),
-                    mPendingIntentMorning);
+            getCurrentAlarm().setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    currentCalendar.getTimeInMillis(),
+                    currentPendingIntent);
 
-            mAlarmManagerAfternoon.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    calendarAfternoon.getTimeInMillis(),
-                    mPendingIntentAfternoon);
-
-            mAlarmManagerNight.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    calendarNight.getTimeInMillis(),
-                    mPendingIntentNight);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AlarmManager alarmManager = getCurrentAlarm();
+            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(currentCalendar.getTimeInMillis(), currentPendingIntent);
+            alarmManager.setAlarmClock(alarmClockInfo, currentPendingIntent);
 
         } else  if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
-                mAlarmManagerMorning.setExact(AlarmManager.RTC_WAKEUP,
-                        calendarMorning.getTimeInMillis(),
-                        mPendingIntentMorning);
-
-                mAlarmManagerAfternoon.setExact(AlarmManager.RTC_WAKEUP,
-                        calendarAfternoon.getTimeInMillis(),
-                        mPendingIntentAfternoon);
-
-                mAlarmManagerNight.setExact(AlarmManager.RTC_WAKEUP,
-                        calendarNight.getTimeInMillis(),
-                        mPendingIntentNight);
+            getCurrentAlarm().setExact(AlarmManager.RTC_WAKEUP,
+                    currentCalendar.getTimeInMillis(),
+                    currentPendingIntent);
 
         } else {
-            mAlarmManagerMorning.setRepeating(AlarmManager.RTC_WAKEUP,
-                    calendarMorning.getTimeInMillis(),
+            getCurrentAlarm().setRepeating(AlarmManager.RTC_WAKEUP,
+                    currentCalendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY,
-                    mPendingIntentMorning);
-
-            mAlarmManagerAfternoon.setRepeating(AlarmManager.RTC_WAKEUP,
-                    calendarAfternoon.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY,
-                    mPendingIntentAfternoon);
-
-            mAlarmManagerNight.setRepeating(AlarmManager.RTC_WAKEUP,
-                    calendarNight.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY,
-                    mPendingIntentNight);
+                    currentPendingIntent);
         }
-        Log.i("Feed_Data",
-                "Morning: "+calendarMorning.getTime().toString()+
-                        " Afternoon: "+ calendarAfternoon.getTime().toString() +
-                        " Night: " + calendarNight.getTime().toString());
-
-        Toast.makeText(mContext,
-                "Morning: "+calendarMorning.getTimeInMillis() +
-                        " Afternoon: "+ calendarAfternoon.getTimeInMillis() +
-                        " Night: " + calendarNight.getTimeInMillis(),
-                Toast.LENGTH_LONG).show();
+        Log.i(MainActivity.TAG,
+                "Set Alarm for Date: "+currentCalendar.getTime().toString());
     }
 
     public void cancelClothingNotificationAlarm() {
@@ -122,18 +147,22 @@ public class AlarmConfigHelper {
 
     private void setCalendars() {
         final TimeZone timeZone = TimeZone.getTimeZone(getCurrentTimeZone(mContext));
+        Date currentDate = new Date();
 
         calendarMorning = Calendar.getInstance(timeZone, Locale.getDefault());
+        calendarMorning.setTime(currentDate);
         calendarMorning.set(Calendar.HOUR_OF_DAY, 7);
         calendarMorning.set(Calendar.MINUTE, 30);
         calendarMorning.set(Calendar.SECOND, 0);
 
         calendarAfternoon = Calendar.getInstance(timeZone, Locale.getDefault());
+        calendarAfternoon.setTime(currentDate);
         calendarAfternoon.set(Calendar.HOUR_OF_DAY, 12);
         calendarAfternoon.set(Calendar.MINUTE, 30);
         calendarAfternoon.set(Calendar.SECOND, 0);
 
         calendarNight = Calendar.getInstance(timeZone, Locale.getDefault());
+        calendarNight.setTime(currentDate);
         calendarNight.set(Calendar.HOUR_OF_DAY, 18);
         calendarNight.set(Calendar.MINUTE, 30);
         calendarNight.set(Calendar.SECOND, 0);
@@ -143,5 +172,11 @@ public class AlarmConfigHelper {
         String timezone = new DatabaseOperation(context)
                 .getCurrentWeatherFromDatabase().getTimeZone();
         return timezone == null ? TimeZone.getDefault().getID() : timezone;
+    }
+
+    public void setClothingNotificationAlarm() {
+        setCalendars();
+        setAlarm();
+        Log.i(MainActivity.TAG, "ALARM DONE AT "+System.currentTimeMillis());
     }
 }

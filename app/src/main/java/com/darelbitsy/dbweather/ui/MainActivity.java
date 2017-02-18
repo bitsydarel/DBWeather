@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -37,9 +38,11 @@ import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
 import com.darelbitsy.dbweather.adapters.HourAdapter;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
+import com.darelbitsy.dbweather.helper.GetNewsData;
+import com.darelbitsy.dbweather.news.News;
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
 import com.darelbitsy.dbweather.receiver.AlarmWeatherReceiver;
-import com.darelbitsy.dbweather.receiver.SyncDataReceiver;
+import com.darelbitsy.dbweather.services.KillCheckerService;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
@@ -62,23 +65,31 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.darelbitsy.dbweather.helper.AlarmConfigHelper.MY_ACTION;
 
 public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
-
-
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
+    public static final String TAG = "dbweather";
     public static final String IS_ALARM_ON = "is_alarm_set";
 
     private WeatherApi mWeather;
-    private ColorManager mColorPicker = new ColorManager();
+    private final ColorManager mColorPicker = new ColorManager();
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private boolean mIsGpsPermissionOn;
@@ -97,7 +108,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     //Defining ImageView and ImageButton to manipulate
     @BindView(R2.id.iconImageView) ImageView mIconImageView;
-    @BindView(R2.id.degreeImageView) ImageView mDegreeImageView;
 
     private Button currentFocusedButton;
     private HorizontalScrollView mScrollView;
@@ -110,6 +120,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private RelativeLayout.LayoutParams mParams;
     private String currentDayName;
     private DatabaseOperation mDatabase;
+    private News[] mNewses;
+    private GetNewsData mNewsData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +130,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         ButterKnife.bind(this);
         AndroidThreeTen.init(this);
         mDatabase = new DatabaseOperation(this);
-        Log.i("LIFECYCLE", "OnCreate METHOD");
+        mNewsData = new GetNewsData(this);
+
+        Log.i(TAG, "MainActivity OnCreate METHOD");
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
         refreshLayout.setColorSchemeColors(Color.parseColor("#ff0099cc"),
                 Color.parseColor("#ff33b5e5"),
@@ -128,16 +142,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
             new GetWeather().execute();
-            if (!isAlarmSet()) {
-                new Handler().post(new AlarmConfigHelper(MainActivity.this)::setClothingNotificationAlarm);
-                Log.i("Feed_Data", "Setted the alarm from MainActivity");
-                FeedDataInForeground.setNextSync(getApplicationContext());
-                Log.i("Feed_Data", "Setted the hourly sync from MainActivity");
-                getSharedPreferences(DatabaseOperation.PREFS_NAME, getApplicationContext().MODE_PRIVATE)
-                        .edit()
-                        .putBoolean(IS_ALARM_ON, true)
-                        .apply();
-            }
+            mNewsData.execute();
             refreshLayout.setRefreshing(false);
         });
 
@@ -181,8 +186,30 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private boolean isAlarmSet() {
-        return getSharedPreferences(DatabaseOperation.PREFS_NAME, getApplicationContext().MODE_PRIVATE)
-                .getBoolean(IS_ALARM_ON, false);
+        int lastAlarm = getSharedPreferences(DatabaseOperation.PREFS_NAME, this.MODE_PRIVATE)
+                .getInt(AlarmConfigHelper.LAST_NOTIFICATION_PENDING_INTENT_ID, 0);
+        if (lastAlarm == 0 ) { return false; }
+
+        Intent notificationLIntent = new Intent(this, AlarmWeatherReceiver.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            notificationLIntent.setFlags(0);
+        } else {
+            notificationLIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        notificationLIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        notificationLIntent.setAction(MY_ACTION);
+
+        return PendingIntent.getBroadcast(getApplicationContext(),
+                lastAlarm,
+                notificationLIntent,
+                PendingIntent.FLAG_NO_CREATE) != null;
+    }
+
+    public void sendTOviewPager(View view) {
+        Intent intent = new Intent(this, MainActivity1.class);
+        intent.putExtra(WelcomeActivity.WEATHER_DATA_KEY, mWeather);
+        intent.putExtra(WelcomeActivity.NEWS_DATA_KEY, mNewses);
+        startActivity(intent);
     }
 
 
@@ -243,6 +270,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 day.setIcon(json.getString("icon"));
                 day.setHumidity(json.getDouble("humidity"));
                 day.setPrecipChance(json.getDouble("precipProbability"));
+                day.setCloudCover(json.getDouble("cloudCover"));
+                day.setWindSpeed(json.getDouble("windSpeed"));
+                try {
+                    day.setPrecipType(json.getString("precipType"));
+                } catch (JSONException e) { Log.i(MainActivity.TAG, "Error: precipiceType not found"); }
 
                 days[i] = day;
             }
@@ -269,6 +301,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             current.setHumidity(currently.getDouble("humidity"));
             current.setCityName(mCityName);
             current.setWeekSummary(forecastData.getJSONObject("daily").getString("summary"));
+            current.setCloudCover(currently.getDouble("cloudCover"));
+            current.setWindSpeed(currently.getDouble("windSpeed"));
+            try {
+                current.setPrecipType(currently.getString("precipType"));
+            } catch (JSONException e) { Log.i(MainActivity.TAG, "Error: precipiceType not found"); }
 
             if("snow".equalsIgnoreCase(currently.getString("icon"))) {
                 if(mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
@@ -305,6 +342,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         private void updateDisplay() {
             if (mWeather.getDay().length > 0) { setupDayScrollView(); }
             if(mWeather.getHour().length > 0) { setupHourScrollView(); }
+            mNewses = mNewsData.getNewses();
             if(currentFocusedButton != null) {
                 currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
             }
@@ -342,6 +380,30 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         @Override
         protected String doInBackground(Object[] params) {
             mCallHelper.call();
+            if (!isAlarmSet()) {
+                ExecutorService executorService;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    executorService = new ForkJoinPool();
+                    executorService.submit(new AlarmConfigHelper(MainActivity.this)::setClothingNotificationAlarm);
+                    Log.i(TAG, "Setted the alarm from MainActivity");
+                    executorService.submit(() -> FeedDataInForeground.setNextSync(getApplicationContext()));
+                    Log.i(TAG, "Setted the hourly sync from MainActivity");
+                } else {
+                    executorService = Executors.newCachedThreadPool();
+                    executorService.submit(new AlarmConfigHelper(MainActivity.this)::setClothingNotificationAlarm);
+                    Log.i(TAG, "Setted the alarm from MainActivity");
+                    executorService.submit(() -> FeedDataInForeground.setNextSync(getApplicationContext()));
+                    Log.i(TAG, "Setted the hourly sync from MainActivity");
+                }
+
+                startService(new Intent(getApplication(), KillCheckerService.class));
+                executorService.shutdown();
+
+                getSharedPreferences(DatabaseOperation.PREFS_NAME, getApplicationContext().MODE_PRIVATE)
+                        .edit()
+                        .putBoolean(IS_ALARM_ON, true)
+                        .apply();
+            }
             return mCallHelper.getJsonData();
         }
 
@@ -380,9 +442,68 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         } catch (IOException e) {
             Log.e(TAG, "Error message: " + e);
+            cityInfoBuilder = getLocationWithGoogleMapApi(latitude, longitude);
         }
 
         return cityInfoBuilder;
+    }
+
+    private String getLocationWithGoogleMapApi(double latitude, double longitude) {
+        String[] result = {getString(R.string.unknown_location)};
+        OkHttpClient httpClient = new OkHttpClient();
+        Request httpRequest = new Request.Builder()
+                .url(String.format(Locale.ENGLISH, "https://maps.googleapi.com/maps/api/geocode/json?latlng=%f,%f",
+                        latitude,
+                        longitude))
+                .build();
+
+        Call apiCall = httpClient.newCall(httpRequest);
+        apiCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i(TAG, e.getMessage() + " this error happened during the call");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        result[0] = getCityAddress(new JSONObject(response.body().string()));
+                    }
+                } catch (IOException | JSONException e) {
+                    Log.e(TAG, "Exception caught: ", e);
+                }
+            }
+        });
+
+        return result[0];
+    }
+
+    private String getCityAddress(JSONObject jsonResult) {
+        String resultFromArray = "";
+        if (jsonResult.has("results")) {
+            try {
+                JSONArray jsonArray = jsonResult.getJSONArray("results");
+
+                if (jsonArray.length() > 0) {
+                    JSONArray components = jsonArray.getJSONObject(0).getJSONArray("address_components");
+
+                    for (int i = 0; i < components.length(); i++) {
+                        JSONArray types = components.getJSONObject(i).getJSONArray("types");
+
+                        for (int j = 0; j < types.length(); j++) {
+                            if ("locality".equals(types.getString(j))) {
+                                resultFromArray = components.getJSONObject(i).getString("long_name");
+
+                            } else if ("country".equals(types.getString(j))) {
+                                return resultFromArray + ", " + components.getJSONObject(i).getString("long_name");
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) { Log.i(TAG, "Error " + e.getMessage()); }
+        }
+        return resultFromArray;
     }
 
     @Override
@@ -450,7 +571,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     protected void onResume() {
         super.onResume();
         mGoogleApiClient.connect();
-        Log.i("LIFECYCLE", "OnResume METHOD");
+        Log.i(TAG, "OnResume METHOD");
     }
 
     @Override
@@ -469,17 +590,20 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         if (mWeather.getHour()[47] != null) {
             mDatabase.saveHourlyWeather(mWeather.getHour());
         }
-        Log.i("LIFECYCLE", "OnPause METHOD");
+        if (mNewses[3] != null) { mDatabase.saveNewses(mNewses); }
+        Log.i(TAG, "OnPause METHOD");
     }
 
     /**
      * When the activity launched by the user
-     * this function show the last saved from the db
+     * this function show the last saved weather data
+     * from the db
      */
     private void initializeField() {
         mWeather.setCurrent(mDatabase.getCurrentWeatherFromDatabase());
         mWeather.setDay(mDatabase.getDailyWeatherFromDatabase());
         mWeather.setHour(mDatabase.getHourlyWeatherFromDatabase());
+        mNewses = mDatabase.getNewFromDatabase();
 
         mLocationLabel.setText(mWeather.getCurrent().getCityName() == null ? getLocationName(mLatitude, mLongitude)
                 : mWeather.getCurrent().getCityName());

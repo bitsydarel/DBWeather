@@ -8,11 +8,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
+import com.darelbitsy.dbweather.news.News;
+import com.darelbitsy.dbweather.ui.MainActivity;
 import com.darelbitsy.dbweather.weather.WeatherDatabase;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.darelbitsy.dbweather.weather.WeatherDatabase.CURRENT_CITYNAME;
@@ -43,6 +49,12 @@ import static com.darelbitsy.dbweather.weather.WeatherDatabase.HOUR_TIMEZONE;
 import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_JSON_DATA;
 import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_KNOW_LATITUDE;
 import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_KNOW_LONGITUDE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.LAST_SERVER_SYNC;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.NEWS_ID;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.NEWS_SOURCE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.NEWS_TABLE_NAME;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.NEWS_TITLE;
+import static com.darelbitsy.dbweather.weather.WeatherDatabase.NEWS_URL;
 import static com.darelbitsy.dbweather.weather.WeatherDatabase.WEEK_SUMMARY;
 
 /**
@@ -53,12 +65,16 @@ public class DatabaseOperation {
     private static WeatherDatabase mDatabase;
     public static final String PREFS_NAME = "db_weather_prefs";
     private SharedPreferences.Editor mEditor;
+
     private static final String CURRENT_INSERTED = "current_inserted";
     private static final String DAYS_INSERTED = "days_inserted";
     private static final String HOURLY_INSERTED = "hourly_inserted";
+    private static final String NEWS_INSERTED = "news_inserted";
+
     private boolean isDaysInserted;
     private boolean isHourInserted;
     private boolean iSCurrentInserted;
+    private boolean isNewsInserted;
 
     public DatabaseOperation(Context context) {
         if (mDatabase == null) {
@@ -69,6 +85,7 @@ public class DatabaseOperation {
         iSCurrentInserted = sharedPreferences.getBoolean(CURRENT_INSERTED, false);
         isDaysInserted = sharedPreferences.getBoolean(DAYS_INSERTED, false);
         isHourInserted = sharedPreferences.getBoolean(HOURLY_INSERTED, false);
+        AndroidThreeTen.init(context);
     }
 
     public void saveCurrentWeather(final Current current, final WeatherCallHelper weatherApi) {
@@ -86,6 +103,7 @@ public class DatabaseOperation {
         databaseInsert.put(WEEK_SUMMARY, current.getWeekSummary());
         databaseInsert.put(LAST_KNOW_LATITUDE, weatherApi.getLatitude());
         databaseInsert.put(LAST_KNOW_LONGITUDE, weatherApi.getLongitude());
+        databaseInsert.put(LAST_SERVER_SYNC, new Date().toString());
         if(iSCurrentInserted) {
             sqLiteDatabase.update(CURRENT_TABLE_NAME,
                     databaseInsert,
@@ -129,14 +147,50 @@ public class DatabaseOperation {
                 databaseInsert.clear();
                 if ( result == -1) {
                     Log.i("DATABASE_DB", index.get() + " With " + day.toString() + " ON DAYS TABLE NOT INSERTED");
-                }
-                else { Log.i("DATABASE_DB", index.get() +" With " + day.toString() +  " ON DAYS TABLE INSERTED"); }
+
+                } else { Log.i("DATABASE_DB", index.get() +" With " + day.toString() +  " ON DAYS TABLE INSERTED"); }
                 index.getAndIncrement();
             }
         }
         if(!isDaysInserted) {
             isDaysInserted = true;
             mEditor.putBoolean(DAYS_INSERTED, isDaysInserted);
+            mEditor.commit();
+        }
+    }
+
+    public void saveNewses(final News[] newses) {
+        ContentValues databaseInsert = new ContentValues();
+        SQLiteDatabase sqLiteDatabase = mDatabase.getWritableDatabase();
+        AtomicInteger index = new AtomicInteger(1);
+        for (News news : newses) {
+            databaseInsert.put(NEWS_SOURCE, news.getNewsSource());
+            databaseInsert.put(NEWS_TITLE, news.getNewsTitle());
+
+            try { databaseInsert.put(NEWS_URL, news.getArticleUrl()); }
+            catch (URISyntaxException e) { Log.i(MainActivity.TAG, "error can't put news url in the db"); }
+
+            if (isNewsInserted) {
+                int result = sqLiteDatabase.update(NEWS_TABLE_NAME,
+                        databaseInsert,
+                        NEWS_ID + " = ?",
+                        new  String[] {Integer.toString(index.getAndIncrement())});
+                databaseInsert.clear();
+                Log.i(MainActivity.TAG, "ROW "+ result+ " with " + news.toString() + " ON NEWS TABLE UPDATED");
+
+            } else {
+                long result = sqLiteDatabase.insert(NEWS_TABLE_NAME, null, databaseInsert);
+                databaseInsert.clear();
+                if (result == -1) {
+                    Log.i(MainActivity.TAG, index.get() + " with " + news.toString() + " ON NEWS TABLE NOT INSERTED");
+
+                } else { Log.i(MainActivity.TAG, index.get() + " with " + news.toString() + " ON NEWS TABLE INSERTED"); }
+                index.getAndIncrement();
+            }
+        }
+        if (!isNewsInserted) {
+            isNewsInserted = true;
+            mEditor.putBoolean(NEWS_INSERTED, isNewsInserted);
             mEditor.commit();
         }
     }
@@ -175,8 +229,7 @@ public class DatabaseOperation {
 
     public Current getCurrentWeatherFromDatabase() {
         Current current = new Current();
-        SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
-        Cursor databaseCursor = sqLiteDatabase.rawQuery("SELECT * FROM " +
+        Cursor databaseCursor = mDatabase.getReadableDatabase().rawQuery("SELECT * FROM " +
                 CURRENT_TABLE_NAME, null);
         databaseCursor.moveToFirst();
         if(!databaseCursor.isAfterLast()) {
@@ -196,9 +249,8 @@ public class DatabaseOperation {
 
     public Double[] getCoordinates() {
         Double[] coordinates = new Double[2];
-        SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
 
-        Cursor databaseCursor = sqLiteDatabase.rawQuery("SELECT " +
+        Cursor databaseCursor = mDatabase.getReadableDatabase().rawQuery("SELECT " +
                 LAST_KNOW_LATITUDE +
                 ", " +LAST_KNOW_LONGITUDE +
                 " FROM "+ CURRENT_TABLE_NAME , null);
@@ -213,8 +265,7 @@ public class DatabaseOperation {
 
     public String getJsonData() {
         String jsonData = "";
-        SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
-        Cursor databaseCursor = sqLiteDatabase.rawQuery("SELECT " +
+        Cursor databaseCursor = mDatabase.getReadableDatabase().rawQuery("SELECT " +
                 LAST_JSON_DATA +
                 " FROM " +
                 CURRENT_TABLE_NAME, null);
@@ -228,22 +279,40 @@ public class DatabaseOperation {
         return jsonData;
     }
 
+    public String getLastKnowLocation() {
+        String cityName = "--";
+        Cursor databaseCursor  = mDatabase.getReadableDatabase()
+                .rawQuery("SELECT " +
+                CURRENT_CITYNAME +
+                " FROM " +
+                CURRENT_TABLE_NAME, null);
+        if (databaseCursor != null) {
+            databaseCursor.moveToFirst();
+            if (!databaseCursor.isAfterLast()) {
+                cityName = databaseCursor.getString(databaseCursor.getColumnIndex(CURRENT_CITYNAME));
+            }
+            databaseCursor.close();
+        }
+        return cityName;
+    }
+
     public void setJsonData(String jsonData) {
         ContentValues databaseInsert = new ContentValues();
         databaseInsert.put(LAST_JSON_DATA, jsonData);
         SQLiteDatabase sqLiteDatabase = mDatabase.getWritableDatabase();
         sqLiteDatabase.update(CURRENT_TABLE_NAME, databaseInsert, null, null);
         sqLiteDatabase.close();
-        Log.i("DATABASE_DB", "JSONDATA " + jsonData + " UPDATED");
+        Log.i("DATABASE_DB", "JSON_DATA " + jsonData + " UPDATED");
     }
 
     public Day[] getDailyWeatherFromDatabase() {
         Day[] days = new Day[8];
-        SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
-        Cursor databaseCursor = sqLiteDatabase.rawQuery("SELECT * FROM " +
+
+        Cursor databaseCursor = mDatabase.getReadableDatabase().rawQuery("SELECT * FROM " +
                 DAYS_TABLE_NAME +
                 " ORDER BY " +
                 DAY_ID+" ASC", null);
+
         if(databaseCursor != null) {
             AtomicInteger index = new AtomicInteger(0);
             for (databaseCursor.moveToFirst(); !databaseCursor.isAfterLast(); databaseCursor.moveToNext()) {
@@ -287,6 +356,38 @@ public class DatabaseOperation {
         return hours;
     }
 
+    /**
+     * This method get all the news
+     * from the database and return it
+     * @return list of newses
+     */
+    public News[] getNewFromDatabase() {
+        News[] newses = new News[13];
+
+        Cursor databaseCursor = mDatabase.getReadableDatabase().rawQuery("SELECT * FROM " +
+                NEWS_TABLE_NAME +
+                " ORDER BY " +
+                NEWS_ID + " ASC", null);
+
+        if (databaseCursor != null) {
+            AtomicInteger index = new AtomicInteger(0);
+            for (databaseCursor.moveToFirst(); !databaseCursor.isAfterLast(); databaseCursor.moveToNext()) {
+                News news = new News();
+                news.setNewsSource(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_SOURCE)));
+                news.setNewsTitle(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_TITLE)));
+                try {
+                    news.setArticleUrl(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_URL)));
+
+                } catch (MalformedURLException e) { Log.i(MainActivity.TAG, "Error: "+ e.getMessage()); }
+                Log.i(MainActivity.TAG, "getNewsFromDatabase: On " + index.get());
+                Log.i(MainActivity.TAG, news.toString() + ": On " + index.get());
+                newses[index.getAndIncrement()] = news;
+            }
+            databaseCursor.close();
+        }
+        return newses;
+    }
+
     public Hour getNotificationHour(final long systemTime) {
         Hour hour = new Hour();
         SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
@@ -308,5 +409,21 @@ public class DatabaseOperation {
             cursor.close();
         }
         return hour;
+    }
+
+    public String getLastKnowServerSync() {
+        String serverSyncTime = "No Recent Server Sync Available";
+        SQLiteDatabase sqLiteDatabase = mDatabase.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT " +
+                LAST_SERVER_SYNC + " FROM " +
+                CURRENT_TABLE_NAME, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                serverSyncTime = cursor.getString(cursor.getColumnIndex(LAST_SERVER_SYNC));
+            }
+            cursor.close();
+        }
+        return serverSyncTime;
     }
 }

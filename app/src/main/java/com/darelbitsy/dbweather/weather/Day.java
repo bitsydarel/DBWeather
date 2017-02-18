@@ -18,14 +18,29 @@ public class Day extends WeatherData implements Parcelable {
 
     public Day() { }
 
+
+    public static final Creator<Day> CREATOR = new Creator<Day>() {
+        @Override
+        public Day createFromParcel(Parcel in) {
+            return new Day(in);
+        }
+        @Override
+        public Day[] newArray(int size) {
+            return new Day[size];
+        }
+    };
+
     private Day(Parcel in) {
         setTime(in.readLong());
         setSummary(in.readString());
         mTemperatureMax = in.readInt();
         setIcon(in.readString());
         setTimeZone(in.readString());
-        setHumidity(in.readDouble());
+        setHumidity(in.readInt());
         setPrecipChance(in.readInt());
+        setCloudCover(in.readInt());
+        setPrecipType(in.readString());
+        setWindSpeed(in.readInt());
     }
 
     @Override
@@ -37,24 +52,15 @@ public class Day extends WeatherData implements Parcelable {
         dest.writeString(getTimeZone());
         dest.writeInt(getHumidity());
         dest.writeInt(getPrecipChance());
+        dest.writeInt(getCloudCover());
+        dest.writeString(getPrecipType());
+        dest.writeInt(getWindSpeed());
     }
 
     @Override
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Day> CREATOR = new Creator<Day>() {
-        @Override
-        public Day createFromParcel(Parcel source) {
-            return new Day(source);
-        }
-
-        @Override
-        public Day[] newArray(int size) {
-            return new Day[size];
-        }
-    };
 
     public int getTemperatureMax() { return mTemperatureMax; }
 

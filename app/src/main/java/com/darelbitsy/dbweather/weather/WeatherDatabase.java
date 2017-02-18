@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class WeatherDatabase extends SQLiteOpenHelper {
-    public static final int VERSION = 1;
-    public static final String DB_NAME = "db_weather.sqlite";
+    private static final int VERSION = 1;
+    private static final String DB_NAME = "db_weather.sqlite";
     private static final String CREATE_TABLE_QUERY = "create table ";
 
     public static final String DAYS_TABLE_NAME = "days";
@@ -19,8 +19,11 @@ public class WeatherDatabase extends SQLiteOpenHelper {
     public static final String DAY_TEMPERATURE_MAX = "temperature";
     public static final String DAY_ICON = "icon";
     public static final String DAY_HUMIDITY = "humidity";
-    public static final String DAY_PRECIPCHANCE = "precipe_chance";
+    public static final String DAY_PRECIPCHANCE = "precipice_chance";
+    public static final String DAY_PRECIPTYPE = "precipice_type";
     public static final String DAY_SUMMARY = "summary";
+    public static final String DAY_WIND_SPEED = "wind_speed_percentage";
+    public static final String DAY_CLOUD_COVER = "cloud_cover_percentage";
     public static final String DAY_TIMEZONE = "timezone";
 
     public static final String HOURS_TABLE_NAME = "hours";
@@ -29,6 +32,7 @@ public class WeatherDatabase extends SQLiteOpenHelper {
     public static final String HOUR_TIME = "time";
     public static final String HOUR_SUMMARY = "summary";
     public static final String HOUR_ICON = "icon";
+    public static final String HOUR_TEMPERATURE = "hour_temperature";
 
     public static final String CURRENT_TABLE_NAME = "current";
     public static final String CURRENT_CITYNAME = "city_name";
@@ -38,13 +42,23 @@ public class WeatherDatabase extends SQLiteOpenHelper {
     public static final String CURRENT_TIME = "time";
     public static final String CURRENT_TEMPERATURE = "temperature";
     public static final String CURRENT_HUMIDITY = "humidity";
-    public static final String CURRENT_PRECIPCHANCE = "precipe_chance";
+    public static final String CURRENT_PRECIPCHANCE = "precipice_chance";
+    public static final String CURRENT_PRECIPTYPE = "precipice_type";
+    public static final String CURRENT_CLOUD_COVER = "cloud_cover";
+    public static final String CURRENT_WIND_SPEED = "wind_speed";
+
     public static final String WEEK_SUMMARY = "week_summary";
 
     public static final String LAST_KNOW_LATITUDE = "last_know_latitude";
     public static final String LAST_KNOW_LONGITUDE = "last_know_longitude";
     public static final String LAST_JSON_DATA = "last_json_data";
-    public static final String HOUR_TEMPERATURE = "hour_temperature";
+    public static final String LAST_SERVER_SYNC = "last_server_sync";
+
+    public static final String NEWS_TABLE_NAME = "news";
+    public static final String NEWS_ID = "id";
+    public static final String NEWS_SOURCE = "news_source";
+    public static final String NEWS_TITLE = "news_title";
+    public static final String NEWS_URL = "news_url";
 
     public WeatherDatabase(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -66,7 +80,10 @@ public class WeatherDatabase extends SQLiteOpenHelper {
                 DAY_TEMPERATURE_MAX + " integer," +
                 DAY_ICON + " text," +
                 DAY_HUMIDITY + " integer," +
-                DAY_PRECIPCHANCE + " integer" +
+                DAY_PRECIPCHANCE + " integer," +
+                DAY_PRECIPTYPE+ " text," +
+                DAY_CLOUD_COVER+ " integer," +
+                DAY_WIND_SPEED+ " integer" +
                 ");"
         );
     }
@@ -83,6 +100,16 @@ public class WeatherDatabase extends SQLiteOpenHelper {
         );
     }
 
+    private void createNewsTable(SQLiteDatabase database) {
+        database.execSQL(CREATE_TABLE_QUERY + NEWS_TABLE_NAME + " (" +
+                NEWS_ID + " integer primary key autoincrement not null," +
+                NEWS_SOURCE + " text," +
+                NEWS_TITLE + " text," +
+                NEWS_URL + " text" +
+                ");"
+        );
+    }
+
     private void createCurrentWeatherTable(SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + CURRENT_TABLE_NAME + " (" +
                 CURRENT_CITYNAME + " text ," +
@@ -93,10 +120,14 @@ public class WeatherDatabase extends SQLiteOpenHelper {
                 CURRENT_TEMPERATURE + " integer," +
                 CURRENT_HUMIDITY + " integer," +
                 CURRENT_PRECIPCHANCE + " integer," +
+                CURRENT_PRECIPTYPE+ " text," +
+                CURRENT_CLOUD_COVER+ " integer," +
+                CURRENT_WIND_SPEED+ " integer," +
                 WEEK_SUMMARY + " text," +
                 LAST_KNOW_LATITUDE + " real," +
                 LAST_KNOW_LONGITUDE + " real," +
-                LAST_JSON_DATA + " text" +
+                LAST_JSON_DATA + " text," +
+                LAST_SERVER_SYNC + " text" +
                 ");"
         );
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/newsLinearLayout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/news_background"
+              android:orientation="vertical">
+        <TextView
+            android:id="@+id/newsFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/news_from"
+            android:textColor="#F1948A"/>
+        <TextView
+            android:id="@+id/newsDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Here is the news from today, DB WEATHER just came out i hope y'all enjoyed this release , leave a feedback, we will love to her from you and thanks for contributing to my project, thanks for the love -> Darel Bitsy"
+            android:textColor="#FBFCFC"
+            android:gravity="center_horizontal|center_vertical"/>
+</LinearLayout>

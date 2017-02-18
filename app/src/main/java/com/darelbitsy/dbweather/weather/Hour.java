@@ -19,6 +19,9 @@ import java.util.TimeZone;
 public class Hour extends WeatherData implements Parcelable {
 
 
+    /**
+     * Empty constructor just like place holder
+     */
     public Hour() {}
 
     public static final Creator<Hour> CREATOR = new Creator<Hour>() {

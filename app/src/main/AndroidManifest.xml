@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -15,8 +17,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
@@ -31,29 +32,47 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.AboutUs">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity"/>
-        </activity>
+
         <activity android:name=".alert.NotificationActivity"
-            android:screenOrientation="portrait">
+                  android:theme="@style/Theme.Transparent">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.MainActivity1">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name=".services.SyncDatabaseService"
+                 android:enabled="true"
+                 android:process=":remote"/>
+
+        <service android:name=".services.KillCheckerService"
+                 android:enabled="true"
+                 android:stopWithTask="false"/>
+
         <receiver android:name=".receiver.AlarmWeatherReceiver"
-            android:enabled="true"
-            android:exported="true" />
+                  android:enabled="true"
+                  android:process=":remote"
+                  android:exported="true">
+            <intent-filter
+                android:priority="999">
+                <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".receiver.SyncDataReceiver"
-            android:exported="true"
-            android:enabled="true"/>
+                  android:exported="true"
+                  android:enabled="true"
+                  android:process=":remote"/>
 
         <receiver android:name=".receiver.AlarmConfigOnBoot"
-            android:enabled="true"
-            android:exported="true">
+                  android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+                  android:enabled="true"
+                  android:exported="true">
             <intent-filter >
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
@@ -62,6 +81,18 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".receiver.ServiceRestart"
+                  android:exported="true"
+                  android:enabled="true"
+                  android:process=":remote">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_RESTARTED"/>
+                <data android:scheme="package"
+                      android:sspPrefix="com.darelbitsy.dbweather"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

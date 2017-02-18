@@ -27,7 +27,7 @@ import okhttp3.Response;
 
 public class WeatherCallHelper {
     private Context mContext;
-    private List<String> supportedLang = Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
+    private final List<String> supportedLang = Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
             "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
             "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw");
 

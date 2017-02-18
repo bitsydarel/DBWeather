@@ -8,23 +8,21 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
 import com.darelbitsy.dbweather.helper.WeatherCallHelper;
 import com.darelbitsy.dbweather.receiver.SyncDataReceiver;
+import com.darelbitsy.dbweather.ui.MainActivity;
 import com.darelbitsy.dbweather.weather.Current;
 import com.darelbitsy.dbweather.weather.Day;
 import com.darelbitsy.dbweather.weather.Hour;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by Darel Bitsy on 03/02/17.
@@ -42,35 +40,38 @@ public class FeedDataInForeground {
     }
 
     public void performSync() {
+        AndroidThreeTen.init(mContext);
         String json = mCallHelper.call().isEmpty() ? mDatabase.getJsonData() : mCallHelper.getJsonData();
         try {
             mDatabase.saveCurrentWeather(getCurrentWeather(json), mCallHelper);
         } catch (JSONException e) {
-            Log.i("FEED_DBWEATHER", e.getMessage());
+            Log.i(MainActivity.TAG, e.getMessage());
         }
         try {
             mDatabase.saveHourlyWeather(getHourlyWeather(json));
         } catch (JSONException e) {
-            Log.i("FEED_DBWEATHER", e.getMessage());
+            Log.i(MainActivity.TAG, e.getMessage());
         }
         try {
             mDatabase.saveDailyWeather(getDailyWeather(json));
         } catch (JSONException e) {
-            Log.i("FEED_DBWEATHER", e.getMessage());
+            Log.i(MainActivity.TAG, e.getMessage());
         }
-        Log.i("FEED_DBWEATHER with: ", json);
+        Log.i(MainActivity.TAG, json);
+        FeedDataInForeground.setNextSync(mContext);
     }
 
     public static void setNextSync(Context context) {
-        TimeZone timeZone = TimeZone.getTimeZone(AlarmConfigHelper.getCurrentTimeZone(context));
-        Calendar calendar = Calendar.getInstance(timeZone, Locale.getDefault());
-        calendar.setTimeInMillis(System.currentTimeMillis() * 3600000);
+        AndroidThreeTen.init(context);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent syncTaskIntent = new Intent(context, SyncDataReceiver.class);
+        syncTaskIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 7127,
                 new Intent(context, SyncDataReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis() + 3600000, AlarmManager.INTERVAL_HOUR, pendingIntent);
     }
 
     /**
@@ -171,7 +172,7 @@ public class FeedDataInForeground {
             }
 
         } catch (IOException e) {
-            Log.i("FEED_DBWEATHER", "Error message: " + e);
+            Log.i(MainActivity.TAG, "Error message: " + e);
         }
 
         return cityInfoBuilder;

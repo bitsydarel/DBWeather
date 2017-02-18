@@ -3,12 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_notif_advice"
-    android:layout_width="match_parent"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
-    style="@style/Dialog_theme"
-    android:paddingTop="16dp"
+    android:layout_gravity="center_horizontal|center_vertical"
     android:paddingBottom="16dp"
-    tools:background="@android:color/black"
+    tools:background="#7f000000"
     tools:context="com.darelbitsy.dbweather.alert.NotificationHelper">
 
     <ImageView
@@ -18,17 +17,21 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/rounded_bg"
         android:src="@mipmap/ic_launcher"/>
 
     <TextView
         android:id="@+id/title_text"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
-        tools:text="It's will rain"
+        tools:text="It's will rain. Everyday is a new day. Thanks God for all the love"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:paddingTop="16dp"
         android:textSize="15sp"
         android:textColor="@android:color/white"
         android:layout_alignParentTop="true"
@@ -41,21 +44,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/rounded_bg"
         android:src="@drawable/menu"/>
-
-    <ImageView
-        android:id="@+id/iconWeather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/logo_icon"
-        android:layout_marginTop="42dp"
-        android:paddingStart="5dp"
-        android:paddingLeft="5dp"
-        android:src="@drawable/clear_day"
-        android:scaleType="fitXY"/>
 
     <TextView
         android:id="@+id/description_label"
@@ -63,14 +55,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/title_text"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="25dp"
         android:gravity="center_horizontal|center_vertical"
         android:paddingRight="5dp"
         android:paddingLeft="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
         android:textSize="15sp"
-        tools:text="Today in the morning it' will rain.\nWe recommend to take a parra-pluie"
+        tools:text="Today in the morning it' will rain.\nWe recommend to take a parra-pluie,\n\n Loppersum est une commune des Pays-Bas, située dans la province de Groningue. Elle compte 11 000 habitants et sa superficie est de 112 km²."
         android:textColor="@android:color/white"/>
 
     <TextView
@@ -81,7 +73,21 @@
         android:layout_below="@id/description_label"
         android:layout_centerInParent="true"
         android:textSize="15sp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         tools:text="Partly-Cloudly"
         android:textColor="@android:color/white"/>
+
+    <ImageView
+        android:id="@+id/iconWeather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/summaryWeather"
+        android:layout_toStartOf="@id/summaryWeather"
+        android:layout_below="@id/description_label"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:src="@drawable/clear_day"
+        android:scaleType="fitXY"/>
 </RelativeLayout>
