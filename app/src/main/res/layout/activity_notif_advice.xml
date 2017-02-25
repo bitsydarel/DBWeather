@@ -8,7 +8,7 @@
     android:layout_gravity="center_horizontal|center_vertical"
     android:paddingBottom="16dp"
     tools:background="#7f000000"
-    tools:context="com.darelbitsy.dbweather.alert.NotificationHelper">
+    tools:context=".ui.alert.NotificationHelper">
 
     <ImageView
         android:id="@+id/logo_icon"

@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.receiver.AlarmWeatherReceiver;
-import com.darelbitsy.dbweather.ui.MainActivity;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Calendar;
@@ -135,7 +134,7 @@ public class AlarmConfigHelper {
                     AlarmManager.INTERVAL_DAY,
                     currentPendingIntent);
         }
-        Log.i(MainActivity.TAG,
+        Log.i(ConstantHolder.TAG,
                 "Set Alarm for Date: "+currentCalendar.getTime().toString());
     }
 
@@ -170,13 +169,13 @@ public class AlarmConfigHelper {
 
     public static String getCurrentTimeZone(final Context context) {
         String timezone = new DatabaseOperation(context)
-                .getCurrentWeatherFromDatabase().getTimeZone();
+                .getWeatherData().getTimezone();
         return timezone == null ? TimeZone.getDefault().getID() : timezone;
     }
 
     public void setClothingNotificationAlarm() {
         setCalendars();
         setAlarm();
-        Log.i(MainActivity.TAG, "ALARM DONE AT "+System.currentTimeMillis());
+        Log.i(ConstantHolder.TAG, "ALARM DONE AT "+System.currentTimeMillis());
     }
 }

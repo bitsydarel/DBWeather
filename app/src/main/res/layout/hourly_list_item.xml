@@ -14,7 +14,7 @@
         android:layout_marginLeft="5dp"
         android:textColor="@android:color/black"
         android:gravity="center_horizontal|center_vertical"
-        tools:text="100°"/>
+        android:text="100"/>
 
     <ImageView
         android:id="@+id/hourlyIconImageView"

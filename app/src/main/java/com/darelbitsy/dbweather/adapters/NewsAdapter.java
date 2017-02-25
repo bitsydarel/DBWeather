@@ -11,11 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.news.News;
-import com.darelbitsy.dbweather.ui.MainActivity;
+import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.model.news.News;
 
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -23,9 +23,12 @@ import java.util.Locale;
  */
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>  {
-    private News[] mNewses;
+    private ArrayList<News> mNewses;
 
-    public NewsAdapter(News[] newses) { mNewses = Arrays.copyOf(newses, newses.length); }
+    public NewsAdapter(ArrayList<News> newses) {
+        mNewses = new ArrayList<>();
+        mNewses.addAll(newses);
+    }
 
     @Override
     public NewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,18 +39,25 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public void onBindViewHolder(NewsViewHolder holder, int position) {
-        holder.bindNews(mNewses[position]);
+        holder.bindNews(mNewses.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return (mNewses != null  && mNewses.length > 1) ? mNewses.length : 0;
+        return (mNewses != null  && mNewses.size() > 1) ? mNewses.size() : 0;
+    }
+
+    public void updateContent(ArrayList<News> newses) {
+        mNewses.clear();
+        mNewses.addAll(newses);
+        notifyDataSetChanged();
     }
 
     class NewsViewHolder extends RecyclerView.ViewHolder {
         final LinearLayout newsContainer;
         final TextView newsFrom;
         final TextView newsDescription;
+        final TextView newsPublishedDate;
         String newsUrl;
 
         final View.OnClickListener newsOnClickListener = view -> {
@@ -63,6 +73,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             newsContainer = (LinearLayout) itemView.findViewById(R.id.newsLinearLayout);
             newsFrom = (TextView) itemView.findViewById(R.id.newsFrom);
             newsDescription = (TextView) itemView.findViewById(R.id.newsDescription);
+            newsPublishedDate = (TextView) itemView.findViewById(R.id.newsDate);
         }
 
         void bindNews(News news) {
@@ -71,7 +82,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                 newsContainer.setOnClickListener(newsOnClickListener);
             } catch (URISyntaxException e) {
                 newsUrl = "";
-                Log.i(MainActivity.TAG, "Error: " + e.getMessage());
+                Log.i(ConstantHolder.TAG, "Error: " + e.getMessage());
             }
 
             newsFrom.setText(String.format(Locale.getDefault(), itemView
@@ -79,6 +90,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                     .getString(R.string.news_from), news.getNewsSource()));
 
             newsDescription.setText(news.getNewsTitle());
+            newsPublishedDate.setText(news.getPublishedAt());
         }
     }
 }

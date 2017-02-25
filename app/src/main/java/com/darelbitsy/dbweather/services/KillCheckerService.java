@@ -12,9 +12,9 @@ import android.util.Log;
 
 import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
+import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.receiver.ServiceRestart;
 import com.darelbitsy.dbweather.receiver.SyncDataReceiver;
-import com.darelbitsy.dbweather.ui.MainActivity;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 /**
@@ -108,6 +108,6 @@ public class KillCheckerService extends Service {
                     AlarmManager.INTERVAL_HOUR,
                     servicePendingIntent);
         }
-        Log.i(MainActivity.TAG, "Kill Checker Service rescheduled");
+        Log.i(ConstantHolder.TAG, "Kill Checker Service rescheduled");
     }
 }

@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/newsLinearLayout"
-              android:layout_width="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/newsLinearLayout"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:paddingLeft="5dp"
+              android:paddingStart="5dp"
+              android:paddingEnd="5dp"
+              android:paddingRight="5dp"
               android:background="@drawable/news_background"
+              android:layout_weight="0"
               android:orientation="vertical">
-        <TextView
-            android:id="@+id/newsFrom"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/news_from"
-            android:textColor="#F1948A"/>
+            android:weightSum="100">
+                <TextView
+                    android:id="@+id/newsFrom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="@string/news_from"
+                    android:gravity="start"
+                    android:textColor="#F1948A"/>
+                <TextView
+                    android:id="@+id/newsDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:gravity="start"
+                    android:text="@string/published_at"
+                    android:textColor="#F1948A"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/newsDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Here is the news from today, DB WEATHER just came out i hope y'all enjoyed this release , leave a feedback, we will love to her from you and thanks for contributing to my project, thanks for the love -> Darel Bitsy"
+            tools:text="Here is the news from today, DB WEATHER just came out i hope y'all enjoyed this release , leave a feedback, we will love to her from you and thanks for contributing to my project, thanks for the love -> Darel Bitsy"
             android:textColor="#FBFCFC"
             android:gravity="center_horizontal|center_vertical"/>
 </LinearLayout>

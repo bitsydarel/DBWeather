@@ -17,7 +17,7 @@ public class LunarFragment extends android.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        jsonData = getArguments().getString(MainActivity1.JSON_DATA);
+//        jsonData = getArguments().getString(MainActivity.JSON_DATA);
     }
 
     @Nullable

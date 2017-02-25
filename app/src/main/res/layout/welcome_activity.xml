@@ -10,4 +10,13 @@
         android:src="@drawable/about_us"
         android:layout_centerInParent="true"/>
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFF00"
+        android:text="Powered by Dark Sky"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="15dp"/>
 </RelativeLayout>

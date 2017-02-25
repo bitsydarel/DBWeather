@@ -1,12 +1,11 @@
 package com.darelbitsy.dbweather.services;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
+import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.receiver.SyncDataReceiver;
 
 /**
@@ -28,7 +27,7 @@ public class SyncDatabaseService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         new FeedDataInForeground(this).performSync();
         Log.i("DBWEATHER", "Feed data from server ");
-        Toast.makeText(this, "DBweather updated weather data from server", Toast.LENGTH_LONG).show();
+        Log.i(ConstantHolder.TAG, "DBweather updated weather data from server");
         SyncDataReceiver.completeWakefulIntent(intent);
     }
 }

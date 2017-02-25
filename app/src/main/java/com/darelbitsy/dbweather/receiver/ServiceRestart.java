@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.ui.MainActivity;
+import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import static android.app.Service.START_FLAG_REDELIVERY;
@@ -58,7 +58,7 @@ public class ServiceRestart extends BroadcastReceiver {
                     AlarmManager.INTERVAL_HOUR,
                     servicePendingIntent);
         }
-        Log.i(MainActivity.TAG, "Kill Checker Service rescheduled");
+        Log.i(ConstantHolder.TAG, "Kill Checker Service rescheduled");
         wakeLock.release();
     }
 }

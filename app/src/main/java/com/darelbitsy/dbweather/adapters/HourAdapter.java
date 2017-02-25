@@ -8,19 +8,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.weather.Hour;
+import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
+import com.darelbitsy.dbweather.model.weather.HourlyData;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Darel Bitsy on 12/01/17.
  */
 
 public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder> {
-    private Hour[] mHours;
+    private List<HourlyData> mHours;
 
-    public HourAdapter(Hour[] hours) {
-        mHours = Arrays.copyOf(hours, hours.length);
+    public HourAdapter(List<HourlyData> hours) {
+        mHours = new ArrayList<>(hours);
     }
 
     @Override
@@ -33,12 +35,12 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
 
     @Override
     public void onBindViewHolder(HourViewHolder holder, int position) {
-        holder.bindHour(mHours[position]);
+        holder.bindHour(mHours.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return (mHours != null && mHours.length > 9) ? mHours.length : 0;
+        return (mHours != null && mHours.size() > 9) ? mHours.size() : 0;
     }
 
     class HourViewHolder extends RecyclerView.ViewHolder {
@@ -55,11 +57,11 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
             hourlyIconImageView = (ImageView) itemView.findViewById(R.id.hourlyIconImageView);
         }
 
-        void bindHour(Hour hour) {
-            hourlyTimeLabel.setText(hour.getHour());
+        void bindHour(HourlyData hour) {
+            hourlyTimeLabel.setText(WeatherUtil.getHour(hour.getTime(), null));
             hourlySummaryLabel.setText(hour.getSummary());
-            hourlyTemperatureLabel.setText(hour.getTemperature() + "°");
-            hourlyIconImageView.setImageResource(hour.getIconId(hour.getIcon()));
+            hourlyTemperatureLabel.setText(WeatherUtil.getTemperatureInInt(hour.getTemperature()) + "°");
+            hourlyIconImageView.setImageResource(WeatherUtil.getIconId(hour.getIcon()));
         }
     }
 }

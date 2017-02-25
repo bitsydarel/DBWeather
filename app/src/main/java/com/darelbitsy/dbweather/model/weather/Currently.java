@@ -1,0 +1,317 @@
+package com.darelbitsy.dbweather.model.weather;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
+
+/**
+ * Created by Darel Bitsy on 19/02/17.
+ */
+
+public class Currently implements Parcelable {
+
+    @SerializedName("time")
+    @Expose
+    private long time;
+    @SerializedName("summary")
+    @Expose
+    private String summary;
+    @SerializedName("icon")
+    @Expose
+    private String icon;
+    @SerializedName("nearestStormDistance")
+    @Expose
+    private long nearestStormDistance;
+    @SerializedName("precipIntensity")
+    @Expose
+    private double precipIntensity;
+    @SerializedName("precipIntensityError")
+    @Expose
+    private double precipIntensityError;
+    @SerializedName("precipProbability")
+    @Expose
+    private double precipProbability;
+    @SerializedName("precipType")
+    @Expose
+    private String precipType;
+    @SerializedName("temperature")
+    @Expose
+    private double temperature;
+    @SerializedName("apparentTemperature")
+    @Expose
+    private double apparentTemperature;
+    @SerializedName("dewPoint")
+    @Expose
+    private double dewPoint;
+    @SerializedName("humidity")
+    @Expose
+    private double humidity;
+    @SerializedName("windSpeed")
+    @Expose
+    private double windSpeed;
+    @SerializedName("windBearing")
+    @Expose
+    private long windBearing;
+    @SerializedName("visibility")
+    @Expose
+    private double visibility;
+    @SerializedName("cloudCover")
+    @Expose
+    private double cloudCover;
+    @SerializedName("pressure")
+    @Expose
+    private double pressure;
+    @SerializedName("ozone")
+    @Expose
+    private double ozone;
+
+    /**
+     * Empty constructor
+     * Help to initiate the class
+     * without data and populate it later
+     */
+    public Currently() {}
+
+    protected Currently(Parcel in) {
+        time = in.readLong();
+        summary = in.readString();
+        icon = in.readString();
+        nearestStormDistance = in.readLong();
+        precipIntensity = in.readDouble();
+        precipIntensityError = in.readDouble();
+        precipProbability = in.readLong();
+        precipType = in.readString();
+        temperature = in.readDouble();
+        apparentTemperature = in.readDouble();
+        dewPoint = in.readDouble();
+        humidity = in.readDouble();
+        windSpeed = in.readDouble();
+        windBearing = in.readLong();
+        visibility = in.readDouble();
+        cloudCover = in.readDouble();
+        pressure = in.readDouble();
+        ozone = in.readDouble();
+    }
+
+    public static final Creator<Currently> CREATOR = new Creator<Currently>() {
+        @Override
+        public Currently createFromParcel(Parcel in) {
+            return new Currently(in);
+        }
+
+        @Override
+        public Currently[] newArray(int size) {
+            return new Currently[size];
+        }
+    };
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getIcon() {
+        return icon == null ? "clear-day" : icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public long getNearestStormDistance() {
+        return nearestStormDistance;
+    }
+
+    public void setNearestStormDistance(long nearestStormDistance) {
+        this.nearestStormDistance = nearestStormDistance;
+    }
+
+    public double getPrecipIntensity() {
+        return precipIntensity;
+    }
+
+    public void setPrecipIntensity(double precipIntensity) {
+        this.precipIntensity = precipIntensity;
+    }
+
+    public double getPrecipIntensityError() {
+        return precipIntensityError;
+    }
+
+    public void setPrecipIntensityError(double precipIntensityError) {
+        this.precipIntensityError = precipIntensityError;
+    }
+
+    public double getPrecipProbability() {
+        return precipProbability;
+    }
+
+    public void setPrecipProbability(double precipProbability) {
+        this.precipProbability = precipProbability;
+    }
+
+    public String getPrecipType() {
+        return precipType;
+    }
+
+    public void setPrecipType(String precipType) {
+        this.precipType = precipType;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
+    public double getApparentTemperature() {
+        return apparentTemperature;
+    }
+
+    public void setApparentTemperature(double apparentTemperature) {
+        this.apparentTemperature = apparentTemperature;
+    }
+
+    public double getDewPoint() {
+        return dewPoint;
+    }
+
+    public void setDewPoint(double dewPoint) {
+        this.dewPoint = dewPoint;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(double humidity) {
+        this.humidity = humidity;
+    }
+
+    public double getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(double windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    public long getWindBearing() {
+        return windBearing;
+    }
+
+    public void setWindBearing(long windBearing) {
+        this.windBearing = windBearing;
+    }
+
+    public double getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(double visibility) {
+        this.visibility = visibility;
+    }
+
+    public double getCloudCover() {
+        return cloudCover;
+    }
+
+    public void setCloudCover(double cloudCover) {
+        this.cloudCover = cloudCover;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
+    }
+
+    public double getOzone() {
+        return ozone;
+    }
+
+    public void setOzone(double ozone) {
+        this.ozone = ozone;
+    }
+
+    public String getFormattedTime(Weather weather) {
+        final DateTimeFormatter format =
+                DateTimeFormatter.ofPattern("h:mm a");
+
+        return Instant.ofEpochSecond(getTime())
+                .atZone(ZoneId.of(weather.getTimezone()))
+                .format(format);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(time);
+        dest.writeString(summary);
+        dest.writeString(icon);
+        dest.writeLong(nearestStormDistance);
+        dest.writeDouble(precipIntensity);
+        dest.writeDouble(precipIntensityError);
+        dest.writeDouble(precipProbability);
+        dest.writeString(precipType);
+        dest.writeDouble(temperature);
+        dest.writeDouble(apparentTemperature);
+        dest.writeDouble(dewPoint);
+        dest.writeDouble(humidity);
+        dest.writeDouble(windSpeed);
+        dest.writeLong(windBearing);
+        dest.writeDouble(visibility);
+        dest.writeDouble(cloudCover);
+        dest.writeDouble(pressure);
+        dest.writeDouble(ozone);
+    }
+
+    @Override
+    public String toString() {
+        return "Currently{" +
+                "time=" + time +
+                ", summary='" + summary + '\'' +
+                ", icon='" + icon + '\'' +
+                ", nearestStormDistance=" + nearestStormDistance +
+                ", precipIntensity=" + precipIntensity +
+                ", precipIntensityError=" + precipIntensityError +
+                ", precipProbability=" + precipProbability +
+                ", precipType='" + precipType + '\'' +
+                ", temperature=" + temperature +
+                ", apparentTemperature=" + apparentTemperature +
+                ", dewPoint=" + dewPoint +
+                ", humidity=" + humidity +
+                ", windSpeed=" + windSpeed +
+                ", windBearing=" + windBearing +
+                ", visibility=" + visibility +
+                ", cloudCover=" + cloudCover +
+                ", pressure=" + pressure +
+                ", ozone=" + ozone +
+                '}';
+    }
+}

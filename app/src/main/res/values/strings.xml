@@ -48,4 +48,10 @@
     <string name="humidity_value">%1$d %%</string>
     <string name="cloudCover_label">cloudCover</string>
     <string name="cloudCoverValue">%1$d %%</string>
+    <string name="published_at">Published At: %1$s</string>
+    <string name="sunsetLabel">Sunset</string>
+    <string name="sunriseLabel">Sunrise</string>
+    <string name="apparentTemperatureValue">Feeling : %1$d °</string>
+    <string name="timeLabelValue">At %1$s, it will be</string>
+    <string name="precipChanceValue">%1$d %%</string>
 </resources>

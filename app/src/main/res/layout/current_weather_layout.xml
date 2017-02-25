@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    android:id="@+id/current_weather_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.darelbitsy.dbweather.ui.MainActivity"
@@ -16,18 +16,86 @@
         android:id="@+id/temperatureLabel"
         android:textColor="@android:color/white"
         android:text="--"
-        android:textSize="150sp"/>
+        android:textSize="130sp"/>
+
+    <TextView
+        android:id="@+id/apparentTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/temperatureLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="15dp"
+        android:textColor="@android:color/white"
+        android:text="@string/apparentTemperatureValue"/>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/degreeImageView"
         android:src="@drawable/degree"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:layout_alignTop="@id/temperatureLabel"
         android:layout_toRightOf="@id/temperatureLabel"
         android:layout_toEndOf="@id/temperatureLabel"
         android:contentDescription="Degree Image"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:text="@string/sunriseLabel"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/sunriseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_gravity="center"
+            android:text="--"
+            android:textSize="15sp"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:text="@string/sunsetLabel"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/sunsetTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_gravity="center"
+            android:text="--"
+            android:textSize="15sp"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/timeLabel"
         android:layout_width="wrap_content"
@@ -36,7 +104,7 @@
         android:layout_centerInParent="true"
         android:layout_above="@id/temperatureLabel"
         android:textColor="@color/transparentWhite"
-        android:text="At 5:00 PM it will be"
+        android:text="@string/timeLabelValue"
         android:textSize="18sp"/>
 
 
@@ -46,7 +114,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
-        android:layout_above="@id/timeLabel"
+        android:layout_above="@+id/timeLabel"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
         android:layout_marginStart="60dp"
@@ -72,9 +140,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/temperatureLabel"
+        android:layout_below="@id/apparentTemperature"
         android:weightSum="100"
         android:orientation="horizontal"
+        android:layout_marginTop="15dp"
         android:baselineAligned="false">
 
         <LinearLayout
@@ -171,7 +240,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="--"
+                android:text="@string/precipChanceValue"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"/>
 
@@ -192,7 +261,7 @@
         android:textSize="18sp"/>
 
     <HorizontalScrollView
-        android:id="@+id/newsList"
+        android:id="@+id/newsHorizontallSV"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="10dp"

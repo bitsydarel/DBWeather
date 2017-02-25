@@ -1,15 +1,12 @@
 package com.darelbitsy.dbweather.receiver;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
-import com.darelbitsy.dbweather.ui.MainActivity;
 
 /**
  * Created by Darel Bitsy on 30/01/17.
