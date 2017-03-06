@@ -3,7 +3,7 @@ package com.darelbitsy.dbweather.helper.api;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
@@ -13,75 +13,92 @@ import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.News;
 import com.darelbitsy.dbweather.model.news.NewsResponse;
+import com.darelbitsy.dbweather.services.NewsDatabaseService;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
+
 /**
  * Created by Darel Bitsy on 18/02/17.
  * This class help get Newses in background
- * Subclass will on override the onPostExecution
+ * Observer will only choose how to display it
  * to choose of to display the data
  */
 
-public class GetNewsesHelper extends AsyncTask<Object, Void, ArrayList<News>> {
-    private static NewsRestAdapter mRestAdapter;
+public class GetNewsesHelper {
+    private static NewsRestAdapter newsRestAdapter;
     private static TranslateRestAdapter mTranslateRestAdapter;
-    private TranslateHelper mTranslateHelper;
+    private final TranslateHelper mTranslateHelper;
     private static DatabaseOperation mDatabase;
-    private Context mContext;
+    private final Context mContext;
 
     public GetNewsesHelper(Context context) {
+        if (newsRestAdapter == null) {
+            newsRestAdapter = new NewsRestAdapter();
+        }
+
         if (mTranslateRestAdapter == null) {
             mTranslateRestAdapter = new TranslateRestAdapter();
         }
         mTranslateHelper = new TranslateHelper(context);
+
         if (mDatabase == null) {
             mDatabase = new DatabaseOperation(context);
         }
-        mContext = context;
 
+        mContext = context;
     }
 
-    @Override
-    protected ArrayList<News> doInBackground(Object... params) {
-        final List<NewsResponse> newsResponseList = new ArrayList<>();
-        if (mRestAdapter == null) { mRestAdapter = new NewsRestAdapter(); }
-
-        ArrayList<News> newses = new ArrayList<>();
-
-        if (AppUtil.isNetworkAvailable(mContext)) {
-            for (String source : ConstantHolder.LIST_OF_SOURCES) {
+    public Single<ArrayList<News>> getNewsesFromApi() {
+        return Single.create(emitter -> {
                 try {
-                    if ("sky-sports-news".equalsIgnoreCase(source)) {
-                        newsResponseList.add(mRestAdapter
-                                .getNews(source, "latest")
+                    final List<NewsResponse> newsResponseList = new ArrayList<>();
+
+                    for (String source : ConstantHolder.LIST_OF_SOURCES) {
+                        newsResponseList.add(newsRestAdapter
+                                .getNews(source, "top")
                                 .execute()
                                 .body());
-                    } else {
-                        newsResponseList.add(mRestAdapter
-                                .getNews(source, "top")
-                                .execute().body());
+
                     }
-                } catch (IOException e) {
-                    Log.i(ConstantHolder.TAG, "Error : " + e.getMessage());
-                }
-            }
-            parseNewses(newsResponseList, newses);
-            mDatabase.saveNewses(newses);
-        }
-        return newses;
+
+                    ArrayList<News> newses = parseNewses(newsResponseList);
+
+                    Intent intent = new Intent(mContext, NewsDatabaseService.class);
+                    intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
+                    mContext.startService(intent);
+
+                    if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
+
+                } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); }  }
+
+            });
     }
 
+    public Single<ArrayList<News>> getNewsesFromDatabase(DatabaseOperation database) {
+        return Single.create(emitter -> {
+            try {
+                ArrayList<News> newses = database.getNewFromDatabase();
+                if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
 
-    private void parseNewses(List<NewsResponse> newsResponses, ArrayList<News> newses) {
+            } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
+
+        });
+    }
+
+    private ArrayList<News> parseNewses(List<NewsResponse> newsResponses) {
+        ArrayList<News> newses = new ArrayList<>();
         Account[] accounts = null;
-        if (ConstantHolder.isAccountPermissionOn) {
-             accounts = AccountManager.get(mContext)
+
+        if (AppUtil.isAccountPermissionOn(mContext)) {
+            accounts = AccountManager.get(mContext)
                     .getAccountsByType("com.google");
         }
+
         for (NewsResponse response : newsResponses) {
             for (int i = 0; i < 2; i++) {
                 News news = new News();
@@ -90,7 +107,7 @@ public class GetNewsesHelper extends AsyncTask<Object, Void, ArrayList<News>> {
                 String newsTitle = response.getArticles().get(i).getTitle();
                 try {
 
-                    if (!ConstantHolder.USER_LANGUAGE.equals("en")) {
+                    if (!"en".equals(ConstantHolder.USER_LANGUAGE)) {
                         if (accounts != null) {
                             String account = accounts[0].name;
                             news.setNewsTitle(mTranslateRestAdapter
@@ -104,8 +121,10 @@ public class GetNewsesHelper extends AsyncTask<Object, Void, ArrayList<News>> {
 
                         if (news.getNewsTitle().equals(newsTitle) ||
                                 news.getNewsTitle().contains("MYMEMORY WARNING")) {
+
                             news.setNewsTitle(mTranslateHelper
                                     .translateText(newsTitle));
+
                         }
 
                     } else {
@@ -122,5 +141,7 @@ public class GetNewsesHelper extends AsyncTask<Object, Void, ArrayList<News>> {
                 newses.add(news);
             }
         }
+
+        return newses;
     }
 }

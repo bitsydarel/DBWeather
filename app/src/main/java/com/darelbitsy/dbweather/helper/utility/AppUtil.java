@@ -24,8 +24,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
+import static com.darelbitsy.dbweather.adapters.DatabaseOperation.PREFS_NAME;
 import static com.darelbitsy.dbweather.helper.AlarmConfigHelper.MY_ACTION;
+import static com.darelbitsy.dbweather.helper.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
 import static com.darelbitsy.dbweather.helper.ConstantHolder.IS_ALARM_ON;
+import static com.darelbitsy.dbweather.helper.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
 import static com.darelbitsy.dbweather.helper.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.darelbitsy.dbweather.helper.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
 
@@ -47,7 +50,7 @@ public class AppUtil {
     }
 
     public static boolean isAlarmSet(Context context) {
-        int lastAlarm = context.getSharedPreferences(DatabaseOperation.PREFS_NAME, context.MODE_PRIVATE)
+        int lastAlarm = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .getInt(AlarmConfigHelper.LAST_NOTIFICATION_PENDING_INTENT_ID, 0);
         if (lastAlarm == 0 ) { return false; }
 
@@ -75,7 +78,7 @@ public class AppUtil {
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
-            ConstantHolder.isGpsPermissionOn = false;
+            AppUtil.setGpsPermissionValue(activity);
 
         }
     }
@@ -90,9 +93,34 @@ public class AppUtil {
                     MY_PERMiSSIONS_REQUEST_GET_ACCOUNT);
 
         } else {
-            ConstantHolder.isAccountPermissionOn = true;
+            AppUtil.setAccountPermissionValue(activity);
         }
     }
+
+    public static boolean isAccountPermissionOn(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+                .getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false);
+    }
+
+    public static void setAccountPermissionValue(Context context) {
+        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+                .edit()
+                .putBoolean(IS_ACCOUNT_PERMISSION_GRANTED, true)
+                .apply();
+    }
+
+    public static boolean isGpsPermissionOn(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+                .getBoolean(IS_GPS_PERMISSION_GRANTED, false);
+    }
+
+    public static void setGpsPermissionValue(Context context) {
+        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+                .edit()
+                .putBoolean(IS_GPS_PERMISSION_GRANTED, true)
+                .apply();
+    }
+
 
     public static void setNextAlarm(Context context) {
         ExecutorService executorService;
@@ -116,7 +144,7 @@ public class AppUtil {
         context.startService(new Intent(context, KillCheckerService.class));
         executorService.shutdown();
 
-        context.getSharedPreferences(DatabaseOperation.PREFS_NAME, context.MODE_PRIVATE)
+        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(IS_ALARM_ON, true)
                 .apply();

@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * Created by Darel Bitsy on 19/02/17.
+ * This class hold hourly data received from
+ * the server
  */
 
 public class Hourly implements Parcelable {
@@ -23,7 +25,12 @@ public class Hourly implements Parcelable {
     @Expose
     private List<HourlyData> data = null;
 
-    protected Hourly(Parcel in) {
+    public Hourly() {
+        // This empty constructor
+        //help me to create new instance of this class
+    }
+
+    private Hourly(Parcel in) {
         summary = in.readString();
         icon = in.readString();
         data = in.createTypedArrayList(HourlyData.CREATOR);

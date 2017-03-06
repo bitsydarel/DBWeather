@@ -141,15 +141,14 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/apparentTemperature"
-        android:weightSum="100"
         android:orientation="horizontal"
         android:layout_marginTop="15dp"
         android:baselineAligned="false">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="25"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -172,9 +171,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="25"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -197,9 +196,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="25"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -222,9 +221,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="25"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView

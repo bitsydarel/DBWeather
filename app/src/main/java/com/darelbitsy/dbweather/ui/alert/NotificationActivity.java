@@ -16,6 +16,8 @@ import com.darelbitsy.dbweather.services.KillCheckerService;
 
 /**
  * Created by Darel Bitsy on 01/02/17.
+ * Notification activity that show
+ * User about notification
  */
 public class NotificationActivity extends Activity {
 
@@ -43,6 +45,7 @@ public class NotificationActivity extends Activity {
             new Handler().post(new AlarmConfigHelper(getApplicationContext())::setClothingNotificationAlarm);
             finish();
         });
+
         descriptionLabel.setText(notificationHelper.getDescription());
         summaryWeather.setText(summary);
     }

@@ -12,7 +12,9 @@ import com.darelbitsy.dbweather.model.ApplicationDatabase;
 import com.darelbitsy.dbweather.model.news.News;
 import com.darelbitsy.dbweather.model.weather.Alert;
 import com.darelbitsy.dbweather.model.weather.Currently;
+import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.DailyData;
+import com.darelbitsy.dbweather.model.weather.Hourly;
 import com.darelbitsy.dbweather.model.weather.HourlyData;
 import com.darelbitsy.dbweather.model.weather.MinutelyData;
 import com.darelbitsy.dbweather.model.weather.Weather;
@@ -504,6 +506,12 @@ public class DatabaseOperation {
             weather.setTimezone(databaseCursor.getString(databaseCursor.getColumnIndex(TIMEZONE)));
             weather.setLatitude(databaseCursor.getDouble(databaseCursor.getColumnIndex(LAST_KNOW_LATITUDE)));
             weather.setLongitude(databaseCursor.getDouble(databaseCursor.getColumnIndex(LAST_KNOW_LONGITUDE)));
+            weather.setHourly(new Hourly());
+            weather.getHourly().setSummary(databaseCursor.getString(databaseCursor.getColumnIndex(FULL_DAY_SUMMARY)));
+
+            weather.setDaily(new Daily());
+            weather.getDaily().setSummary(databaseCursor.getString(databaseCursor.getColumnIndex(WEEK_SUMMARY)));
+
         }
         databaseCursor.close();
         return weather;
@@ -560,6 +568,8 @@ public class DatabaseOperation {
         databaseCursor.close();
         return current;
     }
+
+    //TODO: need to create an getMinutely method
 
 
     public void saveCoordinates(double latitude, double longitude) {

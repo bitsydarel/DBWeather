@@ -1,13 +1,11 @@
 package com.darelbitsy.dbweather.ui;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.R2;
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
@@ -29,12 +24,15 @@ import com.darelbitsy.dbweather.adapters.NewsAdapter;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.helper.api.GetNewsesHelper;
 import com.darelbitsy.dbweather.helper.api.GetWeatherHelper;
+import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
 import com.darelbitsy.dbweather.model.news.News;
 import com.darelbitsy.dbweather.model.weather.Currently;
 import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.DailyData;
 import com.darelbitsy.dbweather.model.weather.Weather;
+import com.darelbitsy.dbweather.ui.animation.AnimationUtility;
+import com.darelbitsy.dbweather.ui.helper.DaySwitcherHelper;
 import com.darelbitsy.dbweather.widgets.RainFallView;
 import com.darelbitsy.dbweather.widgets.SnowFallView;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -46,6 +44,13 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.darelbitsy.dbweather.helper.utility.WeatherUtil.mColorPicker;
+import static com.darelbitsy.dbweather.ui.MainActivity.subscriptions;
 
 /**
  * Created by Darel Bitsy on 10/02/17.
@@ -57,44 +62,33 @@ public class CurrentWeatherFragment extends Fragment {
     @BindView(R2.id.current_weather_layout)
     RelativeLayout mMainLayout;
 
-    //Defining TextView needed
-    @BindView(R2.id.temperatureLabel)
-    TextView mTemperatureLabel;
-    @BindView(R2.id.apparentTemperature) TextView mApparentTemperature;
-    @BindView(R2.id.timeLabel) TextView mTimeLabel;
-    @BindView(R2.id.humidityValue) TextView mHumidityValue;
-    @BindView(R2.id.locationLabel) TextView mLocationLabel;
-    @BindView(R2.id.precipValue) TextView mPrecipValue;
-    @BindView(R2.id.summaryLabel) TextView mSummaryLabel;
-    @BindView(R2.id.sunriseTime) TextView mSunriseTimeValue;
-    @BindView(R2.id.sunsetTime) TextView mSunsetTimeValue;
-    @BindView(R2.id.windSpeedValue) TextView mWindSpeedValue;
-    @BindView(R2.id.cloudCoverValue) TextView mCloudCoverValue;
-
-    //Defining ImageView and ImageButton to manipulate
-    @BindView(R2.id.iconImageView)
-    ImageView mIconImageView;
-
-    private final ColorManager mColorPicker = new ColorManager();
-
     private Button currentFocusedButton;
     private HorizontalScrollView mScrollView;
     private RelativeLayout.LayoutParams mParams;
-    private Handler mHandler;
     private Button currentDayButton;
     private String currentDayName;
     private String nextDayName;
     private RecyclerView mNewsRecyclerView;
-
     private ArrayList<News> mNewses;
     private DatabaseOperation mDatabase;
     private Currently mCurrently;
     private Daily mDailyData;
     private String mCityName;
     private String mTimeZone;
+
     private NewsAdapter mNewsAdapter;
     private View mView;
     private SwipeRefreshLayout refreshLayout;
+    private final Handler mHandler = new Handler();
+
+    private Single<Weather> mWeatherObservableWithNetwork;
+    private Single<Weather> mWeatherObservableWithoutNetwork;
+    private Single<ArrayList<News>> mNewsesObservableWithNetwork;
+    private Single<ArrayList<News>> mNewsesObservableWithoutNetwork;
+
+    private boolean isSubscriptionDoneWithNetwork;
+    private DaySwitcherHelper mDaySwitcherHelper;
+
     public static CurrentWeatherFragment newInstance(Currently currently, Daily dailyData, ArrayList<News> newses, String cityName) {
         CurrentWeatherFragment currentWeatherFragment = new CurrentWeatherFragment();
 
@@ -108,23 +102,107 @@ public class CurrentWeatherFragment extends Fragment {
         return currentWeatherFragment;
     }
 
+    private final class CurrentWeatherObserver extends DisposableSingleObserver<Weather> {
+        @Override
+        public void onSuccess(Weather weather) {
+            Log.i(ConstantHolder.TAG, "Inside the currentWeatherObserver Fragment");
+            mCityName = weather.getCityName();
+            mTimeZone = weather.getTimezone();
+            mCurrently = weather.getCurrently();
+            mDailyData = weather.getDaily();
+            if (mDaySwitcherHelper != null) {
+                mDaySwitcherHelper.updateDailyData(mDailyData.getData());
+                mDaySwitcherHelper.updateCurrentWeatherData(mCurrently);
+                mDaySwitcherHelper.updateCityName(mCityName);
+            }
+
+            mHandler.post(() -> updateDisplay(mView));
+
+            if (isSubscriptionDoneWithNetwork) {
+                subscriptions.add(mNewsesObservableWithNetwork
+                        .subscribeWith(new CurrentNewsesObserver()));
+
+            } else {
+                subscriptions.add(mNewsesObservableWithoutNetwork
+                        .subscribeWith(new CurrentNewsesObserver()));
+            }
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.i(ConstantHolder.TAG, "Error in current fragment: " + e.getMessage());
+        }
+    }
+
+    private final class CurrentNewsesObserver extends DisposableSingleObserver<ArrayList<News>> {
+        @Override
+        public void onSuccess(ArrayList<News> newses) {
+            Log.i(ConstantHolder.TAG, "Inside the currentNewsesObserver Fragment");
+            mNewses = newses;
+            if (mNewsAdapter != null) {
+                mHandler.post(() -> mNewsAdapter.updateContent(newses));
+            }
+
+            if (refreshLayout != null) {
+                refreshLayout.setRefreshing(false);
+            }
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.i(ConstantHolder.TAG, "Ho My God, got an error: " + e.getMessage());
+        }
+    }
+
+    private void setupObservables() {
+        mWeatherObservableWithNetwork = new GetWeatherHelper(getActivity())
+                .getObservableWeatherFromApi(mDatabase)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mWeatherObservableWithoutNetwork = new GetWeatherHelper(getActivity())
+                .getObservableWeatherFromDatabase(mDatabase)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mNewsesObservableWithNetwork = new GetNewsesHelper(getActivity())
+                .getNewsesFromApi()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mNewsesObservableWithoutNetwork = new GetNewsesHelper(getActivity())
+                .getNewsesFromDatabase(mDatabase)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public void updateDataFromActivity(Currently currently, Daily dailyData, String cityName) {
         mCurrently = currently;
         mDailyData = dailyData;
         mCityName = cityName;
-        updateDisplay(mView);
+        mHandler.post(() -> updateDisplay(mView));
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mDatabase = new DatabaseOperation(getActivity());
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
+        setupObservables();
+
         mCurrently = args.getParcelable(ConstantHolder.CURRENT_WEATHER_KEY);
         mDailyData = args.getParcelable(ConstantHolder.DAILY_WEATHER_KEY);
         mNewses = args.getParcelableArrayList(ConstantHolder.NEWS_DATA_KEY);
         mCityName = args.getString(ConstantHolder.CITY_NAME_KEY);
-        mDatabase = new DatabaseOperation(getActivity());
+        subscriptions.add(mWeatherObservableWithoutNetwork
+                .subscribeWith(new CurrentWeatherObserver()));
     }
 
     @Nullable
@@ -134,9 +212,15 @@ public class CurrentWeatherFragment extends Fragment {
         ButterKnife.bind(this, mView);
         AndroidThreeTen.init(getActivity());
 
+        mDaySwitcherHelper = new DaySwitcherHelper(this,
+                mView,
+                mCurrently,
+                mDailyData.getData(),
+                mCityName);
 
-        initialize(mView);
+        mHandler.post(() -> initialize(mView));
         mView.setBackgroundResource(mColorPicker.getBackgroundColor(mCurrently.getIcon()));
+
         return mView;
     }
 
@@ -152,37 +236,13 @@ public class CurrentWeatherFragment extends Fragment {
                             .parseColor("#30ffffff"));
         }
 
-        scrollToFunc(mHandler, mScrollView, currentDayButton);
+        mHandler.post(() -> scrollToFunc(mHandler,
+                mScrollView,
+                currentDayButton));
 
-        setCurrentWeather();
+        mHandler.post(() -> mDaySwitcherHelper.setCurrentWeather(mTimeZone));
 
-        setupDayScrollView(view);
-    }
-
-    private class GetWeather extends GetWeatherHelper {
-        GetWeather(Activity activity) { super(activity); }
-
-        @Override
-        protected void onPostExecute(Weather weather) {
-            mCityName = weather.getCityName();
-            mTimeZone = weather.getTimezone();
-            mCurrently = weather.getCurrently();
-            mDailyData = weather.getDaily();
-            updateDisplay(mView);
-            refreshLayout.setRefreshing(false);
-        }
-    }
-
-    private class GetNewses extends GetNewsesHelper {
-
-        GetNewses(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<News> newses) {
-            mNewsAdapter.updateContent(newses);
-        }
+        mHandler.post(() -> setupDayScrollView(view));
     }
 
     private void initialize(View view) {
@@ -192,14 +252,9 @@ public class CurrentWeatherFragment extends Fragment {
                 Color.parseColor("#ff99cc00"),
                 Color.parseColor("#ff669900"));
 
-        mNewses = mDatabase.getNewFromDatabase();
-        mCurrently = mDatabase.getCurrentWeatherFromDatabase();
-        mDailyData.setData(mDatabase.getDailyWeatherFromDatabase());
-
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
-            new GetWeather(getActivity()).execute();
-            new GetNewses(view.getContext()).execute();
+            updateData();
         });
 
         mParams = new RelativeLayout.LayoutParams(
@@ -209,110 +264,66 @@ public class CurrentWeatherFragment extends Fragment {
         mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
         if (mCurrently != null) {
-            setCurrentWeather();
+            mHandler.post(() -> {
+                mDaySwitcherHelper.setCurrentWeather(mTimeZone);
+                showFallingSnowOrRain();
+            });
         }
-        setupDayScrollView(view);
-        setupNewsScrollView(view);
+
+        mHandler.post(() -> setupDayScrollView(view));
+        mHandler.post(() -> setupNewsScrollView(view));
+
     }
 
-    private void setCurrentWeather() {
-        mTemperatureLabel.setText(String.format(Locale.ENGLISH,
-                "%d",
-                WeatherUtil.getTemperatureInInt(mCurrently.getTemperature())));
+    private void showFallingSnowOrRain() {
+        mHandler.post(() -> {
+            if("snow".equalsIgnoreCase(mCurrently.getIcon())) {
+                if(mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new SnowFallView(getActivity()), mParams);
+                }
+                if(mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
+                    mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
+                }
 
-        mApparentTemperature.setText(String.format(Locale.ENGLISH,
-                getString(R.string.apparentTemperatureValue),
-                WeatherUtil.getTemperatureInInt(mCurrently.getApparentTemperature())));
+            } else if("rain".equalsIgnoreCase(mCurrently.getIcon())) {
+                if(mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new RainFallView(getActivity()), mParams);
+                }
+                if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
+                    mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
+                }
 
-        mTimeLabel.setText(String.format(Locale.getDefault(),
-                getString(R.string.time_label),
-                WeatherUtil.getFormattedTime(mCurrently.getTime(), mTimeZone)));
+            } else if ("sleet".equalsIgnoreCase(mCurrently.getIcon())) {
+                if (mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new RainFallView(getActivity()), mParams);
+                }
+                if (mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
+                    mMainLayout.addView(new SnowFallView(getActivity()), mParams);
+                }
 
-        mHumidityValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.humidity_value),
-                WeatherUtil.getHumidityPourcentage(mCurrently.getHumidity())));
-
-        //Setting the location to the current location of the device because the api only provide the timezone as location
-        mLocationLabel.setText(mCityName);
-        Log.i(ConstantHolder.TAG, "the City Name: "+mCityName);
-
-        mPrecipValue.setText(String.format(Locale.getDefault(),
-                getString(R.string.precipChanceValue),
-                WeatherUtil.getPrecipPourcentage(mCurrently.getPrecipProbability())));
-
-        mSummaryLabel.setText(mCurrently.getSummary());
-
-        mWindSpeedValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.windSpeedValue),
-                WeatherUtil.getWindSpeedMeterPerHour(mCurrently.getWindSpeed())));
-
-        mCloudCoverValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.cloudCoverValue),
-                WeatherUtil.getCloudCoverPourcentage(mCurrently.getCloudCover())));
-
-        mIconImageView.setImageDrawable(ContextCompat.getDrawable(getActivity(),
-                WeatherUtil.getIconId(mCurrently.getIcon())));
-
-        if (mDailyData.getData() != null) {
-            for (DailyData day : mDailyData.getData()) {
-                String today = WeatherUtil.getDayOfTheWeek(mCurrently.getTime(), mTimeZone);
-
-                if (WeatherUtil
-                        .getDayOfTheWeek(day.getTime(), mTimeZone)
-                        .equals(today)) {
-
-                    mSunriseTimeValue.setText(WeatherUtil.getFormattedTime(day.getSunriseTime(),
-                            mTimeZone));
-
-                    mSunsetTimeValue.setText(WeatherUtil.getFormattedTime(day.getSunsetTime(), mTimeZone));
-
+            } else {
+                if (mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
+                    mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
+                }
+                if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
+                    mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
                 }
             }
-        }
+        });
+    }
 
-        mMainLayout.setBackgroundResource(mColorPicker
-                .getBackgroundColor(mCurrently.getIcon()));
+    private void updateData() {
+        if (AppUtil.isNetworkAvailable(getActivity())) {
+            subscriptions.add(mWeatherObservableWithNetwork
+                    .subscribeWith(new CurrentWeatherObserver()));
 
-        if("snow".equalsIgnoreCase(mCurrently.getIcon())) {
-
-            if(mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new SnowFallView(getActivity()), mParams);
-            }
-
-            if(mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
-            }
-
-        }
-        else if("rain".equalsIgnoreCase(mCurrently.getIcon())) {
-
-            if(mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new RainFallView(getActivity()), mParams);
-            }
-            if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
-            }
-
-        } else if ("sleet".equalsIgnoreCase(mCurrently.getIcon())) {
-
-            if (mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new RainFallView(getActivity()), mParams);
-            }
-            if (mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new SnowFallView(getActivity()), mParams);
-            }
+            isSubscriptionDoneWithNetwork = true;
 
         } else {
-
-            if(mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
-            }
-            if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
-            }
+            mWeatherObservableWithoutNetwork
+                    .subscribeWith(new CurrentWeatherObserver());
 
         }
-
     }
 
     /**
@@ -347,104 +358,10 @@ public class CurrentWeatherFragment extends Fragment {
         }
     }
 
-    /**
-     * Show the weather of the choosed day
-     * @param dayName is the day name
-     */
-    private void showWeatherByDay(String dayName) {
-        if(mDailyData.getData().size() > 0) {
-            for(DailyData day : mDailyData.getData()) {
-                if (dayName.equalsIgnoreCase(getResources()
-                        .getString(R.string.today_label))
-                        && WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone).equalsIgnoreCase(currentDayName)) {
-
-                    mTemperatureLabel.setText(String.format(Locale.ENGLISH,
-                            "%d",
-                            WeatherUtil.getTemperatureInInt(mCurrently.getTemperature())));
-
-                    mApparentTemperature.setText(String.format(Locale.ENGLISH,
-                            getString(R.string.apparentTemperatureValue),
-                            WeatherUtil.getTemperatureInInt(mCurrently.getApparentTemperature())));
-
-                    mTimeLabel.setText(String.format(Locale.getDefault(),
-                            getString(R.string.time_label),
-                            WeatherUtil.getFormattedTime(mCurrently.getTime(), mTimeZone)));
-
-                    mHumidityValue.setText(String.format(Locale.ENGLISH,
-                            getString(R.string.humidity_value),
-                            WeatherUtil.getHumidityPourcentage(mCurrently.getHumidity())));
-
-                    mPrecipValue.setText(String.format(Locale.getDefault(),
-                            getString(R.string.precipChanceValue),
-                            WeatherUtil.getPrecipPourcentage(mCurrently.getPrecipProbability())));
-
-                    mSummaryLabel.setText(mCurrently.getSummary());
-
-                    mSunriseTimeValue.setText(WeatherUtil.getFormattedTime(day.getSunriseTime(), mTimeZone));
-                    mSunsetTimeValue.setText(WeatherUtil.getFormattedTime(day.getSunsetTime(), mTimeZone));
-
-                    mWindSpeedValue.setText(WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed()));
-                    mCloudCoverValue.setText(WeatherUtil.getCloudCoverPourcentage(day.getCloudCover()));
-
-                    mIconImageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), WeatherUtil.getIconId(mCurrently.getIcon())));
-                    mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(mCurrently.getIcon()));
-                }
-
-                if(dayName.equalsIgnoreCase(getResources().getString(R.string.tomorrow_label))
-                        && WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone).equals(nextDayName)) {
-
-                    showDayData(dayName, day);
-
-                }
-
-                if(WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone).equalsIgnoreCase(dayName)
-                        && !WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone).equalsIgnoreCase(currentDayName)) {
-
-                    showDayData(dayName, day);
-
-                }
-            }
-        }
-    }
-
-    private void showDayData(String dayName, DailyData day) {
-        mTemperatureLabel.setText(String.format(Locale.ENGLISH,
-                "%d",
-                WeatherUtil.getTemperatureInInt(day.getTemperatureMax())));
-
-        mApparentTemperature.setText(String.format(Locale.getDefault(),
-                getString(R.string.apparentTemperatureValue),
-                WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax())));
-
-        mTimeLabel.setText(dayName);
-
-        mHumidityValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.humidity_value),
-                WeatherUtil.getHumidityPourcentage(day.getHumidity())));
-
-        mPrecipValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.precipChanceValue),
-                WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
-
-        mSummaryLabel.setText(day.getSummary());
-
-        mSunriseTimeValue.setText(WeatherUtil.getFormattedTime(day.getSunriseTime(), mTimeZone));
-        mSunsetTimeValue.setText(WeatherUtil.getFormattedTime(day.getSunsetTime(), mTimeZone));
-
-        mWindSpeedValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.windSpeedValue),
-                WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
-
-        mCloudCoverValue.setText(String.format(Locale.ENGLISH,
-                getString(R.string.cloudCoverValue),
-                WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
-
-        mIconImageView.setImageDrawable(ContextCompat.getDrawable(getActivity(), WeatherUtil.getIconId(day.getIcon())));
-        mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
-    }
 
     private void setupDayScrollView(View view) {
         mScrollView = (HorizontalScrollView) view.findViewById(R.id.horizontalScroll);
+
         final Button mondayButton = (Button) view.findViewById(R.id.monday);
         final Button tuesdayButton = (Button) view.findViewById(R.id.tuesday);
         final Button wednesdayButton = (Button) view.findViewById(R.id.wednesday);
@@ -453,17 +370,27 @@ public class CurrentWeatherFragment extends Fragment {
         final Button saturdayButton = (Button) view.findViewById(R.id.saturday);
         final Button sundayButton = (Button) view.findViewById(R.id.sunday);
 
-        mHandler = new Handler();
+
         Calendar calendar = Calendar.getInstance();
-        currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+        currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
+                Calendar.LONG,
+                Locale.getDefault());
+
         final View.OnClickListener buttonListener = theView -> {
+
             currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
             theView.setBackgroundColor(Color.parseColor("#80ffffff"));
             currentFocusedButton = (Button) theView;
-            showWeatherByDay(((Button) theView).getText().toString());
+            mHandler.post(AnimationUtility.dayButtonAnimation(theView)::start);
+            mDaySwitcherHelper.showWeatherByDay(((Button) theView).getText().toString(),
+                    nextDayName,
+                    mTimeZone);
+
         };
 
-        if(mDailyData.getData().get(7) != null) {
+        if(mDailyData.getData().size() > 5 &&
+                mDailyData.getData().get(7) != null) {
+
             int count = 0;
             Integer currentDayIndex = null;
 
@@ -479,19 +406,20 @@ public class CurrentWeatherFragment extends Fragment {
                 if(count < 7)  {
                     listOfButton[count].setOnClickListener(buttonListener);
                     if (currentDayName.equalsIgnoreCase(WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone))) {
+
                         scrollToFunc(mHandler,
                                 mScrollView,
                                 listOfButton[count]);
+
                         currentDayButton = listOfButton[count];
-                        listOfButton[count].setText(getResources().getString(R.string.today_label));
+                        listOfButton[count].setText(getString(R.string.today_label));
                         currentDayIndex = count;
                         count++;
 
                     } else if (currentDayIndex != null
                             && count == (currentDayIndex + 1)) {
 
-                        listOfButton[count].setText(getResources()
-                                .getString(R.string.tomorrow_label));
+                        listOfButton[count].setText(getString(R.string.tomorrow_label));
                         nextDayName = WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone);
                         count++;
 
@@ -552,7 +480,7 @@ public class CurrentWeatherFragment extends Fragment {
                     fridayButton.setOnClickListener(buttonListener);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
                         scrollToFunc(mHandler, mScrollView, fridayButton);
-                        fridayButton.setText(getResources().getString(R.string.today_label));
+                        fridayButton.setText(getString(R.string.today_label));
                         currentDayButton = fridayButton;
                     }
                 }

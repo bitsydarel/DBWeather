@@ -22,6 +22,8 @@
                     android:layout_weight="50"
                     android:text="@string/news_from"
                     android:gravity="start"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:textColor="#F1948A"/>
                 <TextView
                     android:id="@+id/newsDate"
@@ -29,6 +31,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
                     android:gravity="start"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:text="@string/published_at"
                     android:textColor="#F1948A"/>
         </LinearLayout>
@@ -37,6 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Here is the news from today, DB WEATHER just came out i hope y'all enjoyed this release , leave a feedback, we will love to her from you and thanks for contributing to my project, thanks for the love -> Darel Bitsy"
-            android:textColor="#FBFCFC"
+            android:textColor="@android:color/black"
             android:gravity="center_horizontal|center_vertical"/>
 </LinearLayout>

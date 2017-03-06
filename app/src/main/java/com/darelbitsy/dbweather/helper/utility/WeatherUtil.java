@@ -1,10 +1,10 @@
 package com.darelbitsy.dbweather.helper.utility;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
+import com.darelbitsy.dbweather.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.GoogleGeocodeAdapter;
@@ -23,26 +23,12 @@ import java.util.TimeZone;
  */
 
 public class WeatherUtil {
-    public static Double mLatitude;
-    public static Double mLongitude;
 
+    public static final ColorManager mColorPicker = new ColorManager();
+    
     public static Double[] getCoordinates(DatabaseOperation database) {
-        Double[] coordinates = new Double[2];
+        return database.getCoordinates();
 
-        if (mLatitude == null || mLongitude == null) {
-            coordinates = database.getCoordinates();
-
-        } else {
-            coordinates[0] = mLatitude;
-            coordinates[1] = mLongitude;
-        }
-
-        return coordinates;
-    }
-
-    public static void saveCoordinates(double latitude, double longitude) {
-        mLatitude = latitude;
-        mLongitude = longitude;
     }
 
     public static void saveCoordinates(double latitude, double longitude, DatabaseOperation database) {
@@ -112,13 +98,9 @@ public class WeatherUtil {
      * @return the location in format (City, Country)
      */
     public static String getLocationName(Context context, double latitude, double longitude) throws IOException {
-        return getLocationWithGoogleMapApi(latitude, longitude);
-    }
-
-    public static String getLocationName(Activity activity, double latitude, double longitude) throws IOException {
-        String cityInfoBuilder = "";
+        String cityInfoBuilder;
         try {
-            Geocoder gcd = new Geocoder(activity, Locale.getDefault());
+            Geocoder gcd = new Geocoder(context, Locale.getDefault());
             List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
             if (!addresses.isEmpty()) {
                cityInfoBuilder = String.format(Locale.getDefault(), "%s, %s",

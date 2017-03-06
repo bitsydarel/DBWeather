@@ -4,17 +4,17 @@ import java.util.Locale;
 
 /**
  * Created by Darel Bitsy on 18/02/17.
+ * This class hold all constant variable needed for
  */
 
 public class ConstantHolder {
     public static final String TAG = "dbweather";
     public static final String IS_ALARM_ON = "is_alarm_set";
-    public static boolean isGpsPermissionOn = false;
-    public static boolean isAccountPermissionOn;
+    public static final String IS_GPS_PERMISSION_GRANTED = "is_gps_permission_granted";
+    public static final String IS_ACCOUNT_PERMISSION_GRANTED = "is_account_granted";
 
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
     public static final int MY_PERMiSSIONS_REQUEST_GET_ACCOUNT = 242;
-    public static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     public static final String MYMEMORY_APIURL = "http://api.mymemory.translated.net";
     public static final String USER_LANGUAGE = Locale.getDefault().getLanguage();

@@ -1,20 +1,14 @@
 package com.darelbitsy.dbweather.ui;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.R;
@@ -24,57 +18,65 @@ import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.helper.api.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
-import com.darelbitsy.dbweather.model.news.News;
 import com.darelbitsy.dbweather.model.weather.Weather;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.darelbitsy.dbweather.services.LocationTracker;
+import com.darelbitsy.dbweather.services.WeatherDatabaseService;
 
-import java.util.ArrayList;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
-import static com.darelbitsy.dbweather.helper.ConstantHolder.CONNECTION_FAILURE_RESOLUTION_REQUEST;
 import static com.darelbitsy.dbweather.helper.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.darelbitsy.dbweather.helper.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
 
 /**
  * Created by Darel Bitsy on 11/02/17.
+ * MainActivity of the application
+ * Handle location update and set viewPager
  */
 
-public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class MainActivity extends FragmentActivity {
 
-
-    private VerticalViewPager mViewPager;
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
-
-    private ArrayList<News> mNewses;
-    private Weather mWeather;
     private DatabaseOperation mDatabase;
     private CustomFragmentAdapter mFragmentAdapter;
     private BroadcastReceiver mLocationBroadcast;
+    private Single<Weather> mWeatherObservable;
+    public static final CompositeDisposable subscriptions = new CompositeDisposable();
+    private final Handler mUpdateHandler = new Handler();
 
-    private class GetWeather extends GetWeatherHelper {
+    /**
+     * This class implement the behavior
+     * i want when i receive the weather data
+     */
+    private final class MainActivityWeatherObserver extends DisposableSingleObserver<Weather> {
+        @Override
+        public void onSuccess(Weather weather) {
+            Log.i(ConstantHolder.TAG, "Inside the weatherObserver MainActivity");
 
-        GetWeather(Activity activity) {
-            super(activity);
+            if (mFragmentAdapter != null) {
+                Log.i(ConstantHolder.TAG, "Inside: fragmentAdapter not null");
+                mUpdateHandler.post(() -> mFragmentAdapter.updateWeatherOnFragment(weather.getCurrently(),
+                        weather.getDaily(),
+                        weather.getCityName()));
+
+            } else {
+                Log.i(ConstantHolder.TAG, "Inside: fragmentAdapter null");
+            }
+
+            startService(new Intent(MainActivity.this, WeatherDatabaseService.class)
+                    .putExtra(ConstantHolder.WEATHER_DATA_KEY, weather));
+
+            Log.i(ConstantHolder.TAG, "City Name: "+ weather.getCityName());
+
         }
 
         @Override
-        protected void onPostExecute(Weather weather) {
-            mWeather = weather;
-            if (mFragmentAdapter != null) {
-                mFragmentAdapter.updateWeatherOnFragment(weather.getCurrently(),
-                        weather.getDaily(),
-                        weather.getCityName());
-            }
-
+        public void onError(Throwable e) {
+            Log.i(ConstantHolder.TAG, "Error: " + e.getMessage());
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,29 +84,27 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         setContentView(R.layout.activity_main);
         mDatabase = new DatabaseOperation(this);
 
-        //Configuring the google api client
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mLocationRequest = createLocationRequest();
+        mWeatherObservable = new GetWeatherHelper(this)
+                .getObservableWeatherFromApi(mDatabase)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
         AppUtil.askLocationPermIfNeeded(this);
         AppUtil.askAccountInfoPermIfNeeded(this);
 
-        Bundle extras = getIntent().getExtras();
-        mWeather = extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY);
-        mNewses = extras.getParcelableArrayList(ConstantHolder.NEWS_DATA_KEY);
-        mViewPager = (VerticalViewPager) findViewById(R.id.viewPager);
-        mFragmentAdapter = new CustomFragmentAdapter(getFragmentManager(), mWeather, mNewses);
-        mViewPager.setAdapter(mFragmentAdapter);
-    }
+        if (AppUtil.isGpsPermissionOn(this)) {
+            startService(new Intent(this, LocationTracker.class));
+        }
 
-    @Override
-    protected void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
+        Bundle extras = getIntent().getExtras();
+
+        VerticalViewPager viewPager = (VerticalViewPager) findViewById(R.id.viewPager);
+        mFragmentAdapter = new CustomFragmentAdapter(getFragmentManager(),
+                extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY),
+                extras.getParcelableArrayList(ConstantHolder.NEWS_DATA_KEY));
+
+        viewPager.setAdapter(mFragmentAdapter);
+
     }
 
     @Override
@@ -115,97 +115,39 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     WeatherUtil.saveCoordinates(intent.getExtras().getDouble("latitude"),
-                            intent.getExtras().getDouble("longitude"));
-                    new GetWeather(MainActivity.this).execute();
+                            intent.getExtras().getDouble("longitude"),
+                            mDatabase);
+
+                    subscriptions.add(mWeatherObservable
+                            .subscribeWith(new MainActivityWeatherObserver()));
+
                 }
+
             };
 
         }
         registerReceiver(mLocationBroadcast, new IntentFilter("dbweather_location_update"));
+
     }
 
     @Override
-    protected void onStop() {
-        if(mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
+    protected void onDestroy() {
+        subscriptions.dispose();
+        if (mLocationBroadcast != null) {
+            unregisterReceiver(mLocationBroadcast);
         }
-        super.onStop();
+        super.onDestroy();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mLocationBroadcast != null) { unregisterReceiver(mLocationBroadcast); }
-
-        mDatabase.saveWeatherData(mWeather);
-
-        if (mWeather.getAlerts() != null) { mDatabase.saveAlerts(mWeather.getAlerts()); }
-        if (mWeather.getMinutely() != null) {
-            mDatabase.saveMinutelyWeather(mWeather
-                .getMinutely()
-                .getData()) ;
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if ((ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED && ConstantHolder.isGpsPermissionOn)
-                &&
-                LocationServices.FusedLocationApi
-                        .getLocationAvailability(mGoogleApiClient)
-                        .isLocationAvailable()) {
-
-            getLocation();
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        //Empty for now, will be implemented later
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        /* trying to send a Intent to start a google play services activity that can resolve the error
-        * if occure
-        */
-        if (connectionResult.hasResolution()) {
-            try {
-                // starting a activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                Log.e(ConstantHolder.TAG, " Following error occure: ", e);
-            }
-        } else {
-            // if no resolution found , display a dialog to the user with error.
-            Log.i(ConstantHolder.TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        WeatherUtil.saveCoordinates(location.getLatitude(), location.getLongitude());
-
-        new Handler().post(new GetWeather(this)::execute);
-        Log.i(ConstantHolder.TAG, "City Name: "+ mWeather.getCityName());
-    }
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // Checking if the user cancelled, the permission
         if(requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
                 && (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-            ConstantHolder.isGpsPermissionOn = true;
-            mLocationRequest = createLocationRequest();
-            getLocation();
+            AppUtil.setGpsPermissionValue(this);
+            startService(new Intent(this, LocationTracker.class));
 
         }
 
@@ -213,32 +155,9 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 && (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-            ConstantHolder.isAccountPermissionOn = true;
+            AppUtil.setAccountPermissionValue(this);
 
         }
-
-
     }
 
-    /**
-     * get last know location
-     * if not available request location update
-     */
-    private void getLocation() {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            WeatherUtil.saveCoordinates(location.getLatitude(), location.getLongitude());
-            runOnUiThread(new GetWeather(this)::execute);
-            Log.i(ConstantHolder.TAG, "City Name: "+mWeather.getCityName());
-        }
-    }
-
-    private LocationRequest createLocationRequest() {
-        return LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval((long)(1200) * 1000) // Seconds, in milliseconds
-                .setFastestInterval(1000); // 1 Seconds, in milliseconds
-    }
 }

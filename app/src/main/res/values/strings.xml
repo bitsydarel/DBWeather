@@ -54,4 +54,5 @@
     <string name="apparentTemperatureValue">Feeling : %1$d °</string>
     <string name="timeLabelValue">At %1$s, it will be</string>
     <string name="precipChanceValue">%1$d %%</string>
+    <string name="precipeChanceTypeLabel">%1$s</string>
 </resources>

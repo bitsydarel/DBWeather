@@ -23,6 +23,8 @@ public class Daily implements Parcelable {
     @Expose
     private List<DailyData> data = null;
 
+    public Daily() {}
+
     protected Daily(Parcel in) {
         summary = in.readString();
         icon = in.readString();

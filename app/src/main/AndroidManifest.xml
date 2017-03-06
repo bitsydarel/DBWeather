@@ -56,8 +56,18 @@
                  android:stopWithTask="false"/>
 
         <service android:name=".services.LocationTracker"
-            android:enabled="true">
+            android:enabled="true"
+            android:stopWithTask="true">
         </service>
+        
+        <service android:name=".services.NewsDatabaseService"
+                 android:enabled="true"
+                 android:stopWithTask="false"/>
+        
+        <service android:name=".services.WeatherDatabaseService"
+                 android:enabled="true"
+                 android:stopWithTask="false"/>
+        
         
         <receiver android:name=".receiver.AlarmWeatherReceiver"
                   android:enabled="true"
