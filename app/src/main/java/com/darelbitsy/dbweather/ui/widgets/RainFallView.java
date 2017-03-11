@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.widgets;
+package com.darelbitsy.dbweather.ui.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;

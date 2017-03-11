@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="slid_in_duration">225</integer>
+    <integer name="slid_out_duration">225</integer>
+    <integer name="text_in_duration">225</integer>
+    <integer name="text_out_duration">225</integer>
+</resources>

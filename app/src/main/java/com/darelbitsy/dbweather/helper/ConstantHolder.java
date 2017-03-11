@@ -1,6 +1,11 @@
 package com.darelbitsy.dbweather.helper;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Darel Bitsy on 18/02/17.
@@ -42,4 +47,28 @@ public class ConstantHolder {
             "the-new-york-times",
             "mtv-news"
     };
+
+    public static final List<String> supportedLang = Collections.unmodifiableList(Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
+            "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
+            "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw"));
+
+    public static final Map<List<String>, String> LIST_OF_TYPEFACES = getTypesFaces();
+
+    private static Map<List<String>, String> getTypesFaces() {
+        Map<List<String>, String> dictOfTypeFaces = new HashMap<>();
+
+        dictOfTypeFaces.put(Arrays.asList("en", "fr", "es", "de", "cs", "ca",
+                "az", "bs", "et", "hr", "hu", "id", "it", "is", "nb", "nl",
+                "pl"),
+                "fonts/default.ttf");
+
+        dictOfTypeFaces.put(Collections.singletonList("ar"),
+                "fonts/arabic.ttf");
+
+        dictOfTypeFaces.put(Arrays.asList("be", "bg", "pt", "ru", "sk", "sl",
+                "sr", "sv", "tr", "uk"),
+                "fonts/est_europe.ttf");
+
+        return Collections.unmodifiableMap(dictOfTypeFaces);
+    }
 }

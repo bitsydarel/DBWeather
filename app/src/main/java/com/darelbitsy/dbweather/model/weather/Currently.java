@@ -6,10 +6,6 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.threeten.bp.Instant;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.format.DateTimeFormatter;
-
 /**
  * Created by Darel Bitsy on 19/02/17.
  */
@@ -85,7 +81,7 @@ public class Currently implements Parcelable {
         nearestStormDistance = in.readLong();
         precipIntensity = in.readDouble();
         precipIntensityError = in.readDouble();
-        precipProbability = in.readLong();
+        precipProbability = in.readDouble();
         precipType = in.readString();
         temperature = in.readDouble();
         apparentTemperature = in.readDouble();
@@ -253,15 +249,6 @@ public class Currently implements Parcelable {
 
     public void setOzone(double ozone) {
         this.ozone = ozone;
-    }
-
-    public String getFormattedTime(Weather weather) {
-        final DateTimeFormatter format =
-                DateTimeFormatter.ofPattern("h:mm a");
-
-        return Instant.ofEpochSecond(getTime())
-                .atZone(ZoneId.of(weather.getTimezone()))
-                .format(format);
     }
 
     @Override

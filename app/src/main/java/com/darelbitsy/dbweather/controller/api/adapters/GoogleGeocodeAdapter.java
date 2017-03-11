@@ -2,13 +2,13 @@ package com.darelbitsy.dbweather.controller.api.adapters;
 
 import com.darelbitsy.dbweather.controller.api.services.GoogleGeocodeService;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.helper.utility.AppUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -30,8 +30,6 @@ public class GoogleGeocodeAdapter {
             "sk", "sl", "sr", "sv", "ta", "te", "th",
             "tl", "tr", "uk", "zh-CN", "zh-TW"
         );
-
-    private final OkHttpClient mHttpClient = new OkHttpClient();
     private final Retrofit mRestAdapter;
     private GoogleGeocodeService mGeocodeService;
 
@@ -39,7 +37,7 @@ public class GoogleGeocodeAdapter {
         mRestAdapter = new Retrofit.Builder()
                 .baseUrl(GOOGLE_GEOCODE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(mHttpClient)
+                .client(AppUtil.translateOkHttpClient)
                 .build();
         mGeocodeService = mRestAdapter.create(GoogleGeocodeService.class);
     }

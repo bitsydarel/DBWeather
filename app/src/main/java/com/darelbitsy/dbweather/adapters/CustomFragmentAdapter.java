@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Currently;
 import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.Weather;
@@ -24,7 +24,7 @@ public class CustomFragmentAdapter extends FragmentPagerAdapter {
     private static final Fragment[] listFragments = new Fragment[5];
 
 
-    public CustomFragmentAdapter(FragmentManager fm, Weather weatherData, ArrayList<News> newses) {
+    public CustomFragmentAdapter(FragmentManager fm, Weather weatherData, ArrayList<Article> newses) {
         super(fm);
         listFragments[0] = CurrentWeatherFragment.newInstance(weatherData.getCurrently(),
                 weatherData.getDaily(),

@@ -25,7 +25,7 @@
         android:layout_below="@id/temperatureLabel"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="16dp"
         android:textColor="@android:color/white"
         android:text="@string/apparentTemperatureValue"/>
 
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/degreeImageView"
         android:src="@drawable/degree"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_alignTop="@id/temperatureLabel"
         android:layout_toRightOf="@id/temperatureLabel"
         android:layout_toEndOf="@id/temperatureLabel"
@@ -48,11 +48,14 @@
         android:layout_alignParentStart="true"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/sunriseTimeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|center_horizontal"
-            android:paddingStart="5dp"
-            android:paddingLeft="5dp"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:paddingLeft="8dp"
             android:text="@string/sunriseLabel"
             android:textColor="@android:color/white"/>
 
@@ -75,13 +78,14 @@
         android:layout_alignParentEnd="true"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/sunsetTimeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|center_horizontal"
-            android:paddingEnd="5dp"
-            android:paddingRight="5dp"
-            android:paddingStart="5dp"
-            android:paddingLeft="5dp"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:paddingLeft="8dp"
             android:text="@string/sunsetLabel"
             android:textColor="@android:color/white"/>
 
@@ -107,21 +111,19 @@
         android:text="@string/timeLabelValue"
         android:textSize="18sp"/>
 
-
-
     <TextView
         android:id="@+id/locationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         android:layout_above="@+id/timeLabel"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginStart="60dp"
+        android:layout_marginBottom="8dp"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:text="Pointe-Noire, Republic of Congo"
-        android:padding="10dp"/>
+        android:padding="8dp"/>
 
     <ImageView
         android:id="@+id/iconImageView"
@@ -130,8 +132,7 @@
         android:layout_alignBottom="@id/locationLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:padding="5dp"
-        android:layout_marginEnd="5dp"
+        android:padding="8dp"
         android:src="@drawable/clear_night"
         android:contentDescription="Weather Icon"/>
 
@@ -142,7 +143,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/apparentTemperature"
         android:orientation="horizontal"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="8dp"
         android:baselineAligned="false">
 
         <LinearLayout
@@ -251,7 +252,7 @@
         android:id="@+id/summaryLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/lineaLayout"
         android:textColor="@android:color/white"
@@ -262,29 +263,14 @@
     <HorizontalScrollView
         android:id="@+id/newsHorizontallSV"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:scrollbars="none"
-        android:layout_below="@id/summaryLabel">
-        <FrameLayout
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="none">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/newsRecyclerView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/checkEmpty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:gravity="center_horizontal|center_vertical"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:visibility="invisible"
-                android:text="@string/no_hourly_weather"/>
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/newsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </FrameLayout>
+            android:layout_height="wrap_content"/>
     </HorizontalScrollView>
 
 
@@ -296,7 +282,7 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="8dp"
             android:id="@+id/horizontalScroll"
             android:fillViewport="true"
             android:scrollbars="none"
@@ -306,57 +292,63 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal|center_vertical"
-                android:weightSum="100"
                 android:orientation="horizontal">
                 <Button
-                    android:id="@+id/monday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
                     android:text="Monday"/>
                 <Button
-                    android:id="@+id/tuesday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
                     android:text="Tuesday"/>
                 <Button
-                    android:id="@+id/wednesday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
                     android:text="Wednesday"/>
                 <Button
-                    android:id="@+id/thursday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
                     android:text="Thursday"/>
                 <Button
-                    android:id="@+id/friday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
                     android:text="Friday"/>
                 <Button
-                    android:id="@+id/saturday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
                     android:text="Saturday"/>
                 <Button
-                    android:id="@+id/sunday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:id="@+id/dayButton7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:filterTouchesWhenObscured="true"
                     style="@style/buttonScroll"
-                    android:text="Sundy"/>
+                    android:text="Sunday"/>
             </LinearLayout>
         </HorizontalScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>

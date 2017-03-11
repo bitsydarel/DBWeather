@@ -92,10 +92,6 @@ public class MainActivity extends FragmentActivity {
         AppUtil.askLocationPermIfNeeded(this);
         AppUtil.askAccountInfoPermIfNeeded(this);
 
-        if (AppUtil.isGpsPermissionOn(this)) {
-            startService(new Intent(this, LocationTracker.class));
-        }
-
         Bundle extras = getIntent().getExtras();
 
         VerticalViewPager viewPager = (VerticalViewPager) findViewById(R.id.viewPager);
@@ -105,11 +101,6 @@ public class MainActivity extends FragmentActivity {
 
         viewPager.setAdapter(mFragmentAdapter);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         if (mLocationBroadcast == null) {
             mLocationBroadcast = new BroadcastReceiver() {
                 @Override
@@ -119,24 +110,28 @@ public class MainActivity extends FragmentActivity {
                             mDatabase);
 
                     subscriptions.add(mWeatherObservable
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribeWith(new MainActivityWeatherObserver()));
-
                 }
-
             };
-
         }
-        registerReceiver(mLocationBroadcast, new IntentFilter("dbweather_location_update"));
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mLocationBroadcast,
+                new IntentFilter("dbweather_location_update"));
     }
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         subscriptions.dispose();
         if (mLocationBroadcast != null) {
             unregisterReceiver(mLocationBroadcast);
         }
-        super.onDestroy();
     }
 
     @Override

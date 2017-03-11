@@ -52,12 +52,17 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
         mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && AppUtil.isGpsPermissionOn(this)) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 300000, 0, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    300000,
+                    0,
+                    this);
 
             if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 300000, 0, this);
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        300000,
+                        0,
+                        this);
             }
-
         }
 
         return START_REDELIVER_INTENT;
@@ -67,7 +72,6 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(ConstantHolder.TAG, "Inside the onConnected for google api client");
         getLocation();
-
     }
 
     @Override

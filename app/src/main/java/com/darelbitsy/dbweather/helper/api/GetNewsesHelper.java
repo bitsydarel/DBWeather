@@ -11,11 +11,12 @@ import com.darelbitsy.dbweather.controller.api.adapters.NewsRestAdapter;
 import com.darelbitsy.dbweather.controller.api.adapters.TranslateRestAdapter;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.news.NewsResponse;
 import com.darelbitsy.dbweather.services.NewsDatabaseService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class GetNewsesHelper {
         mContext = context;
     }
 
-    public Single<ArrayList<News>> getNewsesFromApi() {
+    public Single<ArrayList<Article>> getNewsesFromApi() {
         return Single.create(emitter -> {
                 try {
                     final List<NewsResponse> newsResponseList = new ArrayList<>();
@@ -66,7 +67,7 @@ public class GetNewsesHelper {
 
                     }
 
-                    ArrayList<News> newses = parseNewses(newsResponseList);
+                    ArrayList<Article> newses = parseNewses(newsResponseList);
 
                     Intent intent = new Intent(mContext, NewsDatabaseService.class);
                     intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
@@ -79,10 +80,10 @@ public class GetNewsesHelper {
             });
     }
 
-    public Single<ArrayList<News>> getNewsesFromDatabase(DatabaseOperation database) {
+    public Single<ArrayList<Article>> getNewsesFromDatabase(DatabaseOperation database) {
         return Single.create(emitter -> {
             try {
-                ArrayList<News> newses = database.getNewFromDatabase();
+                ArrayList<Article> newses = database.getNewFromDatabase();
                 if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
 
             } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
@@ -90,8 +91,8 @@ public class GetNewsesHelper {
         });
     }
 
-    private ArrayList<News> parseNewses(List<NewsResponse> newsResponses) {
-        ArrayList<News> newses = new ArrayList<>();
+    private ArrayList<Article> parseNewses(List<NewsResponse> newsResponses) {
+        ArrayList<Article> newses = new ArrayList<>();
         Account[] accounts = null;
 
         if (AppUtil.isAccountPermissionOn(mContext)) {
@@ -101,42 +102,57 @@ public class GetNewsesHelper {
 
         for (NewsResponse response : newsResponses) {
             for (int i = 0; i < 2; i++) {
-                News news = new News();
-                news.setNewsSource(response.getSource());
+                Article news = new Article();
+                news.setAuthor(response.getSource());
                 news.setPublishedAt(response.getArticles().get(i).getPublishedAt());
                 String newsTitle = response.getArticles().get(i).getTitle();
-                try {
+                String newsDescription = response.getArticles().get(i).getDescription();
 
+                try {
                     if (!"en".equals(ConstantHolder.USER_LANGUAGE)) {
                         if (accounts != null) {
                             String account = accounts[0].name;
-                            news.setNewsTitle(mTranslateRestAdapter
+
+                            news.setTitle(mTranslateRestAdapter
                                     .translateText(newsTitle, account));
+                            news.setDescription(mTranslateRestAdapter
+                                    .translateText(newsDescription, account));
 
                         } else {
-                            news.setNewsTitle(mTranslateRestAdapter
+                            news.setTitle(mTranslateRestAdapter
                                     .translateText(newsTitle, ""));
+                            news.setDescription(mTranslateRestAdapter
+                                    .translateText(newsDescription, ""));
 
                         }
 
-                        if (news.getNewsTitle().equals(newsTitle) ||
-                                news.getNewsTitle().contains("MYMEMORY WARNING")) {
+                        if (news.getTitle().equalsIgnoreCase(newsTitle) ||
+                                news.getTitle().contains("MYMEMORY WARNING")) {
 
-                            news.setNewsTitle(mTranslateHelper
+                            news.setTitle(mTranslateHelper
                                     .translateText(newsTitle));
+                        }
+                        if (news.getDescription().equalsIgnoreCase(newsDescription) ||
+                                news.getDescription().contains("MYMEMORY WARNING")) {
 
+                            news.setDescription(mTranslateHelper
+                                    .translateText(newsDescription));
                         }
 
                     } else {
-                        news.setNewsTitle(newsTitle);
+                        news.setTitle(newsTitle);
+                        news.setDescription(newsDescription);
                     }
 
                     news.setArticleUrl(response
                             .getArticles().get(i).getUrl());
 
-                } catch (GeneralSecurityException | IOException e) {
-                    Log.i(ConstantHolder.TAG, "Error: "+e.getMessage());
-                    news.setNewsTitle(newsTitle);
+                    news.setUrlToImage(response
+                            .getArticles().get(i).getUrlToImage());
+
+                } catch (GeneralSecurityException | IOException | URISyntaxException e) {
+                    Log.i(ConstantHolder.TAG, "Error: " + e.getMessage());
+                    news.setTitle(newsTitle);
                 }
                 newses.add(news);
             }

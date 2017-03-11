@@ -2,7 +2,9 @@ package com.darelbitsy.dbweather.model.weather;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
+import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Darel Bitsy on 19/02/17.
  */
 
-public class DailyData implements Parcelable {
+public class DailyData implements Parcelable, Comparable<DailyData> {
     public DailyData() {}
 
     @SerializedName("time")
@@ -413,5 +415,26 @@ public class DailyData implements Parcelable {
         dest.writeDouble(cloudCover);
         dest.writeDouble(pressure);
         dest.writeDouble(ozone);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DailyData)) return false;
+
+        DailyData dailyData = (DailyData) o;
+
+        return WeatherUtil.dayEquality(time, dailyData.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (time ^ (time >>> 32));
+    }
+
+    @Override
+    public int compareTo(@NonNull DailyData o) {
+        return WeatherUtil.compareDay(time, o.getTime());
     }
 }

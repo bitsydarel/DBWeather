@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.model.ApplicationDatabase;
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Alert;
 import com.darelbitsy.dbweather.model.weather.Currently;
 import com.darelbitsy.dbweather.model.weather.Daily;
@@ -103,7 +103,9 @@ import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_P
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_PRECIPTYPE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_TABLE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_TIME;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_DESCRIPTION;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_ID;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_IMAGE_URL;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_INSERTED;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_PUBLISHED_AT;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE;
@@ -295,6 +297,7 @@ public class DatabaseOperation {
         databaseInsert.put(CURRENT_CLOUD_COVER, current.getCloudCover());
         databaseInsert.put(CURRENT_WIND_SPEED, current.getWindSpeed());
         databaseInsert.put(CURRENT_WIND_BEARING, current.getWindBearing());
+        Log.i(ConstantHolder.TAG, "To DB PROBABILITY: " + current.getPrecipProbability());
         if(iSCurrentInserted) {
             int result = sqLiteDatabase.update(CURRENT_TABLE_NAME,
                     databaseInsert,
@@ -455,16 +458,28 @@ public class DatabaseOperation {
      * to be displayed ofline
      * @param newses array of newses
      */
-    public void saveNewses(final ArrayList<News> newses) {
+    public void saveNewses(final ArrayList<Article> newses) {
         ContentValues databaseInsert = new ContentValues();
         SQLiteDatabase sqLiteDatabase = mDatabase.getWritableDatabase();
         AtomicInteger index = new AtomicInteger(1);
-        for (News news : newses) {
-            databaseInsert.put(NEWS_SOURCE, news.getNewsSource());
-            databaseInsert.put(NEWS_TITLE, news.getNewsTitle());
-            try { databaseInsert.put(NEWS_URL, news.getArticleUrl()); }
-            catch (URISyntaxException e) { Log.i(ConstantHolder.TAG, "error can't put news url in the db"); }
+        for (Article news : newses) {
+            databaseInsert.put(NEWS_SOURCE, news.getAuthor());
+            databaseInsert.put(NEWS_TITLE, news.getTitle());
+            try {
+                databaseInsert.put(NEWS_URL, news.getArticleUrl());
+                Log.i("URL_LOG", " : " + news.getArticleUrl());
+                databaseInsert.put(NEWS_IMAGE_URL, news.getUrlToImage());
+                Log.i("URL_LOG", "Got Image_Url: "
+                        + news.getUrlToImage() +
+                        " Got News_Url: " + news.getArticleUrl() );
+
+            }
+            catch (URISyntaxException | MalformedURLException e) {
+                Log.i(ConstantHolder.TAG, "error can't put news url in the db");
+                Log.i("URL_LOG", "Error for author : " + news.getAuthor());
+            }
             databaseInsert.put(NEWS_PUBLISHED_AT, news.getPublishedAt());
+            databaseInsert.put(NEWS_DESCRIPTION, news.getDescription());
 
             if (isNewsInserted) {
                 int result = sqLiteDatabase.update(NEWS_TABLE_NAME,
@@ -564,6 +579,7 @@ public class DatabaseOperation {
             current.setCloudCover(databaseCursor.getDouble(databaseCursor.getColumnIndex(CURRENT_CLOUD_COVER)));
             current.setWindSpeed(databaseCursor.getDouble(databaseCursor.getColumnIndex(CURRENT_WIND_SPEED)));
             current.setWindBearing(databaseCursor.getLong(databaseCursor.getColumnIndex(CURRENT_WIND_BEARING)));
+            Log.i(ConstantHolder.TAG, "From DB PROBABILITY: " + current.getPrecipProbability());
         }
         databaseCursor.close();
         return current;
@@ -732,8 +748,8 @@ public class DatabaseOperation {
      * from the database and return it
      * @return list of newses
      */
-    public ArrayList<News> getNewFromDatabase() {
-        ArrayList<News> newses = new ArrayList<>();
+    public ArrayList<Article> getNewFromDatabase() {
+        ArrayList<Article> newses = new ArrayList<>();
 
         Cursor databaseCursor = mDatabase.getReadableDatabase().rawQuery(SELECT_EVERYTHING_FROM +
                 NEWS_TABLE_NAME +
@@ -743,10 +759,12 @@ public class DatabaseOperation {
         if (databaseCursor != null) {
             AtomicInteger index = new AtomicInteger(0);
             for (databaseCursor.moveToFirst(); !databaseCursor.isAfterLast(); databaseCursor.moveToNext()) {
-                News news = new News();
-                news.setNewsSource(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_SOURCE)));
-                news.setNewsTitle(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_TITLE)));
+                Article news = new Article();
+                news.setAuthor(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_SOURCE)));
+                news.setTitle(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_TITLE)));
                 news.setPublishedAt(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_PUBLISHED_AT)));
+                news.setDescription(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_DESCRIPTION)));
+                news.setUrlToImage(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_IMAGE_URL)));
 
                 try {
                     news.setArticleUrl(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_URL)));

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ import java.util.Locale;
  */
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>  {
-    private ArrayList<News> mNewses;
+    private ArrayList<Article> mNewses;
 
-    public NewsAdapter(ArrayList<News> newses) {
+    public NewsAdapter(ArrayList<Article> newses) {
         mNewses = new ArrayList<>();
         mNewses.addAll(newses);
     }
@@ -47,7 +47,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return (mNewses != null  && mNewses.size() > 1) ? mNewses.size() : 0;
     }
 
-    public void updateContent(ArrayList<News> newses) {
+    public void updateContent(ArrayList<Article> newses) {
         mNewses.clear();
         mNewses.addAll(newses);
         notifyDataSetChanged();
@@ -76,7 +76,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             newsPublishedDate = (TextView) itemView.findViewById(R.id.newsDate);
         }
 
-        void bindNews(News news) {
+        void bindNews(Article news) {
             try {
                 newsUrl = news.getArticleUrl();
                 newsContainer.setOnClickListener(newsOnClickListener);
@@ -87,9 +87,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
             newsFrom.setText(String.format(Locale.getDefault(), itemView
                     .getContext()
-                    .getString(R.string.news_from), news.getNewsSource()));
-
-            newsDescription.setText(news.getNewsTitle());
+                    .getString(R.string.news_from), news.getAuthor()));
+            newsDescription.setText(news.getTitle());
             newsPublishedDate.setText(news.getPublishedAt());
         }
     }

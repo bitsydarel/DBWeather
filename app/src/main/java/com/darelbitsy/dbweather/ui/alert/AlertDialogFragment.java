@@ -9,6 +9,7 @@ import com.darelbitsy.dbweather.R;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
+ * News notification Dialog
  */
 
 public class AlertDialogFragment extends DialogFragment {

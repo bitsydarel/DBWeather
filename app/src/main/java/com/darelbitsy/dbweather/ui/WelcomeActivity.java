@@ -11,7 +11,7 @@ import com.darelbitsy.dbweather.helper.ConstantHolder;
 import com.darelbitsy.dbweather.helper.api.GetNewsesHelper;
 import com.darelbitsy.dbweather.helper.api.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
 import com.darelbitsy.dbweather.services.WeatherDatabaseService;
 
@@ -30,16 +30,16 @@ import io.reactivex.schedulers.Schedulers;
 public class WelcomeActivity extends Activity {
     private Intent mIntent;
     private final CompositeDisposable subscriptions = new CompositeDisposable();
-    private DisposableSingleObserver<ArrayList<News>> mNewsObserver;
+    private DisposableSingleObserver<ArrayList<Article>> mNewsObserver;
     private DisposableSingleObserver<Weather> mWeatherObserver;
     private boolean isSubscriptionDone = false;
     private DatabaseOperation mDatabase;
 
 
     private void setObservers() {
-        mNewsObserver = new DisposableSingleObserver<ArrayList<News>>() {
+        mNewsObserver = new DisposableSingleObserver<ArrayList<Article>>() {
             @Override
-            public void onSuccess(ArrayList<News> newses) {
+            public void onSuccess(ArrayList<Article> newses) {
                 Log.i(ConstantHolder.TAG, "Inside the newsObserver WelcomeActivity");
                 mIntent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
                 startActivity(mIntent);

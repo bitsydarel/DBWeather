@@ -77,7 +77,9 @@ import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_P
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_PRECIPTYPE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_TABLE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.MINUTELY_TIME;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_DESCRIPTION;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_ID;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_IMAGE_URL;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_PUBLISHED_AT;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_TABLE_NAME;
@@ -227,7 +229,9 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
                 NEWS_SOURCE + COLUMN_TEXT_TYPE + COMMA +
                 NEWS_TITLE + COLUMN_TEXT_TYPE + COMMA +
                 NEWS_URL + COLUMN_TEXT_TYPE + COMMA +
-                NEWS_PUBLISHED_AT + COLUMN_TEXT_TYPE +
+                NEWS_PUBLISHED_AT + COLUMN_TEXT_TYPE + COMMA +
+                NEWS_DESCRIPTION + COLUMN_TEXT_TYPE + COMMA +
+                NEWS_IMAGE_URL + COLUMN_TEXT_TYPE +
                 ");"
         );
     }

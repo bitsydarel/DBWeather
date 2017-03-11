@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.darelbitsy.dbweather.widgets;
+package com.darelbitsy.dbweather.ui.widgets;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;

@@ -104,6 +104,8 @@ public class DatabaseConstant {
     public static final String NEWS_TITLE = "news_title";
     public static final String NEWS_URL = "news_url";
     public static final String NEWS_PUBLISHED_AT = "published_at";
+    public static final String NEWS_DESCRIPTION = "news_description";
+    public static final String NEWS_IMAGE_URL = "news_image_url";
 
     public static final String WEATHER_INSERTED = "weather_inserted";
     public static final String CURRENT_INSERTED = "current_inserted";

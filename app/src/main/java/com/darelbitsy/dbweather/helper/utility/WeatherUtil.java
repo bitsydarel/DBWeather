@@ -14,6 +14,8 @@ import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -23,6 +25,9 @@ import java.util.TimeZone;
  */
 
 public class WeatherUtil {
+    private static HashMap<String, Integer> dayOfTheWeek = (HashMap<String, Integer>) Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
+            .getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+
 
     public static final ColorManager mColorPicker = new ColorManager();
     
@@ -128,6 +133,23 @@ public class WeatherUtil {
                 .format(format);
     }
 
+    public static int compareDay(long firstDay, long secondDay, String timeZone) {
+        return dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(firstDay, timeZone))
+                .compareTo(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
+    }
+
+    public static int compareDay(long firstDay, long secondDay) {
+        return compareDay(firstDay, secondDay, null);
+    }
+
+    public static boolean dayEquality(long firstDay, long secondDay, String timeZone) {
+        return dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(firstDay, timeZone))
+                .equals(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
+    }
+
+    public static boolean dayEquality(long firstDay, long secondDay) {
+        return dayEquality(firstDay, secondDay, null);
+    }
 
 
     public static int getIconId(String icon) {

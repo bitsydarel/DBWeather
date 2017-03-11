@@ -1,9 +1,9 @@
 package com.darelbitsy.dbweather.controller.api.adapters;
 
 import com.darelbitsy.dbweather.controller.api.services.NewsService;
+import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.NewsResponse;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -15,7 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NewsRestAdapter {
     private static final String NEWSAPI_URL= "https://newsapi.org/";
     private static final String NEWS_APIKEY = "e6e9d4a3f7f24a7a8d16f496df95126f";
-    private final OkHttpClient mHttpClient = new OkHttpClient();
     private final Retrofit mRestAdapter;
     private NewsService mNewsApi;
 
@@ -23,7 +22,7 @@ public class NewsRestAdapter {
         mRestAdapter = new Retrofit.Builder()
                 .baseUrl(NEWSAPI_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(mHttpClient)
+                .client(AppUtil.newsOkHttpClient)
                 .build();
 
         mNewsApi = mRestAdapter.create(NewsService.class);

@@ -2,16 +2,16 @@ package com.darelbitsy.dbweather.controller.api.adapters;
 
 import com.darelbitsy.dbweather.controller.api.services.WeatherService;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.weather.Weather;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.darelbitsy.dbweather.helper.ConstantHolder.supportedLang;
 
 /**
  * Created by Darel Bitsy on 20/02/17.
@@ -20,22 +20,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class WeatherAdapter {
     private static final String WEATHER_URL = "https://api.darksky.net/";
     private static final String WEATHER_APIKEY = "07aadf598548d8bb35d6621d5e3b3c7b";
-    private final List<String> supportedLang = Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
-            "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
-            "sk","sl","sr","sv","tet","tr","uk","x-pig-latin","zh","zh-tw");
 
-    private final OkHttpClient mHttpClient = new OkHttpClient();
-    private final Retrofit mRestAdapter;
-    private WeatherService mWeatherService;
+    private static final Retrofit mRestAdapter = new Retrofit.Builder()
+            .baseUrl(WEATHER_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(AppUtil.weatherOkHttpClient)
+            .build();
+
+    private static WeatherService mWeatherService;
 
     public WeatherAdapter() {
-        mRestAdapter = new Retrofit.Builder()
-                .baseUrl(WEATHER_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(mHttpClient)
-                .build();
-
-        mWeatherService = mRestAdapter.create(WeatherService.class);
+        if (mWeatherService == null) {
+            mWeatherService =
+                    mRestAdapter.create(WeatherService.class);
+        }
     }
 
     public Weather getWeather(double latitude,

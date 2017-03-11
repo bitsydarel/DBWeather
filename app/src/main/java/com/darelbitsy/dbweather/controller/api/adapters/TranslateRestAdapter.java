@@ -4,15 +4,15 @@ import android.util.Log;
 
 import com.darelbitsy.dbweather.controller.api.services.TranslateService;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.ResponseData;
 import com.darelbitsy.dbweather.model.news.MyMemoryJson;
 
 import java.io.IOException;
 import java.util.Locale;
 
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
 import retrofit2.Call;
+import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -20,14 +20,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class TranslateRestAdapter {
-    private final OkHttpClient mHttpClient = new OkHttpClient();
     protected final Retrofit mRestAdapter;
     protected TranslateService mTranslateService;
     public TranslateRestAdapter() {
         mRestAdapter = new Retrofit.Builder()
                 .baseUrl(ConstantHolder.MYMEMORY_APIURL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(mHttpClient)
+                .client(AppUtil.translateOkHttpClient)
                 .build();
 
         mTranslateService = mRestAdapter.create(TranslateService.class);

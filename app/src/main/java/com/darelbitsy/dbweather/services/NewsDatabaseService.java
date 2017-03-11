@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.darelbitsy.dbweather.adapters.DatabaseOperation;
 import com.darelbitsy.dbweather.helper.ConstantHolder;
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ public class NewsDatabaseService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        ArrayList<News> newses = intent.getParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY);
+        ArrayList<Article> newses = intent.getParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY);
         new DatabaseOperation(this).saveNewses(newses);
         return START_NOT_STICKY;
     }

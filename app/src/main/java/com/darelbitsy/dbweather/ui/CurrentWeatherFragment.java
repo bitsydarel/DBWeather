@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.ui;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +28,16 @@ import com.darelbitsy.dbweather.helper.api.GetNewsesHelper;
 import com.darelbitsy.dbweather.helper.api.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
-import com.darelbitsy.dbweather.model.news.News;
+import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Currently;
 import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.DailyData;
 import com.darelbitsy.dbweather.model.weather.Weather;
+import com.darelbitsy.dbweather.services.LocationTracker;
 import com.darelbitsy.dbweather.ui.animation.AnimationUtility;
 import com.darelbitsy.dbweather.ui.helper.DaySwitcherHelper;
-import com.darelbitsy.dbweather.widgets.RainFallView;
-import com.darelbitsy.dbweather.widgets.SnowFallView;
+import com.darelbitsy.dbweather.ui.widgets.RainFallView;
+import com.darelbitsy.dbweather.ui.widgets.SnowFallView;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.ArrayList;
@@ -69,7 +72,7 @@ public class CurrentWeatherFragment extends Fragment {
     private String currentDayName;
     private String nextDayName;
     private RecyclerView mNewsRecyclerView;
-    private ArrayList<News> mNewses;
+    private ArrayList<Article> mNewses;
     private DatabaseOperation mDatabase;
     private Currently mCurrently;
     private Daily mDailyData;
@@ -83,13 +86,13 @@ public class CurrentWeatherFragment extends Fragment {
 
     private Single<Weather> mWeatherObservableWithNetwork;
     private Single<Weather> mWeatherObservableWithoutNetwork;
-    private Single<ArrayList<News>> mNewsesObservableWithNetwork;
-    private Single<ArrayList<News>> mNewsesObservableWithoutNetwork;
+    private Single<ArrayList<Article>> mNewsesObservableWithNetwork;
+    private Single<ArrayList<Article>> mNewsesObservableWithoutNetwork;
 
     private boolean isSubscriptionDoneWithNetwork;
     private DaySwitcherHelper mDaySwitcherHelper;
 
-    public static CurrentWeatherFragment newInstance(Currently currently, Daily dailyData, ArrayList<News> newses, String cityName) {
+    public static CurrentWeatherFragment newInstance(Currently currently, Daily dailyData, ArrayList<Article> newses, String cityName) {
         CurrentWeatherFragment currentWeatherFragment = new CurrentWeatherFragment();
 
         Bundle args = new Bundle();
@@ -110,6 +113,7 @@ public class CurrentWeatherFragment extends Fragment {
             mTimeZone = weather.getTimezone();
             mCurrently = weather.getCurrently();
             mDailyData = weather.getDaily();
+
             if (mDaySwitcherHelper != null) {
                 mDaySwitcherHelper.updateDailyData(mDailyData.getData());
                 mDaySwitcherHelper.updateCurrentWeatherData(mCurrently);
@@ -135,9 +139,9 @@ public class CurrentWeatherFragment extends Fragment {
         }
     }
 
-    private final class CurrentNewsesObserver extends DisposableSingleObserver<ArrayList<News>> {
+    private final class CurrentNewsesObserver extends DisposableSingleObserver<ArrayList<Article>> {
         @Override
-        public void onSuccess(ArrayList<News> newses) {
+        public void onSuccess(ArrayList<Article> newses) {
             Log.i(ConstantHolder.TAG, "Inside the currentNewsesObserver Fragment");
             mNewses = newses;
             if (mNewsAdapter != null) {
@@ -217,10 +221,13 @@ public class CurrentWeatherFragment extends Fragment {
                 mCurrently,
                 mDailyData.getData(),
                 mCityName);
-
+        
         mHandler.post(() -> initialize(mView));
         mView.setBackgroundResource(mColorPicker.getBackgroundColor(mCurrently.getIcon()));
 
+        if (AppUtil.isGpsPermissionOn(getActivity())) {
+            getActivity().startService(new Intent(getActivity(), LocationTracker.class));
+        }
         return mView;
     }
 
@@ -240,7 +247,10 @@ public class CurrentWeatherFragment extends Fragment {
                 mScrollView,
                 currentDayButton));
 
-        mHandler.post(() -> mDaySwitcherHelper.setCurrentWeather(mTimeZone));
+        mHandler.post(() -> {
+            mDaySwitcherHelper.setCurrentWeather(mTimeZone);
+            showFallingSnowOrRain();
+        });
 
         mHandler.post(() -> setupDayScrollView(view));
     }
@@ -333,12 +343,13 @@ public class CurrentWeatherFragment extends Fragment {
         final HorizontalScrollView newsHorizontallSV = (HorizontalScrollView) view.findViewById(R.id.newsHorizontallSV);
         mNewsRecyclerView = (RecyclerView) newsHorizontallSV.findViewById(R.id.newsRecyclerView);
 
-            if(mNewses != null && mNewses.get(3) != null) {
+            if(mNewses != null && !mNewses.isEmpty()) {
                 mNewsAdapter = new NewsAdapter(mNewses);
                 mNewsRecyclerView.setAdapter(mNewsAdapter);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                 mNewsRecyclerView.setLayoutManager(layoutManager);
                 mNewsRecyclerView.setHasFixedSize(true);
+                mHandler.postDelayed(() -> AnimationUtility.autoScrollRecyclerView(mNewsRecyclerView), 1000);
             }
     }
 
@@ -362,13 +373,13 @@ public class CurrentWeatherFragment extends Fragment {
     private void setupDayScrollView(View view) {
         mScrollView = (HorizontalScrollView) view.findViewById(R.id.horizontalScroll);
 
-        final Button mondayButton = (Button) view.findViewById(R.id.monday);
-        final Button tuesdayButton = (Button) view.findViewById(R.id.tuesday);
-        final Button wednesdayButton = (Button) view.findViewById(R.id.wednesday);
-        final Button thursdayButton = (Button) view.findViewById(R.id.thursday);
-        final Button fridayButton = (Button) view.findViewById(R.id.friday);
-        final Button saturdayButton = (Button) view.findViewById(R.id.saturday);
-        final Button sundayButton = (Button) view.findViewById(R.id.sunday);
+        final Button dayButton1 = (Button) view.findViewById(R.id.dayButton1);
+        final Button dayButton2 = (Button) view.findViewById(R.id.dayButton2);
+        final Button dayButton3 = (Button) view.findViewById(R.id.dayButton3);
+        final Button dayButton4 = (Button) view.findViewById(R.id.dayButton4);
+        final Button dayButton5 = (Button) view.findViewById(R.id.dayButton5);
+        final Button dayButton6 = (Button) view.findViewById(R.id.dayButton6);
+        final Button dayButton7 = (Button) view.findViewById(R.id.dayButton7);
 
 
         Calendar calendar = Calendar.getInstance();
@@ -377,59 +388,83 @@ public class CurrentWeatherFragment extends Fragment {
                 Locale.getDefault());
 
         final View.OnClickListener buttonListener = theView -> {
-
             currentFocusedButton.setBackgroundColor(Color.parseColor("#30ffffff"));
             theView.setBackgroundColor(Color.parseColor("#80ffffff"));
             currentFocusedButton = (Button) theView;
-            mHandler.post(AnimationUtility.dayButtonAnimation(theView)::start);
-            mDaySwitcherHelper.showWeatherByDay(((Button) theView).getText().toString(),
-                    nextDayName,
-                    mTimeZone);
 
+            mHandler.post(AnimationUtility.dayButtonAnimation(theView)::start);
+
+            mDaySwitcherHelper.showWeatherByDay(((Button) theView)
+                            .getText().toString(), nextDayName, mTimeZone);
         };
+
+        dayButton1.setOnClickListener(buttonListener);
+        dayButton2.setOnClickListener(buttonListener);
+        dayButton3.setOnClickListener(buttonListener);
+        dayButton4.setOnClickListener(buttonListener);
+        dayButton5.setOnClickListener(buttonListener);
+        dayButton6.setOnClickListener(buttonListener);
+        dayButton7.setOnClickListener(buttonListener);
 
         if(mDailyData.getData().size() > 5 &&
                 mDailyData.getData().get(7) != null) {
 
-            int count = 0;
+            int count = 1;
+            boolean isTodaySet = false;
+            boolean isTomorrowSet = false;
+
             Integer currentDayIndex = null;
+            SparseArray<Button> listOfButton = new SparseArray<>();
 
-            Button[] listOfButton = {mondayButton,
-                    tuesdayButton,
-                    wednesdayButton,
-                    thursdayButton,
-                    fridayButton,
-                    saturdayButton,
-                    sundayButton};
+            listOfButton.put(1, dayButton1);
+            listOfButton.put(2, dayButton2);
+            listOfButton.put(3, dayButton3);
+            listOfButton.put(4, dayButton4);
+            listOfButton.put(5, dayButton5);
+            listOfButton.put(6, dayButton6);
+            listOfButton.put(7, dayButton7);
 
-            for(DailyData day : mDailyData.getData()) {
-                if(count < 7)  {
-                    listOfButton[count].setOnClickListener(buttonListener);
-                    if (currentDayName.equalsIgnoreCase(WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone))) {
+            while (count < 8) {
+                for (DailyData day : mDailyData.getData()) {
+                    if (count == 8) { break; }
+
+                    if (!isTodaySet &&
+                            currentDayName.equalsIgnoreCase(WeatherUtil.getDayOfTheWeek(day.getTime(),
+                            mTimeZone))) {
 
                         scrollToFunc(mHandler,
                                 mScrollView,
-                                listOfButton[count]);
+                                listOfButton.get(count));
 
-                        currentDayButton = listOfButton[count];
-                        listOfButton[count].setText(getString(R.string.today_label));
-                        currentDayIndex = count;
-                        count++;
+                        count = 1;
+
+                        currentDayButton = listOfButton.get(count);
+                        listOfButton.get(count).setText(getString(R.string.today_label));
+                        listOfButton.remove(count);
+                        currentDayIndex = count++;
+                        isTodaySet = true;
+                        Log.i("DAY_CHECKER", "Got currentDay at count : " + currentDayIndex);
 
                     } else if (currentDayIndex != null
                             && count == (currentDayIndex + 1)) {
 
-                        listOfButton[count].setText(getString(R.string.tomorrow_label));
+                        Log.i("DAY_CHECKER", "Got nextDay at count : " + count);
+                        listOfButton.get(count).setText(getString(R.string.tomorrow_label));
+                        listOfButton.remove(count++);
+                        isTomorrowSet = true;
                         nextDayName = WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone);
-                        count++;
 
-                    } else {
-                        listOfButton[count].setText(WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone));
-                        count++;
+                    } else if (isTodaySet && isTomorrowSet) {
+                        Log.i("DAY_CHECKER", "Got Day at count : " + count);
+                        listOfButton.get(count++)
+                                    .setText(WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone));
+
                     }
                 }
-                else { break; }
             }
+
+            Log.i("DAY_CHECKER", "While loop Done");
+
         } else {
             HashMap<String, Integer> dayOfTheWeek = (HashMap<String, Integer>) calendar.getDisplayNames(Calendar.DAY_OF_WEEK,
                     Calendar.LONG,
@@ -440,66 +475,59 @@ public class CurrentWeatherFragment extends Fragment {
                 int dayId = entry.getValue();
 
                 if(dayId == Calendar.MONDAY) {
-                    mondayButton.setText(dayName);
-                    mondayButton.setOnClickListener(buttonListener);
+                    dayButton1.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, mondayButton);
-                        mondayButton.setText(getResources().getString(R.string.today_label));
-                        currentDayButton = mondayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton1);
+                        dayButton1.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = dayButton1;
                     }
                 }
                 if(dayId == Calendar.TUESDAY) {
-                    tuesdayButton.setText(dayName);
-                    tuesdayButton.setOnClickListener(buttonListener);
+                    dayButton2.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, tuesdayButton);
-                        tuesdayButton.setText(getResources().getString(R.string.today_label));
-                        currentDayButton = tuesdayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton2);
+                        dayButton2.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = dayButton2;
                     }
                 }
                 if(dayId == Calendar.WEDNESDAY) {
-                    wednesdayButton.setText(dayName);
-                    wednesdayButton.setOnClickListener(buttonListener);
+                    dayButton3.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, wednesdayButton);
-                        wednesdayButton.setText(getResources().getString(R.string.today_label));
-                        currentDayButton = wednesdayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton3);
+                        dayButton3.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = dayButton3;
                     }
                 }
                 if(dayId == Calendar.THURSDAY) {
-                    thursdayButton.setText(dayName);
-                    thursdayButton.setOnClickListener(buttonListener);
+                    dayButton4.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, thursdayButton);
-                        thursdayButton.setText(getResources().getString(R.string.today_label));
-                        currentDayButton = thursdayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton4);
+                        dayButton4.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = dayButton4;
                     }
                 }
                 if(dayId == Calendar.FRIDAY) {
-                    fridayButton.setText(dayName);
-                    fridayButton.setOnClickListener(buttonListener);
+                    dayButton5.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, fridayButton);
-                        fridayButton.setText(getString(R.string.today_label));
-                        currentDayButton = fridayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton5);
+                        dayButton5.setText(getString(R.string.today_label));
+                        currentDayButton = dayButton5;
                     }
                 }
                 if(dayId == Calendar.SATURDAY) {
-                    saturdayButton.setText(dayName);
-                    saturdayButton.setOnClickListener(buttonListener);
+                    dayButton6.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, saturdayButton);
-                        saturdayButton.setText(getResources().getString(R.string.today_label));
-                        currentDayButton = saturdayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton6);
+                        dayButton6.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = dayButton6;
                     }
                 }
                 if(dayId == Calendar.SUNDAY) {
-                    sundayButton.setText(dayName);
-                    sundayButton.setOnClickListener(buttonListener);
+                    dayButton7.setText(dayName);
                     if(dayName.equalsIgnoreCase(currentDayName)) {
-                        scrollToFunc(mHandler, mScrollView, sundayButton);
-                        sundayButton.setText(getResources().getString(R.string.today_label));
-                        currentDayButton = sundayButton;
+                        scrollToFunc(mHandler, mScrollView, dayButton7);
+                        dayButton7.setText(getResources().getString(R.string.today_label));
+                        currentDayButton = dayButton7;
                     }
                 }
             }
