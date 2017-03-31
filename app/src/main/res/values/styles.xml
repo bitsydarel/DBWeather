@@ -6,16 +6,19 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
 
-    <style name="Theme.Transparent" parent="android:Theme.Holo.Light.Dialog.NoActionBar">
+    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@drawable/notification_background</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
+        <item name="windowActionBar">false</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
@@ -27,12 +30,34 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="NewsActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
         <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="ToolBarStyle" parent="">
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:minHeight">@dimen/abc_action_bar_default_height_material</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="Theme.ProgressBarTheme" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:autoStart">true</item>
+        <item name="android:indeterminate">true</item>
+    </style>
+
+    <style name="Theme.Switch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/switchColorOn</item>
+        <item name="colorSwitchThumbNormal">@color/switchColorThumbNormal</item>
+        <item name="android:colorForeground">@color/switchColorNormal</item>
+    </style>
+
+    <color name="switchColorForeground">#30bdbdbd</color>
 </resources>

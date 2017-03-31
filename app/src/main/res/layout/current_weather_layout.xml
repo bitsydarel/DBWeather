@@ -1,355 +1,374 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/current_weather_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.darelbitsy.dbweather.ui.MainActivity"
-    android:background="@drawable/clear_night_background">
+    android:layout_height="match_parent">
+
+    <VideoView
+        android:id="@+id/backgroundVideo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="0dp"
+        android:visibility="visible"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/leftVerticalGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2"
+        tools:layout_editor_absoluteX="82dp"
+        tools:layout_editor_absoluteY="0dp"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/RightVerticalGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"
+        tools:layout_editor_absoluteX="329dp"
+        tools:layout_editor_absoluteY="0dp"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/refreshLimitGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.55"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="263dp"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/refreshLimitGuideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ScrollView
+            android:id="@+id/scrollRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/summaryTopGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="494dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/summaryLabel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/temperatureLabel"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/default_weather_summary"
         android:textColor="@android:color/white"
-        android:text="--"
-        android:textSize="130sp"/>
+        app:layout_constraintLeft_toLeftOf="@+id/leftVerticalGuideline"
+        app:layout_constraintRight_toLeftOf="@+id/RightVerticalGuideline"
+        app:layout_constraintTop_toTopOf="@+id/summaryTopGuideline"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/detailsTopGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7"/>
+
+    <TextView
+        android:id="@+id/precipValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/precipChanceValue"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/precipLabel"
+        app:layout_constraintBottom_toTopOf="@+id/summaryTopGuideline"
+        app:layout_constraintLeft_toLeftOf="@+id/precipLabel"
+        app:layout_constraintRight_toRightOf="@+id/precipLabel"/>
+
+    <TextView
+        android:id="@+id/cloudCoverValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/cloudCoverValue"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/cloudCoverLabel"
+        app:layout_constraintBottom_toTopOf="@+id/summaryTopGuideline"
+        app:layout_constraintLeft_toLeftOf="@+id/cloudCoverLabel"
+        app:layout_constraintRight_toRightOf="@+id/cloudCoverLabel"/>
+
+    <TextView
+        android:id="@+id/humidityValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/humidity_value"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/cloudCoverLabel"
+        app:layout_constraintBottom_toTopOf="@+id/summaryTopGuideline"
+        app:layout_constraintLeft_toLeftOf="@+id/humidityLabel"
+        app:layout_constraintRight_toRightOf="@+id/humidityLabel"/>
+
+    <TextView
+        android:id="@+id/windSpeedValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/windSpeedValue"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/windSpeed"
+        app:layout_constraintBottom_toTopOf="@+id/summaryTopGuideline"
+        app:layout_constraintLeft_toLeftOf="@+id/windSpeed"
+        app:layout_constraintRight_toRightOf="@+id/windSpeed"/>
+
+    <TextView
+        android:id="@+id/precipLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/precipeChanceLabel"
+        android:textColor="@color/transparentWhite"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@id/precipValue"
+        app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailsTopGuideline"/>
+
+    <TextView
+        android:id="@+id/cloudCoverLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/cloudCover_label"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/transparentWhite"
+        app:layout_constraintBottom_toTopOf="@id/cloudCoverValue"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toRightOf="@+id/humidityLabel"
+        app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@id/detailsTopGuideline"
+        tools:layout_editor_absoluteX="241dp"
+        tools:layout_editor_absoluteY="436dp"/>
+
+    <TextView
+        android:id="@+id/humidityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/humidity_label"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/transparentWhite"
+        app:layout_constraintBottom_toTopOf="@id/humidityValue"
+        app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+        app:layout_constraintRight_toLeftOf="@+id/cloudCoverLabel"
+        app:layout_constraintTop_toBottomOf="@id/detailsTopGuideline"/>
+
+    <TextView
+        android:id="@+id/windSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/windSpeedLabel"
+        android:textColor="@color/transparentWhite"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@id/windSpeedValue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@id/detailsTopGuideline"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/sunBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.62"/>
 
     <TextView
         android:id="@+id/apparentTemperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/temperatureLabel"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="16dp"
+        android:text="@string/apparentTemperatureValue"
         android:textColor="@android:color/white"
-        android:text="@string/apparentTemperatureValue"/>
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/sunBottomGuideline"
+        app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+        app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/temperatureLabel"
+        tools:layout_editor_absoluteX="156dp"
+        tools:layout_editor_absoluteY="379dp"/>
+
+    <TextView
+        android:id="@+id/temperatureLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="17"
+        android:textColor="@android:color/white"
+        android:textSize="128sp"
+        app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+        app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/timeLabel"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_editor_absoluteY="206dp"/>
+
+    <TextView
+        android:id="@+id/sunriseTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:gravity="center_horizontal"
+        android:text="6:00 AM"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/sunsetTime"
+        app:layout_constraintBottom_toTopOf="@id/sunBottomGuideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"/>
+
+    <TextView
+        android:id="@+id/sunsetTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:text="6:30 PM"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/sunBottomGuideline"
+        app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteX="351dp"
+        tools:layout_editor_absoluteY="310dp"/>
+
+    <TextView
+        android:id="@+id/sunriseTimeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/sunriseLabel"
+        android:textColor="@android:color/white"
+        app:layout_constraintBaseline_toBaselineOf="@+id/sunsetTimeLabel"
+        app:layout_constraintBottom_toTopOf="@id/sunriseTime"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="279dp"/>
+
+    <TextView
+        android:id="@+id/sunsetTimeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/sunsetLabel"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/sunsetTime"
+        app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteX="352dp"
+        tools:layout_editor_absoluteY="279dp"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/degreeLimitGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/degreeTopGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/degreeImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:contentDescription="Degree Image"
         android:src="@drawable/degree"
-        android:layout_marginTop="8dp"
-        android:layout_alignTop="@id/temperatureLabel"
-        android:layout_toRightOf="@id/temperatureLabel"
-        android:layout_toEndOf="@id/temperatureLabel"
-        android:contentDescription="Degree Image"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/sunriseTimeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingEnd="8dp"
-            android:paddingRight="8dp"
-            android:paddingStart="8dp"
-            android:paddingLeft="8dp"
-            android:text="@string/sunriseLabel"
-            android:textColor="@android:color/white"/>
-
-        <TextView
-            android:id="@+id/sunriseTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_gravity="center"
-            android:text="--"
-            android:textSize="15sp"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/sunsetTimeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingEnd="8dp"
-            android:paddingRight="8dp"
-            android:paddingStart="8dp"
-            android:paddingLeft="8dp"
-            android:text="@string/sunsetLabel"
-            android:textColor="@android:color/white"/>
-
-        <TextView
-            android:id="@+id/sunsetTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_gravity="center"
-            android:text="--"
-            android:textSize="15sp"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
+        app:layout_constraintBottom_toBottomOf="@id/degreeTopGuideline"
+        app:layout_constraintLeft_toRightOf="@id/temperatureLabel"
+        app:layout_constraintRight_toLeftOf="@id/degreeLimitGuideline"/>
 
     <TextView
         android:id="@+id/timeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:layout_above="@id/temperatureLabel"
-        android:textColor="@color/transparentWhite"
         android:text="@string/timeLabelValue"
-        android:textSize="18sp"/>
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/locationLabel"
+        app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+        app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/locationBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/locationTopGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05"/>
 
     <TextView
         android:id="@+id/locationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
-        android:layout_above="@+id/timeLabel"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
+        android:text="Pointe-Noire, Region du Niari, Republic of Congo"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        android:text="Pointe-Noire, Republic of Congo"
-        android:padding="8dp"/>
+        app:layout_constraintBottom_toTopOf="@id/locationBottomGuideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationTopGuideline"/>
 
     <ImageView
         android:id="@+id/iconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/locationLabel"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:padding="8dp"
+        android:contentDescription="Weather Icon"
         android:src="@drawable/clear_night"
-        android:contentDescription="Weather Icon"/>
-
-    <LinearLayout
-        android:id="@+id/lineaLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/apparentTemperature"
-        android:orientation="horizontal"
         android:layout_marginTop="8dp"
-        android:baselineAligned="false">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@id/locationBottomGuideline"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/windSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/windSpeedLabel"
-                android:textColor="@color/transparentWhite"/>
-
-            <TextView
-                android:id="@+id/windSpeedValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/windSpeedValue"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/humidityLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/humidity_label"
-                android:textColor="@color/transparentWhite"/>
-
-            <TextView
-                android:id="@+id/humidityValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/humidity_value"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/cloudCoverLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/cloudCover_label"
-                android:textColor="@color/transparentWhite"/>
-
-            <TextView
-                android:id="@+id/cloudCoverValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/cloudCoverValue"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/precipLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/precipeChanceLabel"
-                android:textColor="@color/transparentWhite"/>
-
-            <TextView
-                android:id="@+id/precipValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/precipChanceValue"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/summaryLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/lineaLayout"
-        android:textColor="@android:color/white"
-        android:text="@string/default_weather_summary"
-        android:gravity="center_horizontal"
-        android:textSize="18sp"/>
-
-    <HorizontalScrollView
-        android:id="@+id/newsHorizontallSV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
-        android:scrollbars="none">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/newsRecyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </HorizontalScrollView>
-
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/lineaLayout">
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:id="@+id/horizontalScroll"
-            android:fillViewport="true"
-            android:scrollbars="none"
-            android:layout_alignParentTop="true">
-            <LinearLayout
-                android:id="@+id/dayLineaLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/dayButton1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Monday"/>
-                <Button
-                    android:id="@+id/dayButton2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Tuesday"/>
-                <Button
-                    android:id="@+id/dayButton3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Wednesday"/>
-                <Button
-                    android:id="@+id/dayButton4"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Thursday"/>
-                <Button
-                    android:id="@+id/dayButton5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Friday"/>
-                <Button
-                    android:id="@+id/dayButton6"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Saturday"/>
-                <Button
-                    android:id="@+id/dayButton7"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:filterTouchesWhenObscured="true"
-                    style="@style/buttonScroll"
-                    android:text="Sunday"/>
-            </LinearLayout>
-        </HorizontalScrollView>
-    </android.support.v4.widget.SwipeRefreshLayout>
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

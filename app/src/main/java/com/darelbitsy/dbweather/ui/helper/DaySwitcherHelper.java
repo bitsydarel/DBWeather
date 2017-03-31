@@ -1,31 +1,30 @@
 package com.darelbitsy.dbweather.ui.helper;
 
+import android.content.Context;
 import android.graphics.Typeface;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.R2;
-import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
-import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
+import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.weather.Currently;
 import com.darelbitsy.dbweather.model.weather.DailyData;
-import com.darelbitsy.dbweather.ui.CurrentWeatherFragment;
+import com.darelbitsy.dbweather.ui.WeatherFragment;
 import com.darelbitsy.dbweather.ui.animation.AnimationUtility;
 
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.darelbitsy.dbweather.helper.utility.WeatherUtil.mColorPicker;
+import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColorPicker;
 
 /**
  * Created by Darel Bitsy on 03/03/17.
@@ -33,8 +32,8 @@ import static com.darelbitsy.dbweather.helper.utility.WeatherUtil.mColorPicker;
  */
 
 public class DaySwitcherHelper {
-    @BindView(R2.id.current_weather_layout)
-    RelativeLayout mMainLayout;
+    @BindView(R.id.current_weather_layout)
+    ConstraintLayout mMainLayout;
     @BindView(R.id.locationLabel)
     TextView mLocationLabel;
     @BindView(R.id.temperatureLabel)
@@ -71,45 +70,20 @@ public class DaySwitcherHelper {
     TextView mSunriseTimeLabel;
     @BindView(R.id.sunsetTimeLabel)
     TextView mSunsetTimeLabel;
-    @BindView(R.id.dayButton1)
-    Button mondayButton;
-    @BindView(R.id.dayButton2)
-    Button tuesdayButton;
-    @BindView(R.id.dayButton3)
-    Button wednesdayButton;
-    @BindView(R.id.dayButton4)
-    Button thursdayButton;
-    @BindView(R.id.dayButton5)
-    Button fridayButton;
-    @BindView(R.id.dayButton6)
-    Button saturdayButton;
-    @BindView(R.id.dayButton7)
-    Button sundayButton;
 
-    private final CurrentWeatherFragment  mCurrentFragment;
-    private List<DailyData> mDailyData;
-    private String currentDayName;
-    private Currently mCurrently;
     private String mCityName;
 
 
-    public DaySwitcherHelper(CurrentWeatherFragment currentFragment,
-                             View view,
-                             Currently currently,
-                             List<DailyData> dailyData,
-                             String cityName) {
+    public DaySwitcherHelper(WeatherFragment currentFragment, View view, String cityName) {
 
-        mCurrently = currently;
         ButterKnife.bind(this, view);
-        mCurrentFragment = currentFragment;
-        mDailyData = dailyData;
         mCityName = cityName;
-        setTypeFace();
+        setTypeFace(currentFragment.getContext());
     }
 
-    private void setTypeFace() {
+    private void setTypeFace(Context context) {
         Typeface appTypeFace = AppUtil
-                .getAppGlobalTypeFace(mCurrentFragment.getActivity());
+                .getAppGlobalTypeFace(context);
 
         if (appTypeFace != null) {
             mLocationLabel.setTypeface(appTypeFace);
@@ -122,85 +96,39 @@ public class DaySwitcherHelper {
             mHumidityLabel.setTypeface(appTypeFace);
             mCloudCoverLabel.setTypeface(appTypeFace);
             mSummaryLabel.setTypeface(appTypeFace);
-            mondayButton.setTypeface(appTypeFace);
-            tuesdayButton.setTypeface(appTypeFace);
-            wednesdayButton.setTypeface(appTypeFace);
-            thursdayButton.setTypeface(appTypeFace);
-            fridayButton.setTypeface(appTypeFace);
-            saturdayButton.setTypeface(appTypeFace);
-            sundayButton.setTypeface(appTypeFace);
         }
     }
 
-    public void setCurrentWeather(String timeZone) {
-        setCurrentViews(timeZone);
-        getSunriseAndSunset(timeZone);
-    }
-
-    private void setCurrentWeather(String timeZone, DailyData day) {
-        setCurrentWeather(timeZone);
-        getSunriseAndSunset(timeZone, day);
-    }
-
-    /**
-     * Show the weather of the choosed day
-     * @param dayName is the day name
-     * @param timeZone user timeZone
-     */
-    public void showWeatherByDay(String dayName, String nextDayName, String timeZone) {
-        if(!mDailyData.isEmpty()) {
-            for(DailyData day : mDailyData) {
-                if (dayName.equalsIgnoreCase(mCurrentFragment
-                        .getString(R.string.today_label))
-                        && WeatherUtil.getDayOfTheWeek(day.getTime(), timeZone)
-                        .equalsIgnoreCase(currentDayName)) {
-
-                    setCurrentWeather(timeZone, day);
-
-                } else if (dayName.equalsIgnoreCase(mCurrentFragment.getString(R.string.tomorrow_label))
-                        &&
-                        nextDayName.equalsIgnoreCase(WeatherUtil.getDayOfTheWeek(day.getTime(), timeZone))) {
-
-                    showDayData(dayName, day, timeZone);
-
-                } else if (dayName.equalsIgnoreCase(WeatherUtil.getDayOfTheWeek(day.getTime(), timeZone))) {
-
-                    showDayData(dayName, day, timeZone);
-
-                }
-            }
-        }
-    }
-
-    private void setCurrentViews(String timeZone) {
+    public void setCurrentViews(Context context, Currently currently, String timeZone, long sunrise, long sunset) {
 
         AnimationUtility.rotateTextThanUpdate(mTemperatureLabel,
                 String.format(Locale.ENGLISH,
                         "%d",
-                        WeatherUtil.getTemperatureInInt(mCurrently.getTemperature())));
+                        WeatherUtil.getTemperatureInInt(currently.getTemperature())));
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mApparentTemperature,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.apparentTemperatureValue),
-                        WeatherUtil.getTemperatureInInt(mCurrently.getApparentTemperature())));
+                        context.getString(R.string.apparentTemperatureValue),
+                        WeatherUtil.getTemperatureInInt(currently.getApparentTemperature())));
 
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mTimeLabel,
                 String.format(Locale.getDefault(),
-                        mCurrentFragment.getString(R.string.time_label),
-                        WeatherUtil.getFormattedTime(mCurrently.getTime(), timeZone)));
+                        context.getString(R.string.time_label),
+                        WeatherUtil.getFormattedTime(currently.getTime(), timeZone)));
 
-        AnimationUtility.slideTextUpThanUpdate(mHumidityValue,
+        AnimationUtility.fadeTextOutUpdateThanFadeIn(mHumidityValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.humidity_value),
-                        WeatherUtil.getHumidityPourcentage(mCurrently.getHumidity())));
+                        context.getString(R.string.humidity_value),
+                        WeatherUtil.getHumidityPourcentage(currently.getHumidity())));
 
-        if (mCurrently.getPrecipType() != null) {
-            mPrecipLabel.setText(String.format(Locale.getDefault(),
-                    mCurrentFragment.getString(R.string.precipeChanceTypeLabel),
-                    mCurrently.getPrecipType()));
+        if (currently.getPrecipType() != null) {
+
+            AnimationUtility.slideTextRightThanLeft(mPrecipLabel, String.format(Locale.getDefault(),
+                    context.getString(R.string.precipeChanceTypeLabel),
+                    currently.getPrecipType()));
         } else {
-            mPrecipLabel.setText("RAIN/SNOW");
+            AnimationUtility.slideTextRightThanLeft(mPrecipLabel, "Rain/Snow");
         }
 
         //Setting the location to the current location of the device because the api only provide the timezone as location
@@ -210,27 +138,37 @@ public class DaySwitcherHelper {
 
         AnimationUtility.slideTextRightThanLeft(mPrecipValue,
                 String.format(Locale.getDefault(),
-                        mCurrentFragment.getString(R.string.precipChanceValue),
-                        WeatherUtil.getPrecipPourcentage(mCurrently.getPrecipProbability())));
+                        context.getString(R.string.precipChanceValue),
+                        WeatherUtil.getPrecipPourcentage(currently.getPrecipProbability())));
 
-        AnimationUtility.rotateTextThanUpdate(mSummaryLabel, mCurrently.getSummary());
+        AnimationUtility.rotateTextThanUpdate(mSummaryLabel, currently.getSummary());
 
         AnimationUtility.slideTextLeftThanRight(mWindSpeedValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.windSpeedValue),
-                        WeatherUtil.getWindSpeedMeterPerHour(mCurrently.getWindSpeed())));
+                        context.getString(R.string.windSpeedValue),
+                        WeatherUtil.getWindSpeedMeterPerHour(currently.getWindSpeed())));
 
 
-        AnimationUtility.slideTextUpThanUpdate(mCloudCoverValue,
+        AnimationUtility.fadeTextOutUpdateThanFadeIn(mCloudCoverValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.cloudCoverValue),
-                        WeatherUtil.getCloudCoverPourcentage(mCurrently.getCloudCover())));
+                        context.getString(R.string.cloudCoverValue),
+                        WeatherUtil.getCloudCoverPourcentage(currently.getCloudCover())));
 
-        mIconImageView.setImageDrawable(ContextCompat.getDrawable(mCurrentFragment.getActivity(),
-                WeatherUtil.getIconId(mCurrently.getIcon())));
+        getSunriseAndSunset(timeZone, sunrise, sunset);
 
+        mIconImageView.setImageDrawable(ContextCompat.getDrawable(context,
+                WeatherUtil.getIconId(currently.getIcon())));
 
-        mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(mCurrently.getIcon()));
+        if (!"rain".equals(currently.getIcon()) || !"snow".equals(currently.getIcon())) {
+
+            VideoView videoView = (VideoView)
+                    mMainLayout.findViewById(R.id.backgroundVideo);
+            if (videoView.getVisibility() == View.VISIBLE) {
+                videoView.stopPlayback();
+                videoView.setVisibility(View.INVISIBLE);
+            }
+            mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(currently.getIcon()));
+        }
     }
 
     /**
@@ -239,7 +177,11 @@ public class DaySwitcherHelper {
      * @param day the Day
      * @param timeZone the user timeZone
      */
-    private void showDayData(String dayName, DailyData day, String timeZone) {
+    public void showDayData(Context context, String dayName, DailyData day, String timeZone) {
+
+        //Setting the location to the current location of the device because the api only provide the timezone as location
+        AnimationUtility.fadeTextOutUpdateThanFadeIn(mLocationLabel, mCityName);
+        Log.i(ConstantHolder.TAG, "the City Name: " + mCityName);
 
         AnimationUtility.rotateTextThanUpdate(mTemperatureLabel,
                 String.format(Locale.ENGLISH, "%d",
@@ -248,25 +190,25 @@ public class DaySwitcherHelper {
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mApparentTemperature,
                 String.format(Locale.getDefault(),
-                        mCurrentFragment.getString(R.string.apparentTemperatureValue),
+                        context.getString(R.string.apparentTemperatureValue),
                         WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax())));
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mTimeLabel, dayName);
 
-        AnimationUtility.slideTextUpThanUpdate(mHumidityValue,
+        AnimationUtility.fadeTextOutUpdateThanFadeIn(mHumidityValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.humidity_value),
+                        context.getString(R.string.humidity_value),
                         WeatherUtil.getHumidityPourcentage(day.getHumidity())));
 
         if (day.getPrecipType() != null) {
             mPrecipLabel.setText(String.format(Locale.getDefault(),
-                    mCurrentFragment.getString(R.string.precipeChanceTypeLabel),
+                    context.getString(R.string.precipeChanceTypeLabel),
                     day.getPrecipType()));
         }
 
         AnimationUtility.slideTextRightThanLeft(mPrecipValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.precipChanceValue),
+                        context.getString(R.string.precipChanceValue),
                         WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
 
         AnimationUtility.rotateTextThanUpdate(mSummaryLabel, day.getSummary());
@@ -275,15 +217,17 @@ public class DaySwitcherHelper {
 
         AnimationUtility.slideTextLeftThanRight(mWindSpeedValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.windSpeedValue),
+                        context.getString(R.string.windSpeedValue),
                         WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
 
-        AnimationUtility.slideTextUpThanUpdate(mCloudCoverValue,
+        AnimationUtility.fadeTextOutUpdateThanFadeIn(mCloudCoverValue,
                 String.format(Locale.ENGLISH,
-                        mCurrentFragment.getString(R.string.cloudCoverValue),
+                        context.getString(R.string.cloudCoverValue),
                         WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
 
-        mIconImageView.setImageDrawable(ContextCompat.getDrawable(mCurrentFragment.getActivity(), WeatherUtil.getIconId(day.getIcon())));
+        mIconImageView.setImageDrawable(ContextCompat
+                .getDrawable(context, WeatherUtil.getIconId(day.getIcon())));
+
         mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
     }
 
@@ -297,34 +241,14 @@ public class DaySwitcherHelper {
                         timeZone));
     }
 
-    private void getSunriseAndSunset(String timeZone) {
-        for (DailyData day : mDailyData) {
-            //Getting current day
-            currentDayName = WeatherUtil.getDayOfTheWeek(mCurrently.getTime(), timeZone);
-
-            //Checking if the current day match the day in the loop
-            if (WeatherUtil
-                    .getDayOfTheWeek(day.getTime(), timeZone)
-                    .equals(currentDayName)) {
-
-                AnimationUtility.slideTextLeftThanRight(mSunriseTimeValue,
-                        WeatherUtil.getFormattedTime(day.getSunriseTime(),
+    private void getSunriseAndSunset(String timeZone, long sunrise, long sunset) {
+        AnimationUtility.slideTextLeftThanRight(mSunriseTimeValue,
+                        WeatherUtil.getFormattedTime(sunrise,
                                 timeZone));
 
                 AnimationUtility.slideTextRightThanLeft(mSunsetTimeValue,
-                        WeatherUtil.getFormattedTime(day.getSunsetTime(),
+                        WeatherUtil.getFormattedTime(sunset,
                                 timeZone));
-            }
-        }
-    }
-
-    public void updateDailyData(List<DailyData> dailyData) {
-        mDailyData.clear();
-        mDailyData.addAll(dailyData);
-    }
-
-    public void updateCurrentWeatherData(Currently currently) {
-        mCurrently = currently;
     }
 
     public void updateCityName(String cityName) {

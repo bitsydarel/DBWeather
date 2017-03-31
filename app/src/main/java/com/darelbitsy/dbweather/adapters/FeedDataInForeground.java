@@ -6,13 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.controller.api.adapters.NewsRestAdapter;
-import com.darelbitsy.dbweather.controller.api.adapters.WeatherAdapter;
-import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
+import com.darelbitsy.dbweather.controller.api.adapters.network.NewsRestAdapter;
+import com.darelbitsy.dbweather.controller.api.adapters.network.WeatherAdapter;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.NewsResponse;
 import com.darelbitsy.dbweather.model.weather.Weather;
-import com.darelbitsy.dbweather.receiver.SyncDataReceiver;
+import com.darelbitsy.dbweather.helper.receiver.SyncDataReceiver;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.io.IOException;
@@ -35,8 +36,8 @@ public class FeedDataInForeground {
     public void performSync() {
         if (AppUtil.isNetworkAvailable(mContext)) {
             AndroidThreeTen.init(mContext);
-            WeatherAdapter weatherApi = new WeatherAdapter();
-            NewsRestAdapter newsApi = new NewsRestAdapter();
+            WeatherAdapter weatherApi = new WeatherAdapter(mContext);
+            NewsRestAdapter newsApi = new NewsRestAdapter(mContext);
             final List<NewsResponse> newsResponseList = new ArrayList<>();
 
             try {
@@ -49,7 +50,8 @@ public class FeedDataInForeground {
                 mDatabase.saveHourlyWeather(weather.getHourly().getData());
                 mDatabase.saveDailyWeather(weather.getDaily().getData());
                 if (weather.getMinutely() != null) {
-                    mDatabase.saveMinutelyWeather(weather.getMinutely().getData());
+                    mDatabase
+                            .saveMinutelyWeather(weather.getMinutely().getData());
                 }
                 if (weather.getAlerts() != null) { mDatabase.saveAlerts(weather.getAlerts()); }
 
@@ -79,7 +81,8 @@ public class FeedDataInForeground {
         AndroidThreeTen.init(context);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent syncTaskIntent = new Intent(context, SyncDataReceiver.class);
-        syncTaskIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        syncTaskIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                .addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 7127,

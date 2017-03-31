@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.adapters.DatabaseOperation;
-import com.darelbitsy.dbweather.helper.ConstantHolder;
-import com.darelbitsy.dbweather.helper.api.GetNewsesHelper;
-import com.darelbitsy.dbweather.helper.api.GetWeatherHelper;
+import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
+import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
+import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
-import com.darelbitsy.dbweather.services.WeatherDatabaseService;
+import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
 
 import java.util.ArrayList;
 
@@ -21,6 +21,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 13/02/17.
@@ -43,6 +45,9 @@ public class WelcomeActivity extends Activity {
                 Log.i(ConstantHolder.TAG, "Inside the newsObserver WelcomeActivity");
                 mIntent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
                 startActivity(mIntent);
+                if (isSubscriptionDone) {
+
+                }
                 finish();
             }
 
@@ -59,7 +64,9 @@ public class WelcomeActivity extends Activity {
                 mIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 mIntent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
 
-                if (isSubscriptionDone) {
+                if (isSubscriptionDone && getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                        .getBoolean(ConstantHolder.FIRST_RUN, true)) {
+
                     subscriptions.add(new GetNewsesHelper(WelcomeActivity.this).getNewsesFromApi()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -100,6 +107,7 @@ public class WelcomeActivity extends Activity {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(mWeatherObserver));
+
 
             isSubscriptionDone = true;
 

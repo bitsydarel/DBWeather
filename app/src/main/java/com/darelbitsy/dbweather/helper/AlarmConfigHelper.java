@@ -7,14 +7,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.adapters.DatabaseOperation;
-import com.darelbitsy.dbweather.receiver.AlarmWeatherReceiver;
+import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
+import com.darelbitsy.dbweather.helper.receiver.AlarmWeatherReceiver;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 30/01/17.
@@ -76,7 +79,7 @@ public class AlarmConfigHelper {
         if (calendarMorning.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarMorning;
             currentPendingIntent = mPendingIntentMorning;
-            mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+            mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
                     .edit()
                     .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7124)
                     .apply();
@@ -86,7 +89,7 @@ public class AlarmConfigHelper {
         if (calendarAfternoon.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarAfternoon;
             currentPendingIntent = mPendingIntentAfternoon;
-            mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+            mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
                     .edit()
                     .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7125)
                     .apply();
@@ -95,7 +98,7 @@ public class AlarmConfigHelper {
         if (calendarNight.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarNight;
             currentPendingIntent = mPendingIntentNight;
-            mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+            mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
                     .edit()
                     .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7126)
                     .apply();
@@ -105,7 +108,7 @@ public class AlarmConfigHelper {
         calendarMorning.add(Calendar.DATE, +1);
         currentCalendar = calendarMorning;
         currentPendingIntent = mPendingIntentMorning;
-        mContext.getSharedPreferences(DatabaseOperation.PREFS_NAME, mContext.MODE_PRIVATE)
+        mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
                 .edit()
                 .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7124)
                 .apply();

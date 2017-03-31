@@ -18,6 +18,7 @@ package com.darelbitsy.dbweather.ui.widgets;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
@@ -53,7 +54,7 @@ public class AnimateDrawable extends ProxyDrawable {
     }
     
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         Drawable dr = getProxy();
         if (dr != null) {
             int sc = canvas.save();

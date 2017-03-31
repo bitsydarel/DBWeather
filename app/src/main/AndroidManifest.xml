@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.darelbitsy.dbweather">
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
@@ -15,6 +16,7 @@
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="false"
+        tools:replace="android:allowBackup"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -30,10 +32,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        
+
         <activity android:name=".ui.alert.NotificationActivity"
                   android:noHistory="true"
-                  android:theme="@style/Theme.Transparent">
+                  android:theme="@style/NewsActivityTheme">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.alert.NewsDialogActivity"
+                  android:noHistory="true"
+                  android:theme="@style/NewsActivityTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -47,29 +57,31 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.SyncDatabaseService"
+        <service android:name=".helper.services.SyncDatabaseService"
                  android:enabled="true"
                  android:process=":remote"/>
 
-        <service android:name=".services.KillCheckerService"
+        <service android:name=".helper.services.KillCheckerService"
                  android:enabled="true"
+                 android:process=":remote"
                  android:stopWithTask="false"/>
 
-        <service android:name=".services.LocationTracker"
+        <service android:name=".helper.services.LocationTracker"
             android:enabled="true"
             android:stopWithTask="true">
         </service>
-        
-        <service android:name=".services.NewsDatabaseService"
+
+        <service android:name=".helper.services.NewsDatabaseService"
                  android:enabled="true"
+                 android:process=":remote"
                  android:stopWithTask="false"/>
-        
-        <service android:name=".services.WeatherDatabaseService"
+
+        <service android:name=".helper.services.WeatherDatabaseService"
                  android:enabled="true"
+                 android:process=":remote"
                  android:stopWithTask="false"/>
-        
-        
-        <receiver android:name=".receiver.AlarmWeatherReceiver"
+
+        <receiver android:name=".helper.receiver.AlarmWeatherReceiver"
                   android:enabled="true"
                   android:process=":remote"
                   android:exported="true">
@@ -79,12 +91,12 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.SyncDataReceiver"
+        <receiver android:name=".helper.receiver.SyncDataReceiver"
                   android:exported="true"
                   android:enabled="true"
                   android:process=":remote"/>
 
-        <receiver android:name=".receiver.AlarmConfigOnBoot"
+        <receiver android:name=".helper.receiver.AlarmConfigOnBoot"
                   android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
                   android:enabled="true"
                   android:exported="true">
@@ -97,7 +109,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.ServiceRestart"
+        <receiver android:name=".helper.receiver.ServiceRestart"
                   android:exported="true"
                   android:enabled="true"
                   android:process=":remote">

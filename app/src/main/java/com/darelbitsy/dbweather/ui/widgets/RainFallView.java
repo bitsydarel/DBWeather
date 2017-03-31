@@ -19,10 +19,11 @@ import java.util.Random;
 
 /**
  * Created by Darel Bitsy on 20/01/17.
+ * Rain Falling Animation
  */
 
 public class RainFallView extends View {
-    private int snow_flake_count = 10;
+    private int mRainFlakeCount = 10;
     private final List<Drawable> drawables = new ArrayList<>();
     private int[][] coords;
     private final Drawable mRainDrop;
@@ -46,10 +47,10 @@ public class RainFallView extends View {
         Random random = new SecureRandom();
         Interpolator interpolator = new LinearInterpolator();
 
-        snow_flake_count = Math.max(width, height) / 20;
-        coords = new int[snow_flake_count][];
+        mRainFlakeCount = Math.max(width, height) / 20;
+        coords = new int[mRainFlakeCount][];
         drawables.clear();
-        for (int i = 0; i < snow_flake_count; i++) {
+        for (int i = 0; i < mRainFlakeCount; i++) {
             Animation animation = new TranslateAnimation(0, height / 10
                     - random.nextInt(height / 5), 0, height + 30);
             animation.setDuration(10 * height + random.nextInt(5 * height));
@@ -71,7 +72,7 @@ public class RainFallView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (int i = 0; i < snow_flake_count; i++) {
+        for (int i = 0; i < mRainFlakeCount; i++) {
             Drawable drawable = drawables.get(i);
             canvas.save();
             canvas.translate(coords[i][0], coords[i][1]);

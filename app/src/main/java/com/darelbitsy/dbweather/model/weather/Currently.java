@@ -67,6 +67,14 @@ public class Currently implements Parcelable {
     @Expose
     private double ozone;
 
+    @SerializedName("sunriseTime")
+    @Expose
+    private long sunriseTime;
+
+    @SerializedName("sunsetTime")
+    @Expose
+    private long sunsetTime;
+
     /**
      * Empty constructor
      * Help to initiate the class
@@ -249,6 +257,22 @@ public class Currently implements Parcelable {
 
     public void setOzone(double ozone) {
         this.ozone = ozone;
+    }
+
+    public long getSunriseTime() {
+        return sunriseTime;
+    }
+
+    public void setSunriseTime(long sunriseTime) {
+        this.sunriseTime = sunriseTime;
+    }
+
+    public long getSunsetTime() {
+        return sunsetTime;
+    }
+
+    public void setSunsetTime(long sunsetTime) {
+        this.sunsetTime = sunsetTime;
     }
 
     @Override

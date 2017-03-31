@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
+    
+    <include android:id="@+id/newsToolbar"
+        layout="@layout/news_toolbar"/>
 
+    <FrameLayout
+        android:id="@+id/newsFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newsToolbar">
+        <ImageView
+            android:id="@+id/articleImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/no_image_icon"/>
+        <ProgressBar
+            android:id="@+id/newsProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            style="@style/Theme.ProgressBarTheme"
+            android:visibility="invisible"/>
+
+    </FrameLayout>
+    <ScrollView
+        android:id="@+id/newsHorizontallSV"
+        android:layout_below="@id/newsFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/articleDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="A New York federal prosecutor who refused to resign when he and 45 other prosecutors were asked to by the Trump administration says he has been sacked."
+            android:padding="8dp"
+            android:gravity="center_horizontal"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/newsHorizontallSV"
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        android:paddingRight="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp">
+        <Button
+            android:id="@+id/closeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white"
+            android:text="@string/news_close_text"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:filterTouchesWhenObscured="true"/>
+        <Button
+            android:id="@+id/openInBrowserButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white"
+            android:text="@string/open_in_browser_text"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:filterTouchesWhenObscured="true"/>
+    </LinearLayout>
 </RelativeLayout>

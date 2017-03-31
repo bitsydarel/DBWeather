@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.helper.ConstantHolder;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -111,17 +111,28 @@ public class Article implements Parcelable {
         }
     }
 
-    public String getUrlToImage() throws MalformedURLException, URISyntaxException {
-        URL urlImage = new URL(urlToImage);
-        Log.i("URL_LOG", "Got url : " + urlToImage);
-        return new URI(urlImage.getProtocol(),
-                urlImage.getUserInfo(),
-                urlImage.getHost(),
-                urlImage.getPort(),
-                urlImage.getPath(),
-                urlImage.getQuery(),
-                urlImage.getRef())
-                .toString();
+    public String getUrlToImage() {
+        String urlImage = "";
+        if (urlToImage != null && !urlToImage.isEmpty()) {
+            try {
+                URL urlInfo = new URL(urlToImage);
+                urlImage = new URI(urlInfo.getProtocol(),
+                        urlInfo.getUserInfo(),
+                        urlInfo.getHost(),
+                        urlInfo.getPort(),
+                        urlInfo.getPath(),
+                        urlInfo.getQuery(),
+                        urlInfo.getRef())
+                        .toString();
+
+                Log.i("URL_LOG", "Got url : " + urlImage);
+
+            } catch (MalformedURLException | URISyntaxException e) {
+                Log.i(ConstantHolder.TAG, "Error parsing url : "
+                        + urlToImage);
+            }
+        }
+        return urlImage;
     }
 
     public void setUrlToImage(String urlToImage) { this.urlToImage = urlToImage; }
@@ -131,18 +142,33 @@ public class Article implements Parcelable {
     }
 
     public void setPublishedAt(String publishedAt) {
-        this.publishedAt = publishedAt;
+        if (publishedAt != null) {
+            this.publishedAt = publishedAt
+                    .replace("T", " ")
+                    .replace("Z", "");
+        }
+
     }
 
-    public String getArticleUrl() throws URISyntaxException {
-        return new URI(mArticleUrl.getProtocol(),
-                mArticleUrl.getUserInfo(),
-                mArticleUrl.getHost(),
-                mArticleUrl.getPort(),
-                mArticleUrl.getPath(),
-                mArticleUrl.getQuery(),
-                mArticleUrl.getRef())
-                .toString();
+    public String getArticleUrl() {
+        String articleUrl = "";
+        if (mArticleUrl != null) {
+            try {
+                articleUrl = new URI(mArticleUrl.getProtocol(),
+                        mArticleUrl.getUserInfo(),
+                        mArticleUrl.getHost(),
+                        mArticleUrl.getPort(),
+                        mArticleUrl.getPath(),
+                        mArticleUrl.getQuery(),
+                        mArticleUrl.getRef())
+                        .toString();
+
+            } catch (URISyntaxException e) {
+                Log.i(ConstantHolder.TAG, "Error while reformatting the url: "
+                        + e.getMessage());
+            }
+        }
+        return articleUrl;
     }
 
     public void setArticleUrl(String articleUrl) throws MalformedURLException {

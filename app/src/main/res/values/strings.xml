@@ -12,15 +12,12 @@
     <string name="default_weather_summary">Getting current weather</string>
     <string name="action_about_us">About Us</string>
     <string name="the_about_us_page">A menu to the about us page</string>
-    <string name="precipeChanceLabel">RAIN/SNOW</string>
+    <string name="precipeChanceLabel">Rain/Snow</string>
     <string name="humidity_label">HUMIDITY</string>
     <string name="title_activity_main_menu">DB Weather</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
-
     <string name="rain_title">Take an umbrella!</string>
     <string name="clear_night_title">Clear night with a beautiful sky!</string>
     <string name="clear_day_title">Wonderful day in sight!</string>
@@ -43,16 +40,51 @@
     <string name="unknown_location">Unknown Location</string>
     <string name="time_label">At %1$s, it was</string>
     <string name="windSpeedLabel">WindSpeed</string>
-    <string name="news_from">From : %1$s</string>
+    <string name="news_from">%1$s</string>
     <string name="windSpeedValue">%1$d m/s</string>
-    <string name="humidity_value">%1$d %%</string>
+    <string name="humidity_value">%1$d%%</string>
     <string name="cloudCover_label">cloudCover</string>
-    <string name="cloudCoverValue">%1$d %%</string>
-    <string name="published_at">Published At: %1$s</string>
+    <string name="cloudCoverValue">%1$d%%</string>
+    <string name="published_at">%1$s</string>
     <string name="sunsetLabel">Sunset</string>
     <string name="sunriseLabel">Sunrise</string>
     <string name="apparentTemperatureValue">Feeling : %1$d °</string>
     <string name="timeLabelValue">At %1$s, it will be</string>
-    <string name="precipChanceValue">%1$d %%</string>
+    <string name="precipChanceValue">%1$d%%</string>
     <string name="precipeChanceTypeLabel">%1$s</string>
+    <string name="open_in_browser_text">Open in Browser</string>
+    <string name="news_close_text">Close the Window</string>
+
+    <string name="resume_layout_summary">Summary</string>
+    <string name="resume_day_summary">Day Summary</string>
+    <string name="resume_week_summary">Week Summary</string>
+
+    <string name="hourly_precipeChanceTypeLabel">%1$s:</string>
+    <string name="hourly_precipitation_value"> %1$d%%</string>
+    <string name="hourly_humidity">Humidity:</string>
+    <string name="hourly_humidity_value">%1$d%%</string>
+    <string name="hourly_windspeed">WindSpeed:</string>
+    <string name="hourly_windspeed_value">%1$dm/s</string>
+    <string name="hourly_apparentTemperature">Feeling:</string>
+    <string name="hourly_apparentTemperature_value"> %1$d°</string>
+    <string name="hourly_cloudcover">cloudCover:</string>
+    <string name="hourly_cloudcover_value">%1$d%%</string>
+    <string name="hourly_dewpoint">DewPoint:</string>
+    <string name="hourly_dewpoint_value"> %1$d%%</string>
+    <string name="hourly_time"> %1$s</string>
+    <string name="hourly_time_at">At:</string>
+    <string name="hourly_pressure">Pressure:</string>
+    <string name="hourly_pressure_value">%1$f%%</string>
+    <string name="hourly_ozone">Ozone:</string>
+    <string name="hourly_ozone_value">%1$f%%</string>
+    <string name="hourly_visibility">Visibility:</string>
+    <string name="hourly_visibility_value">%1$d%%</string>
+    <string name="hourly_temperature">Temperature:</string>
+    <string name="hourly_temperature_value">%1$d°</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="notification_config_title">Activate Weather Notification</string>
+    <string name="news_translation_title">Translate Newses in Locale Language</string>
+    <string name="add_location_config_title">Add Location</string>
+    <string name="list_custom_view">com.darelbitsy.dbweather.ui.animation.ListCustomBehavior</string>
 </resources>

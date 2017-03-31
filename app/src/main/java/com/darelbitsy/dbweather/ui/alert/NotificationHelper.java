@@ -3,7 +3,7 @@ package com.darelbitsy.dbweather.ui.alert;
 import android.content.Context;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.helper.utility.WeatherUtil;
+import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Locale;

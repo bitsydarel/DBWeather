@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import com.darelbitsy.dbweather.R;
 /**
  * Created by Darel Bitsy on 11/02/17.
  */
-public class LunarFragment extends android.app.Fragment {
+public class LunarFragment extends Fragment {
 //    private String jsonData;
 
     @Override

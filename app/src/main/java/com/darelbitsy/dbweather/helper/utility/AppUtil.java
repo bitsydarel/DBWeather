@@ -6,37 +6,44 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.VideoView;
 
+import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
-import com.darelbitsy.dbweather.helper.ConstantHolder;
-import com.darelbitsy.dbweather.receiver.AlarmWeatherReceiver;
-import com.darelbitsy.dbweather.services.KillCheckerService;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
+import com.darelbitsy.dbweather.helper.receiver.AlarmWeatherReceiver;
+import com.darelbitsy.dbweather.helper.services.KillCheckerService;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
-import static com.darelbitsy.dbweather.adapters.DatabaseOperation.PREFS_NAME;
 import static com.darelbitsy.dbweather.helper.AlarmConfigHelper.MY_ACTION;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.IS_ALARM_ON;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.LIST_OF_TYPEFACES;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
-import static com.darelbitsy.dbweather.helper.ConstantHolder.USER_LANGUAGE;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_ALARM_ON;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.LIST_OF_TYPEFACES;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.USER_LANGUAGE;
 
 /**
  * Created by Darel Bitsy on 22/02/17.
@@ -45,27 +52,35 @@ import static com.darelbitsy.dbweather.helper.ConstantHolder.USER_LANGUAGE;
 public class AppUtil {
 
     public static final OkHttpClient translateOkHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(25, TimeUnit.SECONDS)
+            .writeTimeout(25, TimeUnit.SECONDS)
             .readTimeout(45, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build();
 
-    public static final OkHttpClient weatherOkHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+    public static final OkHttpClient.Builder weatherOkHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(25, TimeUnit.SECONDS)
+            .writeTimeout(25, TimeUnit.SECONDS)
             .readTimeout(45, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            .build();
+            .retryOnConnectionFailure(true);
 
-    public static final OkHttpClient newsOkHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+    public static final OkHttpClient.Builder newsOkHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(25, TimeUnit.SECONDS)
+            .writeTimeout(25, TimeUnit.SECONDS)
             .readTimeout(45, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            .build();
+            .retryOnConnectionFailure(true);
+
 
     private AppUtil() {}
+
+    public static Cache getCacheDirectory(Context context) {
+
+        return new Cache(getFileCache(context), ConstantHolder.CACHE_SIZE);
+    }
+
+    public static File getFileCache(Context context) {
+        return new File(context.getCacheDir(), "dbweather_cache_dir");
+    }
 
     public static boolean isNetworkAvailable(Context context) {
         NetworkInfo networkInfo;
@@ -181,15 +196,25 @@ public class AppUtil {
     }
 
     public static Typeface getAppGlobalTypeFace(Context context) {
-        final Typeface[] typeface = {null};
+        Typeface typeface = null;
 
         for (List<String> languages : LIST_OF_TYPEFACES.keySet()) {
             if (languages.contains(USER_LANGUAGE)) {
-                typeface[0] = Typeface.createFromAsset(context.getAssets(),
+                typeface = Typeface.createFromAsset(context.getAssets(),
                         LIST_OF_TYPEFACES.get(languages));
             }
         }
 
-        return typeface[0];
+        return typeface;
+    }
+
+    public static void setupVideoBackground(int resourceId, Context context, View view) {
+        VideoView background = (VideoView) view.findViewById(R.id.backgroundVideo);
+        background.stopPlayback();
+        background.setVideoURI(Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId));
+        background.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
+        if (background.getVisibility() == View.INVISIBLE) { background.setVisibility(View.VISIBLE); }
+//        background.setOnCompletionListener(mp -> background.setBackgroundColor(Color.BLACK));
+        background.start();
     }
 }

@@ -5,11 +5,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.TextView;
+
+import com.darelbitsy.dbweather.adapters.listAdapter.NewsAdapter;
 
 /**
  * Created by Darel Bitsy on 06/03/17.
@@ -23,12 +24,34 @@ public class AnimationUtility {
 
     private AnimationUtility() {}
 
-    public static void autoScrollRecyclerView(RecyclerView recyclerView) {
-        int maxItem = recyclerView.getAdapter().getItemCount();
-        recyclerView.scrollToPosition(maxItem - 1);
-        Log.i("AnimationEvent", "SmoothScroll Done And max element == " + maxItem);
+    public static void autoScrollRecyclerView(final RecyclerView recyclerView,
+                                              final NewsAdapter adapter) {
+        final int speedScroll = 4000;
+
+        final Runnable runnable = new Runnable() {
+            int count = 0;
+            boolean flag = true;
+            @Override
+            public void run() {
+                if(count < adapter.getItemCount()){
+                    if(count == adapter.getItemCount() -1){
+                        flag = false;
+
+                    } else if(count == 0){ flag = true; }
+
+                    if(flag) { count++; }
+                    else { count--; }
+
+                    recyclerView.smoothScrollToPosition(count);
+                    recyclerView.postDelayed(this, speedScroll);
+                }
+            }
+        };
+        recyclerView
+                .postDelayed(runnable, speedScroll);
 
     }
+
 
     public static void slideTextUpThanUpdate(TextView textView, String value) {
         AnimatorSet compositor = new AnimatorSet();
