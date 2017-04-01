@@ -56,7 +56,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIO
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
-import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.RECYCLER_TOP_LIMIT;
+import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColorPicker;
 
 /**
  * Created by Darel Bitsy on 11/02/17.
@@ -87,8 +87,6 @@ public class MainActivity extends AppCompatActivity {
     private HourAdapter mHourAdapter;
     private final Handler mMyHandler = new Handler();
     private Weather mWeather;
-    private float hourlyRecyclerTopLimit;
-    private float hourlyRecyclerBottomLimit;
     private SharedPreferences sharedPreferences;
 
 
@@ -141,13 +139,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mDatabase = new DatabaseOperation(this);
         Bundle extras = getIntent().getExtras();
         mWeather = extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.weatherToolbar);
         setSupportActionBar(toolbar);
+
+        findViewById(R.id.dbweather_main_layout).setBackgroundResource(mColorPicker
+                .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
         mWeatherObservable = new GetWeatherHelper(this)
                 .getObservableWeatherFromApi(mDatabase)
@@ -268,19 +268,8 @@ public class MainActivity extends AppCompatActivity {
 
         float height = metrics.heightPixels;
 
-        hourlyRecyclerTopLimit = Math.round(height * 0.2f);
-        hourlyRecyclerBottomLimit = Math.round(height * 0.7f);
-
-        Log.i("Behavior", "Default Height: " + height
-                + " and final : " + hourlyRecyclerBottomLimit);
-
-
         sharedPreferences.edit()
-                .putFloat(RECYCLER_TOP_LIMIT, hourlyRecyclerTopLimit)
-                .apply();
-
-        sharedPreferences.edit()
-                .putFloat(RECYCLER_BOTTOM_LIMIT, hourlyRecyclerBottomLimit)
+                .putFloat(RECYCLER_BOTTOM_LIMIT, Math.round(height * 0.7f))
                 .apply();
     }
 

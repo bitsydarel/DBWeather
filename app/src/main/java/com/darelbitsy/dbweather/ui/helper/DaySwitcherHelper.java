@@ -34,12 +34,15 @@ import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColor
 public class DaySwitcherHelper {
     @BindView(R.id.current_weather_layout)
     ConstraintLayout mMainLayout;
+
     @BindView(R.id.locationLabel)
     TextView mLocationLabel;
     @BindView(R.id.temperatureLabel)
     TextView mTemperatureLabel;
+
     @BindView(R.id.iconImageView)
     ImageView mIconImageView;
+
     @BindView(R.id.apparentTemperature)
     TextView mApparentTemperature;
     @BindView(R.id.timeLabel)
@@ -99,7 +102,7 @@ public class DaySwitcherHelper {
         }
     }
 
-    public void setCurrentViews(Context context, Currently currently, String timeZone, long sunrise, long sunset) {
+    public void setCurrentViews(View view, Currently currently, String timeZone, long sunrise, long sunset) {
 
         AnimationUtility.rotateTextThanUpdate(mTemperatureLabel,
                 String.format(Locale.ENGLISH,
@@ -108,24 +111,24 @@ public class DaySwitcherHelper {
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mApparentTemperature,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.apparentTemperatureValue),
+                        view.getContext().getString(R.string.apparentTemperatureValue),
                         WeatherUtil.getTemperatureInInt(currently.getApparentTemperature())));
 
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mTimeLabel,
                 String.format(Locale.getDefault(),
-                        context.getString(R.string.time_label),
+                        view.getContext().getString(R.string.time_label),
                         WeatherUtil.getFormattedTime(currently.getTime(), timeZone)));
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mHumidityValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.humidity_value),
+                        view.getContext().getString(R.string.humidity_value),
                         WeatherUtil.getHumidityPourcentage(currently.getHumidity())));
 
         if (currently.getPrecipType() != null) {
 
             AnimationUtility.slideTextRightThanLeft(mPrecipLabel, String.format(Locale.getDefault(),
-                    context.getString(R.string.precipeChanceTypeLabel),
+                    view.getContext().getString(R.string.precipeChanceTypeLabel),
                     currently.getPrecipType()));
         } else {
             AnimationUtility.slideTextRightThanLeft(mPrecipLabel, "Rain/Snow");
@@ -138,36 +141,35 @@ public class DaySwitcherHelper {
 
         AnimationUtility.slideTextRightThanLeft(mPrecipValue,
                 String.format(Locale.getDefault(),
-                        context.getString(R.string.precipChanceValue),
+                        view.getContext().getString(R.string.precipChanceValue),
                         WeatherUtil.getPrecipPourcentage(currently.getPrecipProbability())));
 
         AnimationUtility.rotateTextThanUpdate(mSummaryLabel, currently.getSummary());
 
         AnimationUtility.slideTextLeftThanRight(mWindSpeedValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.windSpeedValue),
+                        view.getContext().getString(R.string.windSpeedValue),
                         WeatherUtil.getWindSpeedMeterPerHour(currently.getWindSpeed())));
 
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mCloudCoverValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.cloudCoverValue),
+                        view.getContext().getString(R.string.cloudCoverValue),
                         WeatherUtil.getCloudCoverPourcentage(currently.getCloudCover())));
 
         getSunriseAndSunset(timeZone, sunrise, sunset);
 
-        mIconImageView.setImageDrawable(ContextCompat.getDrawable(context,
+        mIconImageView.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
                 WeatherUtil.getIconId(currently.getIcon())));
 
-        if (!"rain".equals(currently.getIcon()) || !"snow".equals(currently.getIcon())) {
+        if (!"rain".equals(currently.getIcon()) && !"snow".equals(currently.getIcon())) {
 
             VideoView videoView = (VideoView)
-                    mMainLayout.findViewById(R.id.backgroundVideo);
-            if (videoView.getVisibility() == View.VISIBLE) {
-                videoView.stopPlayback();
-                videoView.setVisibility(View.INVISIBLE);
-            }
-            mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(currently.getIcon()));
+                    view.findViewById(R.id.backgroundVideo);
+            videoView.stopPlayback();
+            videoView.setVisibility(View.INVISIBLE);
+
+            view.setBackgroundResource(mColorPicker.getBackgroundColor(currently.getIcon()));
         }
     }
 
@@ -177,7 +179,7 @@ public class DaySwitcherHelper {
      * @param day the Day
      * @param timeZone the user timeZone
      */
-    public void showDayData(Context context, String dayName, DailyData day, String timeZone) {
+    public void showDayData(View view, String dayName, DailyData day, String timeZone) {
 
         //Setting the location to the current location of the device because the api only provide the timezone as location
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mLocationLabel, mCityName);
@@ -190,25 +192,25 @@ public class DaySwitcherHelper {
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mApparentTemperature,
                 String.format(Locale.getDefault(),
-                        context.getString(R.string.apparentTemperatureValue),
+                        view.getContext().getString(R.string.apparentTemperatureValue),
                         WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax())));
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mTimeLabel, dayName);
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mHumidityValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.humidity_value),
+                        view.getContext().getString(R.string.humidity_value),
                         WeatherUtil.getHumidityPourcentage(day.getHumidity())));
 
         if (day.getPrecipType() != null) {
             mPrecipLabel.setText(String.format(Locale.getDefault(),
-                    context.getString(R.string.precipeChanceTypeLabel),
+                    view.getContext().getString(R.string.precipeChanceTypeLabel),
                     day.getPrecipType()));
         }
 
         AnimationUtility.slideTextRightThanLeft(mPrecipValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.precipChanceValue),
+                        view.getContext().getString(R.string.precipChanceValue),
                         WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
 
         AnimationUtility.rotateTextThanUpdate(mSummaryLabel, day.getSummary());
@@ -217,18 +219,18 @@ public class DaySwitcherHelper {
 
         AnimationUtility.slideTextLeftThanRight(mWindSpeedValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.windSpeedValue),
+                        view.getContext().getString(R.string.windSpeedValue),
                         WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
 
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mCloudCoverValue,
                 String.format(Locale.ENGLISH,
-                        context.getString(R.string.cloudCoverValue),
+                        view.getContext().getString(R.string.cloudCoverValue),
                         WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
 
         mIconImageView.setImageDrawable(ContextCompat
-                .getDrawable(context, WeatherUtil.getIconId(day.getIcon())));
+                .getDrawable(view.getContext(), WeatherUtil.getIconId(day.getIcon())));
 
-        mMainLayout.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
+        view.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
     }
 
     private void getSunriseAndSunset(String timeZone, DailyData day) {
@@ -246,9 +248,9 @@ public class DaySwitcherHelper {
                         WeatherUtil.getFormattedTime(sunrise,
                                 timeZone));
 
-                AnimationUtility.slideTextRightThanLeft(mSunsetTimeValue,
-                        WeatherUtil.getFormattedTime(sunset,
-                                timeZone));
+        AnimationUtility.slideTextRightThanLeft(mSunsetTimeValue,
+                WeatherUtil.getFormattedTime(sunset,
+                        timeZone));
     }
 
     public void updateCityName(String cityName) {

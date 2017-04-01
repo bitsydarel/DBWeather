@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="0dp"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/leftVerticalGuideline"

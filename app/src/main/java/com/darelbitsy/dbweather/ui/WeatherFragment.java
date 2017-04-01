@@ -39,7 +39,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColorPicker;
 import static com.darelbitsy.dbweather.ui.MainActivity.subscriptions;
 
 /**
@@ -124,29 +123,7 @@ public class WeatherFragment extends Fragment {
                 mCurrentView,
                 mCityName);
 
-        return mCurrentView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mHandler.post(() -> initialize(mCurrentView));
-
-        if (mCurrently != null) {
-
-            setupBackground(mCurrently.getIcon());
-            if (AppUtil.isGpsPermissionOn(getActivity())) {
-                mHandler.post(() -> getActivity()
-                        .startService(new Intent(getActivity(), LocationTracker.class)));
-            }
-
-        } else {
-            setupBackground(mDailyData.getIcon());
-        }
-    }
-
-    private void initialize(View view) {
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayout);
+        refreshLayout = (SwipeRefreshLayout) mCurrentView.findViewById(R.id.refreshLayout);
         refreshLayout.setColorSchemeColors(Color.parseColor("#ff0099cc"),
                 Color.parseColor("#ff33b5e5"),
                 Color.parseColor("#ff99cc00"),
@@ -162,10 +139,28 @@ public class WeatherFragment extends Fragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        return mCurrentView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mHandler.post(this::initialize);
+
+        if (mCurrently != null) {
+            if (AppUtil.isGpsPermissionOn(getActivity())) {
+                mHandler.post(() -> getActivity()
+                        .startService(new Intent(getActivity(), LocationTracker.class)));
+            }
+        }
+    }
+
+    private void initialize() {
 
         if (mCurrently != null) {
             mHandler.post(() -> {
-                mDaySwitcherHelper.setCurrentViews(getContext(),
+                mDaySwitcherHelper.setCurrentViews(mCurrentView,
                         mCurrently,
                         mTimeZone,
                         mCurrently.getSunriseTime(),
@@ -173,37 +168,15 @@ public class WeatherFragment extends Fragment {
 
                 showFallingSnowOrRain();
             });
-        }
 
-        if (mDailyData != null) {
+        } else if (mDailyData != null) {
             mHandler.post(() ->
                     mDaySwitcherHelper
-                            .showDayData(getContext(),
+                            .showDayData(mCurrentView,
                                     WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
                                     mDailyData, mTimeZone));
         }
 
-    }
-
-    private void setupBackground(String icon) {
-        if ("rain".equals(icon)) {
-            mHandler.post(() -> AppUtil
-                    .setupVideoBackground(R.raw.rain_background, getActivity(), mCurrentView));
-
-        } else if ("snow".equals(icon)) {
-            mHandler.post(() -> AppUtil
-                    .setupVideoBackground(R.raw.snow_background, getActivity(), mCurrentView));
-
-        } else {
-            VideoView videoView = (VideoView)
-                    mCurrentView.findViewById(R.id.backgroundVideo);
-
-            videoView.stopPlayback();
-            videoView.refreshDrawableState();
-            videoView.setVisibility(View.INVISIBLE);
-
-            mCurrentView.setBackgroundResource(mColorPicker.getBackgroundColor(icon));
-        }
     }
 
     /**
@@ -212,7 +185,7 @@ public class WeatherFragment extends Fragment {
     private void updateDisplay() {
         mHandler.post(() -> {
             if (mCurrently != null) {
-                mDaySwitcherHelper.setCurrentViews(getContext(),
+                mDaySwitcherHelper.setCurrentViews(mCurrentView,
                         mCurrently,
                         mTimeZone,
                         mCurrently.getSunriseTime(),
@@ -221,7 +194,7 @@ public class WeatherFragment extends Fragment {
                 showFallingSnowOrRain();
             }
             if (mDailyData != null) {
-                mDaySwitcherHelper.showDayData(getContext(), WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
+                mDaySwitcherHelper.showDayData(mCurrentView, WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
                         mDailyData, mTimeZone);
             }
         });
@@ -274,6 +247,10 @@ public class WeatherFragment extends Fragment {
             if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
                 mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
             }
+
+            VideoView videoView = (VideoView) mCurrentView.findViewById(R.id.backgroundVideo);
+            videoView.stopPlayback();
+            videoView.setVisibility(View.GONE);
         }
     }
 

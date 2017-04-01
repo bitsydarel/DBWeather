@@ -49,4 +49,13 @@
         <item name="colorSwitchThumbNormal">@color/switchColorThumbNormal</item>
         <item name="android:colorForeground">@color/switchColorNormal</item>
     </style>
+
+    <style name="Theme.HourlyProgressBar" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:max">100</item>
+        <item name="android:scaleY">1.2</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:progressTint">@color/colorPrimaryDark</item>
+        <item name="android:progressBackgroundTint">#301976D2</item>
+    </style>
+
 </resources>

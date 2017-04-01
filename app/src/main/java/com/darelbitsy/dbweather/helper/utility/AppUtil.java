@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -213,8 +212,9 @@ public class AppUtil {
         background.stopPlayback();
         background.setVideoURI(Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId));
         background.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
-        if (background.getVisibility() == View.INVISIBLE) { background.setVisibility(View.VISIBLE); }
-//        background.setOnCompletionListener(mp -> background.setBackgroundColor(Color.BLACK));
+        if (background.getVisibility() != View.VISIBLE) {
+            background.setVisibility(View.VISIBLE);
+        }
         background.start();
     }
 }

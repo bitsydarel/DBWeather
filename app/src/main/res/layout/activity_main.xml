@@ -5,8 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dbweather_main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorAccent">
+    android:layout_height="match_parent">
 
     <include
         android:id="@+id/weatherToolbar"
@@ -38,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@id/newsRecyclerView"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.darelbitsy.dbweather.ui.helper.CustomCoordinatorLayout
+        <com.darelbitsy.dbweather.ui.helper.CustomConstraintLayout
             android:id="@+id/mainCoordinatorLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -71,7 +70,7 @@
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="vertical"/>
 
-        </com.darelbitsy.dbweather.ui.helper.CustomCoordinatorLayout>
+        </com.darelbitsy.dbweather.ui.helper.CustomConstraintLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/navigationView"

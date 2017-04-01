@@ -1,6 +1,10 @@
 package com.darelbitsy.dbweather.adapters.listAdapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +57,8 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
         notifyDataSetChanged();
     }
 
-    class HourViewHolder extends RecyclerView.ViewHolder {
+    class HourViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ConstraintLayout mainLayout;
         ImageView hourlyIconImage;
 
         TextView hourlyTime;
@@ -70,6 +75,8 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
 
         HourViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
+
             hourlyIconImage = (ImageView) itemView.findViewById(R.id.hourlyImage);
 
             hourlyTime = (TextView) itemView.findViewById(R.id.hourlyTime);
@@ -84,8 +91,25 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
             hourlyHumidityProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyHumidityProgressBar);
             hourlyWindSpeedProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyWindSpeedProgressBar);
 
-            if (mContext == null) { mContext = itemView.getContext(); }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                hourlyPrecipProgressBar.getProgressDrawable()
+                        .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
+                        android.graphics.PorterDuff.Mode.SRC_IN);
 
+                hourlyHumidityProgressBar.getProgressDrawable()
+                        .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
+                        android.graphics.PorterDuff.Mode.SRC_IN);
+
+                hourlyWindSpeedProgressBar.getProgressDrawable()
+                        .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
+                        android.graphics.PorterDuff.Mode.SRC_IN);
+            }
+
+            mainLayout = (ConstraintLayout) itemView.findViewById(R.id.hourlyInfoDetails);
+            mainLayout.setVisibility(View.GONE);
+
+            if (mContext == null) { mContext = itemView.getContext(); }
+            
         }
 
         void bindHour(HourlyData hour) {
@@ -108,7 +132,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
             } else {
                 hourlyPrecipLabel.setText(String.format(Locale.getDefault(),
                         mContext.getString(R.string.hourly_precipeChanceTypeLabel),
-                        "RAIN/SNOW"));
+                        "Rain/Snow"));
             }
 
             hourlyPrecipLabelValue.setText(String.format(Locale.getDefault(),
@@ -126,6 +150,23 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
             hourlyPrecipProgressBar.setProgress(WeatherUtil.getPrecipPourcentage(hour.getPrecipProbability()));
             hourlyHumidityProgressBar.setProgress(WeatherUtil.getHumidityPourcentage(hour.getHumidity()));
             hourlyWindSpeedProgressBar.setProgress(WeatherUtil.getWindSpeedMeterPerHour(hour.getWindSpeed()));
+        }
+
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            if (mainLayout.getVisibility() == View.GONE) {
+                mainLayout.setVisibility(View.VISIBLE);
+                v.setBackgroundColor(Color.WHITE);
+
+            } else {
+                mainLayout.setVisibility(View.GONE);
+                v.setBackgroundColor(Color.parseColor("#DCDCDC"));
+            }
         }
     }
 }

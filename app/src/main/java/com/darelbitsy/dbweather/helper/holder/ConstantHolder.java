@@ -17,7 +17,6 @@ public class ConstantHolder {
     public static final String NOTIFICATION_KEY = "notification_key";
     public static final String NEWS_TRANSLATION_KEY = "news_translation_key";
 
-    public static final String RECYCLER_TOP_LIMIT = "recycler_top_limit";
     public static final String RECYCLER_BOTTOM_LIMIT = "recycler_bottom_limit";
 
     private ConstantHolder() {

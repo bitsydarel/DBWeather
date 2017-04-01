@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/hourlyLayout"
+    android:background="#DCDCDC"
+    android:clickable="true"
+    android:focusable="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -15,10 +18,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@android:color/black"
         android:text="@string/hourly_time"
-        android:textSize="40sp"
+        android:textSize="32sp"
         tools:text="2:00 PM"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/hourlySummary"
@@ -28,7 +31,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         tools:text="Partly cloudy"
         android:textColor="@android:color/black"
-        android:layout_marginStart="16dp"/>
+        android:layout_marginStart="16dp"
+        android:paddingBottom="8dp"/>
 
     <TextView
         android:id="@+id/hourlyTemperatureValue"
@@ -38,7 +42,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:text="@string/hourly_temperature_value"
         android:textColor="@android:color/black"
-        android:textSize="32sp"
+        android:textSize="24sp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="24dp"/>
 
@@ -51,13 +55,12 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@id/hourlyTemperatureValue"
-        android:contentDescription="hourlyImageIcon"/>
+        android:contentDescription="hourly Image Icon"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/hourlyInfoDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
@@ -66,112 +69,136 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <android.support.constraint.Guideline
+            android:id="@+id/leftVerticalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/RightVerticalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75"/>
+
         <TextView
             android:id="@+id/hourlyPrecipLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:gravity="start"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/hourlyHumidityLabel"
             android:text="@string/hourly_precipeChanceTypeLabel"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/hourlyHumidityLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="start"
+            android:text="@string/hourly_humidity"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/hourlyPrecipLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyWindSpeedLabel"/>
+
+        <TextView
+            android:id="@+id/hourlyWindSpeedLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="start"
+            app:layout_constraintTop_toBottomOf="@id/hourlyHumidityLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/hourly_windspeed"
             android:textColor="@android:color/black"/>
 
         <ProgressBar
             android:id="@+id/hourlyPrecipProgressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/Theme.HourlyProgressBar"
             android:max="100"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:progress="55"
-            app:layout_constraintLeft_toRightOf="@id/hourlyPrecipLabel"
-            app:layout_constraintRight_toLeftOf="@+id/hourlyPrecipLabelValue"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@id/hourlyPrecipLabelValue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
+            android:progress="75"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="8dp"
-            android:text="@string/hourly_precipitation_value"
-            android:textColor="@android:color/black"/>
-
-        <TextView
-            android:id="@id/hourlyHumidityLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/hourly_humidity"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintTop_toBottomOf="@id/hourlyPrecipLabel"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/hourlyWindSpeedLabel"/>
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyHumidityProgressBar"/>
 
         <ProgressBar
             android:id="@+id/hourlyHumidityProgressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:max="100"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            style="@style/Theme.HourlyProgressBar"
+            android:layout_marginTop="8dp"
             android:progress="55"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toRightOf="@id/hourlyHumidityLabel"
-            app:layout_constraintRight_toLeftOf="@+id/hourlyHumidityValue"
-            app:layout_constraintTop_toBottomOf="@id/hourlyPrecipProgressBar"/>
-
-        <TextView
-            android:id="@id/hourlyHumidityValue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/hourly_humidity_value"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hourlyPrecipLabelValue"/>
-
-        <TextView
-            android:id="@id/hourlyWindSpeedLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/hourlyHumidityLabel"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/hourly_windspeed"
-            android:textColor="@android:color/black"/>
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+            app:layout_constraintTop_toBottomOf="@id/hourlyPrecipProgressBar"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyWindSpeedProgressBar"/>
 
         <ProgressBar
             android:id="@+id/hourlyWindSpeedProgressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:max="100"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:progress="35"
+            style="@style/Theme.HourlyProgressBar"
             android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toRightOf="@id/hourlyWindSpeedLabel"
-            app:layout_constraintRight_toLeftOf="@+id/hourlyWindSpeedValue"
+            android:progress="35"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
             app:layout_constraintTop_toBottomOf="@id/hourlyHumidityProgressBar"/>
 
         <TextView
-            android:id="@id/hourlyWindSpeedValue"
+            android:id="@+id/hourlyPrecipLabelValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="end"
+            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyHumidityValue"
+            android:text="@string/hourly_precipitation_value"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/hourlyHumidityValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="@string/hourly_humidity_value"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyWindSpeedValue"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+            app:layout_constraintTop_toBottomOf="@id/hourlyPrecipLabelValue"/>
+
+        <TextView
+            android:id="@+id/hourlyWindSpeedValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="@string/hourly_windspeed_value"
             android:textColor="@android:color/black"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
             app:layout_constraintTop_toBottomOf="@id/hourlyHumidityValue"/>
 
     </android.support.constraint.ConstraintLayout>

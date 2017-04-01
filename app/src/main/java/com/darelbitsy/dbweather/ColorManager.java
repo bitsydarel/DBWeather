@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
+ * Color manager for dbweather app
  */
 
 public class ColorManager {
@@ -32,4 +33,11 @@ public class ColorManager {
     public int getBackgroundColor(final String icon) {
         return mColors.get(icon);
     }
+
+    public void getToolbarBackground(final String icon) {
+        switch (icon) {
+            case "clear-day":
+        }
+    }
+
 }

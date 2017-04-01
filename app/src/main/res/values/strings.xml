@@ -64,7 +64,7 @@
     <string name="hourly_humidity">Humidity:</string>
     <string name="hourly_humidity_value">%1$d%%</string>
     <string name="hourly_windspeed">WindSpeed:</string>
-    <string name="hourly_windspeed_value">%1$dm/s</string>
+    <string name="hourly_windspeed_value">%1$d m/s</string>
     <string name="hourly_apparentTemperature">Feeling:</string>
     <string name="hourly_apparentTemperature_value"> %1$d°</string>
     <string name="hourly_cloudcover">cloudCover:</string>

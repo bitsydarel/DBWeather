@@ -1,6 +1,7 @@
 package com.darelbitsy.dbweather.adapters.listAdapter;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,7 +58,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         final ConstraintLayout newsContainer;
         final TextView newsFrom;
         final TextView newsDescription;
-        final TextView newsPublishedDate;
         Article mNews;
 
         final View.OnClickListener newsOnClickListener = view -> {
@@ -72,7 +72,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             newsContainer = (ConstraintLayout) itemView.findViewById(R.id.newsLayout);
             newsFrom = (TextView) itemView.findViewById(R.id.newsFrom);
             newsDescription = (TextView) itemView.findViewById(R.id.newsDescription);
-            newsPublishedDate = (TextView) itemView.findViewById(R.id.newsDate);
         }
 
         void bindNews(Article news) {
@@ -81,8 +80,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             newsFrom.setText(String.format(Locale.getDefault(), itemView
                     .getContext()
                     .getString(R.string.news_from), news.getAuthor()));
+            if (news.getAuthor().contains("sport")) {
+                newsFrom.setBackgroundColor(Color.BLUE);
+            }
             newsDescription.setText(news.getTitle());
-            newsPublishedDate.setText(news.getPublishedAt());
         }
     }
 }
