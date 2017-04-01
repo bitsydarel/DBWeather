@@ -17,6 +17,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.RECYCLER_BOT
 
 /**
  * Created by Darel Bitsy on 31/03/17.
+ * Custom ViewGroup to manage hourlyRecycler view dragging
  */
 
 public class CustomConstraintLayout extends ConstraintLayout {
