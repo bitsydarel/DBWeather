@@ -32,6 +32,7 @@ import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
+import com.darelbitsy.dbweather.helper.services.NewsDatabaseService;
 import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private final Handler mMyHandler = new Handler();
     private Weather mWeather;
     private SharedPreferences sharedPreferences;
+    private View mainLayout;
 
 
     /**
@@ -140,13 +142,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDatabase = new DatabaseOperation(this);
+
         Bundle extras = getIntent().getExtras();
         mWeather = extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY);
+        mNewses = extras.getParcelableArrayList(ConstantHolder.NEWS_DATA_KEY);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.weatherToolbar);
         setSupportActionBar(toolbar);
 
-        findViewById(R.id.dbweather_main_layout).setBackgroundResource(mColorPicker
+        mainLayout = findViewById(R.id.dbweather_main_layout);
+        mainLayout.setBackgroundResource(mColorPicker
                 .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
         mWeatherObservable = new GetWeatherHelper(this)
@@ -157,10 +162,9 @@ public class MainActivity extends AppCompatActivity {
         AppUtil.askLocationPermIfNeeded(this);
         AppUtil.askAccountInfoPermIfNeeded(this);
 
-
         DbViewPager viewPager = (DbViewPager) findViewById(R.id.viewPager);
         
-        mFragmentAdapter = new CustomFragmentAdapter(getSupportFragmentManager(),
+        mFragmentAdapter = new CustomFragmentAdapter(mainLayout, getSupportFragmentManager(),
                 mWeather);
 
         viewPager.setAdapter(mFragmentAdapter);
@@ -222,15 +226,12 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        if (!sharedPreferences.getBoolean(FIRST_RUN, true)) {
+        if (sharedPreferences.getBoolean(FIRST_RUN, true)
+                && AppUtil.isNetworkAvailable(this)) {
 
-            if (AppUtil.isNetworkAvailable(this)) {
-                subscriptions.add(mNewsesObservableWithNetwork
-                        .subscribeWith(new CurrentNewsesObserver()));
-            }
-            mNewses = mDatabase.getNewFromDatabase();
+            subscriptions.add(mNewsesObservableWithNetwork
+                    .subscribeWith(new CurrentNewsesObserver()));
 
-        } else {
             sharedPreferences
                     .edit()
                     .putBoolean(FIRST_RUN, false)
@@ -284,8 +285,11 @@ public class MainActivity extends AppCompatActivity {
                 getString(R.string.notification_config_title), ConstantHolder.NOTIFICATION_KEY);
         DrawerItem newsTranslation = new DrawerItem(R.drawable.ic_g_translate_black_24dp,
                 getString(R.string.news_translation_title), ConstantHolder.NEWS_TRANSLATION_KEY);
+        DrawerItem newsSourcesConfiguration = new DrawerItem(R.drawable.news_icon,
+                getString(R.string.select_news_source));
 
         drawerItemList.add(addLocationConfiguration);
+        drawerItemList.add(newsSourcesConfiguration);
         drawerItemList.add(notificationConfiguration);
         drawerItemList.add(newsTranslation);
 
@@ -316,9 +320,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void cleanCache() {
         File dir = AppUtil.getFileCache(this);
-        if (dir != null && dir.isDirectory()) {
+        if (dir.isDirectory()) {
             for (File file : dir.listFiles()) {
-                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: " + file.delete());
+                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
+                        + file.delete());
             }
         }
     }
@@ -332,6 +337,8 @@ public class MainActivity extends AppCompatActivity {
 
             AppUtil.setGpsPermissionValue(this);
             startService(new Intent(this, LocationTracker.class));
+            mainLayout.setBackgroundResource(mColorPicker
+                    .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
         }
 
@@ -353,7 +360,8 @@ public class MainActivity extends AppCompatActivity {
             if (mNewsAdapter != null) {
                 new Handler().post(() -> mNewsAdapter.updateContent(newses));
             }
-
+            startService(new Intent(MainActivity.this, NewsDatabaseService.class)
+                    .putExtra(ConstantHolder.NEWS_DATA_KEY, newses));
         }
 
         @Override

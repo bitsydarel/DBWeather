@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.model.news.Article;
-import com.darelbitsy.dbweather.ui.alert.NewsDialogActivity;
+import com.darelbitsy.dbweather.ui.NewsDialogActivity;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -82,6 +82,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                     .getString(R.string.news_from), news.getAuthor()));
             if (news.getAuthor().contains("sport")) {
                 newsFrom.setBackgroundColor(Color.BLUE);
+            } else {
+                newsFrom.setBackgroundColor(Color.RED);
             }
             newsDescription.setText(news.getTitle());
         }

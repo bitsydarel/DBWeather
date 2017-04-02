@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.ui.alert;
+package com.darelbitsy.dbweather.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,16 +16,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetImageDownloader;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.Article;
-import com.darelbitsy.dbweather.ui.MainActivity;
 
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -40,33 +37,20 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.NEWS_DATA_KE
  */
 
 public class NewsDialogActivity extends AppCompatActivity {
-    @BindView(R.id.openInBrowserButton)
     Button openInBrowser;
-
-    @BindView(R.id.closeButton)
     Button close;
 
-    @BindView(R.id.articleFrom)
     TextView newsFrom;
-
-    @BindView(R.id.articlePublicationDate)
     TextView newsPublicationDate;
-
-    @BindView(R.id.articleTitleText)
+    TextView newsDetails;
     TextView newsTitle;
 
-    @BindView(R.id.articleImage)
     ImageView newsImage;
 
-    @BindView(R.id.articleDetails)
-    TextView newsDetails;
-
-    @BindView(R.id.newsProgressBar)
     ProgressBar newsProgressBar;
 
     private Article article;
     private Toolbar mToolbar;
-    private Single<Bitmap> imageDownloader;
 
     private class GetNewsImage extends DisposableSingleObserver<Bitmap> {
         @Override
@@ -88,17 +72,27 @@ public class NewsDialogActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_activity);
-        ButterKnife.bind(this);
+
+        openInBrowser = (Button) findViewById(R.id.openInBrowserButton);
+        close = (Button) findViewById(R.id.closeButton);
+        newsFrom = (TextView) findViewById(R.id.articleFrom);
+        newsPublicationDate = (TextView) findViewById(R.id.articlePublicationDate);
+        newsDetails = (TextView) findViewById(R.id.articleDetails);
+        newsTitle = (TextView) findViewById(R.id.articleTitleText);
+        newsImage = (ImageView) findViewById(R.id.articleImage);
+        newsProgressBar = (ProgressBar) findViewById(R.id.newsProgressBar);
 
         Typeface typeface = AppUtil.getAppGlobalTypeFace(this);
         mToolbar = (Toolbar) findViewById(R.id.newsToolbar);
         setSupportActionBar(mToolbar);
 
+        close.setOnClickListener(view -> finish());
+
 
         article = getIntent().getParcelableExtra(NEWS_DATA_KEY);
 
         if(!article.getUrlToImage().isEmpty()) {
-            imageDownloader = new GetImageDownloader(this)
+            Single<Bitmap> imageDownloader = new GetImageDownloader(this)
                     .getObservableImageDownloader(article.getUrlToImage());
 
             newsProgressBar.setVisibility(View.VISIBLE);
@@ -133,10 +127,6 @@ public class NewsDialogActivity extends AppCompatActivity {
                     .addCategory(Intent.CATEGORY_BROWSABLE);
 
             startActivity(browserIntent);
-        });
-
-        close.setOnClickListener(view -> {
-            finish();
         });
 
     }

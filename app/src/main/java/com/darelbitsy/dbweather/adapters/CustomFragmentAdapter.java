@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.weather.Currently;
@@ -19,25 +20,33 @@ import java.util.Locale;
  */
 
 public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerAdapter {
-    private final DailyData[] listFragments = new DailyData[7];
+    private final DailyData[] listOfData = new DailyData[7];
+    private final WeatherFragment[] listOfFragments =
+            new WeatherFragment[7];
+
     private Weather mWeather;
     private Currently mCurrently;
-    private WeatherFragment currentFragment;
+
+    private final View mParentLayout;
 
 
-
-    public CustomFragmentAdapter(FragmentManager fm, Weather weatherData) {
+    public CustomFragmentAdapter(View parentLayout, FragmentManager fm, Weather weatherData) {
         super(fm);
         mWeather = weatherData;
         mCurrently = weatherData.getCurrently();
 
         setupDailyData(weatherData.getDaily().getData(),
-                weatherData.getTimezone(), listFragments);
+                weatherData.getTimezone(), listOfData);
+        mParentLayout = parentLayout;
+    }
+
+    public View getParentLayout() {
+        return mParentLayout;
     }
 
     private void setupDailyData(List<DailyData> data,
-                                           String timeZone,
-                                           DailyData[] listFragments) {
+                                String timeZone,
+                                DailyData[] listFragments) {
 
         Calendar calendar = Calendar.getInstance();
         String currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
@@ -84,7 +93,7 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
     /**
      * Return the Fragment associated with a specified position.
      *
-     * @param position
+     * @param position of the fragment to get
      */
     @Override
     public Fragment getItem(int position) {
@@ -93,56 +102,56 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
                 WeatherFragment fragment =
                         WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
                 fragment.setAdapter(this);
-                currentFragment = fragment;
+                listOfFragments[0] = fragment;
                 return fragment;
 
             case 1:
                 WeatherFragment dayFragment1 =
-                        WeatherFragment.newInstance(listFragments[1], mWeather.getCityName());
+                        WeatherFragment.newInstance(listOfData[1], mWeather.getCityName());
                 dayFragment1.setAdapter(this);
-                currentFragment = dayFragment1;
+                listOfFragments[1] = dayFragment1;
                 return dayFragment1;
 
             case 2:
                 WeatherFragment dayFragment2 =
-                        WeatherFragment.newInstance(listFragments[2], mWeather.getCityName());
+                        WeatherFragment.newInstance(listOfData[2], mWeather.getCityName());
                 dayFragment2.setAdapter(this);
-                currentFragment = dayFragment2;
+                listOfFragments[2] = dayFragment2;
                 return dayFragment2;
 
             case 3:
                 WeatherFragment dayFragment3 =
-                        WeatherFragment.newInstance(listFragments[3], mWeather.getCityName());
+                        WeatherFragment.newInstance(listOfData[3], mWeather.getCityName());
                 dayFragment3.setAdapter(this);
-                currentFragment = dayFragment3;
+                listOfFragments[3] = dayFragment3;
                 return dayFragment3;
 
             case 4:
                 WeatherFragment dayFragment4 =
-                        WeatherFragment.newInstance(listFragments[4], mWeather.getCityName());
+                        WeatherFragment.newInstance(listOfData[4], mWeather.getCityName());
                 dayFragment4.setAdapter(this);
-                currentFragment = dayFragment4;
+                listOfFragments[4] = dayFragment4;
                 return dayFragment4;
 
             case 5:
                 WeatherFragment dayFragment5 =
-                        WeatherFragment.newInstance(listFragments[5], mWeather.getCityName());
+                        WeatherFragment.newInstance(listOfData[5], mWeather.getCityName());
                 dayFragment5.setAdapter(this);
-                currentFragment = dayFragment5;
+                listOfFragments[5] = dayFragment5;
                 return dayFragment5;
 
             case 6:
                 WeatherFragment dayFragment6 =
-                        WeatherFragment.newInstance(listFragments[6], mWeather.getCityName());
+                        WeatherFragment.newInstance(listOfData[6], mWeather.getCityName());
                 dayFragment6.setAdapter(this);
-                currentFragment = dayFragment6;
+                listOfFragments[6] = dayFragment6;
                 return dayFragment6;
 
             default:
                 WeatherFragment defaultFragment =
                         WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
                 defaultFragment.setAdapter(this);
-                currentFragment = defaultFragment;
+                listOfFragments[0] = defaultFragment;
                 return defaultFragment;
         }
     }
@@ -152,17 +161,24 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
      */
     @Override
     public int getCount() {
-        return listFragments.length;
+        return listOfData.length;
     }
 
     public void updateWeatherOnFragment(Weather weatherData) {
         mWeather = weatherData;
         mCurrently = weatherData.getCurrently();
-        if (currentFragment != null) {
-            currentFragment.updateDataFromActivity(mCurrently, weatherData.getCityName());
+        for (int index = 0; index < listOfFragments.length; index++) {
+            if (listOfFragments[index] != null) {
+                if (index == 0) {
+                    listOfFragments[index].updateDataFromActivity(mCurrently, weatherData.getCityName());
+                } else {
+                    listOfFragments[index].updateDataFromActivity(weatherData.getCityName());
+                }
+            }
         }
+
         setupDailyData(weatherData.getDaily().getData(),
                 weatherData.getTimezone(),
-                listFragments);
+                listOfData);
     }
 }

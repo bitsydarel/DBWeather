@@ -10,6 +10,7 @@ import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
+import com.darelbitsy.dbweather.helper.services.NewsDatabaseService;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
@@ -44,10 +45,9 @@ public class WelcomeActivity extends Activity {
             public void onSuccess(ArrayList<Article> newses) {
                 Log.i(ConstantHolder.TAG, "Inside the newsObserver WelcomeActivity");
                 mIntent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
+                startService(new Intent(WelcomeActivity.this, NewsDatabaseService.class)
+                        .putExtra(ConstantHolder.NEWS_DATA_KEY, newses));
                 startActivity(mIntent);
-                if (isSubscriptionDone) {
-
-                }
                 finish();
             }
 
@@ -66,8 +66,8 @@ public class WelcomeActivity extends Activity {
 
                 if (isSubscriptionDone && getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                         .getBoolean(ConstantHolder.FIRST_RUN, true)) {
-
-                    subscriptions.add(new GetNewsesHelper(WelcomeActivity.this).getNewsesFromApi()
+                    subscriptions.add(new GetNewsesHelper(WelcomeActivity.this)
+                            .getNewsesFromApi()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeWith(mNewsObserver));

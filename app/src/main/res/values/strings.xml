@@ -83,8 +83,9 @@
     <string name="hourly_temperature_value">%1$d°</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="notification_config_title">Activate Weather Notification</string>
-    <string name="news_translation_title">Translate Newses in Locale Language</string>
-    <string name="add_location_config_title">Add Location</string>
+    <string name="notification_config_title">Activate weather notification</string>
+    <string name="news_translation_title">Translate news feeds</string>
+    <string name="add_location_config_title">Add location</string>
+    <string name="select_news_source">Select news sources</string>
     <string name="list_custom_view">com.darelbitsy.dbweather.ui.animation.ListCustomBehavior</string>
 </resources>

@@ -57,6 +57,17 @@
         app:layout_constraintRight_toLeftOf="@id/hourlyTemperatureValue"
         android:contentDescription="hourly Image Icon"/>
 
+    <LinearLayout
+        android:id="@+id/hourlyBorderLine"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/hourlySummary"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/hourlyInfoDetails"
+        android:background="@drawable/horizontal_line"/>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/hourlyInfoDetails"
         android:layout_width="0dp"

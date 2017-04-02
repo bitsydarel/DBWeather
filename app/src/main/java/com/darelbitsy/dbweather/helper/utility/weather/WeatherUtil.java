@@ -4,7 +4,7 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
-import com.darelbitsy.dbweather.ColorManager;
+import com.darelbitsy.dbweather.helper.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.network.GoogleGeocodeAdapter;

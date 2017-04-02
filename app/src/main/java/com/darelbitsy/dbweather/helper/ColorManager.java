@@ -1,4 +1,6 @@
-package com.darelbitsy.dbweather;
+package com.darelbitsy.dbweather.helper;
+
+import com.darelbitsy.dbweather.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,11 +35,4 @@ public class ColorManager {
     public int getBackgroundColor(final String icon) {
         return mColors.get(icon);
     }
-
-    public void getToolbarBackground(final String icon) {
-        switch (icon) {
-            case "clear-day":
-        }
-    }
-
 }

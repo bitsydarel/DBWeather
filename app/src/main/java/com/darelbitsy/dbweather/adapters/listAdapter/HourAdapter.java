@@ -1,8 +1,8 @@
 package com.darelbitsy.dbweather.adapters.listAdapter;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -58,24 +59,26 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
     }
 
     class HourViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ConstraintLayout mainLayout;
-        ImageView hourlyIconImage;
+        final ConstraintLayout mainLayout;
+        final LinearLayout hourlyBorderLine;
+        final ImageView hourlyIconImage;
 
-        TextView hourlyTime;
-        TextView hourlySummary;
-        TextView hourlyTemperature;
-        TextView hourlyPrecipLabel;
-        TextView hourlyPrecipLabelValue;
-        TextView hourlyHumidity;
-        TextView hourlyWindSpeed;
+        final TextView hourlyTime;
+        final TextView hourlySummary;
+        final TextView hourlyTemperature;
+        final TextView hourlyPrecipLabel;
+        final TextView hourlyPrecipLabelValue;
+        final TextView hourlyHumidity;
+        final TextView hourlyWindSpeed;
 
-        ProgressBar hourlyPrecipProgressBar;
-        ProgressBar hourlyHumidityProgressBar;
-        ProgressBar hourlyWindSpeedProgressBar;
+        final ProgressBar hourlyPrecipProgressBar;
+        final ProgressBar hourlyHumidityProgressBar;
+        final ProgressBar hourlyWindSpeedProgressBar;
 
         HourViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
+            if (mContext == null) { mContext = itemView.getContext(); }
 
             hourlyIconImage = (ImageView) itemView.findViewById(R.id.hourlyImage);
 
@@ -91,25 +94,23 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
             hourlyHumidityProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyHumidityProgressBar);
             hourlyWindSpeedProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyWindSpeedProgressBar);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
                 hourlyPrecipProgressBar.getProgressDrawable()
                         .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
-                        android.graphics.PorterDuff.Mode.SRC_IN);
+                        PorterDuff.Mode.MULTIPLY);
 
                 hourlyHumidityProgressBar.getProgressDrawable()
                         .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
-                        android.graphics.PorterDuff.Mode.SRC_IN);
+                        android.graphics.PorterDuff.Mode.MULTIPLY);
 
                 hourlyWindSpeedProgressBar.getProgressDrawable()
                         .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
-                        android.graphics.PorterDuff.Mode.SRC_IN);
+                        android.graphics.PorterDuff.Mode.MULTIPLY);
             }
 
             mainLayout = (ConstraintLayout) itemView.findViewById(R.id.hourlyInfoDetails);
             mainLayout.setVisibility(View.GONE);
-
-            if (mContext == null) { mContext = itemView.getContext(); }
-            
+            hourlyBorderLine = (LinearLayout) itemView.findViewById(R.id.hourlyBorderLine);
         }
 
         void bindHour(HourlyData hour) {
@@ -161,11 +162,13 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
         public void onClick(View v) {
             if (mainLayout.getVisibility() == View.GONE) {
                 mainLayout.setVisibility(View.VISIBLE);
+                hourlyBorderLine.setVisibility(View.GONE);
                 v.setBackgroundColor(Color.WHITE);
 
             } else {
                 mainLayout.setVisibility(View.GONE);
                 v.setBackgroundColor(Color.parseColor("#DCDCDC"));
+                hourlyBorderLine.setVisibility(View.VISIBLE);
             }
         }
     }

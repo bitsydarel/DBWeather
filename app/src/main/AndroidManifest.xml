@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.alert.NewsDialogActivity"
+        <activity android:name=".ui.NewsDialogActivity"
                   android:noHistory="true"
                   android:theme="@style/NewsActivityTheme">
             <intent-filter>

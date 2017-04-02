@@ -228,8 +228,8 @@ public class DatabaseOperation {
             isWeatherInserted = true;
             mEditor.putBoolean(WEATHER_INSERTED,
                     isWeatherInserted).apply();
-            database.close();
         }
+        database.close();
     }
 
     /**
@@ -274,6 +274,7 @@ public class DatabaseOperation {
             mEditor.apply();
 
         }
+        database.close();
     }
 
     /**
@@ -319,8 +320,8 @@ public class DatabaseOperation {
             iSCurrentInserted = true;
             mEditor.putBoolean(CURRENT_INSERTED,
                     iSCurrentInserted).apply();
-            sqLiteDatabase.close();
         }
+        sqLiteDatabase.close();
     }
 
     /**
@@ -374,6 +375,7 @@ public class DatabaseOperation {
             mEditor.putBoolean(DAYS_INSERTED, isDaysInserted);
             mEditor.apply();
         }
+        sqLiteDatabase.close();
     }
 
     /**
@@ -420,6 +422,7 @@ public class DatabaseOperation {
             mEditor.putBoolean(HOURLY_INSERTED, isHourInserted);
             mEditor.commit();
         }
+        sqLiteDatabase.close();
     }
 
     public void saveMinutelyWeather(List<MinutelyData> minutelyWeatherData) {
@@ -451,6 +454,7 @@ public class DatabaseOperation {
             mEditor.putBoolean(MINUTELY_INSERTED, isMinutelyInserted)
                     .apply();
         }
+        sqLiteDatabase.close();
     }
 
     /**
@@ -498,6 +502,7 @@ public class DatabaseOperation {
             mEditor.putBoolean(NEWS_INSERTED, isNewsInserted);
             mEditor.commit();
         }
+        sqLiteDatabase.close();
     }
 
     /**
@@ -575,6 +580,7 @@ public class DatabaseOperation {
             current.setWindBearing(databaseCursor.getLong(databaseCursor.getColumnIndex(CURRENT_WIND_BEARING)));
             Log.i(ConstantHolder.TAG, "From DB PROBABILITY: " + current.getPrecipProbability());
         }
+        databaseCursor.close();
         return current;
     }
 
@@ -594,6 +600,7 @@ public class DatabaseOperation {
                         null,
                         null);
         Log.i(ConstantHolder.TAG, "Saving Coordinates, result : "+ result);
+        database.close();
     }
 
     /**
@@ -614,6 +621,7 @@ public class DatabaseOperation {
             if (!databaseCursor.isAfterLast()) {
                 coordinates[0] = databaseCursor.getDouble(databaseCursor.getColumnIndex(LAST_KNOW_LATITUDE));
                 coordinates[1] = databaseCursor.getDouble(databaseCursor.getColumnIndex(LAST_KNOW_LONGITUDE));
+                databaseCursor.close();
                 return coordinates;
             }
         }
@@ -641,6 +649,7 @@ public class DatabaseOperation {
                 cityName = databaseCursor.getString(databaseCursor.getColumnIndex(CITY_NAME));
 
             }
+            databaseCursor.close();
         }
         return cityName;
     }
@@ -686,6 +695,7 @@ public class DatabaseOperation {
                 Log.i("DATABASE_DB", day.toString() + ": On " + index.get());
                 days.add(day);
             }
+            databaseCursor.close();
         }
         return days;
     }
@@ -727,6 +737,7 @@ public class DatabaseOperation {
                 Log.i("DATABASE_DB", hour.toString() + ": On " + index.get());
                 hourlyData.add(hour);
             }
+            databaseCursor.close();
         }
         return hourlyData;
     }
@@ -763,6 +774,7 @@ public class DatabaseOperation {
                 Log.i(ConstantHolder.TAG, news.toString() + ": On " + index.get());
                 newses.add(news);
             }
+            databaseCursor.close();
         }
         return newses;
     }
@@ -800,6 +812,7 @@ public class DatabaseOperation {
                     break;
                 }
             }
+            cursor.close();
         }
         return hour;
     }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
@@ -50,6 +51,7 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
         final ImageView itemIcon;
         final TextView itemTitle;
         final SwitchCompat switchCompat;
+        final LinearLayout drawerItemLimit;
         DrawerItem mDrawerItem;
 
         CompoundButton.OnCheckedChangeListener configurationListener = new CompoundButton.OnCheckedChangeListener() {
@@ -77,15 +79,22 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
             itemIcon = (ImageView) itemView.findViewById(R.id.itemIcon);
             itemTitle = (TextView) itemView.findViewById(R.id.itemTitle);
             switchCompat = (SwitchCompat) itemView.findViewById(R.id.switchId);
+            drawerItemLimit = (LinearLayout) itemView.findViewById(R.id.drawerItemLimit);
         }
 
         void bindItem(DrawerItem item) {
             mDrawerItem = item;
-            itemIcon.setImageResource(mDrawerItem.getIconResourceId());
+            if (!item.getTitle().contains("Sources")) {
+                itemIcon.setImageResource(mDrawerItem.getIconResourceId());
+            }
+
             itemTitle.setText(mDrawerItem.getTitle());
 
             if (item.getPreferenceKey() != null) {
                 switchCompat.setOnCheckedChangeListener(configurationListener);
+                drawerItemLimit.setVisibility(View.GONE);
+            } else {
+                switchCompat.setVisibility(View.GONE);
             }
         }
     }

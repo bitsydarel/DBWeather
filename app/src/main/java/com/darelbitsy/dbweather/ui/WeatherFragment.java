@@ -20,8 +20,10 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
+import com.darelbitsy.dbweather.helper.ColorManager;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
+import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.weather.Currently;
@@ -66,6 +68,8 @@ public class WeatherFragment extends Fragment {
 
     private DaySwitcherHelper mDaySwitcherHelper;
     private CustomFragmentAdapter mAdapter;
+    private final ColorManager mColorManager = new ColorManager();
+
 
     public static WeatherFragment newInstance(Currently currently, String cityName) {
         WeatherFragment weatherFragment = new WeatherFragment();
@@ -148,11 +152,9 @@ public class WeatherFragment extends Fragment {
 
         mHandler.post(this::initialize);
 
-        if (mCurrently != null) {
-            if (AppUtil.isGpsPermissionOn(getActivity())) {
-                mHandler.post(() -> getActivity()
-                        .startService(new Intent(getActivity(), LocationTracker.class)));
-            }
+        if (mCurrently != null && AppUtil.isGpsPermissionOn(getActivity())) {
+            mHandler.post(() -> getActivity()
+                    .startService(new Intent(getActivity(), LocationTracker.class)));
         }
     }
 
@@ -211,7 +213,7 @@ public class WeatherFragment extends Fragment {
                 mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
             }
 
-            new Handler().post(() -> AppUtil.setupVideoBackground(R.raw.rain_background,
+            new Handler().post(() -> AppUtil.setupVideoBackground(R.raw.snow_background,
                     getActivity(),
                     mMainLayout));
 
@@ -226,7 +228,7 @@ public class WeatherFragment extends Fragment {
             }
 
             new Handler().post(() -> AppUtil
-                    .setupVideoBackground(R.raw.snow_background, getActivity(), mMainLayout));
+                    .setupVideoBackground(R.raw.rain_background, getActivity(), mMainLayout));
 
         } else if ("sleet".equalsIgnoreCase(mCurrently.getIcon())) {
 
@@ -267,12 +269,19 @@ public class WeatherFragment extends Fragment {
     }
 
     public void updateDataFromActivity(Currently currently, String cityName) {
-        if (mCurrently != null) {
-            mCurrently = currently;
-            mHandler.post(WeatherFragment.this::updateDisplay);
-        }
+        mCurrently = currently;
+        mHandler.post(WeatherFragment.this::updateDisplay);
         mCityName = cityName;
         mDaySwitcherHelper.updateCityName(mCityName);
+        mAdapter.getParentLayout()
+                .setBackgroundResource(mColorManager
+                        .getBackgroundColor(currently.getIcon()));
+    }
+
+    public void updateDataFromActivity(String cityName) {
+        mCityName = cityName;
+        mDaySwitcherHelper.updateCityName(cityName);
+        mHandler.post(WeatherFragment.this::updateDisplay);
     }
 
 
@@ -296,6 +305,11 @@ public class WeatherFragment extends Fragment {
             mTimeZone = weather.getTimezone();
             if (mCurrently != null) {
                 mCurrently = weather.getCurrently();
+                mAdapter.getParentLayout()
+                        .setBackgroundResource(mColorManager
+                                .getBackgroundColor(mCurrently.getIcon()));
+
+                mAdapter.updateWeatherOnFragment(weather);
 
             } else if (mDailyData != null){
                 for (DailyData day: weather.getDaily().getData()) {
@@ -306,13 +320,13 @@ public class WeatherFragment extends Fragment {
                 }
             }
 
-            if (mAdapter != null) { mAdapter.updateWeatherOnFragment(weather); }
-
             if (mDaySwitcherHelper != null) {
                 mDaySwitcherHelper.updateCityName(mCityName);
             }
 
             mHandler.post(WeatherFragment.this::updateDisplay);
+            mHandler.post(() -> getActivity().startService(new Intent(getActivity(), WeatherDatabaseService.class)
+                    .putExtra(ConstantHolder.WEATHER_DATA_KEY, weather)));
 
             if (refreshLayout != null) {
                 refreshLayout.setRefreshing(false);
