@@ -11,45 +11,47 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="false"
-        tools:replace="android:allowBackup"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
 
-        <activity android:name=".ui.WelcomeActivity"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".ui.WelcomeActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.alert.NotificationActivity"
-                  android:noHistory="true"
-                  android:theme="@style/NewsActivityTheme">
+        <activity
+            android:name=".ui.alert.NotificationActivity"
+            android:noHistory="true"
+            android:theme="@style/NewsActivityTheme">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.NewsDialogActivity"
-                  android:noHistory="true"
-                  android:theme="@style/NewsActivityTheme">
+        <activity
+            android:name=".ui.NewsDialogActivity"
+            android:noHistory="true"
+            android:theme="@style/NewsActivityTheme">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -57,69 +59,81 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".helper.services.SyncDatabaseService"
-                 android:enabled="true"
-                 android:process=":remote"/>
-
-        <service android:name=".helper.services.KillCheckerService"
-                 android:enabled="true"
-                 android:process=":remote"
-                 android:stopWithTask="false"/>
-
-        <service android:name=".helper.services.LocationTracker"
+        <service
+            android:name=".helper.services.SyncDatabaseService"
+            android:enabled="true"
+            android:process=":remote"/>
+        <service
+            android:name=".helper.services.KillCheckerService"
+            android:enabled="true"
+            android:process=":remote"
+            android:stopWithTask="false"/>
+        <service
+            android:name=".helper.services.LocationTracker"
             android:enabled="true"
             android:stopWithTask="true">
         </service>
+        <service
+            android:name=".helper.services.NewsDatabaseService"
+            android:enabled="true"
+            android:process=":remote"
+            android:stopWithTask="false"/>
+        <service
+            android:name=".helper.services.WeatherDatabaseService"
+            android:enabled="true"
+            android:process=":remote"
+            android:stopWithTask="false"/>
 
-        <service android:name=".helper.services.NewsDatabaseService"
-                 android:enabled="true"
-                 android:process=":remote"
-                 android:stopWithTask="false"/>
-
-        <service android:name=".helper.services.WeatherDatabaseService"
-                 android:enabled="true"
-                 android:process=":remote"
-                 android:stopWithTask="false"/>
-
-        <receiver android:name=".helper.receiver.AlarmWeatherReceiver"
-                  android:enabled="true"
-                  android:process=":remote"
-                  android:exported="true">
-            <intent-filter
-                android:priority="999">
+        <receiver
+            android:name=".helper.receiver.AlarmWeatherReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote">
+            <intent-filter android:priority="999">
                 <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION"/>
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".helper.receiver.SyncDataReceiver"
-                  android:exported="true"
-                  android:enabled="true"
-                  android:process=":remote"/>
-
-        <receiver android:name=".helper.receiver.AlarmConfigOnBoot"
-                  android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-                  android:enabled="true"
-                  android:exported="true">
-            <intent-filter >
+        <receiver
+            android:name=".helper.receiver.SyncDataReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote"/>
+        <receiver
+            android:name=".helper.receiver.AlarmConfigOnBoot"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="android.intent.action.REBOOT"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".helper.receiver.ServiceRestart"
-                  android:exported="true"
-                  android:enabled="true"
-                  android:process=":remote">
+        <receiver
+            android:name=".helper.receiver.ServiceRestart"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_RESTARTED"/>
-                <data android:scheme="package"
-                      android:sspPrefix="com.darelbitsy.dbweather"/>
+
+                <data
+                    android:scheme="package"
+                    android:sspPrefix="com.darelbitsy.dbweather"/>
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.AddLocationActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/searchable"/>
+        </activity>
     </application>
 
 </manifest>

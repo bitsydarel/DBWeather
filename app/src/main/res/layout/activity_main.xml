@@ -11,7 +11,7 @@
         android:id="@+id/weatherToolbar"
         layout="@layout/weather_toolbar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -69,7 +69,6 @@
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="vertical"
                 tools:listitem="@layout/hourly_list_item"/>
-
         </com.darelbitsy.dbweather.ui.helper.CustomConstraintLayout>
 
         <android.support.design.widget.NavigationView
@@ -86,7 +85,6 @@
                 android:scrollbars="vertical"
                 tools:listitem="@layout/drawer_item"/>
         </android.support.design.widget.NavigationView>
-
     </android.support.v4.widget.DrawerLayout>
 
 </android.support.constraint.ConstraintLayout>

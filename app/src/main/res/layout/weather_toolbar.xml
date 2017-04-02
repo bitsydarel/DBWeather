@@ -15,42 +15,42 @@
         <android.support.constraint.Guideline
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/leftVerticalGuideline"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.2"/>
-
-        <android.support.constraint.Guideline
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/RightVerticalGuideline"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.8"/>
 
-        <TextView
-            android:id="@+id/weatherToolbarTitle"
+        <android.support.constraint.Guideline
+            android:id="@+id/shareLimit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.98"/>
+
+        <TextView
+            android:id="@+id/weatherToolbarTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/RightVerticalGuideline"
             android:text="@string/app_name"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:gravity="center_horizontal"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageButton
             android:id="@+id/shareIcon"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/share_icon"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/shareLimit"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
             app:layout_constraintBottom_toBottomOf="parent"
             android:contentDescription="Share Icon"
-            app:backgroundTint="@android:color/transparent"
-            android:layout_marginEnd="16dp"/>
-
+            android:backgroundTint="@android:color/transparent"/>
     </android.support.constraint.ConstraintLayout>
+
 </android.support.v7.widget.Toolbar>

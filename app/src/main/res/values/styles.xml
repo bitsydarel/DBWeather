@@ -66,4 +66,10 @@
         <item name="android:scaleY">1.2</item>
         <item name="android:minHeight">10dp</item>
     </style>
+
+    <style name="Theme.LocationProgress" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="mirrorForRtl">true</item>
+        <item name="android:minHeight">8dp</item>
+        <item name="android:indeterminateOnly">true</item>
+    </style>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
@@ -30,7 +31,6 @@ public class WeatherDatabaseService extends Service {
         Weather weather = intent.getParcelableExtra(ConstantHolder.WEATHER_DATA_KEY);
         if (weather != null) {
             database.saveWeatherData(weather);
-
             WeatherUtil.saveCoordinates(weather.getLatitude(),
                     weather.getLongitude(),
                     database);

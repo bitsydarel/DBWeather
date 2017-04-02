@@ -191,6 +191,7 @@ public class DatabaseOperation {
      */
     public void saveWeatherData(Weather weather) {
         SQLiteDatabase database = mDatabase.getWritableDatabase();
+
         ContentValues contentValues =  new ContentValues();
         contentValues.put(CITY_NAME, weather.getCityName());
         contentValues.put(TIMEZONE, weather.getTimezone());
@@ -209,7 +210,6 @@ public class DatabaseOperation {
             Log.i(ConstantHolder.TAG, "Saving weather data, result : "+ result);
             contentValues.clear();
 
-
         } else {
             long result = database.insert(WEATHER_TABLE,
                     null,
@@ -220,7 +220,6 @@ public class DatabaseOperation {
             if ( result == -1) {
                 Log.i(ConstantHolder.TAG,
                         "Weather info On Weather Table Not Inserted");
-
             } else {
                 Log.i(ConstantHolder.TAG,
                         "Weather info On Weather Table Inserted");

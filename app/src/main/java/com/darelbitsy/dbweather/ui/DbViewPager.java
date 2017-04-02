@@ -8,8 +8,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.darelbitsy.dbweather.ui.helper.GestureFinder;
-
 /**
  * Created by Darel Bitsy on 20/03/17.
  */
