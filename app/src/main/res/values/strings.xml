@@ -88,4 +88,5 @@
     <string name="add_location_config_title">Add location</string>
     <string name="select_news_source">Select news sources</string>
     <string name="list_custom_view">com.darelbitsy.dbweather.ui.animation.ListCustomBehavior</string>
+    <string name="add_location_search_hint">Search City or City, Country</string>
 </resources>

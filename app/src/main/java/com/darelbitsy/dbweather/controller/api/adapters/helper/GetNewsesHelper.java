@@ -77,7 +77,6 @@ public class GetNewsesHelper {
                     if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
 
                 } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); }  }
-
             });
     }
 

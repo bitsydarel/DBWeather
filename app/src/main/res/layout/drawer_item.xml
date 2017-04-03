@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="56dp"
+    android:id="@+id/drawerItemLayout"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/transparent"
     tools:background="@android:color/holo_blue_light">

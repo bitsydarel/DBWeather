@@ -45,8 +45,6 @@ public class WelcomeActivity extends Activity {
             public void onSuccess(ArrayList<Article> newses) {
                 Log.i(ConstantHolder.TAG, "Inside the newsObserver WelcomeActivity");
                 mIntent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
-                startService(new Intent(WelcomeActivity.this, NewsDatabaseService.class)
-                        .putExtra(ConstantHolder.NEWS_DATA_KEY, newses));
                 startActivity(mIntent);
                 finish();
             }
@@ -79,9 +77,6 @@ public class WelcomeActivity extends Activity {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeWith(mNewsObserver));
                 }
-                startService(new Intent(WelcomeActivity.this, WeatherDatabaseService.class)
-                        .putExtra(ConstantHolder.WEATHER_DATA_KEY, weather));
-
             }
 
             @Override
@@ -107,8 +102,6 @@ public class WelcomeActivity extends Activity {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(mWeatherObserver));
-
-
             isSubscriptionDone = true;
 
         } else {
@@ -118,7 +111,6 @@ public class WelcomeActivity extends Activity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(mWeatherObserver));
         }
-
     }
 
     @Override

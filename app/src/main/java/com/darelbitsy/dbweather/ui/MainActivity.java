@@ -32,8 +32,6 @@ import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
-import com.darelbitsy.dbweather.helper.services.NewsDatabaseService;
-import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.config.DrawerItem;
@@ -114,10 +112,6 @@ public class MainActivity extends AppCompatActivity {
                         .getHourly()
                         .getData());
             }
-
-            startService(new Intent(MainActivity.this, WeatherDatabaseService.class)
-                    .putExtra(ConstantHolder.WEATHER_DATA_KEY, weather));
-
             Log.i(ConstantHolder.TAG, "City Name: "+ weather.getCityName());
 
             if (isSubscriptionDoneWithNetwork) {
@@ -360,8 +354,6 @@ public class MainActivity extends AppCompatActivity {
             if (mNewsAdapter != null) {
                 new Handler().post(() -> mNewsAdapter.updateContent(newses));
             }
-            startService(new Intent(MainActivity.this, NewsDatabaseService.class)
-                    .putExtra(ConstantHolder.NEWS_DATA_KEY, newses));
         }
 
         @Override

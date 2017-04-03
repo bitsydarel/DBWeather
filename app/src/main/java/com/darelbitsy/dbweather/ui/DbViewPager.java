@@ -8,8 +8,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.darelbitsy.dbweather.ui.helper.GestureFinder;
-
 /**
  * Created by Darel Bitsy on 20/03/17.
  */
@@ -26,25 +24,6 @@ public class DbViewPager extends ViewPager implements View.OnTouchListener {
     public DbViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-    }
-
-    public void init() {
-        mDetector = new GestureDetector(mContext, new GestureFinder() {
-            /**
-             * Override this method. The Direction enum will tell you how the user swiped.
-             *
-             * @param direction the user swiped.
-             */
-            @Override
-            public boolean onSwipe(Direction direction) {
-                if (direction == Direction.up) {
-
-                    mContext.startActivity(new Intent(mContext,
-                            ResumeWeatherFragment.class));
-                }
-                return true;
-            }
-        });
     }
 
     /**
