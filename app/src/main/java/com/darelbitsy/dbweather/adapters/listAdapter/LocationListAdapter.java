@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 
 import org.geonames.InsufficientStyleException;
 import org.geonames.Toponym;
@@ -81,9 +82,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(LocationViewHolder holder, int position) {
-        holder.bindItem(mListOfLocations.get(position));
-    }
+    public void onBindViewHolder(LocationViewHolder holder, int position) { holder.bindItem(mListOfLocations.get(position)); }
 
     /**
      * Returns the total number of items in the data set held by the adapter.
@@ -121,7 +120,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             try {
                 continent.setText(locationInfo.getContinentCode());
             } catch (InsufficientStyleException e) {
-                e.printStackTrace();
+                Log.i(ConstantHolder.TAG, "error: " + e.getMessage());
             }
         }
     }

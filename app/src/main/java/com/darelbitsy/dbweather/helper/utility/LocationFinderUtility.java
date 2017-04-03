@@ -63,7 +63,6 @@ public class LocationFinderUtility {
             toponymList.add(two);
             toponymList.add(three);
             toponymList.add(four);
-
             try {
                 emitter.onSuccess(toponymList);
 

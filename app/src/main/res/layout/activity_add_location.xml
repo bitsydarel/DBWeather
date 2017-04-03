@@ -29,7 +29,8 @@
         style="@style/Theme.LocationProgress"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        tools:visibility="gone"/>
 
     <include android:id="@+id/add_location_toolbar"
              layout="@layout/add_location_toolbar"
