@@ -1,34 +1,34 @@
 package com.darelbitsy.dbweather.adapters.listAdapter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
-
-import org.geonames.InsufficientStyleException;
-import org.geonames.Toponym;
+import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
+import com.darelbitsy.dbweather.model.geonames.GeoName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Darel Bitsy on 02/04/17.
  */
 
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.LocationViewHolder> {
-    private final List<Toponym> mListOfLocations = new ArrayList<>();
+    private final List<GeoName> mListOfLocations = new ArrayList<>();
 
-    public LocationListAdapter(List<Toponym> listOfLocations) {
+    public LocationListAdapter(List<GeoName> listOfLocations) {
         mListOfLocations.addAll(listOfLocations);
     }
 
-    public void updateLocationList(List<Toponym> listOfLocations) {
+    public void updateLocationList(List<GeoName> listOfLocations) {
         mListOfLocations.clear();
         mListOfLocations.addAll(listOfLocations);
         notifyDataSetChanged();
@@ -98,30 +98,40 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         final ConstraintLayout mLayout;
         final TextView cityName;
         final TextView countryName;
-        final TextView continent;
-        Toponym mLocation;
+        final TextView countryCode;
+        DatabaseOperation mDatabaseOperation;
+        GeoName mLocation;
 
-        final View.OnClickListener mLocationOnClickListener =
-                view -> Log.i("Location", "Selected location : " + mLocation.getName());
+        final DialogInterface.OnClickListener mCancelLocationClick = (dialog, which) -> dialog.cancel();
+        final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) -> {
+            mDatabaseOperation.addLocationToDatabase(mLocation);
+        };
+
+        final View.OnClickListener mLocationOnClickListener = view -> new AlertDialog.Builder(view.getContext())
+                .setMessage(String.format(Locale.getDefault(),
+                        view.getContext().getString(R.string.alert_add_location_text),
+                        mLocation.getName()))
+                .setNegativeButton(android.R.string.cancel, mCancelLocationClick)
+                .setPositiveButton(android.R.string.yes, mAddLocationClick)
+                .create()
+                .show();
+
 
         LocationViewHolder(View itemView) {
             super(itemView);
+            mDatabaseOperation = new DatabaseOperation(itemView.getContext());
             mLayout = (ConstraintLayout) itemView.findViewById(R.id.locationListItemLayout);
             cityName = (TextView) itemView.findViewById(R.id.cityName);
             countryName = (TextView) itemView.findViewById(R.id.countryName);
-            continent = (TextView) itemView.findViewById(R.id.continent);
+            countryCode = (TextView) itemView.findViewById(R.id.countryCode);
         }
 
-        void bindItem(Toponym locationInfo) {
+        void bindItem(GeoName locationInfo) {
             mLocation = locationInfo;
             mLayout.setOnClickListener(mLocationOnClickListener);
             cityName.setText(locationInfo.getName());
             countryName.setText(locationInfo.getCountryName());
-            try {
-                continent.setText(locationInfo.getContinentCode());
-            } catch (InsufficientStyleException e) {
-                Log.i(ConstantHolder.TAG, "error: " + e.getMessage());
-            }
+            countryCode.setText(locationInfo.getCountryCode());
         }
     }
 
