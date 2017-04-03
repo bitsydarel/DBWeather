@@ -52,7 +52,6 @@ public class AddLocationActivity extends AppCompatActivity {
             view -> mSearchEditQuery.setText("");
 
     private void getUserQuery(Intent intent) {
-
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
             getUserQuery(intent.getStringExtra(SearchManager.QUERY));
@@ -174,7 +173,6 @@ public class AddLocationActivity extends AppCompatActivity {
         public void onSuccess(List<Toponym> listOfLocations) {
             if (mLocationListAdapter != null) {
                 mLocationListAdapter.updateLocationList(listOfLocations);
-
             } else {
                 mLocationListAdapter = new LocationListAdapter(listOfLocations);
                 mRecyclerView.setAdapter(mLocationListAdapter);
