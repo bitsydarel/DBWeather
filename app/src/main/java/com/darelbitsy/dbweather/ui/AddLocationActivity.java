@@ -1,10 +1,10 @@
 package com.darelbitsy.dbweather.ui;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -19,16 +20,13 @@ import android.widget.ProgressBar;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.adapters.listAdapter.LocationListAdapter;
+import com.darelbitsy.dbweather.controller.api.adapters.helper.GeoNamesHelper;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
-import com.darelbitsy.dbweather.helper.utility.LocationFinderUtility;
+import com.darelbitsy.dbweather.model.geonames.GeoName;
 import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.Hourly;
 import com.darelbitsy.dbweather.model.weather.Weather;
 
-import org.geonames.Toponym;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -49,7 +47,7 @@ public class AddLocationActivity extends AppCompatActivity {
             getUserQuery(mSearchEditQuery.getText().toString());
 
     private final View.OnClickListener clearTextListener =
-            view -> mSearchEditQuery.setText("");
+            view -> mSearchEditQuery.setText(" ");
 
     private void getUserQuery(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -58,16 +56,19 @@ public class AddLocationActivity extends AppCompatActivity {
         }
     }
 
-    private void getUserQuery(final String query) {
-        String userQuery = query;
-        try {
-            userQuery = URLEncoder.encode(query, "UTF8");
-        } catch (UnsupportedEncodingException e) {
-            Log.i(ConstantHolder.TAG, "Error while encoding: "
-                    + e.getMessage());
+    private final View.OnFocusChangeListener mFocusChangeListener = (view,  hasFocus) -> {
+        InputMethodManager imm =
+                (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (hasFocus) {
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
+    };
 
-        mCompositeDisposable.add(LocationFinderUtility.mockGetLocationInfoFromName(userQuery)
+    private void getUserQuery(final String query) {
+        mCompositeDisposable.add(new GeoNamesHelper(this)
+                .getLocationFromApi(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new GetLocationHelper()));
@@ -116,6 +117,8 @@ public class AddLocationActivity extends AppCompatActivity {
             finish();
         });
 
+        mSearchEditQuery.setOnFocusChangeListener(mFocusChangeListener);
+
         mSearchEditQuery.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -160,7 +163,7 @@ public class AddLocationActivity extends AppCompatActivity {
         getUserQuery(intent);
     }
 
-    private class GetLocationHelper extends DisposableSingleObserver<List<Toponym>> {
+    private class GetLocationHelper extends DisposableSingleObserver<List<GeoName>> {
         /**
          * Notifies the SingleObserver with a single item and that the Single has finished sending
          * push-based notifications.
@@ -170,7 +173,7 @@ public class AddLocationActivity extends AppCompatActivity {
          * @param listOfLocations the item emitted by the Single, an list of locations
          */
         @Override
-        public void onSuccess(List<Toponym> listOfLocations) {
+        public void onSuccess(List<GeoName> listOfLocations) {
             if (mLocationListAdapter != null) {
                 mLocationListAdapter.updateLocationList(listOfLocations);
             } else {

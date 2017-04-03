@@ -89,4 +89,5 @@
     <string name="select_news_source">Select news sources</string>
     <string name="list_custom_view">com.darelbitsy.dbweather.ui.animation.ListCustomBehavior</string>
     <string name="add_location_search_hint">Search City or City, Country</string>
+    <string name="alert_add_location_text">Do you want to add  %1$s to your list of Location</string>
 </resources>

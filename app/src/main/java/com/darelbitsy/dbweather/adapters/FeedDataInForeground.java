@@ -61,7 +61,7 @@ public class FeedDataInForeground {
 
             for (String source : ConstantHolder.LIST_OF_SOURCES) {
                 try {
-                    newsResponseList.add(newsApi.getNews(source, "top").execute().body());
+                    newsResponseList.add(newsApi.getNews(source).execute().body());
                 } catch (IOException e) {
                     Log.i(ConstantHolder.TAG, "Error while getting new from "+
                             source +

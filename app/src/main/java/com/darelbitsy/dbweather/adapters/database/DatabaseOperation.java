@@ -10,6 +10,7 @@ import android.util.Log;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.ApplicationDatabase;
+import com.darelbitsy.dbweather.model.geonames.GeoName;
 import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Alert;
 import com.darelbitsy.dbweather.model.weather.Currently;
@@ -814,5 +815,11 @@ public class DatabaseOperation {
             cursor.close();
         }
         return hour;
+    }
+
+    public void addLocationToDatabase(GeoName location) {
+        Log.i(ConstantHolder.TAG, "adding" + location.getName()
+                + " to the database with latitude : " + location.getLatitude()
+                + "longitude: " + location.getLongitude());
     }
 }

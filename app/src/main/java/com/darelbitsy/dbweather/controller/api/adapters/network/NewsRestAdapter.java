@@ -33,7 +33,7 @@ public class NewsRestAdapter {
         mNewsApi = mRestAdapter.create(NewsService.class);
     }
 
-    public Call<NewsResponse> getNews(String source, String sortBy) {
-        return mNewsApi.getNewsFromApiSync(source, sortBy, NEWS_APIKEY);
+    public Call<NewsResponse> getNews(String source) {
+        return mNewsApi.getNewsFromApiSync(source, "top", NEWS_APIKEY);
     }
 }

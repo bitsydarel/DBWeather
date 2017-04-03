@@ -62,7 +62,7 @@ public class GetNewsesHelper {
 
                     for (String source : ConstantHolder.LIST_OF_SOURCES) {
                         newsResponseList.add(newsRestAdapter
-                                .getNews(source, "top")
+                                .getNews(source)
                                 .execute()
                                 .body());
 
