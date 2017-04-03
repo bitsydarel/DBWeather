@@ -26,25 +26,6 @@ public class DbViewPager extends ViewPager implements View.OnTouchListener {
         mContext = context;
     }
 
-    public void init() {
-        mDetector = new GestureDetector(mContext, new GestureFinder() {
-            /**
-             * Override this method. The Direction enum will tell you how the user swiped.
-             *
-             * @param direction the user swiped.
-             */
-            @Override
-            public boolean onSwipe(Direction direction) {
-                if (direction == Direction.up) {
-
-                    mContext.startActivity(new Intent(mContext,
-                            ResumeWeatherFragment.class));
-                }
-                return true;
-            }
-        });
-    }
-
     /**
      * Called when a touch event is dispatched to a view. This allows listeners to
      * get a chance to respond before the target view.

@@ -57,6 +57,8 @@
             app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
             app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
             android:textIsSelectable="true"
+            android:selectAllOnFocus="true"
+            android:inputType="textNoSuggestions"
             android:textColor="@android:color/white"
             android:hint="@string/add_location_search_hint"
             android:textColorHint="#80BDBDBD"

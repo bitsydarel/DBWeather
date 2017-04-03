@@ -24,10 +24,9 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.NEWS_DATA_KE
  */
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>  {
-    private ArrayList<Article> mNewses;
+    private final ArrayList<Article> mNewses = new ArrayList<>();
 
     public NewsAdapter(ArrayList<Article> newses) {
-        mNewses = new ArrayList<>();
         mNewses.addAll(newses);
     }
 
@@ -45,7 +44,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public int getItemCount() {
-        return (mNewses != null  && mNewses.size() > 1) ? mNewses.size() : 0;
+        return mNewses.size();
     }
 
     public void updateContent(ArrayList<Article> newses) {

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/locationListItemLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -44,13 +45,13 @@
         app:layout_constraintLeft_toRightOf="@id/cityName"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/codePostal"
+        app:layout_constraintRight_toLeftOf="@+id/continent"
         tools:text="USA"
         android:gravity="center_horizontal"
         android:textColor="@android:color/black"/>
 
     <TextView
-        android:id="@+id/codePostal"
+        android:id="@+id/continent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -59,7 +60,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
-        tools:text="46000"
+        tools:text="America"
         android:gravity="end"
         android:textColor="@android:color/black"/>
 

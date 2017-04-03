@@ -51,6 +51,7 @@
         app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="32dp"
-        android:background="@android:drawable/dialog_holo_light_frame"/>
+        android:background="@android:drawable/dialog_holo_light_frame"
+        tools:listitem="@layout/location_list_item"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,9 +1,16 @@
 package com.darelbitsy.dbweather.adapters.listAdapter;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.darelbitsy.dbweather.R;
+
+import org.geonames.InsufficientStyleException;
 import org.geonames.Toponym;
 
 import java.util.ArrayList;
@@ -23,6 +30,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     public void updateLocationList(List<Toponym> listOfLocations) {
         mListOfLocations.clear();
         mListOfLocations.addAll(listOfLocations);
+        notifyDataSetChanged();
     }
 
     /**
@@ -47,7 +55,9 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      */
     @Override
     public LocationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        return new LocationViewHolder(LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.location_list_item, parent, false));
     }
 
     /**
@@ -72,7 +82,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      */
     @Override
     public void onBindViewHolder(LocationViewHolder holder, int position) {
-
+        holder.bindItem(mListOfLocations.get(position));
     }
 
     /**
@@ -82,13 +92,38 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      */
     @Override
     public int getItemCount() {
-        return 0;
+        return mListOfLocations.size();
     }
 
     class LocationViewHolder extends RecyclerView.ViewHolder {
+        final ConstraintLayout mLayout;
+        final TextView cityName;
+        final TextView countryName;
+        final TextView continent;
+        Toponym mLocation;
 
-        public LocationViewHolder(View itemView) {
+        final View.OnClickListener mLocationOnClickListener =
+                view -> Log.i("Location", "Selected location : " + mLocation.getName());
+
+        LocationViewHolder(View itemView) {
             super(itemView);
+            mLayout = (ConstraintLayout) itemView.findViewById(R.id.locationListItemLayout);
+            cityName = (TextView) itemView.findViewById(R.id.cityName);
+            countryName = (TextView) itemView.findViewById(R.id.countryName);
+            continent = (TextView) itemView.findViewById(R.id.continent);
+        }
+
+        void bindItem(Toponym locationInfo) {
+            mLocation = locationInfo;
+            mLayout.setOnClickListener(mLocationOnClickListener);
+            cityName.setText(locationInfo.getName());
+            countryName.setText(locationInfo.getCountryName());
+            try {
+                continent.setText(locationInfo.getContinentCode());
+            } catch (InsufficientStyleException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 }
