@@ -134,6 +134,13 @@
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable"/>
         </activity>
+        
+        <provider
+            android:enabled="true"
+            android:exported="true"
+            android:authorities="com.darelbitsy.dbweather.helper.provider.LocationSuggestionProvider"
+            android:name=".helper.provider.LocationSuggestionProvider"/>
+        
     </application>
 
 </manifest>

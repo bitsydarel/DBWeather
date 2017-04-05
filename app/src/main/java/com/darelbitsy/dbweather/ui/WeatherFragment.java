@@ -305,11 +305,6 @@ public class WeatherFragment extends Fragment {
             mTimeZone = weather.getTimezone();
             if (mCurrently != null) {
                 mCurrently = weather.getCurrently();
-                mAdapter.getParentLayout()
-                        .setBackgroundResource(mColorManager
-                                .getBackgroundColor(mCurrently.getIcon()));
-
-                mAdapter.updateWeatherOnFragment(weather);
 
             } else if (mDailyData != null){
                 for (DailyData day: weather.getDaily().getData()) {
@@ -318,6 +313,16 @@ public class WeatherFragment extends Fragment {
                         mDailyData = day;
                     }
                 }
+            }
+
+            if(mAdapter != null) {
+                if (mCurrently != null) {
+                    mAdapter.getParentLayout()
+                            .setBackgroundResource(mColorManager
+                                    .getBackgroundColor(mCurrently.getIcon()));
+                }
+
+                mAdapter.updateWeatherOnFragment(weather);
             }
 
             if (mDaySwitcherHelper != null) {

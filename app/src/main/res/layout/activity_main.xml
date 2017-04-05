@@ -76,15 +76,11 @@
             android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@android:color/white">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/weatherRecyclerDrawer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                tools:listitem="@layout/drawer_item"/>
-        </android.support.design.widget.NavigationView>
+            android:background="@android:color/white"
+            app:itemBackground="@drawable/drawer_item_background"
+            app:itemTextColor="@android:color/black"
+            app:itemIconTint="@android:color/black"
+            app:menu="@menu/drawer"/>
     </android.support.v4.widget.DrawerLayout>
 
 </android.support.constraint.ConstraintLayout>

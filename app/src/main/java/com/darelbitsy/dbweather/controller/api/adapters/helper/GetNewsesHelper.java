@@ -24,6 +24,8 @@ import java.util.List;
 
 import io.reactivex.Single;
 
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
+
 /**
  * Created by Darel Bitsy on 18/02/17.
  * This class help get Newses in background
@@ -62,7 +64,7 @@ public class GetNewsesHelper {
 
                     for (String source : ConstantHolder.LIST_OF_SOURCES) {
                         newsResponseList.add(newsRestAdapter
-                                .getNews(source, "top")
+                                .getNews(source)
                                 .execute()
                                 .body());
 
@@ -109,7 +111,10 @@ public class GetNewsesHelper {
                 String newsDescription = response.getArticles().get(i).getDescription();
 
                 try {
-                    if (!"en".equals(ConstantHolder.USER_LANGUAGE)) {
+                    if (!"en".equals(ConstantHolder.USER_LANGUAGE) &&
+                            mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                                    .getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
+
                         if (accounts != null) {
                             String account = accounts[0].name;
 

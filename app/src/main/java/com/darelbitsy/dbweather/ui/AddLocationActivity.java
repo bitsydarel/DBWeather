@@ -1,35 +1,35 @@
 package com.darelbitsy.dbweather.ui;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.adapters.listAdapter.LocationListAdapter;
+import com.darelbitsy.dbweather.controller.api.adapters.helper.GeoNamesHelper;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
-import com.darelbitsy.dbweather.helper.utility.LocationFinderUtility;
+import com.darelbitsy.dbweather.helper.provider.LocationSuggestionProvider;
+import com.darelbitsy.dbweather.model.geonames.GeoName;
 import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.Hourly;
 import com.darelbitsy.dbweather.model.weather.Weather;
 
-import org.geonames.Toponym;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -41,57 +41,56 @@ public class AddLocationActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private LocationListAdapter mLocationListAdapter;
     private ProgressBar mLocationProgressBar;
-    private EditText mSearchEditQuery;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-    private ImageButton mLocationSearchIcon;
     private ImageButton mBackToMainActivity;
-    private final View.OnClickListener searchClickListener = view ->
-            getUserQuery(mSearchEditQuery.getText().toString());
 
-    private final View.OnClickListener clearTextListener =
-            view -> mSearchEditQuery.setText("");
+    private DatabaseOperation mDatabaseOperation;
 
     private void getUserQuery(Intent intent) {
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        if (intent != null &&
+                Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
             getUserQuery(intent.getStringExtra(SearchManager.QUERY));
         }
     }
 
     private void getUserQuery(final String query) {
-        String userQuery = query;
-        try {
-            userQuery = URLEncoder.encode(query, "UTF8");
-        } catch (UnsupportedEncodingException e) {
-            Log.i(ConstantHolder.TAG, "Error while encoding: "
-                    + e.getMessage());
+        if (!query.isEmpty()) {
+            mCompositeDisposable.add(new GeoNamesHelper(this)
+                    .getLocationFromApi(query)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new GetLocationHelper()));
         }
-
-        mCompositeDisposable.add(LocationFinderUtility.mockGetLocationInfoFromName(userQuery)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new GetLocationHelper()));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
+        setSupportActionBar(toolbar);
+        mDatabaseOperation = new DatabaseOperation(this);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = (SearchView) findViewById(R.id.searchLocationView);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnSuggestionListener(new SuggestionListener());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.locationRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL,
                 false));
 
-        mSearchEditQuery = (EditText) findViewById(R.id.search_edit_query);
-        mLocationSearchIcon = (ImageButton) findViewById(R.id.location_search_icon);
         mBackToMainActivity = (ImageButton) findViewById(R.id.backToMainActivity);
 
         mLocationProgressBar = (ProgressBar) findViewById(R.id.locationProgressBar);
         mLocationProgressBar.setVisibility(View.GONE);
 
-        getUserQuery("Alajuela");
         getUserQuery(getIntent());
     }
 
@@ -115,25 +114,6 @@ public class AddLocationActivity extends AppCompatActivity {
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);
             finish();
-        });
-
-        mSearchEditQuery.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                mLocationSearchIcon.setImageResource(R.drawable.close_button_icon);
-                mLocationSearchIcon.setOnClickListener(clearTextListener);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                getUserQuery(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mLocationSearchIcon.setImageResource(R.drawable.close_button_icon);
-                mLocationSearchIcon.setOnClickListener(searchClickListener);
-            }
         });
     }
 
@@ -161,7 +141,35 @@ public class AddLocationActivity extends AppCompatActivity {
         getUserQuery(intent);
     }
 
-    private class GetLocationHelper extends DisposableSingleObserver<List<Toponym>> {
+    public class SuggestionListener implements SearchView.OnSuggestionListener {
+        @Override
+        public boolean onSuggestionSelect(int position) {
+            return true;
+        }
+
+        @Override
+        public boolean onSuggestionClick(int position) {
+            GeoName location = LocationSuggestionProvider.mListOfLocation.get(position);
+
+            final DialogInterface.OnClickListener mCancelLocationClick =
+                    (dialog, which) -> dialog.cancel();
+
+            final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) ->
+                    mDatabaseOperation.addLocationToDatabase(location);
+
+            new AlertDialog.Builder(AddLocationActivity.this)
+                    .setMessage(String.format(Locale.getDefault(),
+                            AddLocationActivity.this.getString(R.string.alert_add_location_text),
+                            location.getName()))
+                    .setNegativeButton(android.R.string.cancel, mCancelLocationClick)
+                    .setPositiveButton(android.R.string.yes, mAddLocationClick)
+                    .create()
+                    .show();
+            return true;
+        }
+    }
+
+    private class GetLocationHelper extends DisposableSingleObserver<List<GeoName>> {
         /**
          * Notifies the SingleObserver with a single item and that the Single has finished sending
          * push-based notifications.
@@ -171,10 +179,9 @@ public class AddLocationActivity extends AppCompatActivity {
          * @param listOfLocations the item emitted by the Single, an list of locations
          */
         @Override
-        public void onSuccess(List<Toponym> listOfLocations) {
+        public void onSuccess(List<GeoName> listOfLocations) {
             if (mLocationListAdapter != null) {
                 mLocationListAdapter.updateLocationList(listOfLocations);
-
             } else {
                 mLocationListAdapter = new LocationListAdapter(listOfLocations);
                 mRecyclerView.setAdapter(mLocationListAdapter);

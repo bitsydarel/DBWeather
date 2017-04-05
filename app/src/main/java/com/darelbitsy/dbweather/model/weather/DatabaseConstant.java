@@ -7,7 +7,11 @@ package com.darelbitsy.dbweather.model.weather;
  */
 
 public class DatabaseConstant {
+    public static final String CREATE_TABLE_QUERY = "create table if not exists ";
 
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_PRIMARY_KEY = " primary key";
+    public static final String COLUMN_UNIQUE = " unique";
     public static final String COLUMN_INTEGER_TYPE = " integer";
     public static final String COLUMN_TEXT_TYPE = " text";
     public static final String COLUMN_REAL_TYPE = " real";
@@ -17,6 +21,12 @@ public class DatabaseConstant {
     public static final String SELECT = "SELECT ";
     public static final String FROM = " FROM ";
     public static final String ORDER_BY = " ORDER BY ";
+
+    public static final String CITIES_TABLE = "cities";
+    public static final String THE_CITY_NAME = "name";
+    public static final String THE_CITY_COUNTRY = "country";
+    public static final String THE_CITY_LATITUDE = "latitude";
+    public static final String THE_CITY_LONGITUDE = "longitude";
 
     public static final String APPLICATION_TABLE = "application_table";
     public static final String LAST_WEATHER_SERVER_SYNC = "last_weather_server_sync";

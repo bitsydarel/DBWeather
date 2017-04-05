@@ -69,6 +69,12 @@ public class AppUtil {
             .readTimeout(45, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true);
 
+    public static final OkHttpClient.Builder geoNameOkHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(25, TimeUnit.SECONDS)
+            .writeTimeout(25, TimeUnit.SECONDS)
+            .readTimeout(45, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true);
+
 
     private AppUtil() {}
 

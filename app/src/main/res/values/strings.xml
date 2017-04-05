@@ -84,9 +84,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="notification_config_title">Activate weather notification</string>
-    <string name="news_translation_title">Translate news feeds</string>
-    <string name="add_location_config_title">Add location</string>
-    <string name="select_news_source">Select news sources</string>
+    <string name="news_translation_config_title">Translate news feeds</string>
+    <string name="add_location_config_title">Locations</string>
+    <string name="add_location_menu_title">Add Location</string>
+    <string name="select_news_source_config_title">Select news sources</string>
     <string name="list_custom_view">com.darelbitsy.dbweather.ui.animation.ListCustomBehavior</string>
-    <string name="add_location_search_hint">Search City or City, Country</string>
+    <string name="add_location_search_hint">Enter City Name</string>
+    <string name="alert_add_location_text">Do you want to add  %1$s to your list of Location</string>
+    <string name="add_location_toolbar_label">Add Location</string>
 </resources>
