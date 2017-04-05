@@ -2,14 +2,15 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
                                    android:layout_width="match_parent"
                                    android:layout_height="wrap_content"
+                                   style="@style/ToolBarStyle"
                                    app:contentInsetStart="0dp"
                                    app:contentInsetLeft="0dp"
+                                   android:background="@color/colorPrimary"
                                    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark">
+        android:layout_height="match_parent">
 
         <android.support.constraint.Guideline
             android:layout_width="wrap_content"
@@ -25,6 +26,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.9"/>
 
+
         <ImageButton
             android:id="@+id/backToMainActivity"
             android:layout_width="0dp"
@@ -33,41 +35,21 @@
             app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/return_back_icon"
+            app:srcCompat="@drawable/home_icon"
             android:backgroundTint="@android:color/transparent"
             android:tint="@android:color/white"
             android:background="@android:drawable/dialog_holo_light_frame"/>
-
-        <ImageButton
-            android:id="@+id/location_search_icon"
+        
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
-            app:srcCompat="@drawable/search_icon"
-            android:backgroundTint="@android:color/transparent"
-            android:tint="@android:color/white"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <EditText
-            android:id="@+id/search_edit_query"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
             app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
-            android:textIsSelectable="true"
-            android:selectAllOnFocus="true"
-            android:cursorVisible="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:soundEffectsEnabled="true"
-            android:textCursorDrawable="@drawable/custom_cursor"
-            android:inputType="textShortMessage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:textColor="@android:color/white"
-            android:hint="@string/add_location_search_hint"
-            android:textColorHint="#80BDBDBD"
-            android:backgroundTint="@android:color/white"/>
+            android:text="@string/add_location_toolbar_label"/>
 
     </android.support.constraint.ConstraintLayout>
 

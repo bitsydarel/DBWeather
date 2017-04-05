@@ -19,6 +19,7 @@ import java.util.Locale;
 
 /**
  * Created by Darel Bitsy on 02/04/17.
+ * Location List Adapter
  */
 
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.LocationViewHolder> {
@@ -95,7 +96,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     }
 
     class LocationViewHolder extends RecyclerView.ViewHolder {
-        final ConstraintLayout mLayout;
+        ConstraintLayout mLayout;
         final TextView cityName;
         final TextView countryName;
         final TextView countryCode;
@@ -103,9 +104,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         GeoName mLocation;
 
         final DialogInterface.OnClickListener mCancelLocationClick = (dialog, which) -> dialog.cancel();
-        final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) -> {
-            mDatabaseOperation.addLocationToDatabase(mLocation);
-        };
+        final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) ->
+                mDatabaseOperation.addLocationToDatabase(mLocation);
 
         final View.OnClickListener mLocationOnClickListener = view -> new AlertDialog.Builder(view.getContext())
                 .setMessage(String.format(Locale.getDefault(),
@@ -134,5 +134,4 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             countryCode.setText(locationInfo.getCountryCode());
         }
     }
-
 }

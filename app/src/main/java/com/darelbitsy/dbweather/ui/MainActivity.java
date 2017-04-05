@@ -11,21 +11,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
-import com.darelbitsy.dbweather.adapters.listAdapter.DrawerItemAdapter;
 import com.darelbitsy.dbweather.adapters.listAdapter.HourAdapter;
 import com.darelbitsy.dbweather.adapters.listAdapter.NewsAdapter;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
@@ -34,7 +39,7 @@ import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
-import com.darelbitsy.dbweather.model.config.DrawerItem;
+import com.darelbitsy.dbweather.model.geonames.GeoName;
 import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
 import com.darelbitsy.dbweather.ui.animation.AnimationUtility;
@@ -63,7 +68,7 @@ import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColor
  * Handle location update and set viewPager
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MenuItem.OnMenuItemClickListener {
 
     private DatabaseOperation mDatabase;
     private CustomFragmentAdapter mFragmentAdapter;
@@ -71,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     private Single<Weather> mWeatherObservable;
     public static final CompositeDisposable subscriptions = new CompositeDisposable();
     private final Handler mUpdateHandler = new Handler();
-    private RecyclerView mDrawerRecyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -88,7 +92,55 @@ public class MainActivity extends AppCompatActivity {
     private Weather mWeather;
     private SharedPreferences sharedPreferences;
     private View mainLayout;
+    private final CompoundButton.OnCheckedChangeListener mNotificationConfigurationListener = (buttonView, isChecked) -> {
+        if (isChecked) {
+            getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(ConstantHolder.NOTIFICATION_KEY, true)
+                    .apply();
 
+        } else {
+            getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(ConstantHolder.NOTIFICATION_KEY, false)
+                    .apply();
+        }
+    };
+
+    private final CompoundButton.OnCheckedChangeListener mNewsConfigurationListener = (buttonView, isChecked) -> {
+        if (isChecked) {
+            sharedPreferences
+                    .edit()
+                    .putBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)
+                    .apply();
+
+        } else {
+            sharedPreferences
+                    .edit()
+                    .putBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, false)
+                    .apply();
+        }
+    };
+
+
+    private void respondToMenuItemClick(MenuItem item) {
+        if (item.getItemId() == R.id.add_location_id) {
+            startActivity(new Intent(this, AddLocationActivity.class));
+
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        respondToMenuItemClick(item);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        respondToMenuItemClick(item);
+        return true;
+    }
 
     /**
      * This class implement the behavior
@@ -143,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.weatherToolbar);
         setSupportActionBar(toolbar);
+        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         mainLayout = findViewById(R.id.dbweather_main_layout);
         mainLayout.setBackgroundResource(mColorPicker
@@ -218,8 +271,6 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
         if (sharedPreferences.getBoolean(FIRST_RUN, true)
                 && AppUtil.isNetworkAvailable(this)) {
 
@@ -269,30 +320,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupNavigationDrawer() {
-        mDrawerRecyclerView = (RecyclerView) mDrawerLayout.findViewById(R.id.weatherRecyclerDrawer);
+        NavigationView navigationView = (NavigationView)
+                mDrawerLayout.findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(this);
+        List<GeoName> listOfLocation = mDatabase.getUserCitiesFromDatabase();
 
-        List<DrawerItem> drawerItemList = new ArrayList<>();
+        Menu menu = navigationView.getMenu();
+        Menu locationSubmenu = menu.findItem(R.id.location_config_id)
+                .setOnMenuItemClickListener(this)
+                .setEnabled(true)
+                .getSubMenu();
 
-        DrawerItem addLocationConfiguration = new DrawerItem(R.drawable.ic_add_location_black_24dp,
-                getString(R.string.add_location_config_title));
-        DrawerItem notificationConfiguration = new DrawerItem(R.drawable.ic_notifications_black_24dp,
-                getString(R.string.notification_config_title), ConstantHolder.NOTIFICATION_KEY);
-        DrawerItem newsTranslation = new DrawerItem(R.drawable.ic_g_translate_black_24dp,
-                getString(R.string.news_translation_title), ConstantHolder.NEWS_TRANSLATION_KEY);
-        DrawerItem newsSourcesConfiguration = new DrawerItem(R.drawable.news_icon,
-                getString(R.string.select_news_source));
+        final MenuItem addLocationItem =
+                locationSubmenu.findItem(R.id.add_location_id);
+        addLocationItem.setOnMenuItemClickListener(this);
 
-        drawerItemList.add(addLocationConfiguration);
-        drawerItemList.add(newsSourcesConfiguration);
-        drawerItemList.add(notificationConfiguration);
-        drawerItemList.add(newsTranslation);
+        for (int index = 0; index < listOfLocation.size(); index++) {
+            GeoName location = listOfLocation.get(index);
+            MenuItem item = locationSubmenu.add(R.id.cities_menu_id, index + 1, Menu.NONE,
+                    location.getName() + ", " + location.getCountryName());
+            item.setIcon(R.drawable.city_location_icon);
+            item.setOnMenuItemClickListener(this);
+            item.setEnabled(true);
+        }
 
-        DrawerItemAdapter itemAdapter = new DrawerItemAdapter(drawerItemList);
+        SwitchCompat notification_switch = (SwitchCompat)
+                MenuItemCompat.getActionView(menu.findItem(R.id.notification_config_id));
+        SwitchCompat news_translation_switch = (SwitchCompat)
+                MenuItemCompat.getActionView(menu.findItem(R.id.news_translation_config_id));
 
-        mDrawerRecyclerView.setAdapter(itemAdapter);
-        mDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL,
-                false));
+        notification_switch.setOnCheckedChangeListener(mNotificationConfigurationListener);
+        news_translation_switch.setOnCheckedChangeListener(mNewsConfigurationListener);
+
+        notification_switch.setChecked(sharedPreferences.getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, false));
+        news_translation_switch.setChecked(sharedPreferences.getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, false));
     }
 
     @Override
@@ -362,9 +423,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Setup the news scroll view and fetch it with data if available
-     */
+    // Setup the news scroll view and fetch it with data if available
     private void setupNewsScrollView() {
         if (mNewsRecyclerView == null) {
             mNewsRecyclerView = (RecyclerView)
@@ -407,5 +466,4 @@ public class MainActivity extends AppCompatActivity {
             AnimationUtility.autoScrollRecyclerView(mNewsRecyclerView, mNewsAdapter);
         }
     }
-
 }

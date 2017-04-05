@@ -3,7 +3,6 @@ package com.darelbitsy.dbweather.model;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.ALERT_EXPIRES;
@@ -18,6 +17,7 @@ import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.COLUMN_INT
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.COLUMN_REAL_TYPE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.COLUMN_TEXT_TYPE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.COMMA;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.CREATE_TABLE_QUERY;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.CURRENT_APPARENT_TEMPERATURE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.CURRENT_CLOUD_COVER;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.CURRENT_HUMIDITY;
@@ -99,7 +99,6 @@ import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.WEEK_SUMMA
 public class ApplicationDatabase extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DB_NAME = "db_weather.sqlite";
-    private static final String CREATE_TABLE_QUERY = "create table ";
 
 
 

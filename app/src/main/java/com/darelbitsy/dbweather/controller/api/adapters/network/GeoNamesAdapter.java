@@ -29,7 +29,7 @@ public class GeoNamesAdapter {
     private static final String GEO_NAMES_API_URL= "http://api.geonames.org/";
     private static final String USER_NAME = "bitsydarel";
     private static final boolean IS_NAME_REQUIERED = true;
-    private static final int MAX_ROWS = 5;
+    private static final int MAX_ROWS = 3;
     private static GeoNamesService mGeoNamesService;
 
     public GeoNamesAdapter(Context context) {
