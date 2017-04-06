@@ -77,7 +77,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@android:color/white"
-            app:itemBackground="@drawable/drawer_item_background"
             app:itemTextColor="@android:color/black"
             app:itemIconTint="@android:color/black"
             app:menu="@menu/drawer"/>

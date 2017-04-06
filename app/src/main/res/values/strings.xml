@@ -92,4 +92,6 @@
     <string name="add_location_search_hint">Enter City Name</string>
     <string name="alert_add_location_text">Do you want to add  %1$s to your list of Location</string>
     <string name="add_location_toolbar_label">Add Location</string>
+    <string name="news_config_title">News</string>
+    <string name="current_location_title">Current Location</string>
 </resources>
