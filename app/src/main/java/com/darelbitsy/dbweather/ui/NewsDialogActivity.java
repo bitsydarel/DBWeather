@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetImageDownloader;
+import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.Article;
@@ -25,6 +26,7 @@ import java.util.Locale;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -37,20 +39,10 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.NEWS_DATA_KE
  */
 
 public class NewsDialogActivity extends AppCompatActivity {
-    Button openInBrowser;
-    Button close;
+    private ImageView newsImage;
+    private ProgressBar newsProgressBar;
+    private CompositeDisposable subscriptions = new CompositeDisposable();
 
-    TextView newsFrom;
-    TextView newsPublicationDate;
-    TextView newsDetails;
-    TextView newsTitle;
-
-    ImageView newsImage;
-
-    ProgressBar newsProgressBar;
-
-    private Article article;
-    private Toolbar mToolbar;
 
     private class GetNewsImage extends DisposableSingleObserver<Bitmap> {
         @Override
@@ -73,32 +65,31 @@ public class NewsDialogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_activity);
 
-        openInBrowser = (Button) findViewById(R.id.openInBrowserButton);
-        close = (Button) findViewById(R.id.closeButton);
-        newsFrom = (TextView) findViewById(R.id.articleFrom);
-        newsPublicationDate = (TextView) findViewById(R.id.articlePublicationDate);
-        newsDetails = (TextView) findViewById(R.id.articleDetails);
-        newsTitle = (TextView) findViewById(R.id.articleTitleText);
+        final Button openInBrowser = (Button) findViewById(R.id.openInBrowserButton);
+        final Button close = (Button) findViewById(R.id.closeButton);
+        final TextView newsFrom = (TextView) findViewById(R.id.articleFrom);
+        final TextView newsPublicationDate = (TextView) findViewById(R.id.articlePublicationDate);
+        final TextView newsDetails = (TextView) findViewById(R.id.articleDetails);
+        final TextView newsTitle = (TextView) findViewById(R.id.articleTitleText);
         newsImage = (ImageView) findViewById(R.id.articleImage);
         newsProgressBar = (ProgressBar) findViewById(R.id.newsProgressBar);
 
-        Typeface typeface = AppUtil.getAppGlobalTypeFace(this);
-        mToolbar = (Toolbar) findViewById(R.id.newsToolbar);
-        setSupportActionBar(mToolbar);
+        Typeface typeface = AppUtil.getAppGlobalTypeFace(getApplicationContext());
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.newsToolbar);
+        setSupportActionBar(toolbar);
 
         close.setOnClickListener(view -> finish());
 
-
-        article = getIntent().getParcelableExtra(NEWS_DATA_KEY);
+        final Article article = getIntent().getParcelableExtra(NEWS_DATA_KEY);
 
         if(!article.getUrlToImage().isEmpty()) {
-            Single<Bitmap> imageDownloader = new GetImageDownloader(this)
-                    .getObservableImageDownloader(article.getUrlToImage(), this);
+            Single<Bitmap> imageDownloader = GetImageDownloader.newInstance(this)
+                    .getObservableImageDownloader(article.getUrlToImage());
 
             newsProgressBar.setVisibility(View.VISIBLE);
             newsImage.setVisibility(View.INVISIBLE);
 
-            MainActivity.subscriptions.add(imageDownloader.subscribeOn(Schedulers.io())
+            subscriptions.add(imageDownloader.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new GetNewsImage()));
         }
@@ -133,6 +124,8 @@ public class NewsDialogActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        MemoryLeakChecker.getRefWatcher(this)
+                .watch(this);
         super.onDestroy();
     }
 }

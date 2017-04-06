@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
@@ -41,7 +41,6 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private LocationListAdapter mLocationListAdapter;
-    private ProgressBar mLocationProgressBar;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private ImageButton mBackToMainActivity;
 
@@ -57,7 +56,7 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private void getUserQuery(final String query) {
         if (!query.isEmpty()) {
-            mCompositeDisposable.add(new GeoNamesHelper(this)
+            mCompositeDisposable.add(GeoNamesHelper.newInstance(this)
                     .getLocationFromApi(query)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -71,7 +70,7 @@ public class AddLocationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_location);
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
         setSupportActionBar(toolbar);
-        mDatabaseOperation = new DatabaseOperation(this);
+        mDatabaseOperation = DatabaseOperation.newInstance(this);
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -83,14 +82,15 @@ public class AddLocationActivity extends AppCompatActivity {
         searchView.setOnSuggestionListener(new SuggestionListener());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.locationRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
                 false));
 
         mBackToMainActivity = (ImageButton) findViewById(R.id.backToMainActivity);
 
-        mLocationProgressBar = (ProgressBar) findViewById(R.id.locationProgressBar);
-        mLocationProgressBar.setVisibility(View.GONE);
+        final ProgressBar locationProgressBar = (ProgressBar) findViewById(R.id.locationProgressBar);
+        locationProgressBar.setBackgroundColor(Color.GREEN);
+//        locationProgressBar.setVisibility(View.GONE);
 
         getUserQuery(getIntent());
     }
@@ -99,7 +99,7 @@ public class AddLocationActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mBackToMainActivity.setOnClickListener(v -> {
-            DatabaseOperation database = new DatabaseOperation(this);
+            DatabaseOperation database = DatabaseOperation.newInstance(this);
             Weather weather = database.getWeatherData();
             weather.setCurrently(database.getCurrentWeatherFromDatabase());
 
@@ -110,7 +110,7 @@ public class AddLocationActivity extends AppCompatActivity {
             weather.getHourly().setData(database.getHourlyWeatherFromDatabase());
 
             weather.setAlerts(database.getAlerts());
-            Intent intent = new Intent(AddLocationActivity.this, MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);
@@ -161,7 +161,9 @@ public class AddLocationActivity extends AppCompatActivity {
 
             new AlertDialog.Builder(AddLocationActivity.this)
                     .setMessage(String.format(Locale.getDefault(),
-                            AddLocationActivity.this.getString(R.string.alert_add_location_text),
+                            AddLocationActivity.this
+                                    .getApplicationContext()
+                                    .getString(R.string.alert_add_location_text),
                             location.getName()))
                     .setNegativeButton(android.R.string.cancel, mCancelLocationClick)
                     .setPositiveButton(android.R.string.yes, mAddLocationClick)

@@ -17,32 +17,28 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.supportedLan
 
 /**
  * Created by Darel Bitsy on 20/02/17.
+ * Weather adapter
+ * this class manage the method to get the weather
  */
 
 public class WeatherAdapter {
     private static final String WEATHER_URL = "https://api.darksky.net/";
     private static final String WEATHER_APIKEY = "07aadf598548d8bb35d6621d5e3b3c7b";
 
-    private static Retrofit mRestAdapter;
-
-    private static WeatherService mWeatherService;
+    private final WeatherService mWeatherService;
 
     public WeatherAdapter(Context context) {
-        if (mRestAdapter == null) {
-            mRestAdapter = new Retrofit.Builder()
-                    .baseUrl(WEATHER_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(AppUtil
-                            .weatherOkHttpClient
-                            .cache(AppUtil.getCacheDirectory(context))
-                            .build())
-                    .build();
-        }
+        final Retrofit restAdapter = new Retrofit.Builder()
+                .baseUrl(WEATHER_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(AppUtil
+                        .weatherOkHttpClient
+                        .cache(AppUtil.getCacheDirectory(context))
+                        .build())
+                .build();
 
-        if (mWeatherService == null) {
-            mWeatherService =
-                    mRestAdapter.create(WeatherService.class);
-        }
+        mWeatherService =
+                    restAdapter.create(WeatherService.class);
     }
 
     public Weather getWeather(double latitude,

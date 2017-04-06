@@ -21,6 +21,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 30/01/17.
+ * Alarm manager config for notification
  */
 
 public class AlarmConfigHelper {
@@ -170,8 +171,8 @@ public class AlarmConfigHelper {
         calendarNight.set(Calendar.SECOND, 0);
     }
 
-    public static String getCurrentTimeZone(final Context context) {
-        String timezone = new DatabaseOperation(context)
+    private static String getCurrentTimeZone(final Context context) {
+        String timezone = DatabaseOperation.newInstance(context)
                 .getWeatherData().getTimezone();
         return timezone == null ? TimeZone.getDefault().getID() : timezone;
     }

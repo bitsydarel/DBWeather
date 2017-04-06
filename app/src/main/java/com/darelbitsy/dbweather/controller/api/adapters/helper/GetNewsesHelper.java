@@ -37,14 +37,24 @@ public class GetNewsesHelper {
     private final NewsRestAdapter newsRestAdapter;
     private final TranslateRestAdapter mTranslateRestAdapter;
     private final TranslateHelper mTranslateHelper;
+    private final Context mContext;
+    private static GetNewsesHelper singletonGetNewsesHelper;
 
-    public GetNewsesHelper(Context context) {
-        newsRestAdapter = new NewsRestAdapter(context);
-        mTranslateRestAdapter = new TranslateRestAdapter();
-        mTranslateHelper = new TranslateHelper();
+    public static GetNewsesHelper newInstance(Context context) {
+        if (singletonGetNewsesHelper == null) {
+            singletonGetNewsesHelper = new GetNewsesHelper(context.getApplicationContext());
+        }
+        return singletonGetNewsesHelper;
     }
 
-    public Single<ArrayList<Article>> getNewsesFromApi(Context context) {
+    private GetNewsesHelper(Context context) {
+        mContext = context;
+        newsRestAdapter = NewsRestAdapter.newInstance(context);
+        mTranslateRestAdapter = new TranslateRestAdapter();
+        mTranslateHelper = TranslateHelper.newInstance(context);
+    }
+
+    public Single<ArrayList<Article>> getNewsesFromApi() {
         return Single.create(emitter -> {
                 try {
                     final List<NewsResponse> newsResponseList = new ArrayList<>();
@@ -57,11 +67,11 @@ public class GetNewsesHelper {
 
                     }
 
-                    ArrayList<Article> newses = parseNewses(newsResponseList, context);
+                    ArrayList<Article> newses = parseNewses(newsResponseList, mContext);
 
-                    Intent intent = new Intent(context, NewsDatabaseService.class);
+                    Intent intent = new Intent(mContext, NewsDatabaseService.class);
                     intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
-                    context.startService(intent);
+                    mContext.startService(intent);
 
                     if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
 
@@ -124,13 +134,13 @@ public class GetNewsesHelper {
                                 news.getTitle().contains("MYMEMORY WARNING")) {
 
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mTranslateHelper
-                                    .translateText(newsTitle, context)));
+                                    .translateText(newsTitle)));
                         }
                         if (news.getDescription().equalsIgnoreCase(newsDescription) ||
                                 news.getDescription().contains("MYMEMORY WARNING")) {
 
                             news.setDescription(StringEscapeUtils.unescapeHtml4(mTranslateHelper
-                                    .translateText(newsDescription, context)));
+                                    .translateText(newsDescription)));
                         }
 
                     } else {

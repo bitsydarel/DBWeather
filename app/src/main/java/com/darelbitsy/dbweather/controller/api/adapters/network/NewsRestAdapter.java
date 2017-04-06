@@ -17,11 +17,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NewsRestAdapter {
     private static final String NEWSAPI_URL= "https://newsapi.org/";
     private static final String NEWS_APIKEY = "e6e9d4a3f7f24a7a8d16f496df95126f";
-    private final Retrofit mRestAdapter;
     private NewsService mNewsApi;
+    private static NewsRestAdapter singletonNewsRestAdapter;
 
-    public NewsRestAdapter(Context context) {
-        mRestAdapter = new Retrofit.Builder()
+    public static NewsRestAdapter newInstance(Context context) {
+        if (singletonNewsRestAdapter == null) {
+            singletonNewsRestAdapter =
+                    new NewsRestAdapter(context.getApplicationContext());
+        }
+        return singletonNewsRestAdapter;
+    }
+
+    private NewsRestAdapter(Context context) {
+        final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(NEWSAPI_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(AppUtil
@@ -30,7 +38,7 @@ public class NewsRestAdapter {
                         .build())
                 .build();
 
-        mNewsApi = mRestAdapter.create(NewsService.class);
+        mNewsApi = restAdapter.create(NewsService.class);
     }
 
     public Call<NewsResponse> getNews(String source) {

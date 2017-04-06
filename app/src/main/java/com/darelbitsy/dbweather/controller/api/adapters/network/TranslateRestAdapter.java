@@ -1,5 +1,6 @@
 package com.darelbitsy.dbweather.controller.api.adapters.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.controller.api.services.TranslateService;
@@ -19,16 +20,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class TranslateRestAdapter {
-    protected final Retrofit mRestAdapter;
-    protected TranslateService mTranslateService;
+    private final TranslateService mTranslateService;
+
     public TranslateRestAdapter() {
-        mRestAdapter = new Retrofit.Builder()
+        final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(ConstantHolder.MYMEMORY_APIURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(AppUtil.translateOkHttpClient)
                 .build();
 
-        mTranslateService = mRestAdapter.create(TranslateService.class);
+        mTranslateService = restAdapter.create(TranslateService.class);
     }
 
     public String translateText(String textToTranslate, String email) {

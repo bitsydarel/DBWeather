@@ -44,7 +44,6 @@ import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.geonames.GeoName;
 import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
-import com.darelbitsy.dbweather.ui.animation.AnimationUtility;
 import com.darelbitsy.dbweather.ui.animation.CubeOutTransformer;
 
 import java.io.File;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private CustomFragmentAdapter mFragmentAdapter;
     private BroadcastReceiver mLocationBroadcast;
     private Single<Weather> mWeatherObservable;
-    public static final CompositeDisposable subscriptions = new CompositeDisposable();
+    public final CompositeDisposable subscriptions = new CompositeDisposable();
     private final Handler mUpdateHandler = new Handler();
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Single<ArrayList<Article>> mNewsesObservableWithoutNetwork;
 
     private boolean isSubscriptionDoneWithNetwork;
-    private boolean isFromSelectedCity;
     private HourAdapter mHourAdapter;
     private final Handler mMyHandler = new Handler();
     private Weather mWeather;
@@ -136,16 +134,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.add_location_id) {
-            startActivity(new Intent(this, AddLocationActivity.class));
+            startActivity(new Intent(getApplicationContext(), AddLocationActivity.class));
             finish();
 
         } else if (id == R.id.current_location) {
             subscriptions.add(mWeatherObservable
                     .subscribeWith(new MainActivityWeatherObserver()));
 
-            isFromSelectedCity = false;
             sharedPreferences.edit()
-                    .putBoolean(IS_FROM_CITY_KEY, isFromSelectedCity)
+                    .putBoolean(IS_FROM_CITY_KEY, false)
                     .apply();
 
             mDrawerLayout.closeDrawers();
@@ -155,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             final double latitude = location.getLatitude();
             final double longitude = location.getLongitude();
 
-            subscriptions.add(new GetWeatherHelper(this)
+            subscriptions.add(GetWeatherHelper.newInstance(this)
                     .getObservableWeatherForCityFromApi(String.format(Locale.getDefault(),
                             "%s, %s", location.getName(), location.getCountryName()),
                             latitude,
@@ -164,9 +161,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new MainActivityWeatherObserver()));
 
-            isFromSelectedCity = true;
             sharedPreferences.edit()
-                    .putBoolean(IS_FROM_CITY_KEY, isFromSelectedCity)
+                    .putBoolean(IS_FROM_CITY_KEY, true)
                     .apply();
 
             sharedPreferences.edit()
@@ -243,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDatabase = new DatabaseOperation(this);
+        mDatabase = DatabaseOperation.newInstance(this);
 
         Bundle extras = getIntent().getExtras();
         mWeather = extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY);
@@ -257,8 +253,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mainLayout.setBackgroundResource(mColorPicker
                 .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
-        mWeatherObservable = new GetWeatherHelper(this)
-                .getObservableWeatherFromApi(mDatabase, this)
+        mWeatherObservable = GetWeatherHelper.newInstance(this)
+                .getObservableWeatherFromApi(mDatabase)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -303,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.getExtras().getDouble("longitude"),
                         mDatabase);
 
-                if (AppUtil.isNetworkAvailable(MainActivity.this) && !sharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)) {
+                if (AppUtil.isNetworkAvailable(MainActivity.this.getApplicationContext()) && !sharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)) {
                     subscriptions.add(mWeatherObservable
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -317,18 +313,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mNewsesObservableWithNetwork = new GetNewsesHelper(this)
-                .getNewsesFromApi(this)
+        mNewsesObservableWithNetwork = GetNewsesHelper.newInstance(this)
+                .getNewsesFromApi()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mNewsesObservableWithoutNetwork = new GetNewsesHelper(this)
+        mNewsesObservableWithoutNetwork = GetNewsesHelper.newInstance(this)
                 .getNewsesFromDatabase(mDatabase)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
         if (sharedPreferences.getBoolean(FIRST_RUN, true)
-                && AppUtil.isNetworkAvailable(this)) {
+                && AppUtil.isNetworkAvailable(getApplicationContext())) {
 
             subscriptions.add(mNewsesObservableWithNetwork
                     .subscribeWith(new CurrentNewsesObserver()));
@@ -359,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mHourAdapter = new HourAdapter(mWeather.getHourly().getData());
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.hourlyRecyclerView);
         recyclerView.setAdapter(mHourAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this,
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
                 false));
 
@@ -429,6 +425,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .edit()
                 .putBoolean(IS_FROM_CITY_KEY, false)
                 .apply();
+        subscriptions.dispose();
     }
 
     @Override
@@ -455,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void cleanCache() {
-        File dir = AppUtil.getFileCache(this);
+        File dir = AppUtil.getFileCache(getApplicationContext());
         if (dir.isDirectory()) {
             for (File file : dir.listFiles()) {
                 Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
@@ -471,8 +468,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 && (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-            AppUtil.setGpsPermissionValue(this);
-            startService(new Intent(this, LocationTracker.class));
+            AppUtil.setGpsPermissionValue(getApplicationContext());
+            startService(new Intent(getApplicationContext(), LocationTracker.class));
             mainLayout.setBackgroundResource(mColorPicker
                     .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
@@ -482,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 && (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-            AppUtil.setAccountPermissionValue(this);
+            AppUtil.setAccountPermissionValue(getApplicationContext());
 
         }
         setupNewsScrollView();
@@ -515,7 +512,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (mNewsAdapter ==  null) {
                 mNewsAdapter = new NewsAdapter(mNewses);
                 mNewsRecyclerView.setAdapter(mNewsAdapter);
-                LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),
                         LinearLayoutManager.HORIZONTAL,
                         false) {
 
@@ -544,7 +541,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mNewsRecyclerView.setHasFixedSize(true);
 
             }
-            AnimationUtility.autoScrollRecyclerView(mNewsRecyclerView, mNewsAdapter);
+            final int speedScroll = 4000;
+
+            final Runnable runnable = new Runnable() {
+                int count = 0;
+                boolean flag = true;
+                @Override
+                public void run() {
+                    if(count < mNewsAdapter.getItemCount()){
+                        if(count == mNewsAdapter.getItemCount() -1){
+                            flag = false;
+
+                        } else if(count == 0){ flag = true; }
+
+                        if(flag) { count++; }
+                        else { count--; }
+
+                        mNewsRecyclerView.smoothScrollToPosition(count);
+                        if (mNewsRecyclerView.getVisibility() == View.VISIBLE) {
+                            mNewsRecyclerView.postDelayed(this, speedScroll);
+                        }
+                    }
+                }
+            };
+            mNewsRecyclerView
+                    .postDelayed(runnable, speedScroll);
         }
     }
 }

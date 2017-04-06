@@ -123,11 +123,11 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
 
         Log.i("RECEIVER", "Inside the broadcast receiver");
         mContext = context;
-        mDatabase = new DatabaseOperation(context);
+        mDatabase = DatabaseOperation.newInstance(context);
 
         if (AppUtil.isNetworkAvailable(context)) {
-            new GetWeatherHelper(context)
-                    .getObservableWeatherFromApi(mDatabase, context)
+            GetWeatherHelper.newInstance(context)
+                    .getObservableWeatherFromApi(mDatabase)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new GetWeather());

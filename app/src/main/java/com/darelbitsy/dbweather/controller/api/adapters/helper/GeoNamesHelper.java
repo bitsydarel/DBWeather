@@ -16,9 +16,17 @@ import io.reactivex.Single;
 
 public class GeoNamesHelper {
     private final GeoNamesAdapter geoNamesAdapter;
+    private static GeoNamesHelper singletonGeoNamesHelper;
 
-    public GeoNamesHelper(Context context) {
-        geoNamesAdapter = new GeoNamesAdapter(context);
+    public static GeoNamesHelper newInstance(Context context) {
+        if (singletonGeoNamesHelper == null) {
+            singletonGeoNamesHelper = new GeoNamesHelper(context.getApplicationContext());
+        }
+        return singletonGeoNamesHelper;
+    }
+
+    private GeoNamesHelper(Context context) {
+        geoNamesAdapter = GeoNamesAdapter.newInstance(context);
     }
 
     public Single<List<GeoName>> getLocationFromApi(String query) {
@@ -28,7 +36,8 @@ public class GeoNamesHelper {
                    emitter.onSuccess(geoNamesAdapter
                            .getLocations(query)
                            .execute()
-                           .body().getGeoName());
+                           .body()
+                           .getGeoName());
                }
 
            } catch (Exception e) { if (!emitter.isDisposed()) {emitter.onError(e);} }

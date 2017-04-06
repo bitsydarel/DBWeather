@@ -146,7 +146,16 @@ public class DatabaseOperation {
     private boolean iSCurrentInserted;
     private boolean isWeatherInserted;
 
-    public DatabaseOperation(Context context) {
+    private static DatabaseOperation singletonDatabaseOperation;
+
+    public static DatabaseOperation newInstance(Context context) {
+        if (singletonDatabaseOperation == null) {
+            singletonDatabaseOperation = new DatabaseOperation(context.getApplicationContext());
+        }
+        return singletonDatabaseOperation;
+    }
+
+    private DatabaseOperation(Context context) {
         applicationDatabase = new ApplicationDatabase(context);
         userCitiesDatabase = new UserCitiesDatabase(context);
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);

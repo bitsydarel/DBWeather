@@ -30,9 +30,17 @@ public class GeoNamesAdapter {
     private static final String USER_NAME = "bitsydarel";
     private static final boolean IS_NAME_REQUIERED = true;
     private static final int MAX_ROWS = 3;
-    private static GeoNamesService mGeoNamesService;
+    private GeoNamesService mGeoNamesService;
+    private static GeoNamesAdapter singletonGeoNamesAdapter;
 
-    public GeoNamesAdapter(Context context) {
+    public static GeoNamesAdapter newInstance(Context context) {
+        if (singletonGeoNamesAdapter == null) {
+            singletonGeoNamesAdapter = new GeoNamesAdapter(context.getApplicationContext());
+        }
+        return singletonGeoNamesAdapter;
+    }
+
+    private GeoNamesAdapter(Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GEO_NAMES_API_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())

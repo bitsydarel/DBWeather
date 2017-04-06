@@ -14,31 +14,43 @@ import okhttp3.OkHttpClient;
 
 /**
  * Created by Darel Bitsy on 12/03/17.
+ * Image Downloader Class
+ * For downloading news image
  */
 
 public class GetImageDownloader {
-    private static OkHttpClient newsImageOkHttpClient;
     private final Picasso mPicasso;
+    private static GetImageDownloader singletonGetImageDownloader;
+    private final Context mContext;
 
-    public GetImageDownloader(Context context) {
-        if (newsImageOkHttpClient == null) {
-            newsImageOkHttpClient = new OkHttpClient.Builder()
-                    .cache(AppUtil.getCacheDirectory(context))
-                    .connectTimeout(25, TimeUnit.SECONDS)
-                    .writeTimeout(25, TimeUnit.SECONDS)
-                    .readTimeout(45, TimeUnit.SECONDS)
-                    .retryOnConnectionFailure(true)
-                    .build();
+    public static GetImageDownloader newInstance(Context context) {
+        if (singletonGetImageDownloader == null) {
+            singletonGetImageDownloader = new GetImageDownloader(context.getApplicationContext());
         }
+        return singletonGetImageDownloader;
+    }
+
+    private GetImageDownloader(Context context) {
+        mContext = context;
+        final OkHttpClient newsImageOkHttpClient = new OkHttpClient.Builder()
+                .cache(AppUtil.getCacheDirectory(context))
+                .connectTimeout(25, TimeUnit.SECONDS)
+                .writeTimeout(25, TimeUnit.SECONDS)
+                .readTimeout(45, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
         mPicasso = new Picasso.Builder(context)
                     .downloader(new OkHttp3Downloader(newsImageOkHttpClient))
                     .build();
     }
 
-    public Single<Bitmap> getObservableImageDownloader(String url, Context context) {
+    public Single<Bitmap> getObservableImageDownloader(String url) {
         return Single.create(emitter -> {
             try {
-                if (AppUtil.isNetworkAvailable(context)) {
+                if (AppUtil.isNetworkAvailable(mContext)
+                        && !emitter.isDisposed()) {
+
                     emitter.onSuccess(mPicasso
                             .load(url)
                             .get());
@@ -46,7 +58,7 @@ public class GetImageDownloader {
                 } else { throw new IllegalStateException("No internet available to download the image"); }
 
             } catch (Exception e) {
-                emitter.onError(e);
+                if (!emitter.isDisposed()) { emitter.onError(e); }
             }
         });
     }
