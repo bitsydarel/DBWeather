@@ -93,7 +93,7 @@ public class NewsDialogActivity extends AppCompatActivity {
 
         if(!article.getUrlToImage().isEmpty()) {
             Single<Bitmap> imageDownloader = new GetImageDownloader(this)
-                    .getObservableImageDownloader(article.getUrlToImage());
+                    .getObservableImageDownloader(article.getUrlToImage(), this);
 
             newsProgressBar.setVisibility(View.VISIBLE);
             newsImage.setVisibility(View.INVISIBLE);

@@ -17,12 +17,10 @@ import okhttp3.OkHttpClient;
  */
 
 public class GetImageDownloader {
-    private Context mContext;
     private static OkHttpClient newsImageOkHttpClient;
-    private static Picasso picasso;
+    private final Picasso mPicasso;
 
     public GetImageDownloader(Context context) {
-        mContext = context;
         if (newsImageOkHttpClient == null) {
             newsImageOkHttpClient = new OkHttpClient.Builder()
                     .cache(AppUtil.getCacheDirectory(context))
@@ -32,18 +30,16 @@ public class GetImageDownloader {
                     .retryOnConnectionFailure(true)
                     .build();
         }
-        if (picasso == null) {
-            picasso = new Picasso.Builder(mContext)
+        mPicasso = new Picasso.Builder(context)
                     .downloader(new OkHttp3Downloader(newsImageOkHttpClient))
                     .build();
-        }
     }
 
-    public Single<Bitmap> getObservableImageDownloader(String url) {
+    public Single<Bitmap> getObservableImageDownloader(String url, Context context) {
         return Single.create(emitter -> {
             try {
-                if (AppUtil.isNetworkAvailable(mContext)) {
-                    emitter.onSuccess(picasso
+                if (AppUtil.isNetworkAvailable(context)) {
+                    emitter.onSuccess(mPicasso
                             .load(url)
                             .get());
 

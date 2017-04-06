@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import com.darelbitsy.dbweather.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.ColorManager;
+import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
 import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
@@ -41,6 +43,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
 import static com.darelbitsy.dbweather.ui.MainActivity.subscriptions;
 
 /**
@@ -69,7 +76,7 @@ public class WeatherFragment extends Fragment {
     private DaySwitcherHelper mDaySwitcherHelper;
     private CustomFragmentAdapter mAdapter;
     private final ColorManager mColorManager = new ColorManager();
-
+    private SharedPreferences mSharedPreferences;
 
     public static WeatherFragment newInstance(Currently currently, String cityName) {
         WeatherFragment weatherFragment = new WeatherFragment();
@@ -102,6 +109,7 @@ public class WeatherFragment extends Fragment {
         super.onAttach(context);
         mDatabase = new DatabaseOperation(context);
         setupObservables(context);
+        mSharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
     }
 
     @Override
@@ -112,8 +120,19 @@ public class WeatherFragment extends Fragment {
         mCurrently = args.getParcelable(ConstantHolder.CURRENT_WEATHER_KEY);
         mDailyData = args.getParcelable(ConstantHolder.DAY_WEATHER_KEY);
         mCityName = args.getString(ConstantHolder.CITY_NAME_KEY);
-        subscriptions.add(mWeatherObservableWithoutNetwork
-                .subscribeWith(new WeatherFragment.CurrentWeatherObserver()));
+
+        if (mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false) && mSharedPreferences.contains(SELECTED_CITY_LATITUDE)) {
+            subscriptions.add(new GetWeatherHelper(getContext())
+                    .getObservableWeatherForCityFromApi(mCityName,
+                            Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0)),
+                                    Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0)))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new CurrentWeatherObserver()));
+        } else {
+            subscriptions.add(mWeatherObservableWithoutNetwork
+                    .subscribeWith(new CurrentWeatherObserver()));
+        }
     }
 
     @Nullable
@@ -156,6 +175,12 @@ public class WeatherFragment extends Fragment {
             mHandler.post(() -> getActivity()
                     .startService(new Intent(getActivity(), LocationTracker.class)));
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        MemoryLeakChecker.getRefWatcher(getActivity()).watch(this);
     }
 
     private void initialize() {
@@ -257,14 +282,30 @@ public class WeatherFragment extends Fragment {
     }
 
     private void updateData() {
-        if (AppUtil.isNetworkAvailable(getActivity())) {
-            subscriptions.add(mWeatherObservableWithNetwork
+        boolean isNetworkAvailable = AppUtil.isNetworkAvailable(getActivity());
+
+        if (mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)
+                && mSharedPreferences.contains(SELECTED_CITY_LATITUDE)
+                && isNetworkAvailable) {
+
+            subscriptions.add(new GetWeatherHelper(getContext())
+                    .getObservableWeatherForCityFromApi(mCityName,
+                            Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0)),
+                            Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0)))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new CurrentWeatherObserver()));
 
         } else {
-            mWeatherObservableWithoutNetwork
-                    .subscribeWith(new CurrentWeatherObserver());
+            if (isNetworkAvailable) {
+                subscriptions.add(mWeatherObservableWithNetwork
+                        .subscribeWith(new CurrentWeatherObserver()));
 
+            } else {
+                mWeatherObservableWithoutNetwork
+                        .subscribeWith(new CurrentWeatherObserver());
+
+            }
         }
     }
 
@@ -287,7 +328,7 @@ public class WeatherFragment extends Fragment {
 
     private void setupObservables(Context context) {
         mWeatherObservableWithNetwork = new GetWeatherHelper(context)
-                .getObservableWeatherFromApi(mDatabase)
+                .getObservableWeatherFromApi(mDatabase, context)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -330,8 +371,6 @@ public class WeatherFragment extends Fragment {
             }
 
             mHandler.post(WeatherFragment.this::updateDisplay);
-            mHandler.post(() -> getActivity().startService(new Intent(getActivity(), WeatherDatabaseService.class)
-                    .putExtra(ConstantHolder.WEATHER_DATA_KEY, weather)));
 
             if (refreshLayout != null) {
                 refreshLayout.setRefreshing(false);

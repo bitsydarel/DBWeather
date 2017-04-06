@@ -7,11 +7,11 @@ import android.util.Log;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.network.WeatherAdapter;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
+import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.model.weather.Daily;
 import com.darelbitsy.dbweather.model.weather.Hourly;
 import com.darelbitsy.dbweather.model.weather.Weather;
-import com.darelbitsy.dbweather.helper.services.WeatherDatabaseService;
 
 import io.reactivex.Single;
 
@@ -23,31 +23,41 @@ import io.reactivex.Single;
  */
 
 public class GetWeatherHelper {
-    private final Context mContext;
-    private static WeatherAdapter mWeatherAdapter;
+    private final WeatherAdapter mWeatherAdapter;
 
     public GetWeatherHelper(Context context) {
-        mContext = context;
-        if (mWeatherAdapter == null) {
-            mWeatherAdapter = new WeatherAdapter(context);
-        }
+        mWeatherAdapter = new WeatherAdapter(context);
     }
 
-    public Single<Weather> getObservableWeatherFromApi(final DatabaseOperation database) {
+    public Single<Weather> getObservableWeatherForCityFromApi(final String cityName,
+                                                              final double latitude,
+                                                              final  double longitude) {
+        return Single.create(emitter -> {
+            try {
+                final Weather weather = mWeatherAdapter.getWeather(latitude, longitude);
+                weather.setCityName(cityName);
+
+                if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
+
+            } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
+        });
+    }
+
+    public Single<Weather> getObservableWeatherFromApi(final DatabaseOperation database, final Context context) {
 
         return io.reactivex.Single.create(emitter -> {
             try {
-                Double[] coordinates = WeatherUtil.getCoordinates(database);
-                    final Weather weather = mWeatherAdapter.getWeather(coordinates[0],
-                            coordinates[1]);
+                final Double[] coordinates = WeatherUtil.getCoordinates(database);
+                final Weather weather = mWeatherAdapter.getWeather(coordinates[0],
+                        coordinates[1]);
 
-                weather.setCityName(WeatherUtil.getLocationName(mContext,
+                weather.setCityName(WeatherUtil.getLocationName(context,
                         coordinates[0],
                         coordinates[1]));
 
-                Intent intent = new Intent(mContext, WeatherDatabaseService.class);
+                Intent intent = new Intent(context, WeatherDatabaseService.class);
                 intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
-                mContext.startService(intent);
+                context.startService(intent);
 
                 if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
 

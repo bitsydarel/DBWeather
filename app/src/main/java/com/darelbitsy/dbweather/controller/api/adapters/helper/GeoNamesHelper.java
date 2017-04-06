@@ -15,12 +15,10 @@ import io.reactivex.Single;
  */
 
 public class GeoNamesHelper {
-    private static GeoNamesAdapter geoNamesAdapter;
+    private final GeoNamesAdapter geoNamesAdapter;
 
     public GeoNamesHelper(Context context) {
-        if (geoNamesAdapter == null) {
-            geoNamesAdapter = new GeoNamesAdapter(context);
-        }
+        geoNamesAdapter = new GeoNamesAdapter(context);
     }
 
     public Single<List<GeoName>> getLocationFromApi(String query) {
