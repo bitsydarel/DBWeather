@@ -51,6 +51,9 @@ public class ConstantHolder {
     public static final String NOTIF_TEMPERATURE = "notif_temperature";
 
     public static final String DRAWER_WAS_OPEN = "drawer_was_open";
+    public static final String IS_FROM_CITY_KEY = "is_from_city_key";
+    public static final String SELECTED_CITY_LATITUDE = "selected_city_latitude";
+    public static final String SELECTED_CITY_LONGITUDE = "selected_city_longitude";
 
     public static final String[] LIST_OF_SOURCES = {
             "bbc-news",

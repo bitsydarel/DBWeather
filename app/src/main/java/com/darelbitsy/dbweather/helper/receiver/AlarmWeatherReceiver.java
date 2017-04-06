@@ -127,7 +127,7 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
 
         if (AppUtil.isNetworkAvailable(context)) {
             new GetWeatherHelper(context)
-                    .getObservableWeatherFromApi(mDatabase)
+                    .getObservableWeatherFromApi(mDatabase, context)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new GetWeather());

@@ -43,7 +43,9 @@ public class AnimationUtility {
                     else { count--; }
 
                     recyclerView.smoothScrollToPosition(count);
-                    recyclerView.postDelayed(this, speedScroll);
+                    if (recyclerView.getVisibility() == View.VISIBLE) {
+                        recyclerView.postDelayed(this, speedScroll);
+                    }
                 }
             }
         };

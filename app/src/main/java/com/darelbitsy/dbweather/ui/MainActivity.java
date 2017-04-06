@@ -23,6 +23,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.darelbitsy.dbweather.adapters.listAdapter.HourAdapter;
 import com.darelbitsy.dbweather.adapters.listAdapter.NewsAdapter;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
+import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
@@ -48,6 +50,7 @@ import com.darelbitsy.dbweather.ui.animation.CubeOutTransformer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -56,10 +59,13 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.FIRST_RUN;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_FROM_CITY_KEY;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
 import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColorPicker;
 
 /**
@@ -87,11 +93,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Single<ArrayList<Article>> mNewsesObservableWithoutNetwork;
 
     private boolean isSubscriptionDoneWithNetwork;
+    private boolean isFromSelectedCity;
     private HourAdapter mHourAdapter;
     private final Handler mMyHandler = new Handler();
     private Weather mWeather;
     private SharedPreferences sharedPreferences;
     private View mainLayout;
+    private final SparseArray<GeoName> userCities = new SparseArray<>();
+
     private final CompoundButton.OnCheckedChangeListener mNotificationConfigurationListener = (buttonView, isChecked) -> {
         if (isChecked) {
             getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -124,10 +133,57 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void respondToMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.add_location_id) {
-            startActivity(new Intent(this, AddLocationActivity.class));
+        int id = item.getItemId();
 
+        if (id == R.id.add_location_id) {
+            startActivity(new Intent(this, AddLocationActivity.class));
+            finish();
+
+        } else if (id == R.id.current_location) {
+            subscriptions.add(mWeatherObservable
+                    .subscribeWith(new MainActivityWeatherObserver()));
+
+            isFromSelectedCity = false;
+            sharedPreferences.edit()
+                    .putBoolean(IS_FROM_CITY_KEY, isFromSelectedCity)
+                    .apply();
+
+            mDrawerLayout.closeDrawers();
+
+        } else if (userCities.indexOfKey(id) >= 0) {
+            GeoName location = userCities.get(id);
+            final double latitude = location.getLatitude();
+            final double longitude = location.getLongitude();
+
+            subscriptions.add(new GetWeatherHelper(this)
+                    .getObservableWeatherForCityFromApi(String.format(Locale.getDefault(),
+                            "%s, %s", location.getName(), location.getCountryName()),
+                            latitude,
+                            longitude)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new MainActivityWeatherObserver()));
+
+            isFromSelectedCity = true;
+            sharedPreferences.edit()
+                    .putBoolean(IS_FROM_CITY_KEY, isFromSelectedCity)
+                    .apply();
+
+            sharedPreferences.edit()
+                    .putLong(SELECTED_CITY_LATITUDE, Double.doubleToRawLongBits(latitude))
+                    .apply();
+
+            sharedPreferences.edit()
+                    .putLong(SELECTED_CITY_LONGITUDE, Double.doubleToRawLongBits(longitude))
+                    .apply();
+            mDrawerLayout.closeDrawers();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        respondToMenuItemClick(item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -202,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
         mWeatherObservable = new GetWeatherHelper(this)
-                .getObservableWeatherFromApi(mDatabase)
+                .getObservableWeatherFromApi(mDatabase, this)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -237,8 +293,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        setupNavigationDrawer();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        setupNavigationDrawer();
 
         mLocationBroadcast = new BroadcastReceiver() {
             @Override
@@ -247,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.getExtras().getDouble("longitude"),
                         mDatabase);
 
-                if (AppUtil.isNetworkAvailable(MainActivity.this)) {
+                if (AppUtil.isNetworkAvailable(MainActivity.this) && !sharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)) {
                     subscriptions.add(mWeatherObservable
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -262,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setHomeButtonEnabled(true);
 
         mNewsesObservableWithNetwork = new GetNewsesHelper(this)
-                .getNewsesFromApi()
+                .getNewsesFromApi(this)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -322,32 +378,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupNavigationDrawer() {
         NavigationView navigationView = (NavigationView)
                 mDrawerLayout.findViewById(R.id.navigationView);
+
         navigationView.setNavigationItemSelectedListener(this);
-        List<GeoName> listOfLocation = mDatabase.getUserCitiesFromDatabase();
 
         Menu menu = navigationView.getMenu();
-        Menu locationSubmenu = menu.findItem(R.id.location_config_id)
+        Menu locationSubMenu = menu.findItem(R.id.location_config_id)
+                .setOnMenuItemClickListener(this)
+                .setEnabled(true)
+                .getSubMenu();
+
+        Menu newsSubMenu = menu.findItem(R.id.news_config_id)
                 .setOnMenuItemClickListener(this)
                 .setEnabled(true)
                 .getSubMenu();
 
         final MenuItem addLocationItem =
-                locationSubmenu.findItem(R.id.add_location_id);
+                locationSubMenu.findItem(R.id.add_location_id);
         addLocationItem.setOnMenuItemClickListener(this);
 
+        List<GeoName> listOfLocation = mDatabase.getUserCitiesFromDatabase();
         for (int index = 0; index < listOfLocation.size(); index++) {
             GeoName location = listOfLocation.get(index);
-            MenuItem item = locationSubmenu.add(R.id.cities_menu_id, index + 1, Menu.NONE,
+            int id = View.generateViewId();
+            userCities.append(id, location);
+
+            MenuItem item = locationSubMenu.add(R.id.cities_menu_id, id, Menu.NONE,
                     location.getName() + ", " + location.getCountryName());
+
             item.setIcon(R.drawable.city_location_icon);
             item.setOnMenuItemClickListener(this);
             item.setEnabled(true);
         }
 
         SwitchCompat notification_switch = (SwitchCompat)
-                MenuItemCompat.getActionView(menu.findItem(R.id.notification_config_id));
+                MenuItemCompat.getActionView(newsSubMenu.findItem(R.id.notification_config_id));
         SwitchCompat news_translation_switch = (SwitchCompat)
-                MenuItemCompat.getActionView(menu.findItem(R.id.news_translation_config_id));
+                MenuItemCompat.getActionView(newsSubMenu.findItem(R.id.news_translation_config_id));
 
         notification_switch.setOnCheckedChangeListener(mNotificationConfigurationListener);
         news_translation_switch.setOnCheckedChangeListener(mNewsConfigurationListener);
@@ -357,20 +423,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        sharedPreferences
+                .edit()
+                .putBoolean(IS_FROM_CITY_KEY, false)
+                .apply();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         registerReceiver(mLocationBroadcast,
                 new IntentFilter("dbweather_location_update"));
+
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         subscriptions.dispose();
         if (mLocationBroadcast != null) {
             unregisterReceiver(mLocationBroadcast);
         }
+        sharedPreferences
+                .edit()
+                .putBoolean(IS_FROM_CITY_KEY, false)
+                .apply();
         cleanCache();
+        MemoryLeakChecker.getRefWatcher(this);
+        super.onDestroy();
     }
 
     private void cleanCache() {

@@ -55,12 +55,16 @@ public class WeatherAdapter {
             weatherData = mWeatherService.getWeatherWithLanguage(WEATHER_APIKEY,
                     coordinates,
                     ConstantHolder.USER_LANGUAGE,
-                    "auto").execute().body();
+                    "auto")
+                    .execute()
+                    .body();
 
         } else {
             weatherData = mWeatherService.getWeather(WEATHER_APIKEY,
                     coordinates,
-                    "auto").execute().body();
+                    "auto")
+                    .execute()
+                    .body();
 
         }
 

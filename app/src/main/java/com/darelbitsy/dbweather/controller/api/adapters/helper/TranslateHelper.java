@@ -17,22 +17,17 @@ import java.util.Locale;
  * Created by Darel Bitsy on 16/02/17.
  */
 
-public class TranslateHelper {
+class TranslateHelper {
     private final String translateApiKey = "AIzaSyAcFFnbD94RuNav543XpwfrPh0kOznIR3c";
-    private final Context mContext;
     private final String mUserLanguage = Locale.getDefault().getLanguage();
 
-    public TranslateHelper(Context context) {
-        mContext = context;
-    }
-
-    public String translateText(String sourceText) throws GeneralSecurityException, IOException {
+    String translateText(String sourceText, Context context) throws GeneralSecurityException, IOException {
         final ImmutableList<String> textToTranslate = ImmutableList
                 .<String>builder()
                 .add(sourceText)
                 .build();
 
-        return createTranslateService()
+        return createTranslateService(context)
                 .translations()
                 .list(textToTranslate, mUserLanguage)
                 .execute()
@@ -41,11 +36,11 @@ public class TranslateHelper {
                 .getTranslatedText();
     }
 
-    private Translate createTranslateService() throws GeneralSecurityException, IOException {
+    private Translate createTranslateService(Context context) throws GeneralSecurityException, IOException {
         return new Translate.Builder(com.google.api.client.extensions.android.http.AndroidHttp.newCompatibleTransport(),
                 GsonFactory.getDefaultInstance(), null)
                 .setTranslateRequestInitializer(new TranslateRequestInitializer(translateApiKey))
-                .setApplicationName(mContext.getString(R.string.app_name))
+                .setApplicationName(context.getString(R.string.app_name))
                 .build();
     }
 }

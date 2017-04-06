@@ -34,30 +34,17 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
  */
 
 public class GetNewsesHelper {
-    private static NewsRestAdapter newsRestAdapter;
-    private static TranslateRestAdapter mTranslateRestAdapter;
+    private final NewsRestAdapter newsRestAdapter;
+    private final TranslateRestAdapter mTranslateRestAdapter;
     private final TranslateHelper mTranslateHelper;
-    private static DatabaseOperation mDatabase;
-    private final Context mContext;
 
     public GetNewsesHelper(Context context) {
-        if (newsRestAdapter == null) {
-            newsRestAdapter = new NewsRestAdapter(context);
-        }
-
-        if (mTranslateRestAdapter == null) {
-            mTranslateRestAdapter = new TranslateRestAdapter();
-        }
-        mTranslateHelper = new TranslateHelper(context);
-
-        if (mDatabase == null) {
-            mDatabase = new DatabaseOperation(context);
-        }
-
-        mContext = context;
+        newsRestAdapter = new NewsRestAdapter(context);
+        mTranslateRestAdapter = new TranslateRestAdapter();
+        mTranslateHelper = new TranslateHelper();
     }
 
-    public Single<ArrayList<Article>> getNewsesFromApi() {
+    public Single<ArrayList<Article>> getNewsesFromApi(Context context) {
         return Single.create(emitter -> {
                 try {
                     final List<NewsResponse> newsResponseList = new ArrayList<>();
@@ -70,11 +57,11 @@ public class GetNewsesHelper {
 
                     }
 
-                    ArrayList<Article> newses = parseNewses(newsResponseList);
+                    ArrayList<Article> newses = parseNewses(newsResponseList, context);
 
-                    Intent intent = new Intent(mContext, NewsDatabaseService.class);
+                    Intent intent = new Intent(context, NewsDatabaseService.class);
                     intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
-                    mContext.startService(intent);
+                    context.startService(intent);
 
                     if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
 
@@ -93,12 +80,12 @@ public class GetNewsesHelper {
         });
     }
 
-    private ArrayList<Article> parseNewses(List<NewsResponse> newsResponses) {
+    private ArrayList<Article> parseNewses(List<NewsResponse> newsResponses, Context context) {
         ArrayList<Article> newses = new ArrayList<>();
         Account[] accounts = null;
 
-        if (AppUtil.isAccountPermissionOn(mContext)) {
-            accounts = AccountManager.get(mContext)
+        if (AppUtil.isAccountPermissionOn(context)) {
+            accounts = AccountManager.get(context)
                     .getAccountsByType("com.google");
         }
 
@@ -112,7 +99,7 @@ public class GetNewsesHelper {
 
                 try {
                     if (!"en".equals(ConstantHolder.USER_LANGUAGE) &&
-                            mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                                     .getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
 
                         if (accounts != null) {
@@ -137,13 +124,13 @@ public class GetNewsesHelper {
                                 news.getTitle().contains("MYMEMORY WARNING")) {
 
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mTranslateHelper
-                                    .translateText(newsTitle)));
+                                    .translateText(newsTitle, context)));
                         }
                         if (news.getDescription().equalsIgnoreCase(newsDescription) ||
                                 news.getDescription().contains("MYMEMORY WARNING")) {
 
                             news.setDescription(StringEscapeUtils.unescapeHtml4(mTranslateHelper
-                                    .translateText(newsDescription)));
+                                    .translateText(newsDescription, context)));
                         }
 
                     } else {

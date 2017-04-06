@@ -134,9 +134,9 @@ import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.WEEK_SUMMA
  */
 
 public class DatabaseOperation {
-    private static ApplicationDatabase applicationDatabase;
-    private static UserCitiesDatabase userCitiesDatabase;
-    private SharedPreferences.Editor mEditor;
+    private final ApplicationDatabase applicationDatabase;
+    private final UserCitiesDatabase userCitiesDatabase;
+    private final SharedPreferences.Editor mEditor;
 
     private boolean isDaysInserted;
     private boolean isHourInserted;
@@ -147,12 +147,8 @@ public class DatabaseOperation {
     private boolean isWeatherInserted;
 
     public DatabaseOperation(Context context) {
-        if (applicationDatabase == null) {
-            applicationDatabase = new ApplicationDatabase(context);
-        }
-        if (userCitiesDatabase == null) {
-            userCitiesDatabase = new UserCitiesDatabase(context);
-        }
+        applicationDatabase = new ApplicationDatabase(context);
+        userCitiesDatabase = new UserCitiesDatabase(context);
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
         mEditor = sharedPreferences.edit();
         isWeatherInserted = sharedPreferences.getBoolean(WEATHER_INSERTED, false);
