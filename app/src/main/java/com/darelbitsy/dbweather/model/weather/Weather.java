@@ -70,7 +70,7 @@ public class Weather implements Parcelable {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
 
@@ -78,7 +78,7 @@ public class Weather implements Parcelable {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 
@@ -86,7 +86,7 @@ public class Weather implements Parcelable {
         return timezone;
     }
 
-    public void setTimezone(String timezone) {
+    public void setTimezone(final String timezone) {
         this.timezone = timezone;
     }
 
@@ -94,7 +94,7 @@ public class Weather implements Parcelable {
         return currently;
     }
 
-    public void setCurrently(Currently currently) {
+    public void setCurrently(final Currently currently) {
         this.currently = currently;
     }
 
@@ -102,7 +102,7 @@ public class Weather implements Parcelable {
         return minutely;
     }
 
-    public void setMinutely(Minutely minutely) {
+    public void setMinutely(final Minutely minutely) {
         this.minutely = minutely;
     }
 
@@ -110,7 +110,7 @@ public class Weather implements Parcelable {
         return hourly;
     }
 
-    public void setHourly(Hourly hourly) {
+    public void setHourly(final Hourly hourly) {
         this.hourly = hourly;
     }
 
@@ -118,7 +118,7 @@ public class Weather implements Parcelable {
         return daily;
     }
 
-    public void setDaily(Daily daily) {
+    public void setDaily(final Daily daily) {
         this.daily = daily;
     }
 
@@ -126,7 +126,7 @@ public class Weather implements Parcelable {
         return alerts;
     }
 
-    public void setAlerts(List<Alert> alerts) {
+    public void setAlerts(final List<Alert> alerts) {
         this.alerts = alerts;
     }
 
@@ -151,7 +151,7 @@ public class Weather implements Parcelable {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
+    public void setCityName(final String cityName) {
         this.cityName = cityName;
     }
 

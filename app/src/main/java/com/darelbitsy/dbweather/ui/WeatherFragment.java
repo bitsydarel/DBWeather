@@ -74,14 +74,16 @@ public class WeatherFragment extends Fragment {
 
     private DaySwitcherHelper mDaySwitcherHelper;
     private CustomFragmentAdapter mAdapter;
-    private final ColorManager mColorManager = new ColorManager();
+    private final ColorManager mColorManager = ColorManager.newInstance();
     private SharedPreferences mSharedPreferences;
     private final CompositeDisposable subscriptions = new CompositeDisposable();
 
-    public static WeatherFragment newInstance(Currently currently, String cityName) {
-        WeatherFragment weatherFragment = new WeatherFragment();
+    public static WeatherFragment newInstance(final Currently currently,
+                                              final String cityName) {
 
-        Bundle args = new Bundle();
+        final WeatherFragment weatherFragment = new WeatherFragment();
+
+        final Bundle args = new Bundle();
         args.putParcelable(ConstantHolder.CURRENT_WEATHER_KEY, currently);
         args.putString(ConstantHolder.CITY_NAME_KEY, cityName);
 
@@ -89,10 +91,11 @@ public class WeatherFragment extends Fragment {
         return weatherFragment;
     }
 
-    public static WeatherFragment newInstance(DailyData dailyData, String cityName) {
-        WeatherFragment weatherFragment = new WeatherFragment();
+    public static WeatherFragment newInstance(final DailyData dailyData,
+                                              final String cityName) {
+        final WeatherFragment weatherFragment = new WeatherFragment();
 
-        Bundle args = new Bundle();
+        final Bundle args = new Bundle();
         args.putParcelable(ConstantHolder.DAY_WEATHER_KEY, dailyData);
         args.putString(ConstantHolder.CITY_NAME_KEY, cityName);
 
@@ -100,7 +103,7 @@ public class WeatherFragment extends Fragment {
         return weatherFragment;
     }
 
-    public void setAdapter(CustomFragmentAdapter adapter) {
+    public void setAdapter(final CustomFragmentAdapter adapter) {
         mAdapter = adapter;
     }
 
@@ -115,7 +118,7 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
+        final Bundle args = getArguments();
 
         mCurrently = args.getParcelable(ConstantHolder.CURRENT_WEATHER_KEY);
         mDailyData = args.getParcelable(ConstantHolder.DAY_WEATHER_KEY);
@@ -321,7 +324,8 @@ public class WeatherFragment extends Fragment {
         }
     }
 
-    public void updateDataFromActivity(Currently currently, String cityName) {
+    public void updateDataFromActivity(final Currently currently,
+                                       final String cityName) {
         mCurrently = currently;
         mHandler.post(WeatherFragment.this::updateDisplay);
         mCityName = cityName;
@@ -331,14 +335,14 @@ public class WeatherFragment extends Fragment {
                         .getBackgroundColor(currently.getIcon()));
     }
 
-    public void updateDataFromActivity(String cityName) {
+    public void updateDataFromActivity(final String cityName) {
         mCityName = cityName;
         mDaySwitcherHelper.updateCityName(cityName);
         mHandler.post(WeatherFragment.this::updateDisplay);
     }
 
 
-    private void setupObservables(Context context) {
+    private void setupObservables(final Context context) {
         mWeatherObservableWithNetwork = GetWeatherHelper.newInstance(context)
                 .getObservableWeatherFromApi(mDatabase)
                 .subscribeOn(Schedulers.io())
@@ -352,7 +356,7 @@ public class WeatherFragment extends Fragment {
 
     private final class CurrentWeatherObserver extends DisposableSingleObserver<Weather> {
         @Override
-        public void onSuccess(Weather weather) {
+        public void onSuccess(final Weather weather) {
             Log.i(ConstantHolder.TAG, "Inside the currentWeatherObserver Fragment");
             mCityName = weather.getCityName();
             mTimeZone = weather.getTimezone();
@@ -390,7 +394,7 @@ public class WeatherFragment extends Fragment {
         }
 
         @Override
-        public void onError(Throwable e) {
+        public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error in weather fragment: " + e.getMessage());
         }
     }

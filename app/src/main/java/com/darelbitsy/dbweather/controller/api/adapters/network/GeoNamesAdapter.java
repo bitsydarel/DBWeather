@@ -33,15 +33,15 @@ public class GeoNamesAdapter {
     private GeoNamesService mGeoNamesService;
     private static GeoNamesAdapter singletonGeoNamesAdapter;
 
-    public static GeoNamesAdapter newInstance(Context context) {
+    public static GeoNamesAdapter newInstance(final Context context) {
         if (singletonGeoNamesAdapter == null) {
             singletonGeoNamesAdapter = new GeoNamesAdapter(context.getApplicationContext());
         }
         return singletonGeoNamesAdapter;
     }
 
-    private GeoNamesAdapter(Context context) {
-        Retrofit retrofit = new Retrofit.Builder()
+    private GeoNamesAdapter(final Context context) {
+        final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GEO_NAMES_API_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .client(AppUtil
@@ -54,7 +54,7 @@ public class GeoNamesAdapter {
         }
     }
 
-    public Call<GeoNamesResult> getLocations(String query) {
+    public Call<GeoNamesResult> getLocations(final String query) {
         return mGeoNamesService.getLocation(query, USER_NAME, RESULT_STYLE,
                 MAX_ROWS, IS_NAME_REQUIERED,
                 listOfSupportedLanguage.contains(USER_LANGUAGE) ? USER_LANGUAGE : "en");

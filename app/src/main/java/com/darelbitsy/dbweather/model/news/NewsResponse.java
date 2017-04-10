@@ -27,7 +27,7 @@ public class NewsResponse {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -35,7 +35,7 @@ public class NewsResponse {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 
@@ -43,7 +43,7 @@ public class NewsResponse {
         return sortBy;
     }
 
-    public void setSortBy(String sortBy) {
+    public void setSortBy(final String sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -51,7 +51,7 @@ public class NewsResponse {
         return articles;
     }
 
-    public void setArticles(List<Article> articles) {
+    public void setArticles(final List<Article> articles) {
         this.articles = articles;
     }
 

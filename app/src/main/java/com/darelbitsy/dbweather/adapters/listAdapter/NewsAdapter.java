@@ -26,7 +26,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.NEWS_DATA_KE
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>  {
     private final ArrayList<Article> mNewses = new ArrayList<>();
 
-    public NewsAdapter(ArrayList<Article> newses) {
+    public NewsAdapter(final ArrayList<Article> newses) {
         mNewses.addAll(newses);
     }
 
@@ -47,7 +47,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return mNewses.size();
     }
 
-    public void updateContent(ArrayList<Article> newses) {
+    public void updateContent(final ArrayList<Article> newses) {
         mNewses.clear();
         mNewses.addAll(newses);
         notifyDataSetChanged();
@@ -61,19 +61,19 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         final View.OnClickListener newsOnClickListener = view -> {
 
-            Intent newsActivity = new Intent(view.getContext(), NewsDialogActivity.class);
+            final Intent newsActivity = new Intent(view.getContext(), NewsDialogActivity.class);
             newsActivity.putExtra(NEWS_DATA_KEY, mNews);
             view.getContext().startActivity(newsActivity);
         };
 
-        NewsViewHolder(View itemView) {
+        NewsViewHolder(final View itemView) {
             super(itemView);
             newsContainer = (ConstraintLayout) itemView.findViewById(R.id.newsLayout);
             newsFrom = (TextView) itemView.findViewById(R.id.newsFrom);
             newsDescription = (TextView) itemView.findViewById(R.id.newsDescription);
         }
 
-        void bindNews(Article news) {
+        void bindNews(final Article news) {
             mNews = news;
             newsContainer.setOnClickListener(newsOnClickListener);
             newsFrom.setText(String.format(Locale.getDefault(), itemView

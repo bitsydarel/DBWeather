@@ -2,7 +2,6 @@ package com.darelbitsy.dbweather.ui.helper;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.helper.ColorManager;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
@@ -24,17 +24,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil.mColorPicker;
-
 /**
  * Created by Darel Bitsy on 03/03/17.
  * class that manage day switch
  */
 
 public class DaySwitcherHelper {
-    @BindView(R.id.current_weather_layout)
-    ConstraintLayout mMainLayout;
-
     @BindView(R.id.locationLabel)
     TextView mLocationLabel;
     @BindView(R.id.temperatureLabel)
@@ -75,12 +70,13 @@ public class DaySwitcherHelper {
     TextView mSunsetTimeLabel;
 
     private String mCityName;
+    private ColorManager mColorManager;
 
 
     public DaySwitcherHelper(WeatherFragment currentFragment, View view, String cityName) {
-
         ButterKnife.bind(this, view);
         mCityName = cityName;
+        mColorManager = ColorManager.newInstance();
         setTypeFace(currentFragment.getContext());
     }
 
@@ -169,7 +165,7 @@ public class DaySwitcherHelper {
             videoView.stopPlayback();
             videoView.setVisibility(View.INVISIBLE);
 
-            view.setBackgroundResource(mColorPicker.getBackgroundColor(currently.getIcon()));
+            view.setBackgroundResource(mColorManager.getBackgroundColor(currently.getIcon()));
         }
     }
 
@@ -230,7 +226,7 @@ public class DaySwitcherHelper {
         mIconImageView.setImageDrawable(ContextCompat
                 .getDrawable(view.getContext(), WeatherUtil.getIconId(day.getIcon())));
 
-        view.setBackgroundResource(mColorPicker.getBackgroundColor(day.getIcon()));
+        view.setBackgroundResource(mColorManager.getBackgroundColor(day.getIcon()));
     }
 
     private void getSunriseAndSunset(String timeZone, DailyData day) {

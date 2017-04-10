@@ -26,7 +26,7 @@ public class Minutely {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -34,7 +34,7 @@ public class Minutely {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 
@@ -42,7 +42,7 @@ public class Minutely {
         return data;
     }
 
-    public void setData(List<MinutelyData> data) {
+    public void setData(final List<MinutelyData> data) {
         this.data = data;
     }
 }

@@ -27,14 +27,14 @@ public class GetWeatherHelper {
     private final Context mContext;
     private static GetWeatherHelper singletonGetWeatherHelper;
 
-    public static GetWeatherHelper newInstance(Context context) {
+    public static GetWeatherHelper newInstance(final Context context) {
         if (singletonGetWeatherHelper == null) {
             singletonGetWeatherHelper = new GetWeatherHelper(context.getApplicationContext());
         }
         return singletonGetWeatherHelper;
     }
 
-    private GetWeatherHelper(Context context) {
+    private GetWeatherHelper(final Context context) {
         mWeatherAdapter = new WeatherAdapter(context);
         mContext = context;
     }
@@ -49,7 +49,7 @@ public class GetWeatherHelper {
 
                 if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
 
-            } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
+            } catch (final Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
         });
     }
 
@@ -65,20 +65,20 @@ public class GetWeatherHelper {
                         coordinates[0],
                         coordinates[1]));
 
-                Intent intent = new Intent(mContext, WeatherDatabaseService.class);
+                final Intent intent = new Intent(mContext, WeatherDatabaseService.class);
                 intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
                 mContext.startService(intent);
 
                 if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
 
-            } catch (Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
+            } catch (final Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
         });
     }
 
     public Single<Weather> getObservableWeatherFromDatabase(final DatabaseOperation database) {
         return Single.create(emitter -> {
            try {
-               Weather weather = database.getWeatherData();
+               final Weather weather = database.getWeatherData();
                weather.setCurrently(database.getCurrentWeatherFromDatabase());
 
                weather.setDaily(new Daily());
@@ -91,7 +91,7 @@ public class GetWeatherHelper {
 
                if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
 
-           } catch (Exception e) {
+           } catch (final Exception e) {
                Log.i(ConstantHolder.TAG, "Error from getObservableWeatherFromDatabase: "
                        + e.getMessage());
                if (!emitter.isDisposed()) { emitter.onError(e); }

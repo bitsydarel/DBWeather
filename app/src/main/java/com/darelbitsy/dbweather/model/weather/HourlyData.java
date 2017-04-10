@@ -102,7 +102,7 @@ public class HourlyData implements Parcelable {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(final long time) {
         this.time = time;
     }
 
@@ -110,7 +110,7 @@ public class HourlyData implements Parcelable {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -118,7 +118,7 @@ public class HourlyData implements Parcelable {
         return icon == null ? "clear-day" : icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 
@@ -126,7 +126,7 @@ public class HourlyData implements Parcelable {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(double precipIntensity) {
+    public void setPrecipIntensity(final double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
@@ -134,7 +134,7 @@ public class HourlyData implements Parcelable {
         return precipProbability;
     }
 
-    public void setPrecipProbability(double precipProbability) {
+    public void setPrecipProbability(final double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
@@ -142,7 +142,7 @@ public class HourlyData implements Parcelable {
         return precipType;
     }
 
-    public void setPrecipType(String precipType) {
+    public void setPrecipType(final String precipType) {
         this.precipType = precipType;
     }
 
@@ -150,7 +150,7 @@ public class HourlyData implements Parcelable {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(final double temperature) {
         this.temperature = temperature;
     }
 
@@ -158,7 +158,7 @@ public class HourlyData implements Parcelable {
         return apparentTemperature;
     }
 
-    public void setApparentTemperature(double apparentTemperature) {
+    public void setApparentTemperature(final double apparentTemperature) {
         this.apparentTemperature = apparentTemperature;
     }
 
@@ -166,7 +166,7 @@ public class HourlyData implements Parcelable {
         return dewPoint;
     }
 
-    public void setDewPoint(double dewPoint) {
+    public void setDewPoint(final double dewPoint) {
         this.dewPoint = dewPoint;
     }
 
@@ -174,7 +174,7 @@ public class HourlyData implements Parcelable {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(final double humidity) {
         this.humidity = humidity;
     }
 
@@ -183,7 +183,7 @@ public class HourlyData implements Parcelable {
     }
 
 
-    public void setWindSpeed(double windSpeed) {
+    public void setWindSpeed(final double windSpeed) {
         this.windSpeed = windSpeed;
     }
 
@@ -191,7 +191,7 @@ public class HourlyData implements Parcelable {
         return windBearing;
     }
 
-    public void setWindBearing(long windBearing) {
+    public void setWindBearing(final long windBearing) {
         this.windBearing = windBearing;
     }
 
@@ -199,7 +199,7 @@ public class HourlyData implements Parcelable {
         return visibility;
     }
 
-    public void setVisibility(double visibility) {
+    public void setVisibility(final double visibility) {
         this.visibility = visibility;
     }
 
@@ -207,7 +207,7 @@ public class HourlyData implements Parcelable {
         return cloudCover;
     }
 
-    public void setCloudCover(double cloudCover) {
+    public void setCloudCover(final double cloudCover) {
         this.cloudCover = cloudCover;
     }
 
@@ -215,7 +215,7 @@ public class HourlyData implements Parcelable {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
+    public void setPressure(final double pressure) {
         this.pressure = pressure;
     }
 
@@ -223,7 +223,7 @@ public class HourlyData implements Parcelable {
         return ozone;
     }
 
-    public void setOzone(double ozone) {
+    public void setOzone(final double ozone) {
         this.ozone = ozone;
     }
 

@@ -15,7 +15,7 @@ public class NotificationHelper {
     public static final String NOTIFICATION_DESC = "notification_desc";
 
 
-    public NotificationHelper(Context context, String icon, double temperature) {
+    public NotificationHelper(final Context context, final String icon,final double temperature) {
         mIcon = icon;
         mTemperature = temperature;
         mContext = context;

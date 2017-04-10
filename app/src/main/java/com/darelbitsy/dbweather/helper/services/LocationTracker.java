@@ -163,8 +163,8 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
      * by an broadcast request
      * @param location represent the user location
      */
-    private void sendLocationToActivity(Location location) {
-        Intent coordonateIntent = new Intent("dbweather_location_update");
+    private void sendLocationToActivity(final Location location) {
+        final Intent coordonateIntent = new Intent("dbweather_location_update");
         coordonateIntent.putExtra("latitude", location.getLatitude());
         coordonateIntent.putExtra("longitude", location.getLongitude());
         sendBroadcast(coordonateIntent);

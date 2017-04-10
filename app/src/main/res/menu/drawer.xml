@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/location_config_id"
-            android:icon="@drawable/ic_add_location_black_24dp"
+            android:icon="@drawable/location_config_icon"
             android:title="@string/add_location_config_title"
             android:enabled="true"
             android:visible="true">
@@ -27,7 +27,7 @@
 
         <item
             android:id="@+id/news_config_id"
-            android:icon="@drawable/news_icon"
+            android:icon="@drawable/news_source_config_icon"
             android:title="@string/news_config_title"
             android:enabled="true"
             android:visible="true">
@@ -38,21 +38,31 @@
 
                 <group android:checkableBehavior="single">
                     <item android:enabled="true"
+                          android:icon="@drawable/news_source_config_icon"
                           android:id="@+id/select_news_source_config_id"
                           android:title="@string/select_news_source_config_title"/>
-
-                    <item
-                        android:id="@+id/notification_config_id"
-                        android:title="@string/notification_config_title"
-                        android:icon="@drawable/ic_notifications_black_24dp"
-                        app:actionLayout="@layout/switch_btn_layout"
-                        android:enabled="true"
-                        android:visible="true"/>
 
                     <item
                         android:id="@+id/news_translation_config_id"
                         android:title="@string/news_translation_config_title"
                         android:icon="@drawable/ic_g_translate_black_24dp"
+                        app:actionLayout="@layout/switch_btn_layout"
+                        android:enabled="true"
+                        android:visible="true"/>
+                </group>
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/weather_config_id"
+            android:title="@string/weather_config_title">
+            <menu android:id="@+id/weather_menu"
+                android:enabled="true">
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/notification_config_id"
+                        android:title="@string/notification_config_title"
+                        android:icon="@drawable/ic_notifications_black_24dp"
                         app:actionLayout="@layout/switch_btn_layout"
                         android:enabled="true"
                         android:visible="true"/>

@@ -29,7 +29,7 @@ public class GeoNamesResult {
         return totalResultsCount;
     }
 
-    public void setTotalResultsCount(long totalResultsCount) {
+    public void setTotalResultsCount(final long totalResultsCount) {
         this.totalResultsCount = totalResultsCount;
     }
 
@@ -37,7 +37,7 @@ public class GeoNamesResult {
         return mGeoName;
     }
 
-    public void setGeoName(List<GeoName> geoName) {
+    public void setGeoName(final List<GeoName> geoName) {
         mGeoName = geoName;
     }
 
@@ -45,7 +45,7 @@ public class GeoNamesResult {
         return style;
     }
 
-    public void setStyle(String style) {
+    public void setStyle(final String style) {
         this.style = style;
     }
 }

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
+
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.ALERT_EXPIRES;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.ALERT_ID;
@@ -83,6 +86,11 @@ import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_ID;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_IMAGE_URL;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_PUBLISHED_AT;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCES_TABLE;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE_COUNT;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE_ID;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE_NAME;
+import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_SOURCE_STATUS;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_TABLE_NAME;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_TITLE;
 import static com.darelbitsy.dbweather.model.weather.DatabaseConstant.NEWS_URL;
@@ -100,13 +108,9 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DB_NAME = "db_weather.sqlite";
 
-
-
-    public ApplicationDatabase(Context context) {
+    public ApplicationDatabase(final Context context) {
         super(context, DB_NAME, null, VERSION);
     }
-
-
 
     /**
      * Called when the database connection is being configured, to enable features
@@ -138,7 +142,7 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
      * @param db The database.
      */
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(final SQLiteDatabase db) {
         createApplicationTable(db);
         createWeatherTable(db);
         createAlertTable(db);
@@ -147,9 +151,10 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         createDaysWeatherTable(db);
         createMinutelyTable(db);
         createNewsTable(db);
+        createNewsSourceTable(db);
     }
 
-    private void createApplicationTable(SQLiteDatabase database) {
+    private void createApplicationTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + APPLICATION_TABLE + " (" +
                 LAST_WEATHER_SERVER_SYNC + COLUMN_TEXT_TYPE + COMMA +
                 LAST_NEWS_SERVER_SYNC + COLUMN_TEXT_TYPE +
@@ -157,7 +162,7 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         );
     }
 
-    private void createWeatherTable(SQLiteDatabase database) {
+    private void createWeatherTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + WEATHER_TABLE + " (" +
                 CITY_NAME + COLUMN_TEXT_TYPE + COMMA +
                 TIMEZONE + COLUMN_TEXT_TYPE + COMMA +
@@ -170,9 +175,9 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         );
     }
 
-    private void createAlertTable(SQLiteDatabase database) {
+    private void createAlertTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + ALERT_TABLE + " (" +
-                ALERT_ID + " integer primary key autoincrement not null," +
+                ALERT_ID + INTEGER_PRIMARY_KEY +
                 ALERT_TITLE + COLUMN_TEXT_TYPE + COMMA +
                 ALERT_TIME + COLUMN_INTEGER_TYPE + COMMA +
                 ALERT_EXPIRES + COLUMN_INTEGER_TYPE + COMMA +
@@ -181,7 +186,7 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
                 ");");
     }
 
-    private void createCurrentWeatherTable(SQLiteDatabase database) {
+    private void createCurrentWeatherTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + CURRENT_TABLE_NAME + " (" +
                 CURRENT_TIME + COLUMN_INTEGER_TYPE + COMMA +
                 CURRENT_SUMMARY + COLUMN_TEXT_TYPE + COMMA +
@@ -198,9 +203,9 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         );
     }
 
-    private void createDaysWeatherTable(SQLiteDatabase database) {
+    private void createDaysWeatherTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + DAYS_TABLE_NAME + " (" +
-                DAY_ID + " integer primary key autoincrement not null," +
+                DAY_ID + INTEGER_PRIMARY_KEY +
                 DAY_TIME + COLUMN_INTEGER_TYPE + COMMA +
                 DAY_SUMMARY + COLUMN_TEXT_TYPE + COMMA +
                 DAY_ICON + COLUMN_TEXT_TYPE + COMMA +
@@ -223,9 +228,9 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         );
     }
 
-    private void createHoursWeatherTable(SQLiteDatabase database) {
+    private void createHoursWeatherTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + HOURS_TABLE_NAME +" (" +
-                HOUR_ID + " integer primary key autoincrement not null," +
+                HOUR_ID + INTEGER_PRIMARY_KEY +
                 HOUR_TIME + COLUMN_INTEGER_TYPE + COMMA +
                 HOUR_SUMMARY + COLUMN_TEXT_TYPE + COMMA +
                 HOUR_ICON + COLUMN_TEXT_TYPE + COMMA +
@@ -245,18 +250,18 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         );
     }
 
-    private void createMinutelyTable(SQLiteDatabase database) {
+    private void createMinutelyTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + MINUTELY_TABLE +  " (" +
-                MINUTELY_ID + " integer primary key autoincrement not null," +
+                MINUTELY_ID + INTEGER_PRIMARY_KEY +
                 MINUTELY_TIME + COLUMN_INTEGER_TYPE + COMMA +
                 MINUTELY_PRECIPCHANCE + COLUMN_REAL_TYPE + COMMA +
                 MINUTELY_PRECIPTYPE + COLUMN_TEXT_TYPE + ");"
         );
     }
 
-    private void createNewsTable(SQLiteDatabase database) {
+    private void createNewsTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + NEWS_TABLE_NAME + " (" +
-                NEWS_ID + " integer primary key autoincrement not null," +
+                NEWS_ID + INTEGER_PRIMARY_KEY +
                 NEWS_SOURCE + COLUMN_TEXT_TYPE + COMMA +
                 NEWS_TITLE + COLUMN_TEXT_TYPE + COMMA +
                 NEWS_URL + COLUMN_TEXT_TYPE + COMMA +
@@ -267,7 +272,17 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         );
     }
 
+    private void createNewsSourceTable(final SQLiteDatabase database) {
+        database.execSQL(CREATE_TABLE_QUERY + NEWS_SOURCES_TABLE + " (" +
+                NEWS_SOURCE_ID + INTEGER_PRIMARY_KEY +
+                NEWS_SOURCE_NAME + COLUMN_TEXT_TYPE + COMMA +
+                NEWS_SOURCE_STATUS + COLUMN_INTEGER_TYPE + COMMA +
+                NEWS_SOURCE_COUNT + COLUMN_INTEGER_TYPE +
+                ");"
+        );
+    }
+
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(final SQLiteDatabase db,final int oldVersion,final int newVersion) {
     }
 }

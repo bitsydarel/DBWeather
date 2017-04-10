@@ -23,14 +23,14 @@ public class GetImageDownloader {
     private static GetImageDownloader singletonGetImageDownloader;
     private final Context mContext;
 
-    public static GetImageDownloader newInstance(Context context) {
+    public static GetImageDownloader newInstance(final Context context) {
         if (singletonGetImageDownloader == null) {
             singletonGetImageDownloader = new GetImageDownloader(context.getApplicationContext());
         }
         return singletonGetImageDownloader;
     }
 
-    private GetImageDownloader(Context context) {
+    private GetImageDownloader(final Context context) {
         mContext = context;
         final OkHttpClient newsImageOkHttpClient = new OkHttpClient.Builder()
                 .cache(AppUtil.getCacheDirectory(context))
@@ -45,7 +45,7 @@ public class GetImageDownloader {
                     .build();
     }
 
-    public Single<Bitmap> getObservableImageDownloader(String url) {
+    public Single<Bitmap> getObservableImageDownloader(final String url) {
         return Single.create(emitter -> {
             try {
                 if (AppUtil.isNetworkAvailable(mContext)
@@ -57,7 +57,7 @@ public class GetImageDownloader {
 
                 } else { throw new IllegalStateException("No internet available to download the image"); }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (!emitter.isDisposed()) { emitter.onError(e); }
             }
         });

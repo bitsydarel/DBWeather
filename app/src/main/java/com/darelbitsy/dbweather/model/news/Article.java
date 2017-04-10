@@ -78,7 +78,7 @@ public class Article implements Parcelable {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(final String author) {
         this.author = author;
     }
 
@@ -86,7 +86,7 @@ public class Article implements Parcelable {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -94,7 +94,7 @@ public class Article implements Parcelable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -102,11 +102,11 @@ public class Article implements Parcelable {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         this.url = url;
         try {
             setArticleUrl(url);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             Log.i(ConstantHolder.TAG, "Could not set article Url");
         }
     }
@@ -115,7 +115,7 @@ public class Article implements Parcelable {
         String urlImage = "";
         if (urlToImage != null && !urlToImage.isEmpty()) {
             try {
-                URL urlInfo = new URL(urlToImage);
+                final URL urlInfo = new URL(urlToImage);
                 urlImage = new URI(urlInfo.getProtocol(),
                         urlInfo.getUserInfo(),
                         urlInfo.getHost(),
@@ -135,13 +135,13 @@ public class Article implements Parcelable {
         return urlImage;
     }
 
-    public void setUrlToImage(String urlToImage) { this.urlToImage = urlToImage; }
+    public void setUrlToImage(final String urlToImage) { this.urlToImage = urlToImage; }
 
     public String getPublishedAt() {
         return publishedAt;
     }
 
-    public void setPublishedAt(String publishedAt) {
+    public void setPublishedAt(final String publishedAt) {
         if (publishedAt != null) {
             this.publishedAt = publishedAt
                     .replace("T", " ")
@@ -163,7 +163,7 @@ public class Article implements Parcelable {
                         mArticleUrl.getRef())
                         .toString();
 
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 Log.i(ConstantHolder.TAG, "Error while reformatting the url: "
                         + e.getMessage());
             }
@@ -171,7 +171,7 @@ public class Article implements Parcelable {
         return articleUrl;
     }
 
-    public void setArticleUrl(String articleUrl) throws MalformedURLException {
+    public void setArticleUrl(final String articleUrl) throws MalformedURLException {
         mArticleUrl = new URL(articleUrl);
     }
 

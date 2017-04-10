@@ -53,7 +53,7 @@ public class MinutelyData implements Parcelable {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(final long time) {
         this.time = time;
     }
 
@@ -61,7 +61,7 @@ public class MinutelyData implements Parcelable {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(double precipIntensity) {
+    public void setPrecipIntensity(final double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
@@ -69,7 +69,7 @@ public class MinutelyData implements Parcelable {
         return precipIntensityError;
     }
 
-    public void setPrecipIntensityError(double precipIntensityError) {
+    public void setPrecipIntensityError(final double precipIntensityError) {
         this.precipIntensityError = precipIntensityError;
     }
 
@@ -77,7 +77,7 @@ public class MinutelyData implements Parcelable {
         return precipProbability;
     }
 
-    public void setPrecipProbability(double precipProbability) {
+    public void setPrecipProbability(final double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
@@ -85,7 +85,7 @@ public class MinutelyData implements Parcelable {
         return precipType;
     }
 
-    public void setPrecipType(String precipType) {
+    public void setPrecipType(final String precipType) {
         this.precipType = precipType;
     }
 

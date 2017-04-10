@@ -52,7 +52,7 @@ public class Hourly implements Parcelable {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -60,7 +60,7 @@ public class Hourly implements Parcelable {
         return icon == null ? "clear-day" : icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 
@@ -68,7 +68,7 @@ public class Hourly implements Parcelable {
         return data;
     }
 
-    public void setData(List<HourlyData> data) {
+    public void setData(final List<HourlyData> data) {
         this.data = data;
     }
 

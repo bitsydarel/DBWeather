@@ -1,6 +1,5 @@
 package com.darelbitsy.dbweather.controller.api.adapters.network;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.controller.api.services.TranslateService;
@@ -17,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Darel Bitsy on 19/02/17.
+ * Translate api adapter
  */
 
 public class TranslateRestAdapter {
@@ -32,13 +32,14 @@ public class TranslateRestAdapter {
         mTranslateService = restAdapter.create(TranslateService.class);
     }
 
-    public String translateText(String textToTranslate, String email) {
+    public String translateText(final String textToTranslate,
+                                final String email) {
 
-        String languagePair = String.format(Locale.ENGLISH,
+        final String languagePair = String.format(Locale.ENGLISH,
                 "en|%s",
                 ConstantHolder.USER_LANGUAGE);
 
-        Response<MyMemoryJson> response;
+        final Response<MyMemoryJson> response;
 
         try {
             if (!"".equals(email)) {
@@ -54,7 +55,7 @@ public class TranslateRestAdapter {
                 return response.body().getResponseData().getTranslatedText();
             }
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Log.i(ConstantHolder.TAG, "Error : " + e.getMessage());
             return textToTranslate;
         }

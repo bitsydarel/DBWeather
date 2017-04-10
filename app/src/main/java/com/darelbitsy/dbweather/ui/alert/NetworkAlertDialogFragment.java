@@ -14,12 +14,11 @@ import com.darelbitsy.dbweather.R;
 
 public class NetworkAlertDialogFragment extends DialogFragment {
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Context context = getActivity();
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
         alertBuilder.setTitle(R.string.error_title)
                 .setMessage(R.string.network_unavailable_message)
-                .setPositiveButton(R.string.error_positive_button_text, null);
+                .setPositiveButton(android.R.string.ok, null);
 
         return alertBuilder.create();
     }

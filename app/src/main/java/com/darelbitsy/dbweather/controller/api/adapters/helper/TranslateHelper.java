@@ -25,18 +25,18 @@ class TranslateHelper {
     private static TranslateHelper singletonTranslateHelper;
     private final Context mContext;
 
-    public static TranslateHelper newInstance(Context context) {
+    public static TranslateHelper newInstance(final Context context) {
         if (singletonTranslateHelper == null) {
             singletonTranslateHelper = new TranslateHelper(context.getApplicationContext());
         }
         return singletonTranslateHelper;
     }
 
-    private TranslateHelper(Context context) {
+    private TranslateHelper(final Context context) {
         mContext = context;
     }
 
-    String translateText(String sourceText) throws GeneralSecurityException, IOException {
+    String translateText(final String sourceText) throws GeneralSecurityException, IOException {
         final ImmutableList<String> textToTranslate = ImmutableList
                 .<String>builder()
                 .add(sourceText)

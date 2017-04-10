@@ -27,7 +27,7 @@ public class WeatherAdapter {
 
     private final WeatherService mWeatherService;
 
-    public WeatherAdapter(Context context) {
+    public WeatherAdapter(final Context context) {
         final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(WEATHER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -41,11 +41,11 @@ public class WeatherAdapter {
                     restAdapter.create(WeatherService.class);
     }
 
-    public Weather getWeather(double latitude,
-                              double longitude) throws IOException {
+    public Weather getWeather(final double latitude,
+                              final double longitude) throws IOException {
 
-        Weather weatherData;
-        String coordinates = String.format(Locale.ENGLISH, "%f,%f", latitude, longitude);
+        final Weather weatherData;
+        final String coordinates = String.format(Locale.ENGLISH, "%f,%f", latitude, longitude);
 
         if (supportedLang.contains(ConstantHolder.USER_LANGUAGE)) {
             weatherData = mWeatherService.getWeatherWithLanguage(WEATHER_APIKEY,

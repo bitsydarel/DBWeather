@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
-import com.darelbitsy.dbweather.helper.ColorManager;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.network.GoogleGeocodeAdapter;
@@ -35,9 +34,6 @@ public class WeatherUtil {
     private static HashMap<String, Integer> dayOfTheWeek = (HashMap<String, Integer>) Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
             .getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
 
-
-    public static final ColorManager mColorPicker = new ColorManager();
-    
     public static Double[] getCoordinates(DatabaseOperation database) {
         return database.getCoordinates();
 
@@ -139,7 +135,7 @@ public class WeatherUtil {
         return cityInfoBuilder;
     }
 
-    public static String getLocationWithGoogleMapApi(double latitude, double longitude) throws IOException {
+    private static String getLocationWithGoogleMapApi(double latitude, double longitude) throws IOException {
         return new GoogleGeocodeAdapter().getLocationByCoordinate(latitude, longitude);
     }
 
@@ -152,7 +148,7 @@ public class WeatherUtil {
                 .format(format);
     }
 
-    public static int compareDay(long firstDay, long secondDay, String timeZone) {
+    private static int compareDay(long firstDay, long secondDay, String timeZone) {
         return dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(firstDay, timeZone))
                 .compareTo(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
     }
@@ -161,7 +157,7 @@ public class WeatherUtil {
         return compareDay(firstDay, secondDay, null);
     }
 
-    public static boolean dayEquality(long firstDay, long secondDay, String timeZone) {
+    private static boolean dayEquality(long firstDay, long secondDay, String timeZone) {
         return dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(firstDay, timeZone))
                 .equals(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
     }

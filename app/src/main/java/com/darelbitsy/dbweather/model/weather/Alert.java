@@ -54,7 +54,7 @@ public class Alert implements Parcelable {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -62,7 +62,7 @@ public class Alert implements Parcelable {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(final long time) {
         this.time = time;
     }
 
@@ -70,7 +70,7 @@ public class Alert implements Parcelable {
         return expires;
     }
 
-    public void setExpires(long expires) {
+    public void setExpires(final long expires) {
         this.expires = expires;
     }
 
@@ -78,7 +78,7 @@ public class Alert implements Parcelable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -86,7 +86,7 @@ public class Alert implements Parcelable {
         return uri;
     }
 
-    public void setUri(String uri) {
+    public void setUri(final String uri) {
         this.uri = uri;
     }
 

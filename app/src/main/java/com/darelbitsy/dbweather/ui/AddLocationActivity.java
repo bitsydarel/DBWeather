@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
@@ -46,7 +44,7 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private DatabaseOperation mDatabaseOperation;
 
-    private void getUserQuery(Intent intent) {
+    private void getUserQuery(final Intent intent) {
         if (intent != null &&
                 Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
@@ -65,17 +63,17 @@ public class AddLocationActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
         setSupportActionBar(toolbar);
         mDatabaseOperation = DatabaseOperation.newInstance(this);
 
         // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        SearchView searchView = (SearchView) findViewById(R.id.searchLocationView);
+        final SearchView searchView = (SearchView) findViewById(R.id.searchLocationView);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(true);
@@ -88,19 +86,15 @@ public class AddLocationActivity extends AppCompatActivity {
 
         mBackToMainActivity = (ImageButton) findViewById(R.id.backToMainActivity);
 
-        final ProgressBar locationProgressBar = (ProgressBar) findViewById(R.id.locationProgressBar);
-        locationProgressBar.setBackgroundColor(Color.GREEN);
-//        locationProgressBar.setVisibility(View.GONE);
-
         getUserQuery(getIntent());
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+    protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mBackToMainActivity.setOnClickListener(v -> {
-            DatabaseOperation database = DatabaseOperation.newInstance(this);
-            Weather weather = database.getWeatherData();
+            final DatabaseOperation database = DatabaseOperation.newInstance(this);
+            final Weather weather = database.getWeatherData();
             weather.setCurrently(database.getCurrentWeatherFromDatabase());
 
             weather.setDaily(new Daily());
@@ -145,13 +139,13 @@ public class AddLocationActivity extends AppCompatActivity {
 
     public class SuggestionListener implements SearchView.OnSuggestionListener {
         @Override
-        public boolean onSuggestionSelect(int position) {
+        public boolean onSuggestionSelect(final int position) {
             return true;
         }
 
         @Override
-        public boolean onSuggestionClick(int position) {
-            GeoName location = LocationSuggestionProvider.mListOfLocation.get(position);
+        public boolean onSuggestionClick(final int position) {
+            final GeoName location = LocationSuggestionProvider.mListOfLocation.get(position);
 
             final DialogInterface.OnClickListener mCancelLocationClick =
                     (dialog, which) -> dialog.cancel();
@@ -183,7 +177,7 @@ public class AddLocationActivity extends AppCompatActivity {
          * @param listOfLocations the item emitted by the Single, an list of locations
          */
         @Override
-        public void onSuccess(List<GeoName> listOfLocations) {
+        public void onSuccess(final List<GeoName> listOfLocations) {
             if (mLocationListAdapter != null) {
                 mLocationListAdapter.updateLocationList(listOfLocations);
             } else {
@@ -200,7 +194,7 @@ public class AddLocationActivity extends AppCompatActivity {
          * @param e the exception encountered by the Single
          */
         @Override
-        public void onError(Throwable e) {
+        public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error in AddLocationActivity: " + e.getMessage());
         }
     }

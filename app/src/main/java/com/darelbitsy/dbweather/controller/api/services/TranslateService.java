@@ -14,15 +14,20 @@ public interface TranslateService {
 
     @GET("/get")
     Call<MyMemoryJson> getTranslatedText (
-            @Query("q") String textToTranslate,
-            @Query("langpair") String langPair,
-            @Query("de") String email
+            @Query("q")
+            final String textToTranslate,
+            @Query("langpair")
+            final String langPair,
+            @Query("de")
+            final String email
     );
 
     @GET("/get")
     Call<MyMemoryJson> getTranslatedText (
-            @Query("q") String textToTranslate,
-            @Query("langpair") String langPair
+            @Query("q")
+            final String textToTranslate,
+            @Query("langpair")
+            final String langPair
     );
 
 }

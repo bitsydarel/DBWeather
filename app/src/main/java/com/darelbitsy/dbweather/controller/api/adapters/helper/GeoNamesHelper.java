@@ -18,18 +18,18 @@ public class GeoNamesHelper {
     private final GeoNamesAdapter geoNamesAdapter;
     private static GeoNamesHelper singletonGeoNamesHelper;
 
-    public static GeoNamesHelper newInstance(Context context) {
+    public static GeoNamesHelper newInstance(final Context context) {
         if (singletonGeoNamesHelper == null) {
             singletonGeoNamesHelper = new GeoNamesHelper(context.getApplicationContext());
         }
         return singletonGeoNamesHelper;
     }
 
-    private GeoNamesHelper(Context context) {
+    private GeoNamesHelper(final Context context) {
         geoNamesAdapter = GeoNamesAdapter.newInstance(context);
     }
 
-    public Single<List<GeoName>> getLocationFromApi(String query) {
+    public Single<List<GeoName>> getLocationFromApi(final String query) {
         return Single.create(emitter -> {
            try {
                if (!emitter.isDisposed()) {
@@ -40,7 +40,7 @@ public class GeoNamesHelper {
                            .getGeoName());
                }
 
-           } catch (Exception e) { if (!emitter.isDisposed()) {emitter.onError(e);} }
+           } catch (final Exception e) { if (!emitter.isDisposed()) {emitter.onError(e);} }
         });
     }
 }

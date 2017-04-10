@@ -27,7 +27,7 @@ public class UserCitiesDatabase extends SQLiteOpenHelper {
     private static final String DB_NAME = "user_city_list";
     private static final int VERSION = 1;
 
-    public UserCitiesDatabase(Context context) {
+    public UserCitiesDatabase(final Context context) {
         super(context, DB_NAME, null, VERSION);
     }
 
@@ -47,7 +47,7 @@ public class UserCitiesDatabase extends SQLiteOpenHelper {
 
     }
 
-    private void createCityTable(SQLiteDatabase database) {
+    private void createCityTable(final SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_QUERY + CITIES_TABLE + " (" +
                 COLUMN_ID + COLUMN_INTEGER_TYPE + COLUMN_PRIMARY_KEY + COMMA +
                 THE_CITY_NAME + COLUMN_TEXT_TYPE + COLUMN_UNIQUE + COMMA +

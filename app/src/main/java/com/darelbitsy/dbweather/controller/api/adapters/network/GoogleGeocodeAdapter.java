@@ -42,8 +42,10 @@ public class GoogleGeocodeAdapter {
         mGeocodeService = mRestAdapter.create(GoogleGeocodeService.class);
     }
 
-    public String getLocationByCoordinate(double latitude, double longitude) throws IOException {
-        String coordinates = String.format(Locale.ENGLISH, "%f,%f", latitude, longitude);
+    public String getLocationByCoordinate(final double latitude,
+                                          final double longitude) throws IOException {
+
+        final String coordinates = String.format(Locale.ENGLISH, "%f,%f", latitude, longitude);
 
         if (supportedLanguage.contains(ConstantHolder.USER_LANGUAGE)) {
             return mGeocodeService
