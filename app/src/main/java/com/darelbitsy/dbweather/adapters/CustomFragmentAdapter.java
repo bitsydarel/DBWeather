@@ -30,7 +30,9 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
     private final View mParentLayout;
 
 
-    public CustomFragmentAdapter(View parentLayout, FragmentManager fm, Weather weatherData) {
+    public CustomFragmentAdapter(final View parentLayout,
+                                 final FragmentManager fm,
+                                 final Weather weatherData) {
         super(fm);
         mWeather = weatherData;
         mCurrently = weatherData.getCurrently();
@@ -44,12 +46,12 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
         return mParentLayout;
     }
 
-    private void setupDailyData(List<DailyData> data,
-                                String timeZone,
-                                DailyData[] listFragments) {
+    private void setupDailyData(final List<DailyData> data,
+                                final String timeZone,
+                                final DailyData[] listFragments) {
 
-        Calendar calendar = Calendar.getInstance();
-        String currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
+        final Calendar calendar = Calendar.getInstance();
+        final String currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
                 Calendar.LONG,
                 Locale.getDefault());
 
@@ -87,7 +89,6 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
                 }
             }
         }
-
     }
 
     /**
@@ -99,56 +100,56 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                WeatherFragment fragment =
+                final WeatherFragment fragment =
                         WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
                 fragment.setAdapter(this);
                 listOfFragments[0] = fragment;
                 return fragment;
 
             case 1:
-                WeatherFragment dayFragment1 =
+                final WeatherFragment dayFragment1 =
                         WeatherFragment.newInstance(listOfData[1], mWeather.getCityName());
                 dayFragment1.setAdapter(this);
                 listOfFragments[1] = dayFragment1;
                 return dayFragment1;
 
             case 2:
-                WeatherFragment dayFragment2 =
+                final WeatherFragment dayFragment2 =
                         WeatherFragment.newInstance(listOfData[2], mWeather.getCityName());
                 dayFragment2.setAdapter(this);
                 listOfFragments[2] = dayFragment2;
                 return dayFragment2;
 
             case 3:
-                WeatherFragment dayFragment3 =
+                final WeatherFragment dayFragment3 =
                         WeatherFragment.newInstance(listOfData[3], mWeather.getCityName());
                 dayFragment3.setAdapter(this);
                 listOfFragments[3] = dayFragment3;
                 return dayFragment3;
 
             case 4:
-                WeatherFragment dayFragment4 =
+                final WeatherFragment dayFragment4 =
                         WeatherFragment.newInstance(listOfData[4], mWeather.getCityName());
                 dayFragment4.setAdapter(this);
                 listOfFragments[4] = dayFragment4;
                 return dayFragment4;
 
             case 5:
-                WeatherFragment dayFragment5 =
+                final WeatherFragment dayFragment5 =
                         WeatherFragment.newInstance(listOfData[5], mWeather.getCityName());
                 dayFragment5.setAdapter(this);
                 listOfFragments[5] = dayFragment5;
                 return dayFragment5;
 
             case 6:
-                WeatherFragment dayFragment6 =
+                final WeatherFragment dayFragment6 =
                         WeatherFragment.newInstance(listOfData[6], mWeather.getCityName());
                 dayFragment6.setAdapter(this);
                 listOfFragments[6] = dayFragment6;
                 return dayFragment6;
 
             default:
-                WeatherFragment defaultFragment =
+                final WeatherFragment defaultFragment =
                         WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
                 defaultFragment.setAdapter(this);
                 listOfFragments[0] = defaultFragment;
@@ -164,10 +165,15 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
         return listOfData.length;
     }
 
-    public void updateWeatherOnFragment(Weather weatherData) {
+    public void updateWeatherOnFragment(final Weather weatherData) {
         mWeather = weatherData;
         mCurrently = weatherData.getCurrently();
-        for (int index = 0; index < listOfFragments.length; index++) {
+
+        // Moved  listOfFragments.length call out of the loop to local variable listOfFragments_length
+        // So it's won't run this check every time
+        final int listOfFragments_length = listOfFragments.length;
+
+        for (int index = 0; index < listOfFragments_length; index++) {
             if (listOfFragments[index] != null) {
                 if (index == 0) {
                     listOfFragments[index].updateDataFromActivity(mCurrently, weatherData.getCityName());

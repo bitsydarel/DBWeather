@@ -119,7 +119,7 @@ public class Currently implements Parcelable {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(final long time) {
         this.time = time;
     }
 
@@ -127,7 +127,7 @@ public class Currently implements Parcelable {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -135,7 +135,7 @@ public class Currently implements Parcelable {
         return icon == null ? "clear-day" : icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 
@@ -143,7 +143,7 @@ public class Currently implements Parcelable {
         return nearestStormDistance;
     }
 
-    public void setNearestStormDistance(long nearestStormDistance) {
+    public void setNearestStormDistance(final long nearestStormDistance) {
         this.nearestStormDistance = nearestStormDistance;
     }
 
@@ -151,7 +151,7 @@ public class Currently implements Parcelable {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(double precipIntensity) {
+    public void setPrecipIntensity(final double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
@@ -159,7 +159,7 @@ public class Currently implements Parcelable {
         return precipIntensityError;
     }
 
-    public void setPrecipIntensityError(double precipIntensityError) {
+    public void setPrecipIntensityError(final double precipIntensityError) {
         this.precipIntensityError = precipIntensityError;
     }
 
@@ -167,7 +167,7 @@ public class Currently implements Parcelable {
         return precipProbability;
     }
 
-    public void setPrecipProbability(double precipProbability) {
+    public void setPrecipProbability(final double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
@@ -175,7 +175,7 @@ public class Currently implements Parcelable {
         return precipType;
     }
 
-    public void setPrecipType(String precipType) {
+    public void setPrecipType(final String precipType) {
         this.precipType = precipType;
     }
 
@@ -183,7 +183,7 @@ public class Currently implements Parcelable {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(final double temperature) {
         this.temperature = temperature;
     }
 
@@ -191,7 +191,7 @@ public class Currently implements Parcelable {
         return apparentTemperature;
     }
 
-    public void setApparentTemperature(double apparentTemperature) {
+    public void setApparentTemperature(final double apparentTemperature) {
         this.apparentTemperature = apparentTemperature;
     }
 
@@ -199,7 +199,7 @@ public class Currently implements Parcelable {
         return dewPoint;
     }
 
-    public void setDewPoint(double dewPoint) {
+    public void setDewPoint(final double dewPoint) {
         this.dewPoint = dewPoint;
     }
 
@@ -207,7 +207,7 @@ public class Currently implements Parcelable {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(final double humidity) {
         this.humidity = humidity;
     }
 
@@ -215,7 +215,7 @@ public class Currently implements Parcelable {
         return windSpeed;
     }
 
-    public void setWindSpeed(double windSpeed) {
+    public void setWindSpeed(final double windSpeed) {
         this.windSpeed = windSpeed;
     }
 
@@ -223,7 +223,7 @@ public class Currently implements Parcelable {
         return windBearing;
     }
 
-    public void setWindBearing(long windBearing) {
+    public void setWindBearing(final long windBearing) {
         this.windBearing = windBearing;
     }
 
@@ -231,7 +231,7 @@ public class Currently implements Parcelable {
         return visibility;
     }
 
-    public void setVisibility(double visibility) {
+    public void setVisibility(final double visibility) {
         this.visibility = visibility;
     }
 
@@ -239,7 +239,7 @@ public class Currently implements Parcelable {
         return cloudCover;
     }
 
-    public void setCloudCover(double cloudCover) {
+    public void setCloudCover(final double cloudCover) {
         this.cloudCover = cloudCover;
     }
 
@@ -247,7 +247,7 @@ public class Currently implements Parcelable {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
+    public void setPressure(final double pressure) {
         this.pressure = pressure;
     }
 
@@ -255,7 +255,7 @@ public class Currently implements Parcelable {
         return ozone;
     }
 
-    public void setOzone(double ozone) {
+    public void setOzone(final double ozone) {
         this.ozone = ozone;
     }
 
@@ -263,7 +263,7 @@ public class Currently implements Parcelable {
         return sunriseTime;
     }
 
-    public void setSunriseTime(long sunriseTime) {
+    public void setSunriseTime(final long sunriseTime) {
         this.sunriseTime = sunriseTime;
     }
 
@@ -271,7 +271,7 @@ public class Currently implements Parcelable {
         return sunsetTime;
     }
 
-    public void setSunsetTime(long sunsetTime) {
+    public void setSunsetTime(final long sunsetTime) {
         this.sunsetTime = sunsetTime;
     }
 

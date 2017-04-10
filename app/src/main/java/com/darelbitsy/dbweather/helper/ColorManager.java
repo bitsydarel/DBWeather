@@ -12,8 +12,16 @@ import java.util.Map;
 
 public class ColorManager {
     private Map<String, Integer> mColors;
+    private static ColorManager singletonColorManager;
 
-    public ColorManager() {
+    public static ColorManager newInstance() {
+        if (singletonColorManager == null) {
+            singletonColorManager = new ColorManager();
+        }
+        return singletonColorManager;
+    }
+
+    private ColorManager() {
         mColors = new HashMap<>();
         initialize();
 

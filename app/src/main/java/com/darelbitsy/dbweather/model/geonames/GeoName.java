@@ -46,7 +46,7 @@ public class GeoName {
         return toponymName;
     }
 
-    public void setToponymName(String toponymName) {
+    public void setToponymName(final String toponymName) {
         this.toponymName = toponymName;
     }
 
@@ -54,7 +54,7 @@ public class GeoName {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -62,7 +62,7 @@ public class GeoName {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
 
@@ -70,7 +70,7 @@ public class GeoName {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 
@@ -78,7 +78,7 @@ public class GeoName {
         return geonameId;
     }
 
-    public void setGeonameId(long geonameId) {
+    public void setGeonameId(final long geonameId) {
         this.geonameId = geonameId;
     }
 
@@ -86,7 +86,7 @@ public class GeoName {
         return countryCode;
     }
 
-    public void setCountryCode(String countryCode) {
+    public void setCountryCode(final String countryCode) {
         this.countryCode = countryCode;
     }
 
@@ -94,7 +94,7 @@ public class GeoName {
         return countryName;
     }
 
-    public void setCountryName(String countryName) {
+    public void setCountryName(final String countryName) {
         this.countryName = countryName;
     }
 
@@ -102,7 +102,7 @@ public class GeoName {
         return fcl;
     }
 
-    public void setFcl(String fcl) {
+    public void setFcl(final String fcl) {
         this.fcl = fcl;
     }
 
@@ -110,7 +110,7 @@ public class GeoName {
         return fcode;
     }
 
-    public void setFcode(String fcode) {
+    public void setFcode(final String fcode) {
         this.fcode = fcode;
     }
 }

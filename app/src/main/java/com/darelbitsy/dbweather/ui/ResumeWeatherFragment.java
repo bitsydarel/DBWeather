@@ -70,7 +70,7 @@ public class ResumeWeatherFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        mDatabase = new DatabaseOperation(getActivity());
+        mDatabase = DatabaseOperation.newInstance(getActivity());
 
         mHourly = args.getParcelable(ConstantHolder.HOURLY_WEATHER_KEY);
         mWeekSummary = args.getString(ConstantHolder.WEEK_SUMMARY);

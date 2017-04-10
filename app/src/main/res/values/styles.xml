@@ -54,9 +54,12 @@
     </style>
 
     <style name="Theme.Switch" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/switchColorOn</item>
         <item name="colorControlActivated">@color/switchColorOn</item>
         <item name="colorSwitchThumbNormal">@color/switchColorThumbNormal</item>
         <item name="android:colorForeground">@color/switchColorNormal</item>
+        <item name="android:textOn">On</item>
+        <item name="android:textOff">Off</item>
     </style>
 
     <color name="switchColorForeground">#30bdbdbd</color>

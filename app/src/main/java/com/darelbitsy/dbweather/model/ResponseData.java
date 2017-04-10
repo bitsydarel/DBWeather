@@ -20,7 +20,7 @@ public class ResponseData {
         return translatedText;
     }
 
-    public void setTranslatedText(String translatedText) {
+    public void setTranslatedText(final String translatedText) {
         this.translatedText = translatedText;
     }
 
@@ -28,7 +28,7 @@ public class ResponseData {
         return match;
     }
 
-    public void setMatch(double match) {
+    public void setMatch(final double match) {
         this.match = match;
     }
 }

@@ -28,7 +28,7 @@ public class NewsDatabaseService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         ArrayList<Article> newses = intent.getParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY);
-        new DatabaseOperation(this).saveNewses(newses);
+        DatabaseOperation.newInstance(this).saveNewses(newses);
         stopSelf();
         return START_NOT_STICKY;
     }

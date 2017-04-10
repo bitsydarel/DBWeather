@@ -24,37 +24,6 @@ public class AnimationUtility {
 
     private AnimationUtility() {}
 
-    public static void autoScrollRecyclerView(final RecyclerView recyclerView,
-                                              final NewsAdapter adapter) {
-        final int speedScroll = 4000;
-
-        final Runnable runnable = new Runnable() {
-            int count = 0;
-            boolean flag = true;
-            @Override
-            public void run() {
-                if(count < adapter.getItemCount()){
-                    if(count == adapter.getItemCount() -1){
-                        flag = false;
-
-                    } else if(count == 0){ flag = true; }
-
-                    if(flag) { count++; }
-                    else { count--; }
-
-                    recyclerView.smoothScrollToPosition(count);
-                    if (recyclerView.getVisibility() == View.VISIBLE) {
-                        recyclerView.postDelayed(this, speedScroll);
-                    }
-                }
-            }
-        };
-        recyclerView
-                .postDelayed(runnable, speedScroll);
-
-    }
-
-
     public static void slideTextUpThanUpdate(TextView textView, String value) {
         AnimatorSet compositor = new AnimatorSet();
         ObjectAnimator moveUp = ObjectAnimator.ofFloat(textView, View.TRANSLATION_Y, 200);

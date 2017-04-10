@@ -18,6 +18,7 @@ public class ConstantHolder {
     public static final String NEWS_TRANSLATION_KEY = "news_translation_key";
 
     public static final String RECYCLER_BOTTOM_LIMIT = "recycler_bottom_limit";
+    public static final String INTEGER_PRIMARY_KEY = " integer primary key autoincrement not null,";
 
     private ConstantHolder() {
         //To disable default constructor
@@ -27,11 +28,13 @@ public class ConstantHolder {
     public static final String IS_ALARM_ON = "is_alarm_set";
     public static final String IS_GPS_PERMISSION_GRANTED = "is_gps_permission_granted";
     public static final String IS_ACCOUNT_PERMISSION_GRANTED = "is_account_granted";
+    public static final String IS_WRITE_PERMISSION_GRANTED = "is_write_granted";
     public static final String PREFS_NAME = "db_weather_prefs";
 
 
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
-    public static final int MY_PERMiSSIONS_REQUEST_GET_ACCOUNT = 242;
+    public static final int MY_PERMISSIONS_REQUEST_GET_ACCOUNT = 242;
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 380;
 
     public static final String MYMEMORY_APIURL = "http://api.mymemory.translated.net";
     public static final String USER_LANGUAGE = Locale.getDefault().getLanguage();
@@ -55,19 +58,6 @@ public class ConstantHolder {
     public static final String SELECTED_CITY_LATITUDE = "selected_city_latitude";
     public static final String SELECTED_CITY_LONGITUDE = "selected_city_longitude";
 
-    public static final String[] LIST_OF_SOURCES = {
-            "bbc-news",
-            "cnbc",
-            "cnn",
-            "bbc-sport",
-            "google-news",
-            "the-new-york-times",
-            "espn",
-            "the-wall-street-journal",
-            "hacker-news",
-            "sky-sports-news",
-            "mtv-news"
-    };
 
     public static final List<String> supportedLang = Collections.unmodifiableList(Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",
             "et","fr","hr","hu","id","it","is","kw","nb","nl","pl","pt","ru",
@@ -78,7 +68,7 @@ public class ConstantHolder {
     public static final String FIRST_RUN = "is_first_run";
 
     private static Map<List<String>, String> getTypesFaces() {
-        Map<List<String>, String> dictOfTypeFaces = new HashMap<>();
+        final Map<List<String>, String> dictOfTypeFaces = new HashMap<>();
 
         dictOfTypeFaces.put(Arrays.asList("en", "fr", "es", "de", "cs", "ca",
                 "az", "bs", "et", "hr", "hu", "id", "it", "is", "nb", "nl",

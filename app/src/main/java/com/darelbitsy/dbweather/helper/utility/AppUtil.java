@@ -26,6 +26,7 @@ import com.darelbitsy.dbweather.helper.services.KillCheckerService;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
@@ -38,9 +39,11 @@ import static com.darelbitsy.dbweather.helper.AlarmConfigHelper.MY_ACTION;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_ALARM_ON;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_WRITE_PERMISSION_GRANTED;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.LIST_OF_TYPEFACES;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMiSSIONS_REQUEST_GET_ACCOUNT;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.USER_LANGUAGE;
 
@@ -87,9 +90,9 @@ public class AppUtil {
         return new File(context.getCacheDir(), "dbweather_cache_dir");
     }
 
-    public static boolean isNetworkAvailable(Context context) {
-        NetworkInfo networkInfo;
-        ConnectivityManager manager = (ConnectivityManager)
+    public static boolean isNetworkAvailable(final Context context) {
+        final NetworkInfo networkInfo;
+        final ConnectivityManager manager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         networkInfo = manager.getActiveNetworkInfo();
         boolean isAvailable = false;
@@ -99,12 +102,12 @@ public class AppUtil {
         return isAvailable;
     }
 
-    public static boolean isAlarmSet(Context context) {
-        int lastAlarm = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+    public static boolean isAlarmSet(final Context context) {
+        final int lastAlarm = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .getInt(AlarmConfigHelper.LAST_NOTIFICATION_PENDING_INTENT_ID, 0);
         if (lastAlarm == 0 ) { return false; }
 
-        Intent notificationLIntent = new Intent(context, AlarmWeatherReceiver.class);
+        final Intent notificationLIntent = new Intent(context, AlarmWeatherReceiver.class);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             notificationLIntent.setFlags(0);
         } else {
@@ -119,7 +122,31 @@ public class AppUtil {
                 PendingIntent.FLAG_NO_CREATE) != null;
     }
 
-    public static void askLocationPermIfNeeded(Activity activity) {
+    public static void askWriteToExtPermIfNeeded(final Activity activity) {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        } else {
+            AppUtil.setWritePermissionValue(activity.getApplicationContext());
+        }
+    }
+
+    public static void setWritePermissionValue(final Context context) {
+        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+                .edit()
+                .putBoolean(IS_WRITE_PERMISSION_GRANTED, true)
+                .apply();
+    }
+
+    public static boolean isWritePermissionOn(final Context context) {
+        return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+                .getBoolean(IS_WRITE_PERMISSION_GRANTED, false);
+    }
+
+    public static void askLocationPermIfNeeded(final Activity activity) {
         if (ContextCompat.checkSelfPermission(activity,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -128,43 +155,42 @@ public class AppUtil {
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
-            AppUtil.setGpsPermissionValue(activity);
-
+            AppUtil.setGpsPermissionValue(activity.getApplicationContext());
         }
     }
 
-    public static void askAccountInfoPermIfNeeded(Activity activity) {
+    public static void askAccountInfoPermIfNeeded(final Activity activity) {
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(activity,
                     new String[] {Manifest.permission.GET_ACCOUNTS},
-                    MY_PERMiSSIONS_REQUEST_GET_ACCOUNT);
+                    MY_PERMISSIONS_REQUEST_GET_ACCOUNT);
 
         } else {
-            AppUtil.setAccountPermissionValue(activity);
+            AppUtil.setAccountPermissionValue(activity.getApplicationContext());
         }
     }
 
-    public static boolean isAccountPermissionOn(Context context) {
+    public static boolean isAccountPermissionOn(final Context context) {
         return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false);
     }
 
-    public static void setAccountPermissionValue(Context context) {
+    public static void setAccountPermissionValue(final Context context) {
         context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(IS_ACCOUNT_PERMISSION_GRANTED, true)
                 .apply();
     }
 
-    public static boolean isGpsPermissionOn(Context context) {
+    public static boolean isGpsPermissionOn(final Context context) {
         return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .getBoolean(IS_GPS_PERMISSION_GRANTED, false);
     }
 
-    public static void setGpsPermissionValue(Context context) {
+    public static void setGpsPermissionValue(final Context context) {
         context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(IS_GPS_PERMISSION_GRANTED, true)
@@ -172,8 +198,8 @@ public class AppUtil {
     }
 
 
-    public static void setNextAlarm(Context context) {
-        ExecutorService executorService;
+    public static void setNextAlarm(final Context context) {
+        final ExecutorService executorService;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             executorService = new ForkJoinPool();
             executorService.submit(new AlarmConfigHelper(context)::setClothingNotificationAlarm);
@@ -200,21 +226,23 @@ public class AppUtil {
                 .apply();
     }
 
-    public static Typeface getAppGlobalTypeFace(Context context) {
+    public static Typeface getAppGlobalTypeFace(final Context context) {
         Typeface typeface = null;
 
-        for (List<String> languages : LIST_OF_TYPEFACES.keySet()) {
-            if (languages.contains(USER_LANGUAGE)) {
+        for (final Map.Entry<List<String>, String> languages : LIST_OF_TYPEFACES.entrySet()) {
+            if (languages.getKey().contains(USER_LANGUAGE)) {
                 typeface = Typeface.createFromAsset(context.getAssets(),
-                        LIST_OF_TYPEFACES.get(languages));
+                        languages.getValue());
             }
         }
 
         return typeface;
     }
 
-    public static void setupVideoBackground(int resourceId, Context context, View view) {
-        VideoView background = (VideoView) view.findViewById(R.id.backgroundVideo);
+    public static void setupVideoBackground(final int resourceId,
+                                            final Context context,
+                                            final View view) {
+        final VideoView background = (VideoView) view.findViewById(R.id.backgroundVideo);
         background.stopPlayback();
         background.setVideoURI(Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId));
         background.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));

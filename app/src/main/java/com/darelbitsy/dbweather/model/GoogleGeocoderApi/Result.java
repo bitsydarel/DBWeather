@@ -29,7 +29,7 @@ public class Result {
         return addressComponents;
     }
 
-    public void setAddressComponents(List<AddressComponent> addressComponents) {
+    public void setAddressComponents(final List<AddressComponent> addressComponents) {
         this.addressComponents = addressComponents;
     }
 
@@ -37,7 +37,7 @@ public class Result {
         return formattedAddress;
     }
 
-    public void setFormattedAddress(String formattedAddress) {
+    public void setFormattedAddress(final String formattedAddress) {
         this.formattedAddress = formattedAddress;
     }
 
@@ -45,7 +45,7 @@ public class Result {
         return placeId;
     }
 
-    public void setPlaceId(String placeId) {
+    public void setPlaceId(final String placeId) {
         this.placeId = placeId;
     }
 
@@ -53,7 +53,7 @@ public class Result {
         return types;
     }
 
-    public void setTypes(List<String> types) {
+    public void setTypes(final List<String> types) {
         this.types = types;
     }
 

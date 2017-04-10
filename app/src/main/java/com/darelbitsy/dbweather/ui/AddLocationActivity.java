@@ -13,9 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
@@ -41,13 +39,12 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private LocationListAdapter mLocationListAdapter;
-    private ProgressBar mLocationProgressBar;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private ImageButton mBackToMainActivity;
 
     private DatabaseOperation mDatabaseOperation;
 
-    private void getUserQuery(Intent intent) {
+    private void getUserQuery(final Intent intent) {
         if (intent != null &&
                 Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
@@ -57,7 +54,7 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private void getUserQuery(final String query) {
         if (!query.isEmpty()) {
-            mCompositeDisposable.add(new GeoNamesHelper(this)
+            mCompositeDisposable.add(GeoNamesHelper.newInstance(this)
                     .getLocationFromApi(query)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -66,41 +63,38 @@ public class AddLocationActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
         setSupportActionBar(toolbar);
-        mDatabaseOperation = new DatabaseOperation(this);
+        mDatabaseOperation = DatabaseOperation.newInstance(this);
 
         // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        SearchView searchView = (SearchView) findViewById(R.id.searchLocationView);
+        final SearchView searchView = (SearchView) findViewById(R.id.searchLocationView);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(true);
         searchView.setOnSuggestionListener(new SuggestionListener());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.locationRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
                 false));
 
         mBackToMainActivity = (ImageButton) findViewById(R.id.backToMainActivity);
 
-        mLocationProgressBar = (ProgressBar) findViewById(R.id.locationProgressBar);
-        mLocationProgressBar.setVisibility(View.GONE);
-
         getUserQuery(getIntent());
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+    protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mBackToMainActivity.setOnClickListener(v -> {
-            DatabaseOperation database = new DatabaseOperation(this);
-            Weather weather = database.getWeatherData();
+            final DatabaseOperation database = DatabaseOperation.newInstance(this);
+            final Weather weather = database.getWeatherData();
             weather.setCurrently(database.getCurrentWeatherFromDatabase());
 
             weather.setDaily(new Daily());
@@ -110,7 +104,7 @@ public class AddLocationActivity extends AppCompatActivity {
             weather.getHourly().setData(database.getHourlyWeatherFromDatabase());
 
             weather.setAlerts(database.getAlerts());
-            Intent intent = new Intent(AddLocationActivity.this, MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);
@@ -145,13 +139,13 @@ public class AddLocationActivity extends AppCompatActivity {
 
     public class SuggestionListener implements SearchView.OnSuggestionListener {
         @Override
-        public boolean onSuggestionSelect(int position) {
+        public boolean onSuggestionSelect(final int position) {
             return true;
         }
 
         @Override
-        public boolean onSuggestionClick(int position) {
-            GeoName location = LocationSuggestionProvider.mListOfLocation.get(position);
+        public boolean onSuggestionClick(final int position) {
+            final GeoName location = LocationSuggestionProvider.mListOfLocation.get(position);
 
             final DialogInterface.OnClickListener mCancelLocationClick =
                     (dialog, which) -> dialog.cancel();
@@ -161,7 +155,9 @@ public class AddLocationActivity extends AppCompatActivity {
 
             new AlertDialog.Builder(AddLocationActivity.this)
                     .setMessage(String.format(Locale.getDefault(),
-                            AddLocationActivity.this.getString(R.string.alert_add_location_text),
+                            AddLocationActivity.this
+                                    .getApplicationContext()
+                                    .getString(R.string.alert_add_location_text),
                             location.getName()))
                     .setNegativeButton(android.R.string.cancel, mCancelLocationClick)
                     .setPositiveButton(android.R.string.yes, mAddLocationClick)
@@ -181,7 +177,7 @@ public class AddLocationActivity extends AppCompatActivity {
          * @param listOfLocations the item emitted by the Single, an list of locations
          */
         @Override
-        public void onSuccess(List<GeoName> listOfLocations) {
+        public void onSuccess(final List<GeoName> listOfLocations) {
             if (mLocationListAdapter != null) {
                 mLocationListAdapter.updateLocationList(listOfLocations);
             } else {
@@ -198,7 +194,7 @@ public class AddLocationActivity extends AppCompatActivity {
          * @param e the exception encountered by the Single
          */
         @Override
-        public void onError(Throwable e) {
+        public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error in AddLocationActivity: " + e.getMessage());
         }
     }

@@ -17,7 +17,7 @@ public class MyMemoryJson {
         return responseData;
     }
 
-    public void setResponseData(ResponseData responseData) {
+    public void setResponseData(final ResponseData responseData) {
         this.responseData = responseData;
     }
 }

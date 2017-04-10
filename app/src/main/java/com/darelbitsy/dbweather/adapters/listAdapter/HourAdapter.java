@@ -30,7 +30,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
     private List<HourlyData> mHours;
     private Context mContext;
 
-    public HourAdapter(List<HourlyData> hours) {
+    public HourAdapter(final List<HourlyData> hours) {
         mHours = new ArrayList<>(hours);
     }
 
@@ -52,7 +52,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
         return (mHours != null && mHours.size() > 9) ? mHours.size() : 0;
     }
 
-    public void updateData(List<HourlyData> data) {
+    public void updateData(final List<HourlyData> data) {
         mHours.clear();
         mHours.addAll(data);
         notifyDataSetChanged();
@@ -75,7 +75,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
         final ProgressBar hourlyHumidityProgressBar;
         final ProgressBar hourlyWindSpeedProgressBar;
 
-        HourViewHolder(View itemView) {
+        HourViewHolder(final View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             if (mContext == null) { mContext = itemView.getContext(); }
@@ -113,7 +113,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
             hourlyBorderLine = (LinearLayout) itemView.findViewById(R.id.hourlyBorderLine);
         }
 
-        void bindHour(HourlyData hour) {
+        void bindHour(final HourlyData hour) {
             hourlyIconImage.setImageResource(WeatherUtil.getIconId(hour.getIcon()));
 
             hourlyTime.setText(String.format(Locale.getDefault(),
@@ -159,7 +159,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
          * @param v The view that was clicked.
          */
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             if (mainLayout.getVisibility() == View.GONE) {
                 mainLayout.setVisibility(View.VISIBLE);
                 hourlyBorderLine.setVisibility(View.GONE);

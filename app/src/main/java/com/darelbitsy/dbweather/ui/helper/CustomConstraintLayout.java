@@ -23,8 +23,6 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.RECYCLER_BOT
 public class CustomConstraintLayout extends ConstraintLayout {
     private ViewDragHelper mDragHelper;
     private SharedPreferences mPreferences;
-    private int mLastKnowTopPosition;
-    private int mLastKnowLeftPosition;
 
     public CustomConstraintLayout(Context context) {
         super(context);
@@ -175,8 +173,6 @@ public class CustomConstraintLayout extends ConstraintLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            mLastKnowTopPosition = top;
-            mLastKnowLeftPosition = left;
             changedView.invalidate();
         }
     }

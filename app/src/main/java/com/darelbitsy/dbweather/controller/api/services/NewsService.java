@@ -13,8 +13,11 @@ import retrofit2.http.Query;
 public interface NewsService {
     @GET("/v1/articles")
     Call<NewsResponse> getNewsFromApiSync(
-            @Query("source") String source,
-            @Query("sortBy") String sortBy,
-            @Query("apiKey") String apiKey
+            @Query("source")
+            final String source,
+            @Query("sortBy")
+            final String sortBy,
+            @Query("apiKey")
+            final String apiKey
     );
 }

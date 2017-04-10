@@ -21,6 +21,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 30/01/17.
+ * Alarm manager config for notification
  */
 
 public class AlarmConfigHelper {
@@ -49,7 +50,7 @@ public class AlarmConfigHelper {
         mAlarmManagerAfternoon = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         mAlarmManagerNight = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent notificationLIntent = new Intent(context, AlarmWeatherReceiver.class);
+        final Intent notificationLIntent = new Intent(context, AlarmWeatherReceiver.class);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             notificationLIntent.setFlags(0);
         } else {
@@ -74,7 +75,7 @@ public class AlarmConfigHelper {
     }
 
     private AlarmManager getCurrentAlarm() {
-        Date currentDate = new Date();
+        final Date currentDate = new Date();
 
         if (calendarMorning.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarMorning;
@@ -122,8 +123,8 @@ public class AlarmConfigHelper {
                     currentPendingIntent);
 
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AlarmManager alarmManager = getCurrentAlarm();
-            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(currentCalendar.getTimeInMillis(), currentPendingIntent);
+            final AlarmManager alarmManager = getCurrentAlarm();
+            final AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(currentCalendar.getTimeInMillis(), currentPendingIntent);
             alarmManager.setAlarmClock(alarmClockInfo, currentPendingIntent);
 
         } else  if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
@@ -149,7 +150,7 @@ public class AlarmConfigHelper {
 
     private void setCalendars() {
         final TimeZone timeZone = TimeZone.getTimeZone(getCurrentTimeZone(mContext));
-        Date currentDate = new Date();
+        final Date currentDate = new Date();
 
         calendarMorning = Calendar.getInstance(timeZone, Locale.getDefault());
         calendarMorning.setTime(currentDate);
@@ -170,8 +171,8 @@ public class AlarmConfigHelper {
         calendarNight.set(Calendar.SECOND, 0);
     }
 
-    public static String getCurrentTimeZone(final Context context) {
-        String timezone = new DatabaseOperation(context)
+    private static String getCurrentTimeZone(final Context context) {
+        final String timezone = DatabaseOperation.newInstance(context)
                 .getWeatherData().getTimezone();
         return timezone == null ? TimeZone.getDefault().getID() : timezone;
     }

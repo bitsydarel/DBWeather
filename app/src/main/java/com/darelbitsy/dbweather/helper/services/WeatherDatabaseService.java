@@ -26,7 +26,7 @@ public class WeatherDatabaseService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final DatabaseOperation database = new DatabaseOperation(this);
+        final DatabaseOperation database = DatabaseOperation.newInstance(this);
 
         Weather weather = intent.getParcelableExtra(ConstantHolder.WEATHER_DATA_KEY);
         if (weather != null) {

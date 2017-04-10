@@ -15,6 +15,8 @@ import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -36,7 +38,7 @@ public class WelcomeActivity extends Activity {
 
     private final DisposableSingleObserver<ArrayList<Article>> mNewsObserver = new DisposableSingleObserver<ArrayList<Article>>() {
         @Override
-        public void onSuccess(ArrayList<Article> newses) {
+        public void onSuccess(final ArrayList<Article> newses) {
             Log.i(ConstantHolder.TAG, "Inside the newsObserver WelcomeActivity");
             mIntent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
             startActivity(mIntent);
@@ -44,28 +46,28 @@ public class WelcomeActivity extends Activity {
         }
 
         @Override
-        public void onError(Throwable e) {
+        public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error in welcome activity: "+e.getMessage());
         }
     };
 
     private final DisposableSingleObserver<Weather> mWeatherObserver = new DisposableSingleObserver<Weather>() {
         @Override
-        public void onSuccess(Weather weather) {
+        public void onSuccess(final Weather weather) {
             Log.i(ConstantHolder.TAG, "Inside the WeatherObserver WelcomeActivity");
-            mIntent = new Intent(WelcomeActivity.this, MainActivity.class);
             mIntent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
 
             if (isSubscriptionDone && getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                     .getBoolean(ConstantHolder.FIRST_RUN, true)) {
-                subscriptions.add(new GetNewsesHelper(WelcomeActivity.this)
-                        .getNewsesFromApi(WelcomeActivity.this)
+                mDatabase.initiateNewsSourcesTable();
+                subscriptions.add(GetNewsesHelper.newInstance(WelcomeActivity.this)
+                        .getNewsesFromApi()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(mNewsObserver));
 
             } else {
-                subscriptions.add(new GetNewsesHelper(WelcomeActivity.this)
+                subscriptions.add(GetNewsesHelper.newInstance(WelcomeActivity.this)
                         .getNewsesFromDatabase(mDatabase)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -74,28 +76,36 @@ public class WelcomeActivity extends Activity {
         }
 
         @Override
-        public void onError(Throwable e) {
+        public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error in welcome activity: "
                     + e.getMessage());
+
+            subscriptions.add(GetWeatherHelper.newInstance(WelcomeActivity.this)
+                    .getObservableWeatherFromDatabase(mDatabase)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(mWeatherObserver));
         }
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_activity);
-        mDatabase = new DatabaseOperation(this);
+        mDatabase = DatabaseOperation.newInstance(this);
+        mIntent = new Intent(getApplicationContext(),
+                MainActivity.class);
 
-        if (AppUtil.isNetworkAvailable(this)) {
-            subscriptions.add(new GetWeatherHelper(this)
-                    .getObservableWeatherFromApi(mDatabase, this)
+        if (AppUtil.isNetworkAvailable(getApplicationContext())) {
+            subscriptions.add(GetWeatherHelper.newInstance(this)
+                    .getObservableWeatherFromApi(mDatabase)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(mWeatherObserver));
             isSubscriptionDone = true;
 
         } else {
-            subscriptions.add(new GetWeatherHelper(this)
+            subscriptions.add(GetWeatherHelper.newInstance(this)
                     .getObservableWeatherFromDatabase(mDatabase)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

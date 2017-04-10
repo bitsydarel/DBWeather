@@ -2,7 +2,6 @@
     <string name="app_name">DB Weather</string>
     <string name="error_title">Oops! Sorry</string>
     <string name="error_message">There was an error. Please try again.</string>
-    <string name="error_positive_button_text">Ok</string>
     <string name="today_label">Today</string>
     <string name="tomorrow_label">Tomorrow</string>
     <string name="network_unavailable_message">Network is unavailable!</string>
@@ -94,4 +93,7 @@
     <string name="add_location_toolbar_label">Add Location</string>
     <string name="news_config_title">News</string>
     <string name="current_location_title">Current Location</string>
+    <string name="news_configuration_toolbar_label">News Configurations</string>
+    <string name="bbc_news_description">BBC News (also referred to as the BBC News Channel) is the BBC\'s 24-hour rolling news television network in the United Kingdom. The channel launched as BBC News 24 on 9 November 1997 at 17:30 as part of the BBC\'s foray into digital domestic television channels, becoming the first competitor to Sky News, which had been running since 1989.[1] For a time, looped news, sport and weather bulletins were available to view via BBC Red Button.</string>
+    <string name="weather_config_title">Weather</string>
 </resources>

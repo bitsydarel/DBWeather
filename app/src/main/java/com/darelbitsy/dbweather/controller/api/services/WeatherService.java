@@ -14,16 +14,23 @@ import retrofit2.http.Query;
 public interface WeatherService {
     @GET("forecast/{apiKey}/{coordinates}")
     Call<Weather> getWeather(
-            @Path("apiKey") String apiKey,
-            @Path("coordinates") String coordinates,
-            @Query("units") String unitsType
+            @Path("apiKey")
+            final String apiKey,
+            @Path("coordinates")
+            final String coordinates,
+            @Query("units")
+            final String unitsType
     );
 
     @GET("forecast/{apiKey}/{coordinates}")
     Call<Weather> getWeatherWithLanguage (
-            @Path("apiKey") String apiKey,
-            @Path("coordinates") String coordinates,
-            @Query("lang") String language,
-            @Query("units") String unitsType
+            @Path("apiKey")
+            final String apiKey,
+            @Path("coordinates")
+            final String coordinates,
+            @Query("lang")
+            final String language,
+            @Query("units")
+            final String unitsType
     );
 }

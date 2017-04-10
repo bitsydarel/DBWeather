@@ -35,7 +35,7 @@ public class LocationSuggestionProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mGeoNamesHelper = new GeoNamesHelper(getContext());
+        mGeoNamesHelper = GeoNamesHelper.newInstance(getContext());
         return true;
     }
 

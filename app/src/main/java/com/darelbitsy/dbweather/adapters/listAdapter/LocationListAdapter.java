@@ -100,8 +100,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         final TextView cityName;
         final TextView countryName;
         final TextView countryCode;
-        DatabaseOperation mDatabaseOperation;
-        GeoName mLocation;
+        private DatabaseOperation mDatabaseOperation;
+        private GeoName mLocation;
 
         final DialogInterface.OnClickListener mCancelLocationClick = (dialog, which) -> dialog.cancel();
         final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) ->
@@ -117,16 +117,16 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
                 .show();
 
 
-        LocationViewHolder(View itemView) {
+        LocationViewHolder(final View itemView) {
             super(itemView);
-            mDatabaseOperation = new DatabaseOperation(itemView.getContext());
+            mDatabaseOperation = DatabaseOperation.newInstance(itemView.getContext());
             mLayout = (ConstraintLayout) itemView.findViewById(R.id.locationListItemLayout);
             cityName = (TextView) itemView.findViewById(R.id.cityName);
             countryName = (TextView) itemView.findViewById(R.id.countryName);
             countryCode = (TextView) itemView.findViewById(R.id.countryCode);
         }
 
-        void bindItem(GeoName locationInfo) {
+        void bindItem(final GeoName locationInfo) {
             mLocation = locationInfo;
             mLayout.setOnClickListener(mLocationOnClickListener);
             cityName.setText(locationInfo.getName());

@@ -19,7 +19,7 @@ public class GoogleGeocodeResponse {
         return results;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(final List<Result> results) {
         this.results = results;
     }
 

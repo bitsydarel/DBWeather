@@ -169,7 +169,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(final long time) {
         this.time = time;
     }
 
@@ -177,7 +177,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -185,7 +185,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 
@@ -193,7 +193,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return sunriseTime;
     }
 
-    public void setSunriseTime(long sunriseTime) {
+    public void setSunriseTime(final long sunriseTime) {
         this.sunriseTime = sunriseTime;
     }
 
@@ -201,7 +201,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return sunsetTime;
     }
 
-    public void setSunsetTime(long sunsetTime) {
+    public void setSunsetTime(final long sunsetTime) {
         this.sunsetTime = sunsetTime;
     }
 
@@ -209,7 +209,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return moonPhase;
     }
 
-    public void setMoonPhase(double moonPhase) {
+    public void setMoonPhase(final double moonPhase) {
         this.moonPhase = moonPhase;
     }
 
@@ -217,7 +217,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(double precipIntensity) {
+    public void setPrecipIntensity(final double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
@@ -225,7 +225,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return precipIntensityMax;
     }
 
-    public void setPrecipIntensityMax(double precipIntensityMax) {
+    public void setPrecipIntensityMax(final double precipIntensityMax) {
         this.precipIntensityMax = precipIntensityMax;
     }
 
@@ -233,7 +233,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return precipIntensityMaxTime;
     }
 
-    public void setPrecipIntensityMaxTime(long precipIntensityMaxTime) {
+    public void setPrecipIntensityMaxTime(final long precipIntensityMaxTime) {
         this.precipIntensityMaxTime = precipIntensityMaxTime;
     }
 
@@ -241,7 +241,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return precipProbability;
     }
 
-    public void setPrecipProbability(double precipProbability) {
+    public void setPrecipProbability(final double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
@@ -249,7 +249,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return precipType;
     }
 
-    public void setPrecipType(String precipType) {
+    public void setPrecipType(final String precipType) {
         this.precipType = precipType;
     }
 
@@ -257,7 +257,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return temperatureMin;
     }
 
-    public void setTemperatureMin(double temperatureMin) {
+    public void setTemperatureMin(final double temperatureMin) {
         this.temperatureMin = temperatureMin;
     }
 
@@ -265,7 +265,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return temperatureMinTime;
     }
 
-    public void setTemperatureMinTime(long temperatureMinTime) {
+    public void setTemperatureMinTime(final long temperatureMinTime) {
         this.temperatureMinTime = temperatureMinTime;
     }
 
@@ -273,7 +273,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return temperatureMax;
     }
 
-    public void setTemperatureMax(double temperatureMax) {
+    public void setTemperatureMax(final double temperatureMax) {
         this.temperatureMax = temperatureMax;
     }
 
@@ -281,7 +281,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return temperatureMaxTime;
     }
 
-    public void setTemperatureMaxTime(long temperatureMaxTime) {
+    public void setTemperatureMaxTime(final long temperatureMaxTime) {
         this.temperatureMaxTime = temperatureMaxTime;
     }
 
@@ -289,7 +289,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return apparentTemperatureMin;
     }
 
-    public void setApparentTemperatureMin(double apparentTemperatureMin) {
+    public void setApparentTemperatureMin(final double apparentTemperatureMin) {
         this.apparentTemperatureMin = apparentTemperatureMin;
     }
 
@@ -297,7 +297,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return apparentTemperatureMinTime;
     }
 
-    public void setApparentTemperatureMinTime(long apparentTemperatureMinTime) {
+    public void setApparentTemperatureMinTime(final long apparentTemperatureMinTime) {
         this.apparentTemperatureMinTime = apparentTemperatureMinTime;
     }
 
@@ -305,7 +305,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return apparentTemperatureMax;
     }
 
-    public void setApparentTemperatureMax(double apparentTemperatureMax) {
+    public void setApparentTemperatureMax(final double apparentTemperatureMax) {
         this.apparentTemperatureMax = apparentTemperatureMax;
     }
 
@@ -313,7 +313,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return apparentTemperatureMaxTime;
     }
 
-    public void setApparentTemperatureMaxTime(long apparentTemperatureMaxTime) {
+    public void setApparentTemperatureMaxTime(final long apparentTemperatureMaxTime) {
         this.apparentTemperatureMaxTime = apparentTemperatureMaxTime;
     }
 
@@ -321,7 +321,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return dewPoint;
     }
 
-    public void setDewPoint(double dewPoint) {
+    public void setDewPoint(final double dewPoint) {
         this.dewPoint = dewPoint;
     }
 
@@ -329,7 +329,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(final double humidity) {
         this.humidity = humidity;
     }
 
@@ -337,7 +337,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return windSpeed;
     }
 
-    public void setWindSpeed(double windSpeed) {
+    public void setWindSpeed(final double windSpeed) {
         this.windSpeed = windSpeed;
     }
 
@@ -345,7 +345,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return windBearing;
     }
 
-    public void setWindBearing(long windBearing) {
+    public void setWindBearing(final long windBearing) {
         this.windBearing = windBearing;
     }
 
@@ -353,7 +353,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return visibility;
     }
 
-    public void setVisibility(double visibility) {
+    public void setVisibility(final double visibility) {
         this.visibility = visibility;
     }
 
@@ -361,7 +361,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return cloudCover;
     }
 
-    public void setCloudCover(double cloudCover) {
+    public void setCloudCover(final double cloudCover) {
         this.cloudCover = cloudCover;
     }
 
@@ -369,7 +369,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
+    public void setPressure(final double pressure) {
         this.pressure = pressure;
     }
 
@@ -377,7 +377,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         return ozone;
     }
 
-    public void setOzone(double ozone) {
+    public void setOzone(final double ozone) {
         this.ozone = ozone;
     }
 
@@ -423,7 +423,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
         if (this == o) return true;
         if (!(o instanceof DailyData)) return false;
 
-        DailyData dailyData = (DailyData) o;
+        final DailyData dailyData = (DailyData) o;
 
         return WeatherUtil.dayEquality(time, dailyData.time);
     }
@@ -434,7 +434,8 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
     }
 
     @Override
-    public int compareTo(@NonNull DailyData o) {
+    public int compareTo(@NonNull
+                         final DailyData o) {
         return WeatherUtil.compareDay(time, o.getTime());
     }
 }

@@ -47,7 +47,7 @@ public class Daily implements Parcelable {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -55,7 +55,7 @@ public class Daily implements Parcelable {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 
@@ -63,7 +63,7 @@ public class Daily implements Parcelable {
         return data;
     }
 
-    public void setData(List<DailyData> data) {
+    public void setData(final List<DailyData> data) {
         this.data = data;
     }
 
