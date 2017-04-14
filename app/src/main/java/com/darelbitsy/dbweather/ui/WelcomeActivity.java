@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -15,8 +16,6 @@ import com.darelbitsy.dbweather.model.news.Article;
 import com.darelbitsy.dbweather.model.weather.Weather;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -51,13 +50,14 @@ public class WelcomeActivity extends Activity {
         }
     };
 
+    private SharedPreferences mSharedPreferences;
     private final DisposableSingleObserver<Weather> mWeatherObserver = new DisposableSingleObserver<Weather>() {
         @Override
         public void onSuccess(final Weather weather) {
             Log.i(ConstantHolder.TAG, "Inside the WeatherObserver WelcomeActivity");
             mIntent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
 
-            if (isSubscriptionDone && getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            if (isSubscriptionDone && mSharedPreferences
                     .getBoolean(ConstantHolder.FIRST_RUN, true)) {
                 mDatabase.initiateNewsSourcesTable();
                 subscriptions.add(GetNewsesHelper.newInstance(WelcomeActivity.this)
@@ -95,8 +95,10 @@ public class WelcomeActivity extends Activity {
         mDatabase = DatabaseOperation.newInstance(this);
         mIntent = new Intent(getApplicationContext(),
                 MainActivity.class);
+        mSharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        if (AppUtil.isNetworkAvailable(getApplicationContext())) {
+        if (AppUtil.isNetworkAvailable(getApplicationContext()) && mSharedPreferences
+                .getBoolean(ConstantHolder.FIRST_RUN, true)) {
             subscriptions.add(GetWeatherHelper.newInstance(this)
                     .getObservableWeatherFromApi(mDatabase)
                     .subscribeOn(Schedulers.io())

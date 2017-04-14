@@ -24,43 +24,29 @@ public class CustomConstraintLayout extends ConstraintLayout {
     private ViewDragHelper mDragHelper;
     private SharedPreferences mPreferences;
 
-    public CustomConstraintLayout(Context context) {
+    public CustomConstraintLayout(final Context context) {
         super(context);
         mPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        this.addOnLayoutChangeListener((v, left, top, right, bottom,
-                                        oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (isMoving()) {
-                v.setTop(oldTop);
-                v.setBottom(oldBottom);
-                v.setLeft(oldLeft);
-                v.setRight(oldRight);
-            }
-        });
-
-        Log.i("drag", "Was in constructor");
+        addChangeListener();
     }
 
-    public CustomConstraintLayout(Context context, AttributeSet attrs) {
+    public CustomConstraintLayout(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         mPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        this.addOnLayoutChangeListener((v, left, top, right, bottom,
-                                        oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (isMoving()) {
-                v.setTop(oldTop);
-                v.setBottom(oldBottom);
-                v.setLeft(oldLeft);
-                v.setRight(oldRight);
-            }
-        });
-        Log.i("drag", "Was in constructor");
+        addChangeListener();
     }
 
-    public CustomConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomConstraintLayout(final Context context, final AttributeSet attrs,
+                                  final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         mPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
+        addChangeListener();
+    }
+
+    private void addChangeListener() {
         this.addOnLayoutChangeListener((v, left, top, right, bottom,
                                         oldLeft, oldTop, oldRight, oldBottom) -> {
             if (isMoving()) {
@@ -81,14 +67,14 @@ public class CustomConstraintLayout extends ConstraintLayout {
 
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean onInterceptTouchEvent(final MotionEvent ev) {
         Log.i("drag", "Was in interceptTouch");
         return mDragHelper.shouldInterceptTouchEvent(ev)
                 || super.onInterceptTouchEvent(ev);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(final MotionEvent ev) {
         Log.i("drag", "Was in ontouchevent");
         mDragHelper.processTouchEvent(ev);
         return super.onTouchEvent(ev) || true;
@@ -125,7 +111,7 @@ public class CustomConstraintLayout extends ConstraintLayout {
 
     private class DragHelperCallback extends ViewDragHelper.Callback {
         @Override
-        public boolean tryCaptureView(View child, int pointerId) {
+        public boolean tryCaptureView(final View child, final int pointerId) {
             Log.i("drag", "Was in try capture view");
 
             return child.getId() == R.id.hourlyRecyclerView;
@@ -139,7 +125,7 @@ public class CustomConstraintLayout extends ConstraintLayout {
          * @return range of vertical motion in pixels
          */
         @Override
-        public int getViewVerticalDragRange(View child) {
+        public int getViewVerticalDragRange(final View child) {
             return getMeasuredHeight();
         }
 
@@ -154,9 +140,11 @@ public class CustomConstraintLayout extends ConstraintLayout {
          * @return The new clamped position for top
          */
         @Override
-        public int clampViewPositionVertical(View child, int top, int dy) {
+        public int clampViewPositionVertical(final View child,
+                                             final int top,
+                                             final int dy) {
             Log.i("drag", "Was in clamp position");
-            int defaultBottom = Math.round(getMeasuredHeight() * 0.7f);
+            final int defaultBottom = Math.round(getMeasuredHeight() * 0.7f);
             return Math.min(Math.max(top, getPaddingTop()),
                     (int) mPreferences.getFloat(RECYCLER_BOTTOM_LIMIT, defaultBottom));
         }

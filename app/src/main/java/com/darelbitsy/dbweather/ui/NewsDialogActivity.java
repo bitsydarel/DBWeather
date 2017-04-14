@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetImageDownloader;
-import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
 import com.darelbitsy.dbweather.model.news.Article;
@@ -41,7 +40,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.NEWS_DATA_KE
 public class NewsDialogActivity extends AppCompatActivity {
     private ImageView newsImage;
     private ProgressBar newsProgressBar;
-    private CompositeDisposable subscriptions = new CompositeDisposable();
+    private final CompositeDisposable subscriptions = new CompositeDisposable();
 
 
     private class GetNewsImage extends DisposableSingleObserver<Bitmap> {
@@ -124,8 +123,6 @@ public class NewsDialogActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        MemoryLeakChecker.getRefWatcher(this)
-                .watch(this);
         super.onDestroy();
     }
 }

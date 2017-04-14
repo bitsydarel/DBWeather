@@ -22,7 +22,6 @@ import com.darelbitsy.dbweather.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.ColorManager;
-import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
@@ -140,7 +139,10 @@ public class WeatherFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
+
         mCurrentView = inflater.inflate(R.layout.current_weather_layout, container, false);
         ButterKnife.bind(this, mCurrentView);
         AndroidThreeTen.init(getActivity());
@@ -183,7 +185,6 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onDestroyView() {
         subscriptions.dispose();
-        MemoryLeakChecker.getRefWatcher(getActivity()).watch(this);
         super.onDestroyView();
     }
 
@@ -213,7 +214,7 @@ public class WeatherFragment extends Fragment {
     /**
      *  this function Fetch the layout with the new data
      */
-    private void updateDisplay() {
+    public void updateDisplay() {
         mHandler.post(() -> {
             if (mCurrently != null) {
                 mDaySwitcherHelper.setCurrentViews(mCurrentView,
@@ -223,9 +224,10 @@ public class WeatherFragment extends Fragment {
                         mCurrently.getSunsetTime());
 
                 showFallingSnowOrRain();
-            }
-            if (mDailyData != null) {
-                mDaySwitcherHelper.showDayData(mCurrentView, WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
+
+            } else if (mDailyData != null) {
+                mDaySwitcherHelper.showDayData(mCurrentView,
+                        WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
                         mDailyData, mTimeZone);
             }
         });
@@ -289,14 +291,14 @@ public class WeatherFragment extends Fragment {
                 mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
             }
 
-            VideoView videoView = (VideoView) mCurrentView.findViewById(R.id.backgroundVideo);
+            final VideoView videoView = (VideoView) mCurrentView.findViewById(R.id.backgroundVideo);
             videoView.stopPlayback();
             videoView.setVisibility(View.GONE);
         }
     }
 
     private void updateData() {
-        boolean isNetworkAvailable = AppUtil.isNetworkAvailable(getActivity()
+        final boolean isNetworkAvailable = AppUtil.isNetworkAvailable(getActivity()
                 .getApplicationContext());
 
         if (mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)
@@ -335,8 +337,9 @@ public class WeatherFragment extends Fragment {
                         .getBackgroundColor(currently.getIcon()));
     }
 
-    public void updateDataFromActivity(final String cityName) {
+    public void updateDataFromActivity(final String cityName, final DailyData dailyData) {
         mCityName = cityName;
+        mDailyData = dailyData;
         mDaySwitcherHelper.updateCityName(cityName);
         mHandler.post(WeatherFragment.this::updateDisplay);
     }

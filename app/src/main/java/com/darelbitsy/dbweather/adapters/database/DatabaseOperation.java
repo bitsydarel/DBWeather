@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.utility.weather.WeatherUtil;
@@ -738,6 +739,20 @@ public class DatabaseOperation {
             cursor.close();
         }
         return hour;
+    }
+
+    public void removeLocationFromDatabase(final GeoName location) {
+        final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
+        final int result = writableDatabase.delete(CITIES_TABLE,
+                THE_CITY_NAME + "=?",
+                new String[]{location.getName()});
+
+        if (result == -1) {
+            Log.i(ConstantHolder.TAG, "CITY " + location.getName() + " NOT REMOVED");
+        } else {
+            Log.i(ConstantHolder.TAG, "CITY " + location.getName() + " WAS REMOVED");
+        }
+        writableDatabase.close();
     }
 
     public void addLocationToDatabase(final GeoName location) {

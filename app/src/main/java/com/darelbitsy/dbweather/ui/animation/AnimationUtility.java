@@ -4,13 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.TextView;
-
-import com.darelbitsy.dbweather.adapters.listAdapter.NewsAdapter;
 
 /**
  * Created by Darel Bitsy on 06/03/17.
@@ -20,33 +17,33 @@ import com.darelbitsy.dbweather.adapters.listAdapter.NewsAdapter;
 
 public class AnimationUtility {
     private static final int FAST_ANIMATION_DURATION = 225;
-    private static final int SLOW_ANIMATION_DURATION = 365;
 
     private AnimationUtility() {}
 
-    public static void slideTextUpThanUpdate(TextView textView, String value) {
-        AnimatorSet compositor = new AnimatorSet();
-        ObjectAnimator moveUp = ObjectAnimator.ofFloat(textView, View.TRANSLATION_Y, 200);
-        ObjectAnimator moveDown = ObjectAnimator.ofFloat(textView, View.TRANSLATION_Y, 0);
+    public static void slideTextUpThanUpdate(final TextView textView,
+                                             final String value) {
+        final AnimatorSet compositor = new AnimatorSet();
+        final ObjectAnimator moveUp = ObjectAnimator.ofFloat(textView, View.TRANSLATION_Y, 200);
+        final ObjectAnimator moveDown = ObjectAnimator.ofFloat(textView, View.TRANSLATION_Y, 0);
 
         moveUp.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(final Animator animation) {
                 textView.setText(value);
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {
+            public void onAnimationCancel(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
+            public void onAnimationRepeat(final Animator animation) {
                 //Not needed
             }
         });
@@ -56,28 +53,29 @@ public class AnimationUtility {
         compositor.start();
     }
 
-    public static void fadeTextOutUpdateThanFadeIn(TextView textView, String value) {
-        AnimatorSet compositor = new AnimatorSet();
-        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(textView, View.ALPHA, 1f);
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(textView, View.ALPHA, 0f);
+    public static void fadeTextOutUpdateThanFadeIn(final TextView textView,
+                                                   final String value) {
+        final AnimatorSet compositor = new AnimatorSet();
+        final ObjectAnimator fadeIn = ObjectAnimator.ofFloat(textView, View.ALPHA, 1f);
+        final ObjectAnimator fadeOut = ObjectAnimator.ofFloat(textView, View.ALPHA, 0f);
         fadeOut.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(final Animator animation) {
                 textView.setText(value);
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {
+            public void onAnimationCancel(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
+            public void onAnimationRepeat(final Animator animation) {
                 //Not needed
             }
         });
@@ -86,16 +84,18 @@ public class AnimationUtility {
         compositor.start();
     }
 
-    public static void rotateTextThanUpdate(TextView textView, String value) {
+    public static void rotateTextThanUpdate(final TextView textView,
+                                            final String value) {
         final boolean[] isTextSet = {false};
 
-        ObjectAnimator rotationUp = ObjectAnimator.ofFloat(textView,
+        final ObjectAnimator rotationUp = ObjectAnimator.ofFloat(textView,
                 View.ROTATION_Y,
-                0, 360).setDuration(FAST_ANIMATION_DURATION);
+                0, 360)
+                .setDuration(FAST_ANIMATION_DURATION);
 
         rotationUp.addUpdateListener(animation -> {
             if ((Float) animation.getAnimatedValue() > 100
-                    && (Float) animation.getAnimatedValue() < 200
+                    && (Float) animation.getAnimatedValue() < 360
                     && !isTextSet[0]) {
 
                 textView.setText(value);
@@ -107,35 +107,36 @@ public class AnimationUtility {
 
     }
 
-    public static void slideTextRightThanLeft(TextView textView, String value) {
-        AnimatorSet animatorSet = new AnimatorSet();
+    public static void slideTextRightThanLeft(final TextView textView,
+                                              final String value) {
+        final AnimatorSet animatorSet = new AnimatorSet();
 
-        ObjectAnimator slideRight = ObjectAnimator.ofFloat(textView,
+        final ObjectAnimator slideRight = ObjectAnimator.ofFloat(textView,
                 View.TRANSLATION_X,
                 200f);
 
-        ObjectAnimator slideLeft = ObjectAnimator.ofFloat(textView,
+        final ObjectAnimator slideLeft = ObjectAnimator.ofFloat(textView,
                 View.TRANSLATION_X,
                 0f);
 
         slideRight.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(final Animator animation) {
                 textView.setText(value);
             }
 
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {
+            public void onAnimationCancel(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
+            public void onAnimationRepeat(final Animator animation) {
                 //Not needed
             }
         });
@@ -147,34 +148,35 @@ public class AnimationUtility {
         animatorSet.start();
     }
 
-    public static void slideTextLeftThanRight(TextView textView, String value) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator slideLeft = ObjectAnimator.ofFloat(textView,
+    public static void slideTextLeftThanRight(final TextView textView,
+                                              final String value) {
+        final AnimatorSet animatorSet = new AnimatorSet();
+        final ObjectAnimator slideLeft = ObjectAnimator.ofFloat(textView,
                 View.TRANSLATION_X,
                 -200f);
 
-        ObjectAnimator slideRight = ObjectAnimator.ofFloat(textView,
+        final ObjectAnimator slideRight = ObjectAnimator.ofFloat(textView,
                 View.TRANSLATION_X,
                 0f);
 
         slideLeft.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(final Animator animation) {
                 textView.setText(value);
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {
+            public void onAnimationCancel(final Animator animation) {
                 //Not needed
             }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
+            public void onAnimationRepeat(final Animator animation) {
                 //Not needed
             }
         });
@@ -186,12 +188,12 @@ public class AnimationUtility {
         animatorSet.start();
     }
 
-    public static AnimatorSet dayButtonAnimation(View view) {
-        AnimatorSet animatorSet = new AnimatorSet();
+    public static AnimatorSet dayButtonAnimation(final View view) {
+        final AnimatorSet animatorSet = new AnimatorSet();
 
         final float scaleX = view.getScaleX();
 
-        ObjectAnimator scaleUp = ObjectAnimator.ofFloat(view,
+        final ObjectAnimator scaleUp = ObjectAnimator.ofFloat(view,
                 View.SCALE_X,
                 scaleX <= 1.0f ? 1.5f : 1.0f);
 

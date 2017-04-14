@@ -175,7 +175,10 @@ public class DaySwitcherHelper {
      * @param day the Day
      * @param timeZone the user timeZone
      */
-    public void showDayData(View view, String dayName, DailyData day, String timeZone) {
+    public void showDayData(final View view,
+                            final String dayName,
+                            final DailyData day,
+                            final String timeZone) {
 
         //Setting the location to the current location of the device because the api only provide the timezone as location
         AnimationUtility.fadeTextOutUpdateThanFadeIn(mLocationLabel, mCityName);
