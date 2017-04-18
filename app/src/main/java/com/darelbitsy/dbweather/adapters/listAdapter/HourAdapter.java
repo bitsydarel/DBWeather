@@ -35,7 +35,8 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
     }
 
     @Override
-    public HourViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HourViewHolder onCreateViewHolder(final ViewGroup parent,
+                                             final int viewType) {
 
         return new HourViewHolder(LayoutInflater
                 .from(parent.getContext())
@@ -43,7 +44,8 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
     }
 
     @Override
-    public void onBindViewHolder(HourViewHolder holder, int position) {
+    public void onBindViewHolder(final HourViewHolder holder,
+                                 final int position) {
         holder.bindHour(mHours.get(position));
     }
 
@@ -77,6 +79,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
 
         HourViewHolder(final View itemView) {
             super(itemView);
+
             itemView.setOnClickListener(this);
             if (mContext == null) { mContext = itemView.getContext(); }
 
@@ -160,6 +163,7 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
          */
         @Override
         public void onClick(final View v) {
+
             if (mainLayout.getVisibility() == View.GONE) {
                 mainLayout.setVisibility(View.VISIBLE);
                 hourlyBorderLine.setVisibility(View.GONE);

@@ -1,17 +1,24 @@
 package com.darelbitsy.dbweather.ui;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -19,6 +26,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
@@ -30,8 +38,10 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.CustomFragmentAdapter;
@@ -41,7 +51,6 @@ import com.darelbitsy.dbweather.adapters.listAdapter.NewsAdapter;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetNewsesHelper;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.helper.ColorManager;
-import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.services.LocationTracker;
 import com.darelbitsy.dbweather.helper.utility.AppUtil;
@@ -52,11 +61,9 @@ import com.darelbitsy.dbweather.model.weather.Weather;
 import com.darelbitsy.dbweather.ui.animation.CubeOutTransformer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,6 +77,7 @@ import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.FIRST_RUN;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.IS_FROM_CITY_KEY;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
+import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.PREFS_NAME;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
 import static com.darelbitsy.dbweather.helper.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
@@ -137,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
     private final ColorManager mColorPicker = ColorManager.newInstance();
+    private SubMenu locationSubMenu;
 
 
     private void respondToMenuItemClick(final MenuItem item) {
@@ -165,27 +174,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             final double latitude = location.getLatitude();
             final double longitude = location.getLongitude();
 
-            subscriptions.add(GetWeatherHelper.newInstance(this)
-                    .getObservableWeatherForCityFromApi(String.format(Locale.getDefault(),
-                            "%s, %s", location.getName(), location.getCountryName()),
-                            latitude,
-                            longitude)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new MainActivityWeatherObserver()));
+            final DialogInterface.OnClickListener displayListener = (dialog, which) -> {
+                subscriptions.add(GetWeatherHelper.newInstance(this)
+                        .getObservableWeatherForCityFromApi(String.format(Locale.getDefault(),
+                                "%s, %s", location.getName(), location.getCountryName()),
+                                latitude,
+                                longitude)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new MainActivityWeatherObserver()));
 
-            sharedPreferences.edit()
-                    .putBoolean(IS_FROM_CITY_KEY, true)
-                    .apply();
+                sharedPreferences.edit()
+                        .putBoolean(IS_FROM_CITY_KEY, true)
+                        .apply();
 
-            sharedPreferences.edit()
-                    .putLong(SELECTED_CITY_LATITUDE, Double.doubleToRawLongBits(latitude))
-                    .apply();
+                sharedPreferences.edit()
+                        .putLong(SELECTED_CITY_LATITUDE, Double.doubleToRawLongBits(latitude))
+                        .apply();
 
-            sharedPreferences.edit()
-                    .putLong(SELECTED_CITY_LONGITUDE, Double.doubleToRawLongBits(longitude))
-                    .apply();
+                sharedPreferences.edit()
+                        .putLong(SELECTED_CITY_LONGITUDE, Double.doubleToRawLongBits(longitude))
+                        .apply();
+            };
+
             mDrawerLayout.closeDrawers();
+
+            new AlertDialog.Builder(this)
+                    .setMessage(String.format(Locale.getDefault(),
+                            MainActivity.this.getApplicationContext().getString(R.string.removeOrDisplay),
+                            location.getName()))
+                    .setNegativeButton(R.string.remove, (dialog, which) -> {
+                        locationSubMenu.removeItem(id);
+                        mDatabase.removeLocationFromDatabase(location);
+                        subscriptions.add(mWeatherObservable
+                                .subscribeWith(new MainActivityWeatherObserver()));
+
+                        sharedPreferences.edit()
+                                .putBoolean(IS_FROM_CITY_KEY, false)
+                                .apply();
+
+                    })
+                    .setPositiveButton(R.string.display, displayListener)
+                    .create()
+                    .show();
         }
     }
 
@@ -260,6 +291,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.weatherToolbar);
         setSupportActionBar(toolbar);
+
+        final ImageButton shareButton = (ImageButton) findViewById(R.id.shareIcon);
+
+        shareButton.setOnClickListener(view -> {
+            final AnimatorSet animatorSet = new AnimatorSet().setDuration(225);
+            final ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 1.0f, 0.0f);
+            final ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 1.0f, 0.0f);
+
+            scaleX.setRepeatMode(ValueAnimator.REVERSE);
+            scaleY.setRepeatMode(ValueAnimator.REVERSE);
+            scaleX.setRepeatCount(1);
+            scaleY.setRepeatCount(1);
+
+            animatorSet.playTogether(scaleX, scaleY);
+            animatorSet.start();
+            shareWeatherInfo();
+        });
+
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         mainLayout = findViewById(R.id.dbweather_main_layout);
@@ -272,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .observeOn(AndroidSchedulers.mainThread());
 
         AppUtil.askLocationPermIfNeeded(this);
-        AppUtil.askAccountInfoPermIfNeeded(this);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         
@@ -355,47 +403,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    //TODO: need this method and implements share
     private void shareWeatherInfo() {
         if (AppUtil.isWritePermissionOn(getApplicationContext())) {
-            AppUtil.askWriteToExtPermIfNeeded(this);
-
-        } else {
-            final Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-            } else {
-                shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            }
             try {
-                final Bitmap image = takeScreenShot();
+                shareScreenShot();
+
             } catch (final IOException e) {
                 Log.i(ConstantHolder.TAG, "Error in share image: " + e.getMessage());
             }
+
+        } else {
+            AppUtil.askWriteToExtPermIfNeeded(this);
         }
     }
 
-    private Bitmap takeScreenShot() throws IOException {
-        FileOutputStream outputStream = null;
+    private void shareScreenShot() throws IOException {
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        } else {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+
+        shareIntent.setType("image/jpeg");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, takeScreenShot());
+
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.send_to)));
+    }
+
+    private Uri takeScreenShot() throws IOException {
+        OutputStream outputStream = null;
 
         if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
             try {
-                final String pathToExternalStorage = String.format(Locale.getDefault(),
-                        "%s/%s.jpg",
-                        Environment.getExternalStorageDirectory().toString(), android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", new Date()));
+                final View viewToShot = getWindow().getDecorView().getRootView();
+                final boolean defaultDrawing = viewToShot.isDrawingCacheEnabled();
+                viewToShot.setDrawingCacheEnabled(true);
+                final Bitmap screenShot = Bitmap.createBitmap(viewToShot.getDrawingCache());
+                viewToShot.setDrawingCacheEnabled(defaultDrawing);
 
+                final ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "db_weather");
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                final Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        values);
 
-            final View viewToShot = getWindow().getDecorView().getRootView();
-            final boolean defaultDrawing = viewToShot.isDrawingCacheEnabled();
-            viewToShot.setDrawingCacheEnabled(true);
-            final Bitmap screenShot = Bitmap.createBitmap(viewToShot.getDrawingCache());
-            viewToShot.setDrawingCacheEnabled(defaultDrawing);
+                if (uri != null) {
+                    outputStream = getContentResolver().openOutputStream(uri);
+                    screenShot.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    return uri;
 
-            outputStream = new FileOutputStream(new File(pathToExternalStorage));
-            screenShot.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            outputStream.flush();
-
-            return screenShot;
+                }
 
             } catch (final IOException e) {
                 Log.i(ConstantHolder.TAG, "Error while Creating screenshot File: " + e.getMessage());
@@ -447,7 +506,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         final Menu menu = navigationView.getMenu();
-        final Menu locationSubMenu = menu.findItem(R.id.location_config_id)
+
+        locationSubMenu = menu.findItem(R.id.location_config_id)
                 .setOnMenuItemClickListener(this)
                 .setEnabled(true)
                 .getSubMenu();
@@ -503,7 +563,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .edit()
                 .putBoolean(IS_FROM_CITY_KEY, false)
                 .apply();
-        subscriptions.dispose();
     }
 
     @Override
@@ -515,7 +574,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+        super.onStop();
         subscriptions.dispose();
         if (mLocationBroadcast != null) {
             unregisterReceiver(mLocationBroadcast);
@@ -524,8 +584,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .edit()
                 .putBoolean(IS_FROM_CITY_KEY, false)
                 .apply();
+
         cleanCache();
-        MemoryLeakChecker.getRefWatcher(this);
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 
@@ -562,6 +626,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             AppUtil.setAccountPermissionValue(getApplicationContext());
 
         }
+
+        if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+                && (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+
+            AppUtil.setWritePermissionValue(getApplicationContext());
+            shareWeatherInfo();
+        }
+        AppUtil.askAccountInfoPermIfNeeded(this);
         setupNewsScrollView();
     }
 

@@ -19,7 +19,6 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.adapters.database.DatabaseOperation;
 import com.darelbitsy.dbweather.adapters.listAdapter.LocationListAdapter;
 import com.darelbitsy.dbweather.controller.api.adapters.helper.GeoNamesHelper;
-import com.darelbitsy.dbweather.helper.MemoryLeakChecker;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.provider.LocationSuggestionProvider;
 import com.darelbitsy.dbweather.model.geonames.GeoName;
@@ -115,7 +114,6 @@ public class AddLocationActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         mCompositeDisposable.dispose();
-        MemoryLeakChecker.getRefWatcher(this);
         super.onDestroy();
     }
 

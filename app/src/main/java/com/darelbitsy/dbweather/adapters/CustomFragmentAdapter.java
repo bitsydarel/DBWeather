@@ -79,13 +79,19 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
                         && count == (currentDayIndex + 1)) {
 
                     listFragments[1] = day;
+                    if (listOfFragments[1] != null) {
+                        listOfFragments[1].updateDataFromActivity(mWeather.getCityName(), day);
+                    }
 
                     count++;
                     isTomorrowSet = true;
 
                 } else if (isTodaySet && isTomorrowSet) {
-                    listFragments[count++] = day;
-
+                    listFragments[count] = day;
+                    if (listOfFragments[count] != null) {
+                        listOfFragments[count].updateDataFromActivity(mWeather.getCityName(), day);
+                    }
+                    count++;
                 }
             }
         }
@@ -97,63 +103,104 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
      * @param position of the fragment to get
      */
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(final int position) {
         switch (position) {
             case 0:
-                final WeatherFragment fragment =
-                        WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
-                fragment.setAdapter(this);
-                listOfFragments[0] = fragment;
-                return fragment;
+                if (listOfFragments[0] == null) {
+                    final WeatherFragment fragment =
+                            WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
+                    fragment.setAdapter(this);
+                    listOfFragments[0] = fragment;
+
+                } else {
+                    listOfFragments[0]
+                            .updateDataFromActivity(mCurrently, mWeather.getCityName());
+                }
+                return listOfFragments[0];
 
             case 1:
-                final WeatherFragment dayFragment1 =
-                        WeatherFragment.newInstance(listOfData[1], mWeather.getCityName());
-                dayFragment1.setAdapter(this);
-                listOfFragments[1] = dayFragment1;
-                return dayFragment1;
+                if (listOfFragments[1] == null) {
+                    final WeatherFragment dayFragment1 =
+                            WeatherFragment.newInstance(listOfData[1], mWeather.getCityName());
+                    dayFragment1.setAdapter(this);
+                    listOfFragments[1] = dayFragment1;
+                } else {
+                    listOfFragments[1]
+                            .updateDataFromActivity(mWeather.getCityName(), listOfData[1]);
+                }
+                return listOfFragments[1];
 
             case 2:
-                final WeatherFragment dayFragment2 =
-                        WeatherFragment.newInstance(listOfData[2], mWeather.getCityName());
-                dayFragment2.setAdapter(this);
-                listOfFragments[2] = dayFragment2;
-                return dayFragment2;
+                if (listOfFragments[2] == null) {
+                    final WeatherFragment dayFragment2 =
+                            WeatherFragment.newInstance(listOfData[2], mWeather.getCityName());
+                    dayFragment2.setAdapter(this);
+                    listOfFragments[2] = dayFragment2;
+                } else {
+                    listOfFragments[2].updateDataFromActivity(mWeather.getCityName(), listOfData[2]);
+                }
+
+                return listOfFragments[2];
 
             case 3:
-                final WeatherFragment dayFragment3 =
-                        WeatherFragment.newInstance(listOfData[3], mWeather.getCityName());
-                dayFragment3.setAdapter(this);
-                listOfFragments[3] = dayFragment3;
-                return dayFragment3;
+                if (listOfFragments[3] == null) {
+                    final WeatherFragment dayFragment3 =
+                            WeatherFragment.newInstance(listOfData[3], mWeather.getCityName());
+                    dayFragment3.setAdapter(this);
+                    listOfFragments[3] = dayFragment3;
+                } else {
+                    listOfFragments[3].updateDataFromActivity(mWeather.getCityName(), listOfData[3]);
+                }
+
+                return listOfFragments[3];
 
             case 4:
-                final WeatherFragment dayFragment4 =
-                        WeatherFragment.newInstance(listOfData[4], mWeather.getCityName());
-                dayFragment4.setAdapter(this);
-                listOfFragments[4] = dayFragment4;
-                return dayFragment4;
+                if (listOfFragments[4] == null) {
+                    final WeatherFragment dayFragment4 =
+                            WeatherFragment.newInstance(listOfData[4], mWeather.getCityName());
+                    dayFragment4.setAdapter(this);
+                    listOfFragments[4] = dayFragment4;
+                } else {
+                    listOfFragments[4].updateDataFromActivity(mWeather.getCityName(), listOfData[4]);
+                }
+
+                return listOfFragments[4];
 
             case 5:
-                final WeatherFragment dayFragment5 =
-                        WeatherFragment.newInstance(listOfData[5], mWeather.getCityName());
-                dayFragment5.setAdapter(this);
-                listOfFragments[5] = dayFragment5;
-                return dayFragment5;
+                if (listOfFragments[5] == null) {
+                    final WeatherFragment dayFragment5 =
+                            WeatherFragment.newInstance(listOfData[5], mWeather.getCityName());
+                    dayFragment5.setAdapter(this);
+                    listOfFragments[5] = dayFragment5;
+                } else {
+                    listOfFragments[5].updateDataFromActivity(mWeather.getCityName(), listOfData[5]);
+                }
+
+                return listOfFragments[5];
 
             case 6:
-                final WeatherFragment dayFragment6 =
-                        WeatherFragment.newInstance(listOfData[6], mWeather.getCityName());
-                dayFragment6.setAdapter(this);
-                listOfFragments[6] = dayFragment6;
-                return dayFragment6;
+                if (listOfFragments[6] == null) {
+                    final WeatherFragment dayFragment6 =
+                            WeatherFragment.newInstance(listOfData[6], mWeather.getCityName());
+                    dayFragment6.setAdapter(this);
+                    listOfFragments[6] = dayFragment6;
+
+                } else {
+                    listOfFragments[6].updateDataFromActivity(mWeather.getCityName(), listOfData[6]);
+                }
+
+                return listOfFragments[6];
 
             default:
-                final WeatherFragment defaultFragment =
-                        WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
-                defaultFragment.setAdapter(this);
-                listOfFragments[0] = defaultFragment;
-                return defaultFragment;
+                if (listOfFragments[0] == null) {
+                    final WeatherFragment defaultFragment =
+                            WeatherFragment.newInstance(mCurrently, mWeather.getCityName());
+                    defaultFragment.setAdapter(this);
+                    listOfFragments[0] = defaultFragment;
+                } else {
+                    listOfFragments[0].updateDataFromActivity(mCurrently, mWeather.getCityName());
+                }
+                return listOfFragments[0];
         }
     }
 
@@ -169,22 +216,14 @@ public class CustomFragmentAdapter extends android.support.v4.app.FragmentPagerA
         mWeather = weatherData;
         mCurrently = weatherData.getCurrently();
 
-        // Moved  listOfFragments.length call out of the loop to local variable listOfFragments_length
-        // So it's won't run this check every time
-        final int listOfFragments_length = listOfFragments.length;
-
-        for (int index = 0; index < listOfFragments_length; index++) {
-            if (listOfFragments[index] != null) {
-                if (index == 0) {
-                    listOfFragments[index].updateDataFromActivity(mCurrently, weatherData.getCityName());
-                } else {
-                    listOfFragments[index].updateDataFromActivity(weatherData.getCityName());
-                }
-            }
+        if (listOfFragments[0] != null) {
+            listOfFragments[0].updateDataFromActivity(mCurrently, weatherData.getCityName());
         }
 
         setupDailyData(weatherData.getDaily().getData(),
                 weatherData.getTimezone(),
                 listOfData);
+
+        notifyDataSetChanged();
     }
 }
