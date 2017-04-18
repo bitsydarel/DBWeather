@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.adapters;
+package com.darelbitsy.dbweather.presenter;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

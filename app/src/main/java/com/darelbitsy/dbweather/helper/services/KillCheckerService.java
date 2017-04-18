@@ -10,7 +10,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
+import com.darelbitsy.dbweather.presenter.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.receiver.ServiceRestart;

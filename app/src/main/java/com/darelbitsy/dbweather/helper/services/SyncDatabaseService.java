@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
+import com.darelbitsy.dbweather.presenter.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.receiver.SyncDataReceiver;
 

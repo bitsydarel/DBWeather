@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
+import com.darelbitsy.dbweather.presenter.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
 
 /**

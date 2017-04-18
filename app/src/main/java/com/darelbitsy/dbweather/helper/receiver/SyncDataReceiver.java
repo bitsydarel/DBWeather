@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
+import com.darelbitsy.dbweather.presenter.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.services.SyncDatabaseService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
