@@ -37,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@id/newsRecyclerView"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.darelbitsy.dbweather.ui.helper.CustomConstraintLayout
+        <com.darelbitsy.dbweather.views.customviews.CustomConstraintLayout
             android:id="@+id/mainCoordinatorLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -69,7 +69,7 @@
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="vertical"
                 tools:listitem="@layout/hourly_list_item"/>
-        </com.darelbitsy.dbweather.ui.helper.CustomConstraintLayout>
+        </com.darelbitsy.dbweather.views.customviews.CustomConstraintLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/navigationView"
