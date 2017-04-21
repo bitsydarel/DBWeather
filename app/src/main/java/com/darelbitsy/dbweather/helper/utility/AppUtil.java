@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.presenter.FeedDataInForeground;
+import com.darelbitsy.dbweather.adapters.FeedDataInForeground;
 import com.darelbitsy.dbweather.helper.AlarmConfigHelper;
 import com.darelbitsy.dbweather.helper.holder.ConstantHolder;
 import com.darelbitsy.dbweather.helper.receiver.AlarmWeatherReceiver;
