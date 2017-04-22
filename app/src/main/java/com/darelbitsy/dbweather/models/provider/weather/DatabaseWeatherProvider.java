@@ -16,7 +16,7 @@ import io.reactivex.Single;
  * Weather provider from database
  */
 
-public class DatabaseWeatherProvider implements WeatherProvider<Weather> {
+public class DatabaseWeatherProvider implements IWeatherProvider<Weather> {
 
     private final DatabaseOperation database;
 

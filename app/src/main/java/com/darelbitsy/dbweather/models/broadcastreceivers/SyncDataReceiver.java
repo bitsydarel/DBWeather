@@ -13,8 +13,8 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
  */
 public class SyncDataReceiver extends WakefulBroadcastReceiver {
     @Override
-    public void onReceive(Context context, Intent intent) {
-        Intent service = new Intent(context, SyncDatabaseService.class);
+    public void onReceive(final Context context, final Intent intent) {
+        final Intent service = new Intent(context, SyncDatabaseService.class);
         AndroidThreeTen.init(context);
         FeedDataInForeground.setNextSync(context);
         startWakefulService(context, service);

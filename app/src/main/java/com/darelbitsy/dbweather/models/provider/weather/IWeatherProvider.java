@@ -8,7 +8,7 @@ import io.reactivex.Single;
  * Created by Darel Bitsy on 22/04/17.
  */
 
-interface WeatherProvider<T> {
+interface IWeatherProvider<T> {
     Single<T> getWeather();
 
     Single<T> getWeatherForCity(final String cityName,

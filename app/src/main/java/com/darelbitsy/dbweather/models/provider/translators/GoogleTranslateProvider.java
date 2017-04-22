@@ -18,7 +18,7 @@ import java.util.Locale;
  * Google Translate Provider
  */
 
-public class GoogleTranslateProvider implements TranslateProvider<String> {
+public class GoogleTranslateProvider implements ITranslateProvider<String> {
     private static final String translateApiKey = "AIzaSyAcFFnbD94RuNav543XpwfrPh0kOznIR3c";
     private final String mUserLanguage = Locale.getDefault().getLanguage();
     private final Context mApplicationContext;

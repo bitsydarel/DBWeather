@@ -23,49 +23,57 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
  */
 public class ServiceRestart extends BroadcastReceiver {
     @Override
-    public void onReceive(Context context, Intent intent) {
-        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(FLAG_KEEP_SCREEN_ON | ACQUIRE_CAUSES_WAKEUP | ON_AFTER_RELEASE,
+    public void onReceive(final Context context, final Intent intent) {
+        final PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        final PowerManager.WakeLock wakeLock = powerManager.newWakeLock(FLAG_KEEP_SCREEN_ON | ACQUIRE_CAUSES_WAKEUP | ON_AFTER_RELEASE,
                 "notification_lock");
 
         wakeLock.acquire(900000);
 
-        Intent serviceReschedule = new Intent(context, ServiceRestart.class);
-        serviceReschedule.setFlags(START_FLAG_REDELIVERY);
-        AndroidThreeTen.init(context);
+        try {
 
-        PendingIntent servicePendingIntent = PendingIntent.getBroadcast(context,
-                7130,
-                serviceReschedule,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+            final Intent serviceReschedule = new Intent(context, ServiceRestart.class);
+            serviceReschedule.setFlags(START_FLAG_REDELIVERY);
+            AndroidThreeTen.init(context);
 
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            final PendingIntent servicePendingIntent = PendingIntent.getBroadcast(context,
+                    7130,
+                    serviceReschedule,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis()+600000,
-                    servicePendingIntent);
+            final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager
-                    .AlarmClockInfo(System.currentTimeMillis()+300000,
-                    servicePendingIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis() + 600000,
+                        servicePendingIntent);
 
-            alarmManager.setAlarmClock(alarmClockInfo, servicePendingIntent);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                final AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager
+                        .AlarmClockInfo(System.currentTimeMillis() + 300000,
+                        servicePendingIntent);
 
-        } else  if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis()+600000,
-                    servicePendingIntent);
+                alarmManager.setAlarmClock(alarmClockInfo, servicePendingIntent);
 
-        } else {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis()+600000,
-                    AlarmManager.INTERVAL_HOUR,
-                    servicePendingIntent);
+            } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis() + 600000,
+                        servicePendingIntent);
+
+            } else {
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis() + 600000,
+                        AlarmManager.INTERVAL_HOUR,
+                        servicePendingIntent);
+            }
+
+            Log.i(ConstantHolder.TAG, "Kill Checker Service rescheduled");
+
+        } catch (final Exception e) {
+            Log.i(ConstantHolder.TAG, "Error occurred : " + e.getMessage());
+
+        } finally {
+            wakeLock.release();
         }
-
-        Log.i(ConstantHolder.TAG, "Kill Checker Service rescheduled");
-        wakeLock.release();
     }
 }

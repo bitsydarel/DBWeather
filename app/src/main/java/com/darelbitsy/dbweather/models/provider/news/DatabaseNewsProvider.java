@@ -14,7 +14,7 @@ import io.reactivex.Single;
  * Created by Darel Bitsy on 22/04/17.
  */
 
-public class DatabaseNewsProvider implements NewsProvider<List<Article>> {
+public class DatabaseNewsProvider implements INewsProvider<List<Article>> {
 
     private final DatabaseOperation mDatabaseOperation;
 

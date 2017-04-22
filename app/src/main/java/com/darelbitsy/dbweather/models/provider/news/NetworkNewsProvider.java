@@ -33,7 +33,7 @@ import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
  * News Provider by Network
  */
 
-public class NetworkNewsProvider implements NewsProvider<List<Article>> {
+public class NetworkNewsProvider implements INewsProvider<List<Article>> {
 
     private final Context mApplicationContext;
     private final DatabaseOperation mDatabaseOperation;

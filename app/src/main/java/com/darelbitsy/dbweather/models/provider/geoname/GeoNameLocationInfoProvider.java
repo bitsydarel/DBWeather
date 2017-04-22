@@ -1,6 +1,7 @@
 package com.darelbitsy.dbweather.models.provider.geoname;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.darelbitsy.dbweather.models.api.adapters.network.GeoNamesAdapter;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
@@ -11,9 +12,11 @@ import io.reactivex.Single;
 
 /**
  * Created by Darel Bitsy on 22/04/17.
+ * Location provider
+ * with help of GeoName Api
  */
 
-public class GeoNameLocationInfoProvider implements LocationInfoProvider<List<GeoName>> {
+public class GeoNameLocationInfoProvider implements ILocationInfoProvider<List<GeoName>> {
     private final GeoNamesAdapter geoNamesAdapter;
 
     public GeoNameLocationInfoProvider(final Context context) {
@@ -21,7 +24,7 @@ public class GeoNameLocationInfoProvider implements LocationInfoProvider<List<Ge
     }
 
     @Override
-    public Single<List<GeoName>> getLocation(final String locationName) {
+    public Single<List<GeoName>> getLocation(@NonNull final String locationName) {
         return Single.create(emitter -> {
             try {
                 if (!emitter.isDisposed()) {

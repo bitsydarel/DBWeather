@@ -17,7 +17,7 @@ import retrofit2.Response;
  * MyMemoryTranslate api Provider
  */
 
-public class MyMemoryTranslateProvider implements TranslateProvider<String> {
+public class MyMemoryTranslateProvider implements ITranslateProvider<String> {
 
     private final MyMemoryTranslateRestAdapter mMyMemoryTranslateRestAdapter;
     private final String languagePair = String.format(Locale.ENGLISH,

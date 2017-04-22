@@ -15,6 +15,7 @@ import android.util.Log;
 import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.models.helper.AlarmConfigHelper;
 import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
 import com.darelbitsy.dbweather.models.utility.AppUtil;
 import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
@@ -49,7 +50,7 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
 
     private class GetWeather extends DisposableSingleObserver<Weather> {
         @Override
-        public void onSuccess(Weather weather) {
+        public void onSuccess(final Weather weather) {
             notificationIntent = new Intent(mContext, NotificationActivity.class);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -64,7 +65,7 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
                     " Summary: " + weather.getCurrently().getSummary() +
                     " Temperature: " + weather.getCurrently().getTemperature());
 
-            Bundle data = new Bundle();
+            final Bundle data = new Bundle();
             data.putString(NOTIF_ICON, weather.getCurrently().getIcon());
             data.putString(NOTIF_SUMMARY, weather.getCurrently().getSummary());
             data.putInt(NOTIF_TEMPERATURE, WeatherUtil.getTemperatureInInt(weather.getCurrently().getTemperature()));
@@ -78,13 +79,13 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
         }
 
         @Override
-        public void onError(Throwable e) {
+        public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error while setting up the notification");
         }
     }
 
     private void setNotificationWithoutNetwork() {
-        HourlyData hour = mDatabase.getNotificationHour(System.currentTimeMillis(),
+        final HourlyData hour = mDatabase.getNotificationHour(System.currentTimeMillis(),
                 mDatabase.getWeatherData().getTimezone());
 
         mNotifAdvice = new NotificationHelper(mContext,
@@ -97,7 +98,7 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
                 " Summary: " + hour.getSummary() +
                 " Temperature: " + hour.getTemperature());
 
-        Bundle data = new Bundle();
+        final Bundle data = new Bundle();
         data.putString(NOTIF_ICON, hour.getIcon());
         data.putString(NOTIF_SUMMARY, hour.getSummary());
         data.putInt(NOTIF_TEMPERATURE,
@@ -113,41 +114,48 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(FLAG_KEEP_SCREEN_ON | ACQUIRE_CAUSES_WAKEUP | ON_AFTER_RELEASE,
+    public void onReceive(final Context context, final Intent intent) {
+        final PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        final PowerManager.WakeLock wakeLock = powerManager.newWakeLock(FLAG_KEEP_SCREEN_ON | ACQUIRE_CAUSES_WAKEUP | ON_AFTER_RELEASE,
                 "notification_lock");
 
         wakeLock.acquire(900000);
 
-        Log.i("RECEIVER", "Inside the broadcast receiver");
-        mContext = context;
-        mDatabase = DatabaseOperation.newInstance(context);
+        try {
+            Log.i("RECEIVER", "Inside the broadcast receiver");
+            mContext = context;
+            mDatabase = DatabaseOperation.newInstance(context);
 
-        if (AppUtil.isNetworkAvailable(context)) {
-            GetWeatherHelper.newInstance(context)
-                    .getObservableWeatherFromApi(mDatabase)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new GetWeather());
+            if (AppUtil.isNetworkAvailable(context)) {
+                new NetworkWeatherProvider(context)
+                        .getWeather()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new GetWeather());
 
-        } else { setNotificationWithoutNetwork(); }
+            } else { setNotificationWithoutNetwork(); }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            new AlarmConfigHelper(context)
-                    .setClothingNotificationAlarm();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                new AlarmConfigHelper(context)
+                        .setClothingNotificationAlarm();
+            }
+
+        } catch (final Exception e) {
+            Log.i(ConstantHolder.TAG, "Error in weather receiver : " + e.getMessage());
+
+        } finally {
+            wakeLock.release();
         }
-        wakeLock.release();
 
     }
 
 
-    private void setNotification(String iconName, String summary) {
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
+    private void setNotification(final String iconName, final String summary) {
+        final NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent barNotification = new Intent(mContext, NotificationActivity.class);
+        final Intent barNotification = new Intent(mContext, NotificationActivity.class);
 
-        Bundle data = new Bundle();
+        final Bundle data = new Bundle();
         data.putString(NOTIF_ICON, iconName);
         data.putString(NOTIF_SUMMARY, summary);
         data.putInt(NOTIF_TEMPERATURE, mTemperature);
@@ -157,12 +165,12 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
         barNotification.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
+        final PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
                 7129,
                 barNotification,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notificationBuilder =  new NotificationCompat.Builder(mContext)
+        final NotificationCompat.Builder notificationBuilder =  new NotificationCompat.Builder(mContext)
                 .setSmallIcon(WeatherUtil.getIconId(iconName))
                 .setContentTitle(mNotifAdvice.getTitleFromIcon())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(mNotifAdvice.getDescription()))
@@ -178,6 +186,5 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
             notificationBuilder.setCategory(Notification.CATEGORY_REMINDER);
         }
         notificationManager.notify(7129, notificationBuilder.build());
-
     }
 }
