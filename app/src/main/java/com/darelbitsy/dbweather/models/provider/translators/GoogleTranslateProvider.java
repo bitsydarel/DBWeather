@@ -1,7 +1,7 @@
-package com.darelbitsy.dbweather.models.api.adapters.helper;
-
+package com.darelbitsy.dbweather.models.provider.translators;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.darelbitsy.dbweather.R;
 import com.google.api.client.json.gson.GsonFactory;
@@ -14,32 +14,34 @@ import java.security.GeneralSecurityException;
 import java.util.Locale;
 
 /**
- * Created by Darel Bitsy on 16/02/17.
- * Translate Helper class
- * it's translate all the words
+ * Created by Darel Bitsy on 22/04/17.
+ * Google Translate Provider
  */
 
-class TranslateHelper {
-    private final String translateApiKey = "AIzaSyAcFFnbD94RuNav543XpwfrPh0kOznIR3c";
+public class GoogleTranslateProvider implements TranslateProvider<String> {
+    private static final String translateApiKey = "AIzaSyAcFFnbD94RuNav543XpwfrPh0kOznIR3c";
     private final String mUserLanguage = Locale.getDefault().getLanguage();
-    private static TranslateHelper singletonTranslateHelper;
-    private final Context mContext;
+    private final Context mApplicationContext;
+    private static GoogleTranslateProvider singletonGoogleTranslator;
 
-    public static TranslateHelper newInstance(final Context context) {
-        if (singletonTranslateHelper == null) {
-            singletonTranslateHelper = new TranslateHelper(context.getApplicationContext());
+    public static GoogleTranslateProvider newInstance(final Context context) {
+        if (singletonGoogleTranslator == null) {
+            singletonGoogleTranslator = new GoogleTranslateProvider(context.getApplicationContext());
         }
-        return singletonTranslateHelper;
+
+        return singletonGoogleTranslator;
     }
 
-    private TranslateHelper(final Context context) {
-        mContext = context;
+    private GoogleTranslateProvider(final Context context) {
+        mApplicationContext = context.getApplicationContext();
     }
 
-    String translateText(final String sourceText) throws GeneralSecurityException, IOException {
+    @Override
+    public String translateText(@NonNull final String text) throws GeneralSecurityException, IOException {
+
         final ImmutableList<String> textToTranslate = ImmutableList
                 .<String>builder()
-                .add(sourceText)
+                .add(text)
                 .build();
 
         return createTranslateService()
@@ -55,7 +57,7 @@ class TranslateHelper {
         return new Translate.Builder(com.google.api.client.extensions.android.http.AndroidHttp.newCompatibleTransport(),
                 GsonFactory.getDefaultInstance(), null)
                 .setTranslateRequestInitializer(new TranslateRequestInitializer(translateApiKey))
-                .setApplicationName(mContext.getString(R.string.app_name))
+                .setApplicationName(mApplicationContext.getString(R.string.app_name))
                 .build();
     }
 }

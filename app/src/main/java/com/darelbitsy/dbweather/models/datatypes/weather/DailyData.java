@@ -123,7 +123,7 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
     @Expose
     private double ozone;
 
-    protected DailyData(Parcel in) {
+    private DailyData(final Parcel in) {
         time = in.readLong();
         summary = in.readString();
         icon = in.readString();
@@ -155,12 +155,12 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
 
     public static final Creator<DailyData> CREATOR = new Creator<DailyData>() {
         @Override
-        public DailyData createFromParcel(Parcel in) {
+        public DailyData createFromParcel(final Parcel in) {
             return new DailyData(in);
         }
 
         @Override
-        public DailyData[] newArray(int size) {
+        public DailyData[] newArray(final int size) {
             return new DailyData[size];
         }
     };

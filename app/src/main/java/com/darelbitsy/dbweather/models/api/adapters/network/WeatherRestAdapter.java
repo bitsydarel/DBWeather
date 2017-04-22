@@ -21,13 +21,25 @@ import static com.darelbitsy.dbweather.models.holder.ConstantHolder.supportedLan
  * this class manage the method to get the weather
  */
 
-public class WeatherAdapter {
+public class WeatherRestAdapter {
     private static final String WEATHER_URL = "https://api.darksky.net/";
     private static final String WEATHER_APIKEY = "07aadf598548d8bb35d6621d5e3b3c7b";
 
     private final WeatherService mWeatherService;
 
-    public WeatherAdapter(final Context context) {
+    private static WeatherRestAdapter singletonWeatherRestAdapter;
+
+
+    public static WeatherRestAdapter newInstance(final Context context) {
+        if (singletonWeatherRestAdapter == null) {
+            singletonWeatherRestAdapter =
+                    new WeatherRestAdapter(context.getApplicationContext());
+        }
+
+        return singletonWeatherRestAdapter;
+    }
+
+    private WeatherRestAdapter(final Context context) {
         final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(WEATHER_URL)
                 .addConverterFactory(GsonConverterFactory.create())

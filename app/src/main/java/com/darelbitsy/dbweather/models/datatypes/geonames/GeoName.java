@@ -1,5 +1,8 @@
 package com.darelbitsy.dbweather.models.datatypes.geonames;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -10,7 +13,7 @@ import org.simpleframework.xml.Root;
  */
 
 @Root(name = "geoname")
-public class GeoName {
+public class GeoName implements Parcelable {
 
     @Element(name = "toponymName",required = false, type = String.class)
     private String toponymName;
@@ -41,6 +44,30 @@ public class GeoName {
 
     public GeoName() {
     }
+
+    protected GeoName(Parcel in) {
+        toponymName = in.readString();
+        name = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        geonameId = in.readLong();
+        countryCode = in.readString();
+        countryName = in.readString();
+        fcl = in.readString();
+        fcode = in.readString();
+    }
+
+    public static final Creator<GeoName> CREATOR = new Creator<GeoName>() {
+        @Override
+        public GeoName createFromParcel(final Parcel in) {
+            return new GeoName(in);
+        }
+
+        @Override
+        public GeoName[] newArray(final int size) {
+            return new GeoName[size];
+        }
+    };
 
     public String getToponymName() {
         return toponymName;
@@ -112,5 +139,23 @@ public class GeoName {
 
     public void setFcode(final String fcode) {
         this.fcode = fcode;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags) {
+        dest.writeString(toponymName);
+        dest.writeString(name);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeLong(geonameId);
+        dest.writeString(countryCode);
+        dest.writeString(countryName);
+        dest.writeString(fcl);
+        dest.writeString(fcode);
     }
 }

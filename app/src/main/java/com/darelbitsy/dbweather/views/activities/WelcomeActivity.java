@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.api.adapters.helper.GetNewsesHelper;
-import com.darelbitsy.dbweather.models.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.models.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;

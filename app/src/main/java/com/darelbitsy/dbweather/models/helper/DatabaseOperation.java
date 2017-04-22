@@ -224,6 +224,7 @@ public class DatabaseOperation {
         databaseInsert.put(CURRENT_WIND_SPEED, current.getWindSpeed());
         databaseInsert.put(CURRENT_WIND_BEARING, current.getWindBearing());
         Log.i(ConstantHolder.TAG, "To DB PROBABILITY: " + current.getPrecipProbability());
+
         if(iSCurrentInserted) {
             final int result = sqLiteDatabase.update(CURRENT_TABLE_NAME,
                     databaseInsert,
@@ -258,7 +259,8 @@ public class DatabaseOperation {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
-        for (DailyData day : dailyData) {
+
+        for (final DailyData day : dailyData) {
             databaseInsert.put(DAY_TIME, day.getTime());
             databaseInsert.put(DAY_SUMMARY, day.getSummary());
             databaseInsert.put(DAY_ICON, day.getIcon());
@@ -287,8 +289,10 @@ public class DatabaseOperation {
                 Log.i(ConstantHolder.TAG, "Row "+result+ " With " + day.toString() + " ON DAYS TABLE UPDATED");
 
             } else {
+
                 final long result = sqLiteDatabase.insert(DAYS_TABLE_NAME, null, databaseInsert);
                 databaseInsert.clear();
+
                 if ( result == -1) {
                     Log.i(ConstantHolder.TAG, index.get() + " With " + day.toString() + " ON DAYS TABLE NOT INSERTED");
 
@@ -312,7 +316,8 @@ public class DatabaseOperation {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
-        for (HourlyData hourlyData : data) {
+
+        for (final HourlyData hourlyData : data) {
             databaseInsert.put(HOUR_TIME, hourlyData.getTime());
             databaseInsert.put(HOUR_SUMMARY, hourlyData.getSummary());
             databaseInsert.put(HOUR_ICON, hourlyData.getIcon());
@@ -328,6 +333,7 @@ public class DatabaseOperation {
             databaseInsert.put(HOUR_VISIBILITY, hourlyData.getVisibility());
             databaseInsert.put(HOUR_PRESSURE, hourlyData.getPressure());
             databaseInsert.put(HOUR_OZONE, hourlyData.getOzone());
+
             if (isHourInserted) {
                 final int row = sqLiteDatabase.update(HOURS_TABLE_NAME,
                         databaseInsert,
@@ -343,11 +349,13 @@ public class DatabaseOperation {
                 index.getAndIncrement();
             }
         }
+
         if (!isHourInserted) {
             isHourInserted = true;
             mEditor.putBoolean(HOURLY_INSERTED, isHourInserted);
             mEditor.commit();
         }
+
         sqLiteDatabase.close();
     }
 
@@ -355,7 +363,8 @@ public class DatabaseOperation {
         final ContentValues contentValues = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger id = new AtomicInteger(1);
-        for (MinutelyData minutelyWeather : minutelyWeatherData) {
+
+        for (final MinutelyData minutelyWeather : minutelyWeatherData) {
             contentValues.put(MINUTELY_TIME, minutelyWeather.getTime());
             contentValues.put(MINUTELY_PRECIPCHANCE, minutelyWeather.getPrecipProbability());
             contentValues.put(MINUTELY_PRECIPTYPE, minutelyWeather.getPrecipType());
@@ -392,7 +401,8 @@ public class DatabaseOperation {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
-        for (Article news : newses) {
+
+        for (final Article news : newses) {
             databaseInsert.put(NEWS_SOURCE, news.getAuthor());
             databaseInsert.put(NEWS_TITLE, news.getTitle());
 
@@ -441,6 +451,7 @@ public class DatabaseOperation {
         final Cursor databaseCursor = applicationDatabase.getReadableDatabase().rawQuery(SELECT_EVERYTHING_FROM
                 + WEATHER_TABLE, null);
         databaseCursor.moveToFirst();
+
         if (!databaseCursor.isAfterLast()) {
             weather.setCityName(databaseCursor.getString(databaseCursor.getColumnIndex(CITY_NAME)));
             weather.setTimezone(databaseCursor.getString(databaseCursor.getColumnIndex(TIMEZONE)));
@@ -467,6 +478,7 @@ public class DatabaseOperation {
                 ALERT_TABLE +
                 ORDER_BY +
                 ALERT_ID + " ASC", null);
+
         if (dabaseCursor != null) {
             for (dabaseCursor.moveToFirst(); !dabaseCursor.isAfterLast(); dabaseCursor.moveToNext()) {
                 final Alert alert = new Alert();
@@ -491,6 +503,7 @@ public class DatabaseOperation {
         final Cursor databaseCursor = applicationDatabase.getReadableDatabase().rawQuery("SELECT * FROM " +
                 CURRENT_TABLE_NAME, null);
         databaseCursor.moveToFirst();
+
         if(!databaseCursor.isAfterLast()) {
             current.setTime(databaseCursor.getLong(databaseCursor.getColumnIndex(CURRENT_TIME)));
             current.setSummary(databaseCursor.getString(databaseCursor.getColumnIndex(CURRENT_SUMMARY)));
@@ -503,7 +516,6 @@ public class DatabaseOperation {
             current.setCloudCover(databaseCursor.getDouble(databaseCursor.getColumnIndex(CURRENT_CLOUD_COVER)));
             current.setWindSpeed(databaseCursor.getDouble(databaseCursor.getColumnIndex(CURRENT_WIND_SPEED)));
             current.setWindBearing(databaseCursor.getLong(databaseCursor.getColumnIndex(CURRENT_WIND_BEARING)));
-            Log.i(ConstantHolder.TAG, "From DB PROBABILITY: " + current.getPrecipProbability());
         }
         databaseCursor.close();
         return current;
@@ -952,5 +964,225 @@ public class DatabaseOperation {
         }
 
         return listOfNewses;
+    }
+
+    public void saveCurrentWeatherForCity(final String cityName, final Currently currently) {
+        final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
+        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format("SELECT %s FROM %s WHERE %s=%s",
+                CITY_NAME, CURRENT_TABLE_NAME, CITY_NAME, cityName), null);
+
+        final ContentValues databaseInsert = new ContentValues();
+
+        databaseInsert.put(CITY_NAME, cityName);
+        databaseInsert.put(CURRENT_TIME, currently.getTime());
+        databaseInsert.put(CURRENT_SUMMARY, currently.getSummary());
+        databaseInsert.put(CURRENT_ICON, currently.getIcon());
+        databaseInsert.put(CURRENT_TEMPERATURE, currently.getTemperature());
+        databaseInsert.put(CURRENT_APPARENT_TEMPERATURE, currently.getApparentTemperature());
+        databaseInsert.put(CURRENT_HUMIDITY, currently.getHumidity());
+        databaseInsert.put(CURRENT_PRECIPCHANCE, currently.getPrecipProbability());
+        databaseInsert.put(CURRENT_PRECIPTYPE, currently.getPrecipType());
+        databaseInsert.put(CURRENT_CLOUD_COVER, currently.getCloudCover());
+        databaseInsert.put(CURRENT_WIND_SPEED, currently.getWindSpeed());
+        databaseInsert.put(CURRENT_WIND_BEARING, currently.getWindBearing());
+
+        if (query != null && query.moveToFirst()) {
+            if (query.getString(query.getColumnIndex(CITY_NAME)).equalsIgnoreCase(cityName)) {
+
+                final int result = writableDatabase.update(CURRENT_TABLE_NAME,
+                        databaseInsert,
+                        null,
+                        null);
+
+                databaseInsert.clear();
+                Log.i(ConstantHolder.TAG, String.format("Saving Current Weather For : %s, result : %d", cityName, result));
+
+            } else {
+                final long result = writableDatabase.insert(CURRENT_TABLE_NAME, null, databaseInsert);
+                databaseInsert.clear();
+
+                if (result == -1) {
+                    Log.i(ConstantHolder.TAG, String.format("CURRENT TABLE NOT INSERTED FOR %s", cityName));
+                } else {
+                    Log.i(ConstantHolder.TAG, String.format("CURRENT TABLE INSERTED FOR %s", cityName));
+                }
+            }
+            query.close();
+        }
+
+        writableDatabase.close();
+    }
+
+    public void saveDailyWeatherForCity(final String cityName, final List<DailyData> dailyData) {
+        final ContentValues databaseInsert = new ContentValues();
+        final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
+        final AtomicInteger index = new AtomicInteger(1);
+
+        for (final DailyData day : dailyData) {
+            databaseInsert.put(CITY_NAME, cityName);
+            databaseInsert.put(DAY_TIME, day.getTime());
+            databaseInsert.put(DAY_SUMMARY, day.getSummary());
+            databaseInsert.put(DAY_ICON, day.getIcon());
+            databaseInsert.put(DAY_SUNRISE_TIME, day.getSunriseTime());
+            databaseInsert.put(DAY_SUNSET_TIME, day.getSunsetTime());
+            databaseInsert.put(DAY_MOON_PHASE, day.getMoonPhase());
+            databaseInsert.put(DAY_PRECIPCHANCE, day.getPrecipProbability());
+            databaseInsert.put(DAY_PRECIPTYPE, day.getPrecipType());
+            databaseInsert.put(DAY_TEMPERATURE_MAX, day.getTemperatureMax());
+            databaseInsert.put(DAY_APPARENT_TEMPERATURE_MAX, day.getApparentTemperatureMax());
+            databaseInsert.put(DAY_DEW_POINT, day.getDewPoint());
+            databaseInsert.put(DAY_HUMIDITY, day.getHumidity());
+            databaseInsert.put(DAY_WIND_SPEED, day.getWindSpeed());
+            databaseInsert.put(DAY_WIND_BEARING, day.getWindBearing());
+            databaseInsert.put(DAY_VISIBILITY, day.getVisibility());
+            databaseInsert.put(DAY_CLOUD_COVER, day.getCloudCover());
+            databaseInsert.put(DAY_PRESSURE, day.getPressure());
+            databaseInsert.put(DAY_OZONE, day.getOzone());
+
+            final int result = writableDatabase.update(DAYS_TABLE_NAME,
+                    databaseInsert,
+                    DAY_ID + " = ?",
+                    new String[] { Integer.toString(index.getAndIncrement())});
+
+            if (result == 0) {
+                writableDatabase.insert(DAYS_TABLE_NAME,
+                        null,
+                        databaseInsert);
+            }
+
+            databaseInsert.clear();
+        }
+        writableDatabase.close();
+    }
+
+    public void saveHourlyWeatherForCity(final String cityName, final List<HourlyData> data) {
+        final ContentValues databaseInsert = new ContentValues();
+        final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
+        final AtomicInteger index = new AtomicInteger(1);
+
+        for (final HourlyData hourlyData : data) {
+            databaseInsert.put(CITY_NAME, cityName);
+            databaseInsert.put(HOUR_TIME, hourlyData.getTime());
+            databaseInsert.put(HOUR_SUMMARY, hourlyData.getSummary());
+            databaseInsert.put(HOUR_ICON, hourlyData.getIcon());
+            databaseInsert.put(HOUR_TEMPERATURE, hourlyData.getTemperature());
+            databaseInsert.put(HOUR_APPARENT_TEMPERATURE, hourlyData.getApparentTemperature());
+            databaseInsert.put(HOUR_HUMIDITY, hourlyData.getHumidity());
+            databaseInsert.put(HOUR_PRECIPCHANCE, hourlyData.getPrecipProbability());
+            databaseInsert.put(HOUR_PRECIPTYPE, hourlyData.getPrecipType());
+            databaseInsert.put(HOUR_DEW_POINT, hourlyData.getDewPoint());
+            databaseInsert.put(HOUR_WIND_SPEED, hourlyData.getWindSpeed());
+            databaseInsert.put(HOUR_WIND_BEARING, hourlyData.getWindBearing());
+            databaseInsert.put(HOUR_CLOUD_COVER, hourlyData.getCloudCover());
+            databaseInsert.put(HOUR_VISIBILITY, hourlyData.getVisibility());
+            databaseInsert.put(HOUR_PRESSURE, hourlyData.getPressure());
+            databaseInsert.put(HOUR_OZONE, hourlyData.getOzone());
+
+            final int result = writableDatabase.update(HOURS_TABLE_NAME,
+                    databaseInsert,
+                    HOUR_ID + " = ?",
+                    new String[]{Integer.toString(index.getAndIncrement())});
+
+            if (result == 0) {
+                writableDatabase.insert(HOURS_TABLE_NAME, null, databaseInsert);
+            }
+
+            databaseInsert.clear();
+        }
+    }
+
+    public Currently getCurrentlyWeatherForCity(final String cityName) {
+        final Currently currently = new Currently();
+        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format(SELECT_EVERYTHING_FROM + CURRENT_TABLE_NAME + " WHERE %s=%s", CITY_NAME, cityName), null);
+        query.moveToFirst();
+        if (!query.isAfterLast()) {
+            currently.setTime(query.getLong(query.getColumnIndex(CURRENT_TIME)));
+            currently.setSummary(query.getString(query.getColumnIndex(CURRENT_SUMMARY)));
+            currently.setIcon(query.getString(query.getColumnIndex(CURRENT_ICON)));
+            currently.setTemperature(query.getDouble(query.getColumnIndex(CURRENT_TEMPERATURE)));
+            currently.setApparentTemperature(query.getDouble(query.getColumnIndex(CURRENT_APPARENT_TEMPERATURE)));
+            currently.setHumidity(query.getDouble(query.getColumnIndex(CURRENT_HUMIDITY)));
+            currently.setPrecipProbability(query.getDouble(query.getColumnIndex(CURRENT_PRECIPCHANCE)));
+            currently.setPrecipType(query.getString(query.getColumnIndex(CURRENT_PRECIPTYPE)));
+            currently.setCloudCover(query.getDouble(query.getColumnIndex(CURRENT_CLOUD_COVER)));
+            currently.setWindSpeed(query.getDouble(query.getColumnIndex(CURRENT_WIND_SPEED)));
+            currently.setWindBearing(query.getLong(query.getColumnIndex(CURRENT_WIND_BEARING)));
+        }
+
+        query.close();
+        return currently;
+    }
+
+    public List<DailyData> getDailyWeatherForCity(final String cityName) {
+        final List<DailyData> days = new ArrayList<>();
+
+        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format(SELECT_EVERYTHING_FROM +
+                        DAYS_TABLE_NAME +
+                        " WHERE %s=%s" + ORDER_BY + DAY_ID + " ASC"
+                , CITY_NAME, cityName), null);
+
+        if (query != null) {
+            for (query.moveToFirst(); !query.isAfterLast(); query.moveToNext()) {
+
+                final DailyData day = new DailyData();
+                day.setTime(query.getLong(query.getColumnIndex(DAY_TIME)));
+                day.setSummary(query.getString(query.getColumnIndex(DAY_SUMMARY)));
+                day.setIcon(query.getString(query.getColumnIndex(DAY_ICON)));
+                day.setSunriseTime(query.getLong(query.getColumnIndex(DAY_SUNRISE_TIME)));
+                day.setSunsetTime(query.getLong(query.getColumnIndex(DAY_SUNSET_TIME)));
+                day.setMoonPhase(query.getDouble(query.getColumnIndex(DAY_MOON_PHASE)));
+                day.setPrecipProbability(query.getDouble(query.getColumnIndex(DAY_PRECIPCHANCE)));
+                day.setPrecipType(query.getString(query.getColumnIndex(DAY_PRECIPTYPE)));
+                day.setTemperatureMax(query.getDouble(query.getColumnIndex(DAY_TEMPERATURE_MAX)));
+                day.setApparentTemperatureMax(query.getDouble(query.getColumnIndex(DAY_APPARENT_TEMPERATURE_MAX)));
+                day.setDewPoint(query.getDouble(query.getColumnIndex(DAY_DEW_POINT)));
+                day.setHumidity(query.getDouble(query.getColumnIndex(DAY_HUMIDITY)));
+                day.setWindSpeed(query.getDouble(query.getColumnIndex(DAY_WIND_SPEED)));
+                day.setWindBearing(query.getLong(query.getColumnIndex(DAY_WIND_BEARING)));
+                day.setVisibility(query.getLong(query.getColumnIndex(DAY_VISIBILITY)));
+                day.setCloudCover(query.getDouble(query.getColumnIndex(DAY_CLOUD_COVER)));
+                day.setPressure(query.getDouble(query.getColumnIndex(DAY_PRESSURE)));
+                day.setOzone(query.getDouble(query.getColumnIndex(DAY_OZONE)));
+
+                days.add(day);
+            }
+            query.close();
+        }
+        return days;
+    }
+
+    public List<HourlyData> getHourlyWeatherForCity(final String cityName) {
+        final List<HourlyData> hourlyData = new ArrayList<>();
+
+        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format(SELECT_EVERYTHING_FROM
+                        + HOURS_TABLE_NAME + " WHERE %s=%s" + ORDER_BY + HOUR_ID + " ASC"
+                , CITY_NAME, cityName), null);
+
+        if (query != null) {
+
+            for (query.moveToFirst(); !query.isAfterLast(); query.moveToNext()) {
+                final HourlyData hour = new HourlyData();
+                hour.setTime(query.getLong(query.getColumnIndex(HOUR_TIME)));
+                hour.setIcon(query.getString(query.getColumnIndex(HOUR_ICON)));
+                hour.setSummary(query.getString(query.getColumnIndex(HOUR_SUMMARY)));
+                hour.setTemperature(query.getDouble(query.getColumnIndex(HOUR_TEMPERATURE)));
+                hour.setApparentTemperature(query.getDouble(query.getColumnIndex(HOUR_APPARENT_TEMPERATURE)));
+                hour.setHumidity(query.getDouble(query.getColumnIndex(HOUR_HUMIDITY)));
+                hour.setPrecipProbability(query.getDouble(query.getColumnIndex(HOUR_PRECIPCHANCE)));
+                hour.setPrecipType(query.getString(query.getColumnIndex(HOUR_PRECIPTYPE)));
+                hour.setDewPoint(query.getDouble(query.getColumnIndex(HOUR_DEW_POINT)));
+                hour.setWindSpeed(query.getDouble(query.getColumnIndex(HOUR_WIND_SPEED)));
+                hour.setWindBearing(query.getLong(query.getColumnIndex(HOUR_WIND_BEARING)));
+                hour.setCloudCover(query.getDouble(query.getColumnIndex(HOUR_CLOUD_COVER)));
+                hour.setVisibility(query.getDouble(query.getColumnIndex(HOUR_VISIBILITY)));
+                hour.setPressure(query.getDouble(query.getColumnIndex(HOUR_PRESSURE)));
+                hour.setOzone(query.getDouble(query.getColumnIndex(HOUR_OZONE)));
+
+                hourlyData.add(hour);
+            }
+            query.close();
+        }
+
+        return hourlyData;
     }
 }

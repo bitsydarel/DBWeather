@@ -147,8 +147,8 @@
         <provider
             android:enabled="true"
             android:exported="true"
-            android:authorities="com.darelbitsy.dbweather.models.provider.android.LocationSuggestionProvider"
-            android:name=".models.provider.android.LocationSuggestionProvider"/>
+            android:authorities="com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider"
+            android:name=".models.provider.geoname.LocationSuggestionProvider"/>
         
     </application>
 

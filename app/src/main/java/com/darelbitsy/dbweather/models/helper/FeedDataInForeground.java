@@ -7,8 +7,7 @@ import android.content.Intent;
 import android.os.Looper;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.api.adapters.helper.GetNewsesHelper;
-import com.darelbitsy.dbweather.models.api.adapters.network.WeatherAdapter;
+import com.darelbitsy.dbweather.models.api.adapters.network.WeatherRestAdapter;
 import com.darelbitsy.dbweather.models.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.broadcastreceivers.SyncDataReceiver;
 import com.darelbitsy.dbweather.models.utility.AppUtil;
@@ -42,7 +41,7 @@ public class FeedDataInForeground {
     public void performSync() {
         if (AppUtil.isNetworkAvailable(mContext)) {
             AndroidThreeTen.init(mContext);
-            final WeatherAdapter weatherApi = new WeatherAdapter(mContext);
+            final WeatherRestAdapter weatherApi = new WeatherRestAdapter(mContext);
             GetNewsesHelper.newInstance(mContext)
                     .getNewsesFromApi()
                     .subscribeOn(Schedulers.io())

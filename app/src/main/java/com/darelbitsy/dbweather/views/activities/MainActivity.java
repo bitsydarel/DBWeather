@@ -48,8 +48,6 @@ import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.HourAdapter;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsAdapter;
-import com.darelbitsy.dbweather.models.api.adapters.helper.GetNewsesHelper;
-import com.darelbitsy.dbweather.models.api.adapters.helper.GetWeatherHelper;
 import com.darelbitsy.dbweather.models.helper.ColorManager;
 import com.darelbitsy.dbweather.models.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.services.LocationTracker;

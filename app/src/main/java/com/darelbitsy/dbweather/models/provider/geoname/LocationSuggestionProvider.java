@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.android;
+package com.darelbitsy.dbweather.models.provider.geoname;
 
 import android.app.SearchManager;
 import android.content.ContentProvider;
@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.api.adapters.helper.GeoNamesHelper;
 import com.darelbitsy.dbweather.models.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
@@ -29,13 +28,13 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class LocationSuggestionProvider extends ContentProvider {
-    private GeoNamesHelper mGeoNamesHelper;
+    private GeoNameLocationInfoProvider mGeoNameLocationInfoProvider;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     public static final List<GeoName> mListOfLocation = new ArrayList<>();
 
     @Override
     public boolean onCreate() {
-        mGeoNamesHelper = GeoNamesHelper.newInstance(getContext());
+        mGeoNameLocationInfoProvider = new GeoNameLocationInfoProvider(getContext());
         return true;
     }
 
@@ -56,7 +55,7 @@ public class LocationSuggestionProvider extends ContentProvider {
         }, mListOfLocation.size());
 
         if (userQuery != null && !userQuery.isEmpty()) {
-            mCompositeDisposable.add(mGeoNamesHelper.getLocationFromApi(userQuery)
+            mCompositeDisposable.add(mGeoNameLocationInfoProvider.getLocation(userQuery)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new GetSuggestions()));
@@ -88,23 +87,28 @@ public class LocationSuggestionProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public String getType(@NonNull Uri uri) {
+    public String getType(@NonNull final Uri uri) {
         return null;
     }
 
     @Nullable
     @Override
-    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+    public Uri insert(@NonNull final Uri uri, @Nullable final ContentValues values) {
         return null;
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+    public int delete(@NonNull final Uri uri,
+                      @Nullable final String selection,
+                      @Nullable final String[] selectionArgs) {
         return 0;
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+    public int update(@NonNull final Uri uri,
+                      @Nullable final ContentValues values,
+                      @Nullable final String selection,
+                      @Nullable final String[] selectionArgs) {
         return 0;
     }
 }
