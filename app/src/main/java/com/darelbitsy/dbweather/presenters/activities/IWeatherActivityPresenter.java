@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.presenters;
+package com.darelbitsy.dbweather.presenters.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

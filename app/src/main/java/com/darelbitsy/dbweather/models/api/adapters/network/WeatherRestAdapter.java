@@ -3,8 +3,8 @@ package com.darelbitsy.dbweather.models.api.adapters.network;
 import android.content.Context;
 
 import com.darelbitsy.dbweather.models.api.services.WeatherService;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.Locale;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.supportedLang;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.supportedLang;
 
 /**
  * Created by Darel Bitsy on 20/02/17.

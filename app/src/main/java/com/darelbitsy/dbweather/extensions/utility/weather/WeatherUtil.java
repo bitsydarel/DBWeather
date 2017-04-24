@@ -1,11 +1,11 @@
-package com.darelbitsy.dbweather.models.utility.weather;
+package com.darelbitsy.dbweather.extensions.utility.weather;
 
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.models.api.adapters.network.GoogleGeocodeAdapter;
 
 import org.threeten.bp.Instant;

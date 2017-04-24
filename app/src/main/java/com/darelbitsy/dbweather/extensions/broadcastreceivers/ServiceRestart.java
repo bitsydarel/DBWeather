@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.broadcastreceivers;
+package com.darelbitsy.dbweather.extensions.broadcastreceivers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import static android.app.Service.START_FLAG_REDELIVERY;

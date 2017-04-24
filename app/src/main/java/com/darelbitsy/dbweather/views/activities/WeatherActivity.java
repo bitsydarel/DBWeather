@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -22,6 +23,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -44,20 +46,26 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
-import com.darelbitsy.dbweather.presenters.weather.RxMainPresenter;
-import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
-import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.views.adapters.listAdapter.HourAdapter;
-import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsAdapter;
+import com.darelbitsy.dbweather.databinding.ActivityWeatherBinding;
 import com.darelbitsy.dbweather.extensions.helper.ColorManager;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.extensions.services.LocationTracker;
 import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
+import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.provider.news.DatabaseNewsProvider;
+import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
+import com.darelbitsy.dbweather.provider.repository.DatabaseUserCitiesRepository;
+import com.darelbitsy.dbweather.presenters.activities.RxWeatherActivityPresenter;
+import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
+import com.darelbitsy.dbweather.views.adapters.listAdapter.HourAdapter;
+import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsAdapter;
 import com.darelbitsy.dbweather.views.animation.CubeOutTransformer;
 
 import java.io.File;
@@ -85,13 +93,13 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED
 
 /**
  * Created by Darel Bitsy on 11/02/17.
- * MainActivity of the application
+ * WeatherActivity of the application
  * Handle location update and set viewPager
  */
 
-public class MainActivity extends AppCompatActivity
+public class WeatherActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MenuItem.OnMenuItemClickListener,
-        IMainView<List<WeatherInfo>, List<Article>>{
+        IWeatherActivityView<Pair<List<WeatherInfo>, List<HourlyData>>, List<Article>> {
 
     private DatabaseOperation mDatabase;
     private CustomFragmentAdapter mFragmentAdapter;
@@ -104,15 +112,16 @@ public class MainActivity extends AppCompatActivity
 
     private NewsAdapter mNewsAdapter;
     private RecyclerView mNewsRecyclerView;
-    private ArrayList<Article> mNewses;
+    private List<Article> mNewses;
 
-    private Single<ArrayList<Article>> mNewsesObservableWithNetwork;
-    private Single<ArrayList<Article>> mNewsesObservableWithoutNetwork;
+    private Single<List<Article>> mNewsesObservableWithNetwork;
+    private Single<List<Article>> mNewsesObservableWithoutNetwork;
 
     private boolean isSubscriptionDoneWithNetwork;
     private HourAdapter mHourAdapter;
     private final Handler mMyHandler = new Handler();
     private Weather mWeather;
+    private final List<WeatherInfo> mWeatherInfoList = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private View mainLayout;
     private final SparseArray<GeoName> userCities = new SparseArray<>();
@@ -148,7 +157,9 @@ public class MainActivity extends AppCompatActivity
     };
     private final ColorManager mColorPicker = ColorManager.newInstance();
     private SubMenu locationSubMenu;
-    private RxMainPresenter mMainPresenter;
+    private RxWeatherActivityPresenter mMainPresenter;
+    private final SparseArray<GeoName> sparseArrayOfIdAndLocation = new SparseArray<>();
+    private ActivityWeatherBinding mWeatherActivityBinder;
 
 
     private void respondToMenuItemClick(final MenuItem item) {
@@ -163,6 +174,8 @@ public class MainActivity extends AppCompatActivity
             finish();
 
         } else if (id == R.id.current_location) {
+            mMainPresenter.getWeather();
+
             subscriptions.add(mWeatherObservable
                     .subscribeWith(new MainActivityWeatherObserver()));
 
@@ -172,14 +185,15 @@ public class MainActivity extends AppCompatActivity
 
             mDrawerLayout.closeDrawers();
 
-        } else if (userCities.indexOfKey(id) >= 0) {
-            final GeoName location = userCities.get(id);
+        } else if (sparseArrayOfIdAndLocation.indexOfKey(id) >= 0) {
+            final GeoName location = sparseArrayOfIdAndLocation.get(id);
             final double latitude = location.getLatitude();
             final double longitude = location.getLongitude();
 
             final DialogInterface.OnClickListener displayListener = (dialog, which) -> {
-                subscriptions.add(GetWeatherHelper.newInstance(this)
-                        .getObservableWeatherForCityFromApi(String.format(Locale.getDefault(),
+                //TODO: CLEAN THIS CODE AFTER REFACTOR
+                subscriptions.add(new NetworkWeatherProvider(getApplicationContext())
+                        .getWeatherForCity(String.format(Locale.getDefault(),
                                 "%s, %s", location.getName(), location.getCountryName()),
                                 latitude,
                                 longitude)
@@ -204,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 
             new AlertDialog.Builder(this)
                     .setMessage(String.format(Locale.getDefault(),
-                            MainActivity.this.getApplicationContext().getString(R.string.removeOrDisplay),
+                            WeatherActivity.this.getApplicationContext().getString(R.string.removeOrDisplay),
                             location.getName()))
                     .setNegativeButton(R.string.remove, (dialog, which) -> {
                         locationSubMenu.removeItem(id);
@@ -252,12 +266,37 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void showWeather(List<WeatherInfo> weatherInfos) {
+    public void showWeather(final Pair<List<WeatherInfo>, List<HourlyData>> weatherInfo) {
+        Log.i(ConstantHolder.TAG, "Inside the weatherObserver WeatherActivity");
+        mWeatherInfoList.clear();
+        mWeatherInfoList.addAll(weatherInfo.first);
+
+        if (mFragmentAdapter != null) {
+            Log.i(ConstantHolder.TAG, "Inside: fragmentAdapter not null");
+//            mUpdateHandler.post(() -> mFragmentAdapter.updateWeatherOnFragment(weather));
+
+        } else {
+            Log.i(ConstantHolder.TAG, "Inside: fragmentAdapter null");
+        }
+        if (mHourAdapter != null) {
+            mHourAdapter.updateData(weatherInfo.second);
+        }
+
+        Log.i(ConstantHolder.TAG, "City Name: " + weatherInfo.first.get(0).locationName.get());
+
+        if (isSubscriptionDoneWithNetwork) {
+            subscriptions.add(mNewsesObservableWithNetwork
+                    .subscribeWith(new CurrentNewsesObserver()));
+
+        } else {
+            subscriptions.add(mNewsesObservableWithoutNetwork
+                    .subscribeWith(new CurrentNewsesObserver()));
+        }
 
     }
 
     @Override
-    public void showNews(List<Article> articles) {
+    public void showNews(final List<Article> articles) {
 
     }
 
@@ -268,6 +307,42 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void showNetworkNewsErrorMessage() {
+
+    }
+
+    @Override
+    public void setupNavigationDrawerWithCities(final List<GeoName> listOfLocation) {
+        Log.d(ConstantHolder.TAG, "Received user cities in VIEW");
+        mWeatherActivityBinder.navigationView.setNavigationItemSelectedListener(this);
+
+        final Menu navigationViewMenu = mWeatherActivityBinder.navigationView.getMenu();
+        locationSubMenu = navigationViewMenu.findItem(R.id.location_config_id)
+                .setOnMenuItemClickListener(this)
+                .getSubMenu();
+
+        final int location_size = listOfLocation.size();
+
+        for (int index = 0; index < location_size; index++) {
+            final GeoName location = listOfLocation.get(index);
+            final int id = View.generateViewId();
+            sparseArrayOfIdAndLocation.append(id, location);
+
+            final MenuItem item = locationSubMenu.add(R.id.cities_menu_id, id, Menu.FLAG_APPEND_TO_GROUP,
+                    String.format(Locale.getDefault(), "%s, %s", location.getName(), location.getCountryName()));
+
+            item.setIcon(R.drawable.city_location_icon);
+            item.setEnabled(true);
+
+        }
+    }
+
+    @Override
+    public void setupNavigationDrawerWithNoCities() {
+        Log.d(ConstantHolder.TAG, "Received no user cities in VIEW");
+    }
+
+    @Override
+    public void setupNavigationDrawerMenu() {
 
     }
 
@@ -283,7 +358,7 @@ public class MainActivity extends AppCompatActivity
     private final class MainActivityWeatherObserver extends DisposableSingleObserver<Weather> {
         @Override
         public void onSuccess(final Weather weather) {
-            Log.i(ConstantHolder.TAG, "Inside the weatherObserver MainActivity");
+            Log.i(ConstantHolder.TAG, "Inside the weatherObserver WeatherActivity");
             mWeather = weather;
 
             if (mFragmentAdapter != null) {
@@ -320,10 +395,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mWeatherActivityBinder = DataBindingUtil.setContentView(this, R.layout.activity_weather);
         mDatabase = DatabaseOperation.newInstance(this);
 
-        mMainPresenter = new RxMainPresenter(this, subscriptions, this);
+        mMainPresenter =
+                new RxWeatherActivityPresenter(this, new DatabaseUserCitiesRepository(this), this);
+
+        mMainPresenter.configureView();
 
         final Bundle extras = getIntent().getExtras();
         mWeather = extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY);
@@ -355,8 +433,8 @@ public class MainActivity extends AppCompatActivity
         mainLayout.setBackgroundResource(mColorPicker
                 .getBackgroundColor(mWeather.getCurrently().getIcon()));
 
-        mWeatherObservable = GetWeatherHelper.newInstance(this)
-                .getObservableWeatherFromApi(mDatabase)
+        mWeatherObservable = new NetworkWeatherProvider(getApplicationContext())
+                .getWeather()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -391,7 +469,9 @@ public class MainActivity extends AppCompatActivity
         };
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-        setupNavigationDrawer();
+
+        //TODO:DB UNCOMMENT AFTER REFACTOR
+//        setupNavigationDrawer();
 
         mLocationBroadcast = new BroadcastReceiver() {
             @Override
@@ -401,7 +481,7 @@ public class MainActivity extends AppCompatActivity
                         intent.getExtras().getDouble("longitude"),
                         mDatabase);
 
-                if (AppUtil.isNetworkAvailable(MainActivity.this.getApplicationContext()) && !sharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)) {
+                if (AppUtil.isNetworkAvailable(WeatherActivity.this.getApplicationContext()) && !sharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)) {
                     subscriptions.add(mWeatherObservable
                             .subscribeWith(new MainActivityWeatherObserver()));
 
@@ -413,13 +493,13 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mNewsesObservableWithNetwork = GetNewsesHelper.newInstance(this)
-                .getNewsesFromApi()
+        mNewsesObservableWithNetwork = new NetworkNewsProvider(getApplicationContext())
+                .getNews()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mNewsesObservableWithoutNetwork = GetNewsesHelper.newInstance(this)
-                .getNewsesFromDatabase(mDatabase)
+        mNewsesObservableWithoutNetwork = new DatabaseNewsProvider(getApplicationContext())
+                .getNews()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
@@ -539,18 +619,13 @@ public class MainActivity extends AppCompatActivity
                 .apply();
     }
 
-    private void setupNavigationDrawer() {
-        final NavigationView navigationView = (NavigationView)
-                mDrawerLayout.findViewById(R.id.navigationView);
+    public void setupNavigationDrawer() {
+        final Menu menu = mWeatherActivityBinder.navigationView.getMenu();
 
-        navigationView.setNavigationItemSelectedListener(this);
-
-        final Menu menu = navigationView.getMenu();
-
-        locationSubMenu = menu.findItem(R.id.location_config_id)
+        /*locationSubMenu = menu.findItem(R.id.location_config_id)
                 .setOnMenuItemClickListener(this)
                 .setEnabled(true)
-                .getSubMenu();
+                .getSubMenu();*/
 
         final Menu newsSubMenu = menu.findItem(R.id.news_config_id)
                 .setOnMenuItemClickListener(this)
@@ -566,23 +641,7 @@ public class MainActivity extends AppCompatActivity
                 locationSubMenu.findItem(R.id.add_location_id);
         addLocationItem.setOnMenuItemClickListener(this);
 
-        final List<GeoName> listOfLocation = mDatabase.getUserCitiesFromDatabase();
-
-        // Moved  listOfLocation.size() call out of the loop to local variable listOfLocation_size
-        // So it's wont check ht size of the list every loop time
-        final int listOfLocation_size = listOfLocation.size();
-
-        for (int index = 0; index < listOfLocation_size; index++) {
-            final GeoName location = listOfLocation.get(index);
-            final int id = View.generateViewId();
-            userCities.append(id, location);
-
-            final MenuItem item = locationSubMenu.add(R.id.cities_menu_id, id, Menu.NONE,
-                    location.getName() + ", " + location.getCountryName());
-
-            item.setIcon(R.drawable.city_location_icon);
-            item.setEnabled(true);
-        }
+        //TODO:DB CLEANUP THIS CODE
 
         final SwitchCompat notification_switch = (SwitchCompat)
                 MenuItemCompat.getActionView(weatherSubMenu.findItem(R.id.notification_config_id));
@@ -678,9 +737,9 @@ public class MainActivity extends AppCompatActivity
         setupNewsScrollView();
     }
 
-    private final class CurrentNewsesObserver extends DisposableSingleObserver<ArrayList<Article>> {
+    private final class CurrentNewsesObserver extends DisposableSingleObserver<List<Article>> {
         @Override
-        public void onSuccess(final ArrayList<Article> newses) {
+        public void onSuccess(final List<Article> newses) {
             Log.i(ConstantHolder.TAG, "Inside the currentNewsesObserver Fragment");
             mNewses = newses;
             if (mNewsAdapter != null) {

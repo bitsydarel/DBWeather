@@ -3,10 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <data class="WeatherActivityBinder">
-        <variable
-            name="WeatherActivityModel"
-            type="com.darelbitsy.dbweather.presenters.RxWeatherActivityPresenter"/>
+    <data>
     </data>
 
     <android.support.constraint.ConstraintLayout

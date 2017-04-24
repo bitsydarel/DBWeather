@@ -11,17 +11,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.AlarmConfigHelper;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
-import com.darelbitsy.dbweather.models.services.KillCheckerService;
-import com.darelbitsy.dbweather.presenters.helper.NotificationHelper;
+import com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.services.KillCheckerService;
+import com.darelbitsy.dbweather.extensions.helper.NotificationHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NOTIF_ICON;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NOTIF_SUMMARY;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NOTIF_TEMPERATURE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NOTIF_ICON;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NOTIF_SUMMARY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NOTIF_TEMPERATURE;
 
 /**
  * Created by Darel Bitsy on 01/02/17.

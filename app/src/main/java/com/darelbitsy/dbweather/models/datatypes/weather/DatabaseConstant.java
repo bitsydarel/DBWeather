@@ -24,7 +24,7 @@ public class DatabaseConstant {
     public static final String SELECT = "SELECT ";
     public static final String FROM = " FROM ";
     public static final String ORDER_BY = " ORDER BY ";
-    public static final String NOT_NULL = " NOT NULL";
+    public static final String NOT_NULL = " not null";
     public static final String FOREIGN_KEY = "FOREIGN KEY(%s) REFERENCES %s(%s)";
 
     private static final String ID = "id";

@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.schedulers;
+package com.darelbitsy.dbweather.provider.schedulers;
 
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
@@ -11,6 +11,7 @@ import io.reactivex.schedulers.Schedulers;
 public class RxSchedulersProvider implements ISchedulersProvider<Scheduler> {
     private final Scheduler mNewsScheduler;
     private final Scheduler mWeatherScheduler;
+    private final Scheduler mDatabaseTaskScheduler;
     private static RxSchedulersProvider singletonProvider;
 
     public static RxSchedulersProvider newInstance() {
@@ -23,6 +24,7 @@ public class RxSchedulersProvider implements ISchedulersProvider<Scheduler> {
     private RxSchedulersProvider() {
         mNewsScheduler = Schedulers.io();
         mWeatherScheduler = Schedulers.io();
+        mDatabaseTaskScheduler = Schedulers.io();
     }
 
     @Override
@@ -34,4 +36,9 @@ public class RxSchedulersProvider implements ISchedulersProvider<Scheduler> {
     public Scheduler getNewsScheduler() {
         return mNewsScheduler;
     }
+
+    @Override
+    public Scheduler getDatabaseWorkScheduler() { return mDatabaseTaskScheduler; }
+
+
 }

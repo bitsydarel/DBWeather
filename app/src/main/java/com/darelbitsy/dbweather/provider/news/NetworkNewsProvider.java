@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.news;
+package com.darelbitsy.dbweather.provider.news;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -12,8 +12,8 @@ import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.news.NewsResponse;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.provider.translators.GoogleTranslateProvider;
-import com.darelbitsy.dbweather.models.provider.translators.MyMemoryTranslateProvider;
+import com.darelbitsy.dbweather.provider.translators.GoogleTranslateProvider;
+import com.darelbitsy.dbweather.provider.translators.MyMemoryTranslateProvider;
 import com.darelbitsy.dbweather.extensions.services.NewsDatabaseService;
 import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 

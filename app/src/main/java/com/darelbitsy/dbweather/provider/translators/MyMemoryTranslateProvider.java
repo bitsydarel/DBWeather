@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.translators;
+package com.darelbitsy.dbweather.provider.translators;
 
 import android.support.annotation.NonNull;
 import android.util.Log;

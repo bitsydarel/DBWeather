@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.geoname;
+package com.darelbitsy.dbweather.provider.geoname;
 
 import android.support.annotation.NonNull;
 

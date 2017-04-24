@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.broadcastreceivers;
+package com.darelbitsy.dbweather.extensions.broadcastreceivers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,16 +12,16 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.helper.AlarmConfigHelper;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.views.activities.NotificationActivity;
-import com.darelbitsy.dbweather.presenters.helper.NotificationHelper;
+import com.darelbitsy.dbweather.extensions.helper.NotificationHelper;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -31,9 +31,9 @@ import static android.content.Context.POWER_SERVICE;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NOTIF_ICON;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NOTIF_SUMMARY;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NOTIF_TEMPERATURE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NOTIF_ICON;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NOTIF_SUMMARY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NOTIF_TEMPERATURE;
 
 /**
  * Created by Darel Bitsy on 30/01/17.

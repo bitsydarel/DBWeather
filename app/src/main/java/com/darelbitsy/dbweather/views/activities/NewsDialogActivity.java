@@ -17,8 +17,8 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.models.api.adapters.helper.GetImageDownloader;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 
 import java.util.Locale;
@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NEWS_DATA_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NEWS_DATA_KEY;
 
 /**
  * Created by Darel Bitsy on 11/03/17.

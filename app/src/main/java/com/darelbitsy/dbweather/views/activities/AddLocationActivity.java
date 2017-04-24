@@ -16,10 +16,11 @@ import android.util.Log;
 import android.widget.ImageButton;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.provider.geoname.GeoNameLocationInfoProvider;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.LocationListAdapter;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.weather.Daily;
 import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
@@ -52,8 +53,9 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private void getUserQuery(final String query) {
         if (!query.isEmpty()) {
-            mCompositeDisposable.add(GeoNamesHelper.newInstance(this)
-                    .getLocationFromApi(query)
+            //TODO:DB Need to remove this code after refactoring
+            mCompositeDisposable.add(new GeoNameLocationInfoProvider(getApplicationContext())
+                    .getLocation(query)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new GetLocationHelper()));
@@ -102,7 +104,7 @@ public class AddLocationActivity extends AppCompatActivity {
             weather.getHourly().setData(database.getHourlyWeatherFromDatabase());
 
             weather.setAlerts(database.getAlerts());
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), WeatherActivity.class);
             intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);

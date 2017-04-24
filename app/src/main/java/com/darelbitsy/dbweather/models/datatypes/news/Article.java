@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

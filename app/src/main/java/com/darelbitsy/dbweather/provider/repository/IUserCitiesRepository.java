@@ -1,8 +1,10 @@
-package com.darelbitsy.dbweather.models.provider.repository;
+package com.darelbitsy.dbweather.provider.repository;
 
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
 import java.util.List;
+
+import io.reactivex.Single;
 
 /**
  * Created by Darel Bitsy on 23/04/17.
@@ -10,5 +12,5 @@ import java.util.List;
 
 public interface IUserCitiesRepository {
 
-    List<GeoName> getUserCities();
+    Single<List<GeoName>> getUserCities();
 }

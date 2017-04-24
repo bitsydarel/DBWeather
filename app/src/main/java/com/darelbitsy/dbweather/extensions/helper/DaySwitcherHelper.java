@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.presenters.helper;
+package com.darelbitsy.dbweather.extensions.helper;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -10,10 +10,10 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.ColorManager;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.helper.ColorManager;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
 import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
 import com.darelbitsy.dbweather.views.fragments.WeatherFragment;

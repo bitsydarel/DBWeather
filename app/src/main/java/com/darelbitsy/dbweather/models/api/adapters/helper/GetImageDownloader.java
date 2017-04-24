@@ -3,7 +3,7 @@ package com.darelbitsy.dbweather.models.api.adapters.helper;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 

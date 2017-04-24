@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.news;
+package com.darelbitsy.dbweather.provider.news;
 
 import android.content.Context;
 

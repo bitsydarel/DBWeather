@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.holder;
+package com.darelbitsy.dbweather.extensions.holder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +19,8 @@ public class ConstantHolder {
 
     public static final String RECYCLER_BOTTOM_LIMIT = "recycler_bottom_limit";
     public static final String INTEGER_PRIMARY_KEY = " integer primary key autoincrement not null,";
+    public static final String UPDATE_REQUEST = "update_request";
+    public static final String WEATHER_INFO_KEY = "weather_info_key";
 
     private ConstantHolder() {
         //To disable default constructor

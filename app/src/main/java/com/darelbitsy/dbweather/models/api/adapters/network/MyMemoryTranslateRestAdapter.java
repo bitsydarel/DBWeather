@@ -2,8 +2,8 @@ package com.darelbitsy.dbweather.models.api.adapters.network;
 
 import com.darelbitsy.dbweather.models.api.services.TranslateService;
 import com.darelbitsy.dbweather.models.datatypes.news.MyMemoryJson;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -18,17 +19,21 @@ import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.presenters.fragments.WeatherFragmentPresenter;
+import com.darelbitsy.dbweather.provider.weather.DatabaseWeatherProvider;
+import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
 import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.helper.ColorManager;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.services.LocationTracker;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.ColorManager;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.services.LocationTracker;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
 import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.presenters.helper.DaySwitcherHelper;
+import com.darelbitsy.dbweather.extensions.helper.DaySwitcherHelper;
 import com.darelbitsy.dbweather.views.animation.widgets.RainFallView;
 import com.darelbitsy.dbweather.views.animation.widgets.SnowFallView;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -42,17 +47,17 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_FROM_CITY_KEY;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
 
 /**
  * Created by Darel Bitsy on 23/03/17.
  * Weather fragment he present weather data to the user.
  */
 
-public class WeatherFragment extends Fragment {
+public class WeatherFragment extends Fragment implements IWeatherFragmentView<WeatherInfo> {
     @BindView(R.id.current_weather_layout)
     ConstraintLayout mMainLayout;
 
@@ -75,6 +80,7 @@ public class WeatherFragment extends Fragment {
     private final ColorManager mColorManager = ColorManager.newInstance();
     private SharedPreferences mSharedPreferences;
     private final CompositeDisposable subscriptions = new CompositeDisposable();
+    private WeatherFragmentPresenter mPresenter;
 
     public static WeatherFragment newInstance(final Currently currently,
                                               final String cityName) {
@@ -114,17 +120,21 @@ public class WeatherFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(final @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Bundle args = getArguments();
+
+        mPresenter = new WeatherFragmentPresenter(this);
 
         mCurrently = args.getParcelable(ConstantHolder.CURRENT_WEATHER_KEY);
         mDailyData = args.getParcelable(ConstantHolder.DAY_WEATHER_KEY);
         mCityName = args.getString(ConstantHolder.CITY_NAME_KEY);
 
         if (mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false) && mSharedPreferences.contains(SELECTED_CITY_LATITUDE)) {
-            subscriptions.add(GetWeatherHelper.newInstance(getActivity())
-                    .getObservableWeatherForCityFromApi(mCityName,
+
+            //TODO:DB Need to remove this code after refactoring
+            subscriptions.add(new NetworkWeatherProvider(getActivity().getApplicationContext())
+                    .getWeatherForCity(mCityName,
                             Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0)),
                                     Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0)))
                     .subscribeOn(Schedulers.io())
@@ -142,7 +152,7 @@ public class WeatherFragment extends Fragment {
                              final @Nullable ViewGroup container,
                              final @Nullable Bundle savedInstanceState) {
 
-        mCurrentView = inflater.inflate(R.layout.current_weather_layout, container, false);
+        mCurrentView = inflater.inflate(R.layout.fragment_weather, container, false);
         ButterKnife.bind(this, mCurrentView);
         AndroidThreeTen.init(getActivity());
 
@@ -304,8 +314,9 @@ public class WeatherFragment extends Fragment {
                 && mSharedPreferences.contains(SELECTED_CITY_LATITUDE)
                 && isNetworkAvailable) {
 
-            subscriptions.add(GetWeatherHelper.newInstance(getActivity())
-                    .getObservableWeatherForCityFromApi(mCityName,
+            //TODO:DB Need to remove this code after refactoring
+            subscriptions.add(new NetworkWeatherProvider(getContext().getApplicationContext())
+                    .getWeatherForCity(mCityName,
                             Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0)),
                             Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0)))
                     .subscribeOn(Schedulers.io())
@@ -345,15 +356,28 @@ public class WeatherFragment extends Fragment {
 
 
     private void setupObservables(final Context context) {
-        mWeatherObservableWithNetwork = GetWeatherHelper.newInstance(context)
-                .getObservableWeatherFromApi(mDatabase)
+
+        //TODO:DB Need to remove this code after refactoring
+        mWeatherObservableWithNetwork = new NetworkWeatherProvider(context)
+                .getWeather()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mWeatherObservableWithoutNetwork = GetWeatherHelper.newInstance(context)
-                .getObservableWeatherFromDatabase(mDatabase)
+        mWeatherObservableWithoutNetwork = new DatabaseWeatherProvider(context)
+                .getWeather()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public void showData(@NonNull final WeatherInfo weatherInfo) {
+        mPresenter.showData(weatherInfo);
+    }
+
+    @Override
+    public void requestUpdate() {
+        final Intent updateRequest = new Intent(ConstantHolder.UPDATE_REQUEST);
+        getActivity().sendBroadcast(updateRequest);
     }
 
     private final class CurrentWeatherObserver extends DisposableSingleObserver<Weather> {

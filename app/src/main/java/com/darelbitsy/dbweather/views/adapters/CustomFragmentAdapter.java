@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
 import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;

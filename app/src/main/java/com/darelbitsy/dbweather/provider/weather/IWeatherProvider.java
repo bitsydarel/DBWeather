@@ -1,6 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.weather;
-
-import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
+package com.darelbitsy.dbweather.provider.weather;
 
 import io.reactivex.Single;
 

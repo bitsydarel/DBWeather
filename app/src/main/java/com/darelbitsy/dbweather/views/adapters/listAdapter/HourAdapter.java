@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 
 import java.util.ArrayList;

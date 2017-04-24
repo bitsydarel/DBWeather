@@ -1,9 +1,9 @@
-package com.darelbitsy.dbweather.presenters.helper;
+package com.darelbitsy.dbweather.extensions.helper;
 
 import android.content.Context;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Locale;

@@ -10,10 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.views.activities.MainActivity;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsConfigurationAdapter;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.weather.Daily;
 import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
@@ -60,7 +59,7 @@ public class NewsConfigurationActivity extends AppCompatActivity {
             weather.getHourly().setData(database.getHourlyWeatherFromDatabase());
 
             weather.setAlerts(database.getAlerts());
-            final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            final Intent intent = new Intent(getApplicationContext(), WeatherActivity.class);
             intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);

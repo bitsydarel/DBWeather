@@ -1,16 +1,16 @@
-package com.darelbitsy.dbweather.models.services;
+package com.darelbitsy.dbweather.extensions.services;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_FROM_CITY_KEY;
 
 /**
  * Created by Darel Bitsy on 25/02/17.

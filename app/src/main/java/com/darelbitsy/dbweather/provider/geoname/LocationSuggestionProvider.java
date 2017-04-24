@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.geoname;
+package com.darelbitsy.dbweather.provider.geoname;
 
 import android.app.SearchManager;
 import android.content.ContentProvider;
@@ -55,7 +55,8 @@ public class LocationSuggestionProvider extends ContentProvider {
         }, mListOfLocation.size());
 
         if (userQuery != null && !userQuery.isEmpty()) {
-            mCompositeDisposable.add(mGeoNameLocationInfoProvider.getLocation(userQuery)
+            mCompositeDisposable.add(mGeoNameLocationInfoProvider
+                    .getLocation(userQuery)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new GetSuggestions()));

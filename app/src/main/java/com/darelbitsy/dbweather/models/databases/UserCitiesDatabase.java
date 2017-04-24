@@ -69,7 +69,7 @@ import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LATITUDE;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LONGITUDE;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_NAME;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
 
 /**
  * Created by Darel Bitsy on 04/04/17.
@@ -128,7 +128,7 @@ public class UserCitiesDatabase extends SQLiteOpenHelper {
                 CURRENT_PRECIPTYPE+ COLUMN_TEXT_TYPE + COMMA +
                 CURRENT_CLOUD_COVER + COLUMN_REAL_TYPE + COMMA +
                 CURRENT_WIND_SPEED+ COLUMN_REAL_TYPE + COMMA +
-                CURRENT_WIND_BEARING + COLUMN_INTEGER_TYPE +
+                CURRENT_WIND_BEARING + COLUMN_INTEGER_TYPE + COMMA +
                 String.format(FOREIGN_KEY,
                         CITY_NAME, CITIES_TABLE, THE_CITY_NAME) +
                 ");"
@@ -156,7 +156,7 @@ public class UserCitiesDatabase extends SQLiteOpenHelper {
                 DAY_VISIBILITY + COLUMN_INTEGER_TYPE + COMMA +
                 DAY_CLOUD_COVER + COLUMN_REAL_TYPE + COMMA +
                 DAY_PRESSURE + COLUMN_REAL_TYPE + COMMA +
-                DAY_OZONE + COLUMN_REAL_TYPE +
+                DAY_OZONE + COLUMN_REAL_TYPE + COMMA +
                 String.format(FOREIGN_KEY,
                         CITY_NAME, CITIES_TABLE, THE_CITY_NAME) +
                 ");"
@@ -181,7 +181,7 @@ public class UserCitiesDatabase extends SQLiteOpenHelper {
                 HOUR_CLOUD_COVER + COLUMN_REAL_TYPE + COMMA +
                 HOUR_VISIBILITY + COLUMN_REAL_TYPE + COMMA +
                 HOUR_PRESSURE + COLUMN_REAL_TYPE + COMMA +
-                HOUR_OZONE + COLUMN_REAL_TYPE +
+                HOUR_OZONE + COLUMN_REAL_TYPE + COMMA +
                 String.format(FOREIGN_KEY,
                         CITY_NAME, CITIES_TABLE, THE_CITY_NAME) +
                 ");"

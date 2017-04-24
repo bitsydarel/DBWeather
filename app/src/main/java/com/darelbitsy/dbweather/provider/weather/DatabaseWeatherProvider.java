@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.provider.weather;
+package com.darelbitsy.dbweather.provider.weather;
 
 import android.content.Context;
 import android.util.Log;

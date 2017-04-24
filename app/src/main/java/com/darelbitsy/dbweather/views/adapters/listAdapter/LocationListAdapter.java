@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
 import java.util.ArrayList;

@@ -2,12 +2,16 @@ package com.darelbitsy.dbweather.views.activities;
 
 import android.os.Bundle;
 
+import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
+
+import java.util.List;
+
 /**
  * Created by Darel Bitsy on 22/04/17.
  * Interface representing the mainScreen of the
  */
 
-public interface IMainView<WEATHER, NEWS> {
+public interface IWeatherActivityView<WEATHER, NEWS> {
 
     void requestWeatherUpdate();
 
@@ -20,6 +24,12 @@ public interface IMainView<WEATHER, NEWS> {
     void showNetworkWeatherErrorMessage();
 
     void showNetworkNewsErrorMessage();
+
+    void setupNavigationDrawerWithCities(final List<GeoName> listOfLocation);
+
+    void setupNavigationDrawerWithNoCities();
+
+    void setupNavigationDrawerMenu();
 
     void saveState(final Bundle bundle);
 }

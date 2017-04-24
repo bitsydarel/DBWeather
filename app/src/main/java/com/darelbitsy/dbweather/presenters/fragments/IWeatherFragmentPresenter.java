@@ -1,5 +1,6 @@
-package com.darelbitsy.dbweather.presenters;
+package com.darelbitsy.dbweather.presenters.fragments;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 /**
@@ -8,7 +9,12 @@ import android.support.annotation.NonNull;
  */
 
 public interface IWeatherFragmentPresenter<TYPE> {
-    void showWeather(@NonNull final TYPE weatherInfo);
 
-    void updateWeather(@NonNull final TYPE weatherInfo);
+    void saveState(@NonNull final Bundle bundle);
+
+    void restoreState(@NonNull final Bundle bundle);
+
+    void showData(@NonNull final TYPE weatherInfo);
+
+    void updateData();
 }

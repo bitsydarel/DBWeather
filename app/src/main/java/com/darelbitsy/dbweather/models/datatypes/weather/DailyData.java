@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

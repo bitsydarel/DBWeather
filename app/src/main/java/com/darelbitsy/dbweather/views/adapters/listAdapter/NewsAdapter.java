@@ -14,9 +14,10 @@ import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.views.activities.NewsDialogActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NEWS_DATA_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NEWS_DATA_KEY;
 
 /**
  * Created by Darel Bitsy on 16/02/17.
@@ -24,21 +25,22 @@ import static com.darelbitsy.dbweather.models.holder.ConstantHolder.NEWS_DATA_KE
  */
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>  {
-    private final ArrayList<Article> mNewses = new ArrayList<>();
+    private final List<Article> mNewses = new ArrayList<>();
 
-    public NewsAdapter(final ArrayList<Article> newses) {
+    public NewsAdapter(final List<Article> newses) {
         mNewses.addAll(newses);
     }
 
     @Override
-    public NewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NewsViewHolder onCreateViewHolder(final ViewGroup parent,
+                                             final int viewType) {
         return new NewsViewHolder(LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.news_list_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(NewsViewHolder holder, int position) {
+    public void onBindViewHolder(final NewsViewHolder holder, final int position) {
         holder.bindNews(mNewses.get(position));
     }
 
@@ -47,7 +49,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return mNewses.size();
     }
 
-    public void updateContent(final ArrayList<Article> newses) {
+    public void updateContent(final List<Article> newses) {
         mNewses.clear();
         mNewses.addAll(newses);
         notifyDataSetChanged();

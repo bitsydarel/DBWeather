@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.helper;
+package com.darelbitsy.dbweather.extensions.helper;
 
 import com.darelbitsy.dbweather.R;
 

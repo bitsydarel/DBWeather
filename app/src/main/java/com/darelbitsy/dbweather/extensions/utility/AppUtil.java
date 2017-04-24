@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.utility;
+package com.darelbitsy.dbweather.extensions.utility;
 
 import android.Manifest;
 import android.app.Activity;
@@ -18,11 +18,11 @@ import android.view.View;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.helper.FeedDataInForeground;
-import com.darelbitsy.dbweather.models.helper.AlarmConfigHelper;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.broadcastreceivers.AlarmWeatherReceiver;
-import com.darelbitsy.dbweather.models.services.KillCheckerService;
+import com.darelbitsy.dbweather.extensions.helper.FeedDataInForeground;
+import com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.broadcastreceivers.AlarmWeatherReceiver;
+import com.darelbitsy.dbweather.extensions.services.KillCheckerService;
 
 import java.io.File;
 import java.util.List;
@@ -35,17 +35,17 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
-import static com.darelbitsy.dbweather.models.helper.AlarmConfigHelper.MY_ACTION;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_ALARM_ON;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_WRITE_PERMISSION_GRANTED;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.LIST_OF_TYPEFACES;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.USER_LANGUAGE;
+import static com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper.MY_ACTION;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_ALARM_ON;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_WRITE_PERMISSION_GRANTED;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.LIST_OF_TYPEFACES;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.USER_LANGUAGE;
 
 /**
  * Created by Darel Bitsy on 22/02/17.

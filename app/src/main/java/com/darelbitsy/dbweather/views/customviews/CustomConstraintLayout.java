@@ -12,8 +12,8 @@ import android.view.View;
 
 import com.darelbitsy.dbweather.R;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
 
 /**
  * Created by Darel Bitsy on 31/03/17.

@@ -11,8 +11,11 @@ import android.databinding.ObservableInt;
 
 public class WeatherInfo {
     public final ObservableBoolean isCurrentWeather = new ObservableBoolean(false);
+    public final ObservableBoolean isVideoPlaying = new ObservableBoolean(false);
+    public final ObservableInt videoBackgroundFile = new ObservableInt();
 
-    public final ObservableField<String> icon = new ObservableField<>();
+    public final ObservableField<String> locationName = new ObservableField<>();
+    public final ObservableInt icon = new ObservableInt();
     public final ObservableField<String> summary = new ObservableField<>();
     public final ObservableField<String> time = new ObservableField<>();
 
@@ -30,4 +33,14 @@ public class WeatherInfo {
 
     public final ObservableField<String> sunrise = new ObservableField<>();
     public final ObservableField<String> sunset = new ObservableField<>();
+
+    private boolean isSleet;
+
+    public boolean isSleet() {
+        return isSleet;
+    }
+
+    public void setSleet(final boolean sleet) {
+        isSleet = sleet;
+    }
 }

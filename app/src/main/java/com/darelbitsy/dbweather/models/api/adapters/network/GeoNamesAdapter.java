@@ -3,7 +3,7 @@ package com.darelbitsy.dbweather.models.api.adapters.network;
 import android.content.Context;
 
 import com.darelbitsy.dbweather.models.api.services.GeoNamesService;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoNamesResult;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.USER_LANGUAGE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.USER_LANGUAGE;
 
 /**
  * Created by Darel Bitsy on 03/04/17.

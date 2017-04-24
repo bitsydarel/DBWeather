@@ -3,7 +3,7 @@ package com.darelbitsy.dbweather.models.api.adapters.network;
 import android.content.Context;
 
 import com.darelbitsy.dbweather.models.api.services.NewsService;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.NewsResponse;
 
 import retrofit2.Call;

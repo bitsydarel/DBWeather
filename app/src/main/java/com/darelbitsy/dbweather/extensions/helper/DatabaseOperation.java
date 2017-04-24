@@ -1,15 +1,14 @@
-package com.darelbitsy.dbweather.models.helper;
+package com.darelbitsy.dbweather.extensions.helper;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.databases.ApplicationDatabase;
 import com.darelbitsy.dbweather.models.databases.UserCitiesDatabase;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
@@ -33,8 +32,99 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.*;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_DESCRIPTION;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_EXPIRES;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_ID;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_TABLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_TITLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_URI;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.APPLICATION_TABLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CITIES_TABLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CITY_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_APPARENT_TEMPERATURE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_CLOUD_COVER;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_HUMIDITY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_ICON;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_PRECIPCHANCE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_PRECIPTYPE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_SUMMARY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_TABLE_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_TEMPERATURE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_WIND_BEARING;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.CURRENT_WIND_SPEED;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAYS_TABLE_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_APPARENT_TEMPERATURE_MAX;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_CLOUD_COVER;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_DEW_POINT;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_HUMIDITY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_ICON;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_ID;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_MOON_PHASE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_OZONE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_PRECIPCHANCE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_PRECIPTYPE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_PRESSURE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_SUMMARY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_SUNRISE_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_SUNSET_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_TEMPERATURE_MAX;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_VISIBILITY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_WIND_BEARING;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.DAY_WIND_SPEED;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.FROM;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.FULL_DAY_SUMMARY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.FULL_HOUR_SUMMARY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOURS_TABLE_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_APPARENT_TEMPERATURE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_CLOUD_COVER;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_DEW_POINT;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_HUMIDITY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_ICON;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_ID;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_OZONE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_PRECIPCHANCE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_PRECIPTYPE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_PRESSURE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_SUMMARY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_TEMPERATURE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_VISIBILITY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_WIND_BEARING;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_WIND_SPEED;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.LAST_KNOW_LATITUDE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.LAST_KNOW_LONGITUDE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.LAST_NEWS_SERVER_SYNC;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.LAST_WEATHER_SERVER_SYNC;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_ID;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_PRECIPCHANCE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_PRECIPTYPE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_TABLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_TIME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_DESCRIPTION;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_ID;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_IMAGE_URL;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_PUBLISHED_AT;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_SOURCE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_SOURCES_TABLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_SOURCE_COUNT;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_SOURCE_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_SOURCE_STATUS;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_TABLE_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_TITLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_URL;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ORDER_BY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.SELECT;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.SELECT_EVERYTHING_FROM;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_COUNTRY;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LATITUDE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LONGITUDE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_NAME;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.TIMEZONE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.WEATHER_TABLE;
+import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.WEEK_SUMMARY;
 
 /**
  * Created by Darel Bitsy on 26/01/17.
@@ -45,15 +135,6 @@ import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant
 public class DatabaseOperation {
     private final ApplicationDatabase applicationDatabase;
     private final UserCitiesDatabase userCitiesDatabase;
-    private final SharedPreferences.Editor mEditor;
-
-    private boolean isDaysInserted;
-    private boolean isHourInserted;
-    private boolean isNewsInserted;
-    private boolean isAlertInserted;
-    private boolean isMinutelyInserted;
-    private boolean iSCurrentInserted;
-    private boolean isWeatherInserted;
 
     private static DatabaseOperation singletonDatabaseOperation;
 
@@ -67,16 +148,8 @@ public class DatabaseOperation {
     private DatabaseOperation(final Context context) {
         applicationDatabase = new ApplicationDatabase(context);
         userCitiesDatabase = new UserCitiesDatabase(context);
-        final SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        mEditor = sharedPreferences.edit();
-        isWeatherInserted = sharedPreferences.getBoolean(WEATHER_INSERTED, false);
-        iSCurrentInserted = sharedPreferences.getBoolean(CURRENT_INSERTED, false);
-        isDaysInserted = sharedPreferences.getBoolean(DAYS_INSERTED, false);
-        isHourInserted = sharedPreferences.getBoolean(HOURLY_INSERTED, false);
-        isNewsInserted = sharedPreferences.getBoolean(NEWS_INSERTED, false);
-        isAlertInserted = sharedPreferences.getBoolean(ALERTS_INSERTED, false);
-        isMinutelyInserted = sharedPreferences.getBoolean(ALERTS_INSERTED, false);
 
+        //TODO:DB UNCOMMENT AFTER TESTING
         AndroidThreeTen.init(context);
     }
 
@@ -90,6 +163,9 @@ public class DatabaseOperation {
         final ContentValues contentValues = new ContentValues();
         contentValues.put(LAST_WEATHER_SERVER_SYNC, new Date().toString());
         final int result = database.update(APPLICATION_TABLE, contentValues, null, null);
+        if (result == 0) {
+            database.insert(APPLICATION_TABLE, null, contentValues);
+        }
         contentValues.clear();
         database.close();
         Log.i(ConstantHolder.TAG, "Saving last weather server sync, result : "+ result);
@@ -104,7 +180,10 @@ public class DatabaseOperation {
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
         final ContentValues contentValues = new ContentValues();
         contentValues.put(LAST_NEWS_SERVER_SYNC, new Date().toString());
-        database.update(APPLICATION_TABLE, contentValues, null, null);
+        final int result = database.update(APPLICATION_TABLE, contentValues, null, null);
+        if (result == 0) {
+            database.insert(APPLICATION_TABLE, null, contentValues);
+        }
         contentValues.clear();
         database.close();
     }
@@ -130,30 +209,24 @@ public class DatabaseOperation {
         contentValues.put(LAST_KNOW_LATITUDE, weather.getLatitude());
         contentValues.put(LAST_KNOW_LONGITUDE, weather.getLongitude());
 
-        if (isWeatherInserted) {
-            final int result = database.update(WEATHER_TABLE, contentValues, null, null);
-            Log.i(ConstantHolder.TAG, "Saving weather data, result : "+ result);
-            contentValues.clear();
+        final int result = database.update(WEATHER_TABLE, contentValues, null, null);
+        Log.i(ConstantHolder.TAG, "Saving weather data, result : "+ result);
 
-        } else {
-            final long result = database.insert(WEATHER_TABLE,
+        if (result == 0) {
+            final long insert = database.insert(WEATHER_TABLE,
                     null,
                     contentValues);
 
-            contentValues.clear();
-
-            if ( result == -1) {
+            if ( insert == -1) {
                 Log.i(ConstantHolder.TAG,
                         "Weather info On Weather Table Not Inserted");
             } else {
                 Log.i(ConstantHolder.TAG,
                         "Weather info On Weather Table Inserted");
             }
-            isWeatherInserted = true;
-            mEditor.putBoolean(WEATHER_INSERTED,
-                    isWeatherInserted)
-                    .apply();
         }
+
+        contentValues.clear();
         database.close();
     }
 
@@ -173,31 +246,25 @@ public class DatabaseOperation {
             contentValues.put(ALERT_DESCRIPTION, alert.getDescription());
             contentValues.put(ALERT_URI, alert.getUri());
 
-            if (isAlertInserted) {
-                final int result = database.update(ALERT_TABLE, contentValues,
-                        ALERT_ID + " = ?",
-                        new String[] {Integer.toString(id.getAndIncrement())});
-                contentValues.clear();
-                Log.i(ConstantHolder.TAG, "Row " + result + " With " + alert + " On Alerts table");
+            final int result = database.update(ALERT_TABLE, contentValues,
+                    ALERT_ID + " = ?",
+                    new String[] {Integer.toString(id.get())});
 
-            } else {
-                final long result = database.insert(ALERT_TABLE, null, contentValues);
-                contentValues.clear();
+            Log.i(ConstantHolder.TAG, "Row " + result + " With " + alert + " On Alerts table");
 
-                if ( result == -1) {
-                    Log.i(ConstantHolder.TAG, id.get() + " With " + alert+ " On Alerts Table Inserted");
+            if (result == 0) {
+                final long insert = database.insert(ALERT_TABLE, null, contentValues);
+
+                if ( insert == -1) {
+                    Log.i(ConstantHolder.TAG, id.get() + " With " + alert+ " On Alerts Table Not Inserted");
 
                 } else {
                     Log.i(ConstantHolder.TAG, id.get() + " With "+ alert + " On Alerts Table Inserted");
-                    id.getAndIncrement();
                 }
             }
-        }
-        if (!isAlertInserted) {
-            isAlertInserted = true;
-            mEditor.putBoolean(ALERTS_INSERTED, isAlertInserted)
-                    .apply();
 
+            contentValues.clear();
+            id.getAndIncrement();
         }
         database.close();
     }
@@ -225,29 +292,25 @@ public class DatabaseOperation {
         databaseInsert.put(CURRENT_WIND_BEARING, current.getWindBearing());
         Log.i(ConstantHolder.TAG, "To DB PROBABILITY: " + current.getPrecipProbability());
 
-        if(iSCurrentInserted) {
-            final int result = sqLiteDatabase.update(CURRENT_TABLE_NAME,
-                    databaseInsert,
-                    null,
-                    null);
+        final int result = sqLiteDatabase.update(CURRENT_TABLE_NAME,
+                databaseInsert,
+                null,
+                null);
 
-            databaseInsert.clear();
-            Log.i(ConstantHolder.TAG, "CURRENT TABLE UPDATED");
-            Log.i(ConstantHolder.TAG, "Saving Current Weather, result : "+ result);
-
-        } else {
-            final long result = sqLiteDatabase.insert(CURRENT_TABLE_NAME, null, databaseInsert);
-            databaseInsert.clear();
-            if (result == -1) {
+        if (result == 0) {
+            final long insert = sqLiteDatabase.insert(CURRENT_TABLE_NAME, null, databaseInsert);
+            if (insert == -1) {
                 Log.i(ConstantHolder.TAG, "CURRENT TABLE NOT INSERTED");
             } else {
                 Log.i(ConstantHolder.TAG, "CURRENT TABLE INSERTED");
             }
-            iSCurrentInserted = true;
-            mEditor.putBoolean(CURRENT_INSERTED,
-                    iSCurrentInserted)
-                    .apply();
+
+        } else {
+            Log.i(ConstantHolder.TAG, "CURRENT TABLE UPDATED");
+            Log.i(ConstantHolder.TAG, "Saving Current Weather, result : "+ result);
         }
+
+        databaseInsert.clear();
         sqLiteDatabase.close();
     }
 
@@ -280,30 +343,24 @@ public class DatabaseOperation {
             databaseInsert.put(DAY_PRESSURE, day.getPressure());
             databaseInsert.put(DAY_OZONE, day.getOzone());
 
-            if (isDaysInserted) {
-                final int result = sqLiteDatabase.update(DAYS_TABLE_NAME,
-                        databaseInsert,
-                        DAY_ID+ " = ?",
-                        new String[] {Integer.toString(index.getAndIncrement())});
-                databaseInsert.clear();
-                Log.i(ConstantHolder.TAG, "Row "+result+ " With " + day.toString() + " ON DAYS TABLE UPDATED");
+            final int result = sqLiteDatabase.update(DAYS_TABLE_NAME,
+                    databaseInsert,
+                    DAY_ID+ " = ?",
+                    new String[] {Integer.toString(index.get())});
+            Log.i(ConstantHolder.TAG, "Row "+result+ " With " + day.toString() + " ON DAYS TABLE UPDATED");
 
-            } else {
-
-                final long result = sqLiteDatabase.insert(DAYS_TABLE_NAME, null, databaseInsert);
+            if (result == 0) {
+                final long insert = sqLiteDatabase.insert(DAYS_TABLE_NAME, null, databaseInsert);
                 databaseInsert.clear();
 
-                if ( result == -1) {
+                if ( insert == -1) {
                     Log.i(ConstantHolder.TAG, index.get() + " With " + day.toString() + " ON DAYS TABLE NOT INSERTED");
 
                 } else { Log.i(ConstantHolder.TAG, index.get() +" With " + day.toString() +  " ON DAYS TABLE INSERTED"); }
-                index.getAndIncrement();
             }
-        }
-        if(!isDaysInserted) {
-            isDaysInserted = true;
-            mEditor.putBoolean(DAYS_INSERTED, isDaysInserted);
-            mEditor.apply();
+
+            index.getAndIncrement();
+            databaseInsert.clear();
         }
         sqLiteDatabase.close();
     }
@@ -334,26 +391,21 @@ public class DatabaseOperation {
             databaseInsert.put(HOUR_PRESSURE, hourlyData.getPressure());
             databaseInsert.put(HOUR_OZONE, hourlyData.getOzone());
 
-            if (isHourInserted) {
-                final int row = sqLiteDatabase.update(HOURS_TABLE_NAME,
-                        databaseInsert,
-                        HOUR_ID + " = ?",
-                        new String[] {Integer.toString(index.getAndIncrement())});
-                databaseInsert.clear();
-                Log.i(ConstantHolder.TAG, row + "ROW With " + hourlyData.toString() + " ON HOUR TABLE UPDATED");
-            } else {
+            final int row = sqLiteDatabase.update(HOURS_TABLE_NAME,
+                    databaseInsert,
+                    HOUR_ID + " = ?",
+                    new String[] {Integer.toString(index.get())});
+
+            Log.i(ConstantHolder.TAG, row + "ROW With " + hourlyData.toString() + " ON HOUR TABLE UPDATED");
+
+            if (row == 0) {
                 final long result = sqLiteDatabase.insert(HOURS_TABLE_NAME, null, databaseInsert);
-                databaseInsert.clear();
                 if (result == -1) { Log.i(ConstantHolder.TAG, index + " With " + hourlyData.toString() + " ON HOUR TABLE NOT INSERTED"); }
                 else { Log.i(ConstantHolder.TAG, index.get() + " With " + hourlyData.toString() + " ON HOUR TABLE INSERTED"); }
-                index.getAndIncrement();
             }
-        }
 
-        if (!isHourInserted) {
-            isHourInserted = true;
-            mEditor.putBoolean(HOURLY_INSERTED, isHourInserted);
-            mEditor.commit();
+            databaseInsert.clear();
+            index.getAndIncrement();
         }
 
         sqLiteDatabase.close();
@@ -368,26 +420,21 @@ public class DatabaseOperation {
             contentValues.put(MINUTELY_TIME, minutelyWeather.getTime());
             contentValues.put(MINUTELY_PRECIPCHANCE, minutelyWeather.getPrecipProbability());
             contentValues.put(MINUTELY_PRECIPTYPE, minutelyWeather.getPrecipType());
-            if (isMinutelyInserted) {
-                final int row = sqLiteDatabase.update(MINUTELY_TABLE,
-                        contentValues,
-                        MINUTELY_ID + " = ?",
-                        new String[] {Integer.toString(id.getAndIncrement())});
-                contentValues.clear();
-                Log.i(ConstantHolder.TAG, row + " ROW With " + minutelyWeather + " On Minutely Table UPDATED");
 
-            } else {
+            final int row = sqLiteDatabase.update(MINUTELY_TABLE,
+                    contentValues,
+                    MINUTELY_ID + " = ?",
+                    new String[] {Integer.toString(id.get())});
+            Log.i(ConstantHolder.TAG, row + " ROW With " + minutelyWeather + " On Minutely Table UPDATED");
+
+            if (row == 0) {
                 final long result = sqLiteDatabase.insert(MINUTELY_TABLE, null, contentValues);
-                contentValues.clear();
                 if (result == -1) { Log.i(ConstantHolder.TAG, id + " With " + minutelyWeather + " On Minutely Table Not Inserted"); }
-                else { Log.i(ConstantHolder.TAG, id + " With " + minutelyWeather + " On Minutely Table Not Inserted"); }
-                id.getAndIncrement();
+                else { Log.i(ConstantHolder.TAG, id + " With " + minutelyWeather + " On Minutely Table Inserted"); }
             }
-        }
-        if (!isMinutelyInserted) {
-            isMinutelyInserted = true;
-            mEditor.putBoolean(MINUTELY_INSERTED, isMinutelyInserted)
-                    .apply();
+
+            contentValues.clear();
+            id.getAndIncrement();
         }
         sqLiteDatabase.close();
     }
@@ -412,28 +459,21 @@ public class DatabaseOperation {
             databaseInsert.put(NEWS_PUBLISHED_AT, news.getPublishedAt());
             databaseInsert.put(NEWS_DESCRIPTION, news.getDescription());
 
-            if (isNewsInserted) {
-                final int result = sqLiteDatabase.update(NEWS_TABLE_NAME,
-                        databaseInsert,
-                        NEWS_ID + " = ?",
-                        new  String[] {Integer.toString(index.getAndIncrement())} );
-                databaseInsert.clear();
-                Log.i(ConstantHolder.TAG, "ROW "+ result+ " with " + news.toString() + " ON NEWS TABLE UPDATED");
+            final int result = sqLiteDatabase.update(NEWS_TABLE_NAME,
+                    databaseInsert,
+                    NEWS_ID + " = ?",
+                    new  String[] {Integer.toString(index.get())} );
+            Log.i(ConstantHolder.TAG, "ROW "+ result+ " with " + news.toString() + " ON NEWS TABLE UPDATED");
 
-            } else {
-                final long result = sqLiteDatabase.insert(NEWS_TABLE_NAME, null, databaseInsert);
-                databaseInsert.clear();
-                if (result == -1) {
+            if (result == 0) {
+                final long insert = sqLiteDatabase.insert(NEWS_TABLE_NAME, null, databaseInsert);
+                if (insert == -1) {
                     Log.i(ConstantHolder.TAG, index.get() + " with " + news.toString() + " ON NEWS TABLE NOT INSERTED");
-
                 } else { Log.i(ConstantHolder.TAG, index.get() + " with " + news.toString() + " ON NEWS TABLE INSERTED"); }
-                index.getAndIncrement();
             }
-        }
-        if (!isNewsInserted) {
-            isNewsInserted = true;
-            mEditor.putBoolean(NEWS_INSERTED, isNewsInserted);
-            mEditor.commit();
+
+            databaseInsert.clear();
+            index.getAndIncrement();
         }
         sqLiteDatabase.close();
     }
@@ -471,22 +511,22 @@ public class DatabaseOperation {
      */
     public List<Alert> getAlerts() {
         final List<Alert> alerts = new ArrayList<>();
-        final Cursor dabaseCursor = applicationDatabase.getReadableDatabase().rawQuery(SELECT_EVERYTHING_FROM +
+        final Cursor databaseCursor = applicationDatabase.getReadableDatabase().rawQuery(SELECT_EVERYTHING_FROM +
                 ALERT_TABLE +
                 ORDER_BY +
                 ALERT_ID + " ASC", null);
 
-        if (dabaseCursor != null) {
-            for (dabaseCursor.moveToFirst(); !dabaseCursor.isAfterLast(); dabaseCursor.moveToNext()) {
+        if (databaseCursor != null) {
+            for (databaseCursor.moveToFirst(); !databaseCursor.isAfterLast(); databaseCursor.moveToNext()) {
                 final Alert alert = new Alert();
-                alert.setTitle(dabaseCursor.getString(dabaseCursor.getColumnIndex(ALERT_TITLE)));
-                alert.setTime(dabaseCursor.getLong(dabaseCursor.getColumnIndex(ALERT_TIME)));
-                alert.setExpires(dabaseCursor.getLong(dabaseCursor.getColumnIndex(ALERT_EXPIRES)));
-                alert.setDescription(dabaseCursor.getString(dabaseCursor.getColumnIndex(ALERT_DESCRIPTION)));
-                alert.setUri(dabaseCursor.getString(dabaseCursor.getColumnIndex(ALERT_URI)));
+                alert.setTitle(databaseCursor.getString(databaseCursor.getColumnIndex(ALERT_TITLE)));
+                alert.setTime(databaseCursor.getLong(databaseCursor.getColumnIndex(ALERT_TIME)));
+                alert.setExpires(databaseCursor.getLong(databaseCursor.getColumnIndex(ALERT_EXPIRES)));
+                alert.setDescription(databaseCursor.getString(databaseCursor.getColumnIndex(ALERT_DESCRIPTION)));
+                alert.setUri(databaseCursor.getString(databaseCursor.getColumnIndex(ALERT_URI)));
                 alerts.add(alert);
             }
-            dabaseCursor.close();
+            databaseCursor.close();
         }
         return alerts;
     }
@@ -782,8 +822,10 @@ public class DatabaseOperation {
 
     public List<GeoName> getUserCitiesFromDatabase() {
         final List<GeoName> geoNameList = new ArrayList<>();
+
         final Cursor cursor = userCitiesDatabase.getReadableDatabase()
                 .rawQuery(SELECT_EVERYTHING_FROM + CITIES_TABLE, null);
+
         if (cursor != null) {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 final GeoName location = new GeoName();

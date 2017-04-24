@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.utility;
+package com.darelbitsy.dbweather.extensions.utility;
 
 import android.app.Activity;
 

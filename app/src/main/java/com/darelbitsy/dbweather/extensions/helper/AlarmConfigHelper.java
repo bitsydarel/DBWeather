@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.helper;
+package com.darelbitsy.dbweather.extensions.helper;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.broadcastreceivers.AlarmWeatherReceiver;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.broadcastreceivers.AlarmWeatherReceiver;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Calendar;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 30/01/17.

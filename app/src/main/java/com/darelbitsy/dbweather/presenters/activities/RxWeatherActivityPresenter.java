@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.presenters;
+package com.darelbitsy.dbweather.presenters.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -167,55 +167,6 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
                 .subscribeWith(new NewsObserver()));
     }
 
-    private WeatherInfo convertToWeatherInfo(@NonNull final String locationName,
-                                             @NonNull final DailyData day,
-                                             @NonNull final WeatherInfo weatherInfo,
-                                             @Nullable final String timeZone) {
-
-        weatherInfo.isCurrentWeather.set(false);
-
-        weatherInfo.locationName.set(locationName);
-        weatherInfo.icon.set(WeatherUtil.getIconId(day.getIcon()));
-        weatherInfo.summary.set(day.getSummary());
-
-        weatherInfo.time.set(WeatherUtil.getDayOfTheWeek(day.getTime(), timeZone));
-
-        weatherInfo.temperature.set(WeatherUtil.getTemperatureInInt(day.getTemperatureMax()));
-        weatherInfo.apparentTemperature.set(WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax()));
-
-        weatherInfo.windSpeed.set(String.format(Locale.ENGLISH,
-                mApplicationContext.getString(R.string.humidity_value),
-                WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
-
-        weatherInfo.humidity.set(String.format(Locale.ENGLISH,
-                mApplicationContext.getString(R.string.humidity_value),
-                WeatherUtil.getHumidityPourcentage(day.getHumidity())));
-
-        weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
-                mApplicationContext.getString(R.string.cloudCoverValue),
-                WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
-
-        if (day.getPrecipType() == null) {
-            weatherInfo.precipitationType
-                    .set(mApplicationContext.getString(R.string.precipitation_default_value));
-
-        } else {
-            weatherInfo.precipitationType
-                    .set(String.format(Locale.getDefault(),
-                            mApplicationContext.getString(R.string.precipeChanceTypeLabel),
-                            day.getPrecipType()));
-        }
-
-        weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
-                mApplicationContext.getString(R.string.precipChanceValue),
-                WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
-
-        weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), timeZone));
-        weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), timeZone));
-
-        return weatherInfo;
-    }
-
     private class NewsObserver extends DisposableSingleObserver<List<Article>> {
         @Override
         public void onSuccess(@NonNull final List<Article> articles) {
@@ -238,6 +189,55 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         @Override
         public void onError(final Throwable throwable) {
             mMainView.showNetworkWeatherErrorMessage();
+        }
+
+        private WeatherInfo convertToWeatherInfo(@NonNull final String locationName,
+                                                 @NonNull final DailyData day,
+                                                 @NonNull final WeatherInfo weatherInfo,
+                                                 @Nullable final String timeZone) {
+
+            weatherInfo.isCurrentWeather.set(false);
+
+            weatherInfo.locationName.set(locationName);
+            weatherInfo.icon.set(WeatherUtil.getIconId(day.getIcon()));
+            weatherInfo.summary.set(day.getSummary());
+
+            weatherInfo.time.set(WeatherUtil.getDayOfTheWeek(day.getTime(), timeZone));
+
+            weatherInfo.temperature.set(WeatherUtil.getTemperatureInInt(day.getTemperatureMax()));
+            weatherInfo.apparentTemperature.set(WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax()));
+
+            weatherInfo.windSpeed.set(String.format(Locale.ENGLISH,
+                    mApplicationContext.getString(R.string.humidity_value),
+                    WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
+
+            weatherInfo.humidity.set(String.format(Locale.ENGLISH,
+                    mApplicationContext.getString(R.string.humidity_value),
+                    WeatherUtil.getHumidityPourcentage(day.getHumidity())));
+
+            weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
+                    mApplicationContext.getString(R.string.cloudCoverValue),
+                    WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
+
+            if (day.getPrecipType() == null) {
+                weatherInfo.precipitationType
+                        .set(mApplicationContext.getString(R.string.precipitation_default_value));
+
+            } else {
+                weatherInfo.precipitationType
+                        .set(String.format(Locale.getDefault(),
+                                mApplicationContext.getString(R.string.precipeChanceTypeLabel),
+                                day.getPrecipType()));
+            }
+
+            weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
+                    mApplicationContext.getString(R.string.precipChanceValue),
+                    WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
+
+            weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), timeZone));
+            weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), timeZone));
+
+            return weatherInfo;
         }
 
         private List<WeatherInfo> parseWeather(final Weather weather) {
@@ -273,6 +273,17 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
                         weatherInfo.locationName.set(weather.getCityName());
                         weatherInfo.icon.set(WeatherUtil.getIconId(currently.getIcon()));
                         weatherInfo.summary.set(currently.getSummary());
+
+                        if ("rain".equalsIgnoreCase(currently.getIcon())) {
+                            weatherInfo.videoBackgroundFile.set(R.raw.rain_background);
+
+                        } else if ("snow".equalsIgnoreCase(currently.getIcon())) {
+                            weatherInfo.videoBackgroundFile.set(R.raw.snow_background);
+                        }
+
+                        if ("sleet".equalsIgnoreCase(currently.getIcon())) {
+                            weatherInfo.setSleet(true);
+                        }
 
                         weatherInfo.time.set(String.format(Locale.getDefault(),
                                 mApplicationContext.getString(R.string.time_label),
@@ -332,7 +343,6 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
                     }
                 }
             }
-
             return weatherInfoList;
         }
     }

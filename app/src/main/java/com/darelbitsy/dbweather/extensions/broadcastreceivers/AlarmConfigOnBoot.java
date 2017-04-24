@@ -1,12 +1,12 @@
-package com.darelbitsy.dbweather.models.broadcastreceivers;
+package com.darelbitsy.dbweather.extensions.broadcastreceivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.helper.FeedDataInForeground;
-import com.darelbitsy.dbweather.models.helper.AlarmConfigHelper;
+import com.darelbitsy.dbweather.extensions.helper.FeedDataInForeground;
+import com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper;
 
 /**
  * Created by Darel Bitsy on 30/01/17.
