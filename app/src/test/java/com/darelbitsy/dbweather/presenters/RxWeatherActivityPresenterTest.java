@@ -1,19 +1,28 @@
-package com.darelbitsy.dbweather.weather;
+package com.darelbitsy.dbweather.presenters;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.test.mock.MockContext;
 
-import com.darelbitsy.dbweather.presenters.RxWeatherActivityPresenter;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
-import com.darelbitsy.dbweather.models.provider.repository.IUserCitiesRepository;
+import com.darelbitsy.dbweather.presenters.activities.RxWeatherActivityPresenter;
+import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
 import com.darelbitsy.dbweather.views.activities.IWeatherActivityView;
 
-import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import io.reactivex.Single;
 
 /**
  * Created by Darel Bitsy on 23/04/17.
@@ -21,74 +30,68 @@ import java.util.List;
  */
 public class RxWeatherActivityPresenterTest {
 
-    @Test
-    public void shouldPass() {
-        Assert.assertEquals(1, 1);
+    @Rule
+    public final MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @Mock
+    Context context;
+
+    @Mock
+    IUserCitiesRepository repository;
+
+    @Mock
+    MockWeatherActivity view;
+    private RxWeatherActivityPresenter mPresenter;
+
+    @Before
+    public void setUp() {
+        Mockito.when(context.getApplicationContext()).thenReturn(context);
+        mPresenter = new RxWeatherActivityPresenter(context,
+                repository,
+                view);
     }
 
     @Test
-    public void shouldPassUserCityToPresenter() {
+    public void shouldPassUserCitiesToPresenter() {
 
-        final MockContext context = new MockContext();
+        final List<GeoName> geoNames = Arrays.asList(new GeoName(), new GeoName(), new GeoName());
 
-        final IWeatherActivityView<List<WeatherInfo>, List<Article>> view =
-                new MockWeatherActivity();
+        Mockito.when(repository.getUserCities()).thenReturn(Single.just(geoNames));
 
-        final IUserCitiesRepository repository= new MockUserCitiesRepository();
+        mPresenter.loadUserCitiesMenu();
 
-        final RxWeatherActivityPresenter presenter =
-                new RxWeatherActivityPresenter(context, repository, view);
-
-        presenter.loadUserCities();
-
+        Mockito.verify(view).setupNavigationDrawerWithCities(geoNames);
     }
 
-    private class MockUserCitiesRepository implements IUserCitiesRepository {
-        @Override
-        public List<GeoName> getUserCities() {
-            return null;
-        }
+    @Test
+    public void shouldHandleNoUserCitiesPassedToPresenter() {
+
+        Mockito.when(repository.getUserCities()).thenReturn(Single.just(Collections.emptyList()));
+
+        mPresenter.loadUserCitiesMenu();
+
+        Mockito.verify(view).setupNavigationDrawerWithNoCities();
     }
 
+    // Extended this class because my presenter need IWeatherActivityView with List of weatherInfo and List of Article
     private class MockWeatherActivity implements IWeatherActivityView<List<WeatherInfo>, List<Article>> {
         @Override
-        public void requestWeatherUpdate() {
-
-        }
-
+        public void requestWeatherUpdate() {}
         @Override
-        public void requestNewsUpdate() {
-
-        }
-
+        public void requestNewsUpdate() {}
         @Override
-        public void showWeather(final List<WeatherInfo> weatherInfoList) {
-
-        }
-
+        public void showWeather(final List<WeatherInfo> weatherInfoList) {}
         @Override
-        public void showNews(final List<Article> articles) {
-
-        }
-
+        public void showNews(final List<Article> articles) {}
         @Override
-        public void showNetworkWeatherErrorMessage() {
-
-        }
-
+        public void showNetworkWeatherErrorMessage() {}
         @Override
-        public void showNetworkNewsErrorMessage() {
-
-        }
-
+        public void showNetworkNewsErrorMessage() {}
         @Override
-        public void setupNavigationDrawer(final List<GeoName> listOfLocation) {
-            Assert.assertNotNull("SetupNavigationDrawer received null", listOfLocation);
-        }
-
+        public void setupNavigationDrawerWithCities(final List<GeoName> listOfLocation) {}
         @Override
-        public void saveState(final Bundle bundle) {
-
-        }
+        public void setupNavigationDrawerWithNoCities() {}
+        @Override
+        public void saveState(final Bundle bundle) {}
     }
 }
