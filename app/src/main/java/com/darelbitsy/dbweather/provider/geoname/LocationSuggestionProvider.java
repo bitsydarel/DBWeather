@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
 import java.util.ArrayList;

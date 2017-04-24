@@ -3,7 +3,7 @@ package com.darelbitsy.dbweather.models.provider.news;
 import android.content.Context;
 
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 
 import java.util.ArrayList;
 import java.util.List;

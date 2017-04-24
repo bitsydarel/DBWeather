@@ -67,7 +67,7 @@ public class DatabaseOperation {
     private DatabaseOperation(final Context context) {
         applicationDatabase = new ApplicationDatabase(context);
         userCitiesDatabase = new UserCitiesDatabase(context);
-        final SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         mEditor = sharedPreferences.edit();
         isWeatherInserted = sharedPreferences.getBoolean(WEATHER_INSERTED, false);
         iSCurrentInserted = sharedPreferences.getBoolean(CURRENT_INSERTED, false);
@@ -85,7 +85,7 @@ public class DatabaseOperation {
      * has been updated
      * I use it for debugging
      */
-    public void saveLastWeatherServerSync() {
+    void saveLastWeatherServerSync() {
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
         final ContentValues contentValues = new ContentValues();
         contentValues.put(LAST_WEATHER_SERVER_SYNC, new Date().toString());
@@ -397,7 +397,7 @@ public class DatabaseOperation {
      * to be displayed ofline
      * @param newses array of newses
      */
-    public void saveNewses(final ArrayList<Article> newses) {
+    public void saveNewses(final List<Article> newses) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
@@ -407,10 +407,7 @@ public class DatabaseOperation {
             databaseInsert.put(NEWS_TITLE, news.getTitle());
 
             databaseInsert.put(NEWS_URL, news.getArticleUrl());
-            Log.i("URL_LOG", " : " + news.getArticleUrl());
             databaseInsert.put(NEWS_IMAGE_URL, news.getUrlToImage());
-            Log.i("URL_LOG", "Got Image_Url: " + news.getUrlToImage() +
-                    " Got News_Url: " + news.getArticleUrl() );
 
             databaseInsert.put(NEWS_PUBLISHED_AT, news.getPublishedAt());
             databaseInsert.put(NEWS_DESCRIPTION, news.getDescription());

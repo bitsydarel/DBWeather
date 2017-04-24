@@ -5,18 +5,19 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.api.adapters.network.WeatherRestAdapter;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.broadcastreceivers.SyncDataReceiver;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.models.provider.news.NetworkNewsProvider;
+import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.models.utility.AppUtil;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -41,47 +42,57 @@ public class FeedDataInForeground {
     public void performSync() {
         if (AppUtil.isNetworkAvailable(mContext)) {
             AndroidThreeTen.init(mContext);
-            final WeatherRestAdapter weatherApi = new WeatherRestAdapter(mContext);
-            GetNewsesHelper.newInstance(mContext)
-                    .getNewsesFromApi()
+
+            new NetworkNewsProvider(mContext)
+                    .getNews()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.from(Looper.getMainLooper()))
-                    .subscribeWith(new DisposableSingleObserver<ArrayList<Article>>() {
+                    .subscribeWith(new DisposableSingleObserver<List<Article>>() {
                         @Override
-                        public void onSuccess(final ArrayList<Article> articles) {
+                        public void onSuccess(final List<Article> articles) {
+                            mDatabase.saveLastWeatherServerSync();
                             mDatabase.saveNewses(articles);
                             mDatabase.saveLastNewsServerSync();
                         }
 
                         @Override
                         public void onError(final Throwable throwable) {
-                            Log.i(ConstantHolder.TAG, "Error in feedDataInForeground: " + throwable.getMessage());
+                            Log.i(ConstantHolder.TAG, "Error in feedDataInForeground for news: " + throwable.getMessage());
                         }
                     });
 
-            try {
-                final Double[] coordinates = mDatabase.getCoordinates();
-                final Weather weather = weatherApi.getWeather(coordinates[0], coordinates[1]);
+            new NetworkWeatherProvider(mContext)
+                    .getWeather()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<Weather>() {
+                        @Override
+                        public void onSuccess(@NonNull final Weather weather) {
+                            mDatabase.saveLastWeatherServerSync();
+                            mDatabase.saveCurrentWeather(weather.getCurrently());
+                            mDatabase.saveDailyWeather(weather.getDaily().getData());
+                            mDatabase.saveHourlyWeather(weather.getHourly().getData());
+                            mDatabase.saveWeatherData(weather);
+                            if (weather.getMinutely() != null) {
+                                mDatabase
+                                        .saveMinutelyWeather(weather.getMinutely().getData());
+                            }
+                            if (weather.getAlerts() != null) { mDatabase.saveAlerts(weather.getAlerts()); }
 
-                mDatabase.saveLastWeatherServerSync();
-                mDatabase.saveWeatherData(weather);
-                mDatabase.saveCurrentWeather(weather.getCurrently());
-                mDatabase.saveHourlyWeather(weather.getHourly().getData());
-                mDatabase.saveDailyWeather(weather.getDaily().getData());
-                if (weather.getMinutely() != null) {
-                    mDatabase
-                            .saveMinutelyWeather(weather.getMinutely().getData());
-                }
-                if (weather.getAlerts() != null) { mDatabase.saveAlerts(weather.getAlerts()); }
+                        }
 
-            } catch (final IOException e) {
-                Log.i(ConstantHolder.TAG, "Error while fetching data in background, error = " + e.getMessage());
-            }
+                        @Override
+                        public void onError(@NonNull final Throwable throwable) {
+                            Log.i(ConstantHolder.TAG, "Error in feedDataInForeground for weather: " + throwable.getMessage());
+                        }
+                    });
 
             Log.i(ConstantHolder.TAG, "Done fetching data from weather and news api");
+
+        } else {
+            Log.i(ConstantHolder.TAG, "No internet connection trying to fetch data in one hours");
         }
 
-        Log.i(ConstantHolder.TAG, "No internet connection trying to fetch data in one hours");
         FeedDataInForeground.setNextSync(mContext);
     }
 

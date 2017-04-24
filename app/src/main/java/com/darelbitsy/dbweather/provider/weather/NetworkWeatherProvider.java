@@ -5,15 +5,15 @@ import android.content.Intent;
 
 import com.darelbitsy.dbweather.models.api.adapters.network.WeatherRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.services.WeatherDatabaseService;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.services.WeatherDatabaseService;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 
 import io.reactivex.Single;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_FROM_CITY_KEY;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.WEATHER_DATA_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_DATA_KEY;
 
 /**
  * Created by Darel Bitsy on 22/04/17.

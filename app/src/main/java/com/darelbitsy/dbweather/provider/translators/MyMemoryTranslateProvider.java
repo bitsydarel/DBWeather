@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.darelbitsy.dbweather.models.api.adapters.network.MyMemoryTranslateRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.news.MyMemoryJson;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 
 import java.io.IOException;
 import java.util.Locale;

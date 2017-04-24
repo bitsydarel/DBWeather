@@ -44,15 +44,17 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.presenters.weather.RxMainPresenter;
 import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.HourAdapter;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsAdapter;
-import com.darelbitsy.dbweather.models.helper.ColorManager;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.services.LocationTracker;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
-import com.darelbitsy.dbweather.models.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.extensions.helper.ColorManager;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.services.LocationTracker;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
@@ -71,15 +73,15 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.FIRST_RUN;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.IS_FROM_CITY_KEY;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.FIRST_RUN;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.RECYCLER_BOTTOM_LIMIT;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
 
 /**
  * Created by Darel Bitsy on 11/02/17.
@@ -87,7 +89,9 @@ import static com.darelbitsy.dbweather.models.holder.ConstantHolder.SELECTED_CIT
  * Handle location update and set viewPager
  */
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MenuItem.OnMenuItemClickListener {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, MenuItem.OnMenuItemClickListener,
+        IMainView<List<WeatherInfo>, List<Article>>{
 
     private DatabaseOperation mDatabase;
     private CustomFragmentAdapter mFragmentAdapter;
@@ -144,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     };
     private final ColorManager mColorPicker = ColorManager.newInstance();
     private SubMenu locationSubMenu;
+    private RxMainPresenter mMainPresenter;
 
 
     private void respondToMenuItemClick(final MenuItem item) {
@@ -236,6 +241,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void requestWeatherUpdate() {
+
+    }
+
+    @Override
+    public void requestNewsUpdate() {
+
+    }
+
+    @Override
+    public void showWeather(List<WeatherInfo> weatherInfos) {
+
+    }
+
+    @Override
+    public void showNews(List<Article> articles) {
+
+    }
+
+    @Override
+    public void showNetworkWeatherErrorMessage() {
+
+    }
+
+    @Override
+    public void showNetworkNewsErrorMessage() {
+
+    }
+
+    @Override
+    public void saveState(final Bundle bundle) {
+
+    }
+
     /**
      * This class implement the behavior
      * i want when i receive the weather data
@@ -282,6 +322,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDatabase = DatabaseOperation.newInstance(this);
+
+        mMainPresenter = new RxMainPresenter(this, subscriptions, this);
 
         final Bundle extras = getIntent().getExtras();
         mWeather = extras.getParcelable(ConstantHolder.WEATHER_DATA_KEY);

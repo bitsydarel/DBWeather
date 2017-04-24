@@ -6,8 +6,8 @@ import android.util.Log;
 import com.darelbitsy.dbweather.models.datatypes.weather.Daily;
 import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 
 import io.reactivex.Single;
 

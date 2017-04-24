@@ -4,17 +4,18 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.models.api.adapters.network.NewsRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.news.NewsResponse;
-import com.darelbitsy.dbweather.models.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.provider.translators.GoogleTranslateProvider;
 import com.darelbitsy.dbweather.models.provider.translators.MyMemoryTranslateProvider;
-import com.darelbitsy.dbweather.models.services.NewsDatabaseService;
-import com.darelbitsy.dbweather.models.utility.AppUtil;
+import com.darelbitsy.dbweather.extensions.services.NewsDatabaseService;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -26,7 +27,7 @@ import java.util.Map;
 
 import io.reactivex.Single;
 
-import static com.darelbitsy.dbweather.models.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 22/04/17.
@@ -65,10 +66,10 @@ public class NetworkNewsProvider implements INewsProvider<List<Article>> {
 
                 }
 
-                final ArrayList<Article> newses = parseNewses(newsResponseList, mApplicationContext, listOfSource);
+                final List<Article> newses = parseNewses(newsResponseList, mApplicationContext, listOfSource);
 
                 final Intent intent = new Intent(mApplicationContext, NewsDatabaseService.class);
-                intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, newses);
+                intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) newses);
                 mApplicationContext.startService(intent);
 
                 if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
