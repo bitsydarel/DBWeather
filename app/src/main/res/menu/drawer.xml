@@ -10,9 +10,10 @@
             android:visible="true">
 
             <menu android:checkableBehavior="single"
-                  android:id="@+id/cities_menu_id"
                    android:enabled="true">
-                <group android:checkableBehavior="single">
+                <group
+                    android:id="@+id/cities_menu_id"
+                    android:checkableBehavior="single">
                     <item android:enabled="true"
                           android:id="@+id/add_location_id"
                           android:icon="@drawable/ic_add_location_black_24dp"

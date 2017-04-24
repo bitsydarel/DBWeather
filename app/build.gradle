@@ -38,6 +38,14 @@ android {
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEX.LIST'
     }
+    
+    dataBinding {
+        enabled = true
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -70,5 +78,6 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.22'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

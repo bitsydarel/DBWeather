@@ -99,4 +99,5 @@
     <string name="removeOrDisplay">Do you want to display %1$s weather info or remove it from your list of cities ?</string>
     <string name="remove">Remove</string>
     <string name="display">Display</string>
+    <string name="precipitation_default_value">Rain/Snow</string>
 </resources>
