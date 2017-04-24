@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,11 +12,14 @@ import android.widget.ImageView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsConfigurationAdapter;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.weather.Daily;
 import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+
+import java.util.ArrayList;
 
 /**
  * Created by Darel Bitsy on 11/02/17.
@@ -60,7 +64,8 @@ public class NewsConfigurationActivity extends AppCompatActivity {
 
             weather.setAlerts(database.getAlerts());
             final Intent intent = new Intent(getApplicationContext(), WeatherActivity.class);
-            intent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
+
+            intent.putParcelableArrayListExtra(ConstantHolder.WEATHER_DATA_KEY, (ArrayList<? extends Parcelable>) WeatherUtil.parseWeather(weather, getApplicationContext()));
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);
             finish();

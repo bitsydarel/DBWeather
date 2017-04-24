@@ -2,15 +2,13 @@ package com.darelbitsy.dbweather.presenters.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.SparseArray;
-import android.view.MenuItem;
 
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
-import java.util.List;
-
 /**
  * Created by Darel Bitsy on 22/04/17.
+ * Interface representing the functionality
+ * of the Weather activity
  */
 
 public interface IWeatherActivityPresenter {
@@ -25,6 +23,8 @@ public interface IWeatherActivityPresenter {
 
     void loadUserCitiesMenu();
 
+    void removeCityFromUserCities(@NonNull final GeoName location);
+
     void getWeather();
 
     void getNews();
@@ -32,8 +32,8 @@ public interface IWeatherActivityPresenter {
     void getWeatherForCity(@NonNull final String cityName,
                               final double latitude,
                               final double longitude);
-
-    void configureNewsMenu();
-
+    
     void saveState(final Bundle save);
+
+    void clearState();
 }

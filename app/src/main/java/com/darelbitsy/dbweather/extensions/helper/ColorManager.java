@@ -1,9 +1,8 @@
 package com.darelbitsy.dbweather.extensions.helper;
 
-import com.darelbitsy.dbweather.R;
+import android.util.SparseIntArray;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.darelbitsy.dbweather.R;
 
 /**
  * Created by Darel Bitsy on 05/01/17.
@@ -11,7 +10,7 @@ import java.util.Map;
  */
 
 public class ColorManager {
-    private Map<String, Integer> mColors;
+    private final SparseIntArray mColors = new SparseIntArray();
     private static ColorManager singletonColorManager;
 
     public static ColorManager newInstance() {
@@ -22,25 +21,24 @@ public class ColorManager {
     }
 
     private ColorManager() {
-        mColors = new HashMap<>();
         initialize();
 
     }
 
     private void initialize() {
-        mColors.put("clear-day", R.drawable.clear_day_background);
-        mColors.put("clear-night", R.drawable.clear_night_background);
-        mColors.put("partly-cloudy-day", R.drawable.partly_cloudy_background);
-        mColors.put("partly-cloudy-night", R.drawable.cloudy_night_background);
-        mColors.put("cloudy", R.drawable.cloudy_background);
-        mColors.put("fog", R.drawable.fog_background);
-        mColors.put("sleet", R.drawable.sleet_background);
-        mColors.put("snow", R.drawable.snow_background);
-        mColors.put("wind", R.drawable.wind_background);
-        mColors.put("rain", R.drawable.rain_background);
+        mColors.put(R.drawable.clear_day, R.drawable.clear_day_background);
+        mColors.put(R.drawable.clear_night, R.drawable.clear_night_background);
+        mColors.put(R.drawable.partly_cloudy, R.drawable.partly_cloudy_background);
+        mColors.put(R.drawable.cloudy_night, R.drawable.cloudy_night_background);
+        mColors.put(R.drawable.cloudy, R.drawable.cloudy_background);
+        mColors.put(R.drawable.fog, R.drawable.fog_background);
+        mColors.put(R.drawable.sleet, R.drawable.sleet_background);
+        mColors.put(R.drawable.snow, R.drawable.snow_background);
+        mColors.put(R.drawable.wind, R.drawable.wind_background);
+        mColors.put(R.drawable.rain, R.drawable.rain_background);
     }
 
-    public int getBackgroundColor(final String icon) {
+    public int getBackgroundColor(final int icon) {
         return mColors.get(icon);
     }
 }

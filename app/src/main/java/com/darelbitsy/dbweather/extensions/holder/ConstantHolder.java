@@ -21,6 +21,8 @@ public class ConstantHolder {
     public static final String INTEGER_PRIMARY_KEY = " integer primary key autoincrement not null,";
     public static final String UPDATE_REQUEST = "update_request";
     public static final String WEATHER_INFO_KEY = "weather_info_key";
+    public static final String FRAGMENT_POSITION = "fragment_position";
+    public static final String LOCATION_UPDATE = "dbweather_location_update";
 
     private ConstantHolder() {
         //To disable default constructor

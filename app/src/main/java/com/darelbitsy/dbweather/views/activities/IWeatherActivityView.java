@@ -13,10 +13,6 @@ import java.util.List;
 
 public interface IWeatherActivityView<WEATHER, NEWS> {
 
-    void requestWeatherUpdate();
-
-    void requestNewsUpdate();
-
     void showWeather(final WEATHER weather);
 
     void showNews(final NEWS news);
@@ -28,8 +24,6 @@ public interface IWeatherActivityView<WEATHER, NEWS> {
     void setupNavigationDrawerWithCities(final List<GeoName> listOfLocation);
 
     void setupNavigationDrawerWithNoCities();
-
-    void setupNavigationDrawerMenu();
 
     void saveState(final Bundle bundle);
 }

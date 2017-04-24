@@ -33,28 +33,25 @@ public class NetworkWeatherProvider implements IWeatherProvider<Weather> {
 
     @Override
     public Single<Weather> getWeather() {
-        return io.reactivex.Single.create(emitter -> {
-            try {
-                final Double[] coordinates = WeatherUtil.getCoordinates(database);
-                final Weather weather = mWeatherRestAdapter.getWeather(coordinates[0],
-                        coordinates[1]);
+        return io.reactivex.Single.fromCallable(() -> {
+            final Double[] coordinates = WeatherUtil.getCoordinates(database);
+            final Weather weather = mWeatherRestAdapter.getWeather(coordinates[0],
+                    coordinates[1]);
 
-                weather.setCityName(WeatherUtil.getLocationName(mApplicationContext,
-                        coordinates[0],
-                        coordinates[1]));
+            weather.setCityName(WeatherUtil.getLocationName(mApplicationContext,
+                    coordinates[0],
+                    coordinates[1]));
 
-                final Intent intent = new Intent(mApplicationContext, WeatherDatabaseService.class);
+            final Intent intent = new Intent(mApplicationContext, WeatherDatabaseService.class);
 
-                intent.putExtra(WEATHER_DATA_KEY,
-                        weather);
+            intent.putExtra(WEATHER_DATA_KEY,
+                    weather);
 
-                intent.putExtra(IS_FROM_CITY_KEY,false);
+            intent.putExtra(IS_FROM_CITY_KEY, false);
 
-                mApplicationContext.startService(intent);
+            mApplicationContext.startService(intent);
 
-                if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
-
-            } catch (final Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
+            return weather;
         });
     }
 
@@ -62,8 +59,7 @@ public class NetworkWeatherProvider implements IWeatherProvider<Weather> {
     public Single<Weather> getWeatherForCity(final String cityName,
                                              final double latitude,
                                              final double longitude) {
-        return Single.create(emitter -> {
-            try {
+        return Single.fromCallable(() -> {
                 final Weather weather = mWeatherRestAdapter.getWeather(latitude, longitude);
                 weather.setCityName(cityName);
 
@@ -76,9 +72,7 @@ public class NetworkWeatherProvider implements IWeatherProvider<Weather> {
 
                 mApplicationContext.startService(intent);
 
-                if (!emitter.isDisposed()) { emitter.onSuccess(weather); }
-
-            } catch (final Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); } }
+                return weather;
         });
     }
 }

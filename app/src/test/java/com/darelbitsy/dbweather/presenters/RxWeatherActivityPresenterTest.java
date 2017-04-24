@@ -2,9 +2,11 @@ package com.darelbitsy.dbweather.presenters;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
+import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.presenters.activities.RxWeatherActivityPresenter;
 import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
@@ -46,6 +48,7 @@ public class RxWeatherActivityPresenterTest {
     @Before
     public void setUp() {
         Mockito.when(context.getApplicationContext()).thenReturn(context);
+
         mPresenter = new RxWeatherActivityPresenter(context,
                 repository,
                 view);
@@ -73,14 +76,25 @@ public class RxWeatherActivityPresenterTest {
         Mockito.verify(view).setupNavigationDrawerWithNoCities();
     }
 
+    @Test
+    public void shouldNotPassWeatherInfoToPresenter() {
+        mPresenter.getWeather();
+
+        Mockito.verify(view).showNetworkWeatherErrorMessage();
+    }
+
+    @Test
+    public void shouldNotPassNewsDataToPresenter() {
+        mPresenter.getNews();
+
+        Mockito.verify(view).showNetworkNewsErrorMessage();
+    }
+
     // Extended this class because my presenter need IWeatherActivityView with List of weatherInfo and List of Article
-    private class MockWeatherActivity implements IWeatherActivityView<List<WeatherInfo>, List<Article>> {
+    private class MockWeatherActivity implements IWeatherActivityView<Pair<List<WeatherInfo>, List<HourlyData>>, List<Article>> {
+
         @Override
-        public void requestWeatherUpdate() {}
-        @Override
-        public void requestNewsUpdate() {}
-        @Override
-        public void showWeather(final List<WeatherInfo> weatherInfoList) {}
+        public void showWeather(final Pair<List<WeatherInfo>, List<HourlyData>> listListPair) {}
         @Override
         public void showNews(final List<Article> articles) {}
         @Override
@@ -91,6 +105,7 @@ public class RxWeatherActivityPresenterTest {
         public void setupNavigationDrawerWithCities(final List<GeoName> listOfLocation) {}
         @Override
         public void setupNavigationDrawerWithNoCities() {}
+
         @Override
         public void saveState(final Bundle bundle) {}
     }

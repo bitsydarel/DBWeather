@@ -9,6 +9,7 @@ import com.darelbitsy.dbweather.provider.schedulers.RxSchedulersProvider;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -27,17 +28,11 @@ public class DatabaseUserCitiesRepository implements IUserCitiesRepository {
 
     @Override
     public Single<List<GeoName>> getUserCities() {
-        return Single.create(singleEmitter -> {
-            try {
-                if (!singleEmitter.isDisposed()) {
-                    singleEmitter.onSuccess(mDatabaseOperation.getUserCitiesFromDatabase());
-                }
+        return Single.fromCallable(mDatabaseOperation::getUserCitiesFromDatabase);
+    }
 
-            } catch (final Exception e) {
-                if (!singleEmitter.isDisposed()) {
-                    singleEmitter.onError(e);
-                }
-            }
-        });
+    @Override
+    public void removeCity(@NonNull final GeoName location) {
+        mDatabaseOperation.removeLocationFromDatabase(location);
     }
 }

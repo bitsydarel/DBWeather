@@ -5,129 +5,76 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.provider.news.DatabaseNewsProvider;
-import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
-import com.darelbitsy.dbweather.provider.weather.DatabaseWeatherProvider;
-import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.presenters.activities.WelcomeActivityPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
-
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NEWS_DATA_KEY;
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_INFO_KEY;
 
 /**
  * Created by Darel Bitsy on 13/02/17.
  * Welcome screen and initializer
  */
 
-public class WelcomeActivity extends Activity {
+public class WelcomeActivity extends Activity implements IWelcomeActivityView {
     private Intent mIntent;
-    private final CompositeDisposable subscriptions = new CompositeDisposable();
-    private boolean isSubscriptionDone = false;
-    private DatabaseOperation mDatabase;
-
-    private final DisposableSingleObserver<List<Article>> mNewsObserver = new DisposableSingleObserver<List<Article>>() {
-        @Override
-        public void onSuccess(final List<Article> newses) {
-            Log.i(ConstantHolder.TAG, "Inside the newsObserver WelcomeActivity");
-            mIntent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) newses);
-            startActivity(mIntent);
-            finish();
-        }
-
-        @Override
-        public void onError(final Throwable e) {
-            Log.i(ConstantHolder.TAG, "Error in welcome activity: "+e.getMessage());
-        }
-    };
-
-    private SharedPreferences mSharedPreferences;
-    private final DisposableSingleObserver<Weather> mWeatherObserver = new DisposableSingleObserver<Weather>() {
-        @Override
-        public void onSuccess(final Weather weather) {
-            Log.i(ConstantHolder.TAG, "Inside the WeatherObserver WelcomeActivity");
-            mIntent.putExtra(ConstantHolder.WEATHER_DATA_KEY, weather);
-
-            if (isSubscriptionDone && mSharedPreferences
-                    .getBoolean(ConstantHolder.FIRST_RUN, true)) {
-                mDatabase.initiateNewsSourcesTable();
-                //TODO:DB Need to remove this code after refactoring
-                subscriptions.add(new NetworkNewsProvider(getApplicationContext())
-                        .getNews()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(mNewsObserver));
-
-            } else {
-                //TODO:DB Need to remove this code after refactoring
-                subscriptions.add(new DatabaseNewsProvider(getApplicationContext())
-                        .getNews()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(mNewsObserver));
-            }
-        }
-
-        @Override
-        public void onError(final Throwable e) {
-            Log.i(ConstantHolder.TAG, "Error in welcome activity: "
-                    + e.getMessage());
-
-            //TODO:DB Need to remove this code after refactoring
-            subscriptions.add(new DatabaseWeatherProvider(getApplicationContext())
-                    .getWeather()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(mWeatherObserver));
-        }
-    };
+    private boolean isSubscriptionDone;
+    private WelcomeActivityPresenter mPresenter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_activity);
-        mDatabase = DatabaseOperation.newInstance(this);
+        mPresenter = new WelcomeActivityPresenter(getApplicationContext(), this);
+
         mIntent = new Intent(getApplicationContext(),
                 WeatherActivity.class);
-        mSharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        if (AppUtil.isNetworkAvailable(getApplicationContext()) && mSharedPreferences
+        final SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        if (sharedPreferences
                 .getBoolean(ConstantHolder.FIRST_RUN, true)) {
 
-            //TODO:DB Need to remove this code after refactoring
-            subscriptions.add(new NetworkWeatherProvider(getApplicationContext())
-                    .getWeather()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(mWeatherObserver));
+            DatabaseOperation.newInstance(this).initiateNewsSourcesTable();
+            mPresenter.getWeather();
             isSubscriptionDone = true;
 
         } else {
-            //TODO:DB Need to remove this code after refactoring
-            subscriptions.add(new DatabaseWeatherProvider(getApplicationContext())
-                    .getWeather()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(mWeatherObserver));
+            mPresenter.loadWeather();
         }
     }
 
     @Override
-    protected void onDestroy() {
-        subscriptions.dispose();
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
+        mPresenter.clearData();
+    }
+
+    @Override
+    public void addWeatherToWeatherActivityIntent(@NonNull final List<WeatherInfo> weatherInfoList) {
+        mIntent.putParcelableArrayListExtra(WEATHER_INFO_KEY, (ArrayList<? extends Parcelable>) weatherInfoList);
+        if (isSubscriptionDone) {
+            mPresenter.getNews();
+        } else {
+            mPresenter.loadNews();
+        }
+    }
+
+    @Override
+    public void addNewsToWeatherActivityIntent(@NonNull final List<Article> articles) {
+        mIntent.putParcelableArrayListExtra(NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) articles);
+        startActivity(mIntent);
+        mPresenter.clearData();
+        finish();
     }
 }

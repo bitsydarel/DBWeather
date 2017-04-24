@@ -2,16 +2,18 @@ package com.darelbitsy.dbweather.presenters.fragments;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.views.animation.widgets.RainFallView;
 import com.darelbitsy.dbweather.views.animation.widgets.SnowFallView;
@@ -26,7 +28,7 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_
 
 public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<WeatherInfo> {
     private final IWeatherFragmentView mView;
-    private WeatherInfo mWeatherInfo = new WeatherInfo();
+    private final WeatherInfo mWeatherInfo = new WeatherInfo();
 
     public WeatherFragmentPresenter(@NonNull final IWeatherFragmentView view) {
         mView = view;
@@ -39,12 +41,12 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
 
     @Override
     public void restoreState(@NonNull final Bundle bundle) {
-        mWeatherInfo = bundle.getParcelable(WEATHER_INFO_KEY);
+        updateWeather(bundle.getParcelable(WEATHER_INFO_KEY));
     }
 
     @Override
     public void showData(@NonNull final WeatherInfo weatherInfo) {
-        mWeatherInfo = weatherInfo;
+        updateWeather(weatherInfo);
     }
 
     @Override
@@ -56,15 +58,49 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
         return mWeatherInfo;
     }
 
+    private void updateWeather(@NonNull final WeatherInfo weatherInfo) {
+        mWeatherInfo.isCurrentWeather.set(weatherInfo.isCurrentWeather.get());
+        mWeatherInfo.isVideoPlaying.set(weatherInfo.isVideoPlaying.get());
+        mWeatherInfo.videoBackgroundFile.set(weatherInfo.videoBackgroundFile.get());
+
+        mWeatherInfo.locationName.set(weatherInfo.locationName.get());
+        mWeatherInfo.icon.set(weatherInfo.icon.get());
+        mWeatherInfo.summary.set(weatherInfo.summary.get());
+        mWeatherInfo.time.set(weatherInfo.time.get());
+
+        mWeatherInfo.temperature.set(weatherInfo.temperature.get());
+        mWeatherInfo.apparentTemperature.set(weatherInfo.apparentTemperature.get());
+
+        mWeatherInfo.windSpeed.set(weatherInfo.windSpeed.get());
+        mWeatherInfo.humidity.set(weatherInfo.humidity.get());
+
+        mWeatherInfo.cloudCover.set(weatherInfo.cloudCover.get());
+
+        mWeatherInfo.precipitationType.set(weatherInfo.precipitationType.get());
+        mWeatherInfo.precipitationProbability.set(weatherInfo.precipitationProbability.get());
+
+        mWeatherInfo.sunrise.set(weatherInfo.sunrise.get());
+        mWeatherInfo.sunset.set(weatherInfo.sunset.get());
+
+        mWeatherInfo.setSleet(weatherInfo.isSleet());
+    }
+
+    @BindingAdapter("setFont")
+    public static void setTypeFace(@NonNull final TextView textView, final boolean shouldSet) {
+        if (shouldSet) {
+            final Typeface typeFace = AppUtil.getAppGlobalTypeFace(textView.getContext());
+            textView.setTypeface(typeFace);
+        }
+    }
 
     @BindingAdapter({"android:src"})
-    public static void setImageViewResource(ImageView imageView, int resource) {
+    public static void setImageViewResource(@NonNull final ImageView imageView, final int resource) {
         imageView.setImageResource(resource);
     }
 
-    @BindingAdapter("bind:showVideoBackground")
-    public static void showVideoBackgroun(@NonNull final VideoView videoView, @NonNull final WeatherInfo weatherInfo) {
-        if (weatherInfo.isCurrentWeather.get() && weatherInfo.icon.get() != 0) {
+    @BindingAdapter("showVideoBackground")
+    public static void showVideoBackground(@NonNull final VideoView videoView, @NonNull final WeatherInfo weatherInfo) {
+        if (weatherInfo.isCurrentWeather.get() && weatherInfo.videoBackgroundFile.get() != 0) {
             videoView.stopPlayback();
 
             videoView.setVideoURI(Uri.parse("android.resource://" +

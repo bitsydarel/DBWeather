@@ -2,10 +2,9 @@ package com.darelbitsy.dbweather.provider.news;
 
 import android.content.Context;
 
-import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.models.datatypes.news.Article;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -24,15 +23,6 @@ public class DatabaseNewsProvider implements INewsProvider<List<Article>> {
 
     @Override
     public Single<List<Article>> getNews() {
-        return Single.create(emitter -> {
-            try {
-                final ArrayList<Article> newFromDatabase = mDatabaseOperation.getNewFromDatabase();
-
-                if (!emitter.isDisposed()) { emitter.onSuccess(newFromDatabase); }
-
-            } catch (final Exception e) {
-                if (!emitter.isDisposed()) { emitter.onError(e); }
-            }
-        });
+        return Single.fromCallable(mDatabaseOperation::getNewFromDatabase);
     }
 }

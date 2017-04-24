@@ -20,6 +20,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.LOCATION_UPDATE;
+
 /**
  * Created by Darel Bitsy on 23/02/17.
  * Service that get the user location
@@ -37,7 +39,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
 
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, final int flags, final int startId) {
         Log.i(ConstantHolder.TAG, "Inside Registered request Location update, and service started");
 
         //Configuring the google api client
@@ -164,7 +166,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
      * @param location represent the user location
      */
     private void sendLocationToActivity(final Location location) {
-        final Intent coordonateIntent = new Intent("dbweather_location_update");
+        final Intent coordonateIntent = new Intent(LOCATION_UPDATE);
         coordonateIntent.putExtra("latitude", location.getLatitude());
         coordonateIntent.putExtra("longitude", location.getLongitude());
         sendBroadcast(coordonateIntent);

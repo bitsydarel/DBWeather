@@ -1,18 +1,26 @@
 package com.darelbitsy.dbweather.presenters.activities;
 
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
+import android.util.Log;
+import android.view.View;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
-import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
@@ -24,10 +32,10 @@ import com.darelbitsy.dbweather.provider.weather.DatabaseWeatherProvider;
 import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
 import com.darelbitsy.dbweather.views.activities.IWeatherActivityView;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
-import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -71,6 +79,8 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
 
     public void configureView() {
         loadUserCitiesMenu();
+        loadWeather();
+        loadNews();
     }
 
     @Override
@@ -91,7 +101,12 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
 
     @Override
     public void saveState(final Bundle save) {
+    }
 
+    @Override
+    public void clearState() {
+        rxSubscriptions.clear();
+        cleanCache();
     }
 
     @Override
@@ -116,11 +131,6 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         } else {
             mMainView.showNetworkWeatherErrorMessage();
         }
-    }
-
-    @Override
-    public void configureNewsMenu() {
-
     }
 
     @Override
@@ -151,12 +161,16 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
                             mMainView.setupNavigationDrawerWithCities(userCities);
                         }
                     }
-
                     @Override
                     public void onError(final Throwable throwable) {
                         mMainView.setupNavigationDrawerWithNoCities();
                     }
                 }));
+    }
+
+    @Override
+    public void removeCityFromUserCities(@NonNull final GeoName location) {
+        mUserCitiesRepository.removeCity(location);
     }
 
     @Override
@@ -179,171 +193,79 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         }
     }
 
+    private void cleanCache() {
+        final File dir = AppUtil.getFileCache(mApplicationContext);
+        if (dir.isDirectory()) {
+            for (final File file : dir.listFiles()) {
+                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
+                        + file.delete());
+            }
+        }
+    }
+
+    public void shareScreenShot(@NonNull final Activity activity) throws IOException {
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        } else {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+
+        shareIntent.setType("image/jpeg");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, takeScreenShot(activity));
+
+        activity.startActivity(Intent.createChooser(shareIntent,
+                mApplicationContext.getString(R.string.send_to)));
+    }
+
+    private Uri takeScreenShot(@NonNull final Activity activity) throws IOException {
+        OutputStream outputStream = null;
+
+        if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
+            try {
+                final View viewToShot = activity.getWindow().getDecorView().getRootView();
+                final boolean defaultDrawing = viewToShot.isDrawingCacheEnabled();
+                viewToShot.setDrawingCacheEnabled(true);
+                final Bitmap screenShot = Bitmap.createBitmap(viewToShot.getDrawingCache());
+                viewToShot.setDrawingCacheEnabled(defaultDrawing);
+
+                final ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "db_weather");
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                final Uri uri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        values);
+
+                if (uri != null) {
+                    outputStream = activity.getContentResolver().openOutputStream(uri);
+                    screenShot.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    return uri;
+
+                }
+
+            } catch (final IOException e) {
+                Log.i(ConstantHolder.TAG, "Error while Creating screenshot File: " + e.getMessage());
+
+            } finally {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        }
+        return null;
+    }
+
     private class WeatherObserver extends DisposableSingleObserver<Weather> {
 
         @Override
         public void onSuccess(@NonNull final Weather weather) {
-            mMainView.showWeather(new Pair<>(parseWeather(weather), weather.getHourly().getData()));
+            mMainView.showWeather(new Pair<>(WeatherUtil.parseWeather(weather, mApplicationContext),
+                    weather.getHourly().getData()));
         }
 
         @Override
         public void onError(final Throwable throwable) {
             mMainView.showNetworkWeatherErrorMessage();
-        }
-
-        private WeatherInfo convertToWeatherInfo(@NonNull final String locationName,
-                                                 @NonNull final DailyData day,
-                                                 @NonNull final WeatherInfo weatherInfo,
-                                                 @Nullable final String timeZone) {
-
-            weatherInfo.isCurrentWeather.set(false);
-
-            weatherInfo.locationName.set(locationName);
-            weatherInfo.icon.set(WeatherUtil.getIconId(day.getIcon()));
-            weatherInfo.summary.set(day.getSummary());
-
-            weatherInfo.time.set(WeatherUtil.getDayOfTheWeek(day.getTime(), timeZone));
-
-            weatherInfo.temperature.set(WeatherUtil.getTemperatureInInt(day.getTemperatureMax()));
-            weatherInfo.apparentTemperature.set(WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax()));
-
-            weatherInfo.windSpeed.set(String.format(Locale.ENGLISH,
-                    mApplicationContext.getString(R.string.humidity_value),
-                    WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
-
-            weatherInfo.humidity.set(String.format(Locale.ENGLISH,
-                    mApplicationContext.getString(R.string.humidity_value),
-                    WeatherUtil.getHumidityPourcentage(day.getHumidity())));
-
-            weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
-                    mApplicationContext.getString(R.string.cloudCoverValue),
-                    WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
-
-            if (day.getPrecipType() == null) {
-                weatherInfo.precipitationType
-                        .set(mApplicationContext.getString(R.string.precipitation_default_value));
-
-            } else {
-                weatherInfo.precipitationType
-                        .set(String.format(Locale.getDefault(),
-                                mApplicationContext.getString(R.string.precipeChanceTypeLabel),
-                                day.getPrecipType()));
-            }
-
-            weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
-                    mApplicationContext.getString(R.string.precipChanceValue),
-                    WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
-
-            weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), timeZone));
-            weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), timeZone));
-
-            return weatherInfo;
-        }
-
-        private List<WeatherInfo> parseWeather(final Weather weather) {
-            final List<WeatherInfo> weatherInfoList = new ArrayList<>();
-            final Calendar calendar = Calendar.getInstance();
-            final String currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
-                    Calendar.LONG,
-                    Locale.getDefault());
-
-            int count = 0;
-            boolean isTodaySet = false;
-            boolean isTomorrowSet = false;
-
-            Integer currentDayIndex = null;
-
-            while (count < 7) {
-                for (final DailyData day : weather.getDaily().getData()) {
-                    if (count == 7) {
-                        break;
-                    }
-
-                    final WeatherInfo weatherInfo = new WeatherInfo();
-
-                    if (!isTodaySet &&
-                            currentDayName.equalsIgnoreCase(WeatherUtil.getDayOfTheWeek(day.getTime(),
-                                    weather.getTimezone()))) {
-
-                        count = 0;
-                        final Currently currently = weather.getCurrently();
-
-                        weatherInfo.isCurrentWeather.set(true);
-
-                        weatherInfo.locationName.set(weather.getCityName());
-                        weatherInfo.icon.set(WeatherUtil.getIconId(currently.getIcon()));
-                        weatherInfo.summary.set(currently.getSummary());
-
-                        if ("rain".equalsIgnoreCase(currently.getIcon())) {
-                            weatherInfo.videoBackgroundFile.set(R.raw.rain_background);
-
-                        } else if ("snow".equalsIgnoreCase(currently.getIcon())) {
-                            weatherInfo.videoBackgroundFile.set(R.raw.snow_background);
-                        }
-
-                        if ("sleet".equalsIgnoreCase(currently.getIcon())) {
-                            weatherInfo.setSleet(true);
-                        }
-
-                        weatherInfo.time.set(String.format(Locale.getDefault(),
-                                mApplicationContext.getString(R.string.time_label),
-                                WeatherUtil.getFormattedTime(currently.getTime(), weather.getTimezone())));
-
-                        weatherInfo.temperature.set(WeatherUtil.getTemperatureInInt(currently.getTemperature()));
-                        weatherInfo.apparentTemperature.set(WeatherUtil.getTemperatureInInt(currently.getApparentTemperature()));
-
-                        weatherInfo.windSpeed.set(String.format(Locale.ENGLISH,
-                                mApplicationContext.getString(R.string.humidity_value),
-                                WeatherUtil.getWindSpeedMeterPerHour(currently.getWindSpeed())));
-
-                        weatherInfo.humidity.set(String.format(Locale.ENGLISH,
-                                mApplicationContext.getString(R.string.humidity_value),
-                                WeatherUtil.getHumidityPourcentage(currently.getHumidity())));
-
-                        weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
-                                mApplicationContext.getString(R.string.cloudCoverValue),
-                                WeatherUtil.getCloudCoverPourcentage(currently.getCloudCover())));
-
-                        if (currently.getPrecipType() == null) {
-                            weatherInfo.precipitationType.set(mApplicationContext.getString(R.string.precipitation_default_value));
-
-                        } else {
-                            weatherInfo.precipitationType.set(String.format(Locale.getDefault(),
-                                    mApplicationContext.getString(R.string.precipeChanceTypeLabel),
-                                    currently.getPrecipType()));
-                        }
-
-                        weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
-                                mApplicationContext.getString(R.string.precipChanceValue),
-                                WeatherUtil.getPrecipPourcentage(currently.getPrecipProbability())));
-
-                        weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), weather.getTimezone()));
-                        weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), weather.getTimezone()));
-
-                        weatherInfoList.add(count, weatherInfo);
-
-                        currentDayIndex = count++;
-                        isTodaySet = true;
-
-                    } else if (currentDayIndex != null
-                            && count == (currentDayIndex + 1)) {
-
-                        weatherInfoList.add(1, convertToWeatherInfo(weather.getCityName(),
-                                day, weatherInfo, weather.getTimezone()));
-
-                        count++;
-                        isTomorrowSet = true;
-
-                    } else if (isTodaySet && isTomorrowSet) {
-
-                        weatherInfoList.add(count,
-                                convertToWeatherInfo(weather.getCityName(), day, weatherInfo, weather.getTimezone()));
-
-                        count++;
-                    }
-                }
-            }
-            return weatherInfoList;
         }
     }
 }

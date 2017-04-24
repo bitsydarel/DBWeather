@@ -1,427 +1,121 @@
 package com.darelbitsy.dbweather.views.fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
-import com.darelbitsy.dbweather.presenters.fragments.WeatherFragmentPresenter;
-import com.darelbitsy.dbweather.provider.weather.DatabaseWeatherProvider;
-import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
-import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
-import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.databinding.FragmentWeatherBinding;
 import com.darelbitsy.dbweather.extensions.helper.ColorManager;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.services.LocationTracker;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
-import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
-import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
-import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
-import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.extensions.helper.DaySwitcherHelper;
-import com.darelbitsy.dbweather.views.animation.widgets.RainFallView;
-import com.darelbitsy.dbweather.views.animation.widgets.SnowFallView;
-import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.presenters.fragments.WeatherFragmentPresenter;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
-
-import static android.content.Context.MODE_PRIVATE;
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_FROM_CITY_KEY;
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_INFO_KEY;
 
 /**
- * Created by Darel Bitsy on 23/03/17.
- * Weather fragment he present weather data to the user.
+ * Created by Darel Bitsy on 24/04/17.
+ * Fragment Representing weather info
  */
 
 public class WeatherFragment extends Fragment implements IWeatherFragmentView<WeatherInfo> {
-    @BindView(R.id.current_weather_layout)
-    ConstraintLayout mMainLayout;
 
-    private RelativeLayout.LayoutParams mParams;
-    private DatabaseOperation mDatabase;
-    private Currently mCurrently;
-    private DailyData mDailyData;
-    private String mCityName;
-    private String mTimeZone;
-
-    private View mCurrentView;
-    private SwipeRefreshLayout refreshLayout;
-    private final Handler mHandler = new Handler();
-
-    private Single<Weather> mWeatherObservableWithNetwork;
-    private Single<Weather> mWeatherObservableWithoutNetwork;
-
-    private DaySwitcherHelper mDaySwitcherHelper;
-    private CustomFragmentAdapter mAdapter;
-    private final ColorManager mColorManager = ColorManager.newInstance();
-    private SharedPreferences mSharedPreferences;
-    private final CompositeDisposable subscriptions = new CompositeDisposable();
     private WeatherFragmentPresenter mPresenter;
+    private FragmentWeatherBinding mFragmentWeatherBinding;
+    private RelativeLayout.LayoutParams mParams;
 
-    public static WeatherFragment newInstance(final Currently currently,
-                                              final String cityName) {
+    public static WeatherFragment newInstance(@NonNull final WeatherInfo weatherInfo) {
 
         final WeatherFragment weatherFragment = new WeatherFragment();
 
         final Bundle args = new Bundle();
-        args.putParcelable(ConstantHolder.CURRENT_WEATHER_KEY, currently);
-        args.putString(ConstantHolder.CITY_NAME_KEY, cityName);
-
+        args.putParcelable(WEATHER_INFO_KEY, weatherInfo);
         weatherFragment.setArguments(args);
+
         return weatherFragment;
     }
 
-    public static WeatherFragment newInstance(final DailyData dailyData,
-                                              final String cityName) {
-        final WeatherFragment weatherFragment = new WeatherFragment();
-
-        final Bundle args = new Bundle();
-        args.putParcelable(ConstantHolder.DAY_WEATHER_KEY, dailyData);
-        args.putString(ConstantHolder.CITY_NAME_KEY, cityName);
-
-        weatherFragment.setArguments(args);
-        return weatherFragment;
-    }
-
-    public void setAdapter(final CustomFragmentAdapter adapter) {
-        mAdapter = adapter;
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mDatabase = DatabaseOperation.newInstance(context);
-        setupObservables(context);
-        mSharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-    }
-
-    @Override
-    public void onCreate(final @Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Bundle args = getArguments();
 
         mPresenter = new WeatherFragmentPresenter(this);
+        final Bundle arguments = getArguments();
 
-        mCurrently = args.getParcelable(ConstantHolder.CURRENT_WEATHER_KEY);
-        mDailyData = args.getParcelable(ConstantHolder.DAY_WEATHER_KEY);
-        mCityName = args.getString(ConstantHolder.CITY_NAME_KEY);
-
-        if (mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false) && mSharedPreferences.contains(SELECTED_CITY_LATITUDE)) {
-
-            //TODO:DB Need to remove this code after refactoring
-            subscriptions.add(new NetworkWeatherProvider(getActivity().getApplicationContext())
-                    .getWeatherForCity(mCityName,
-                            Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0)),
-                                    Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0)))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new CurrentWeatherObserver()));
-        } else {
-            subscriptions.add(mWeatherObservableWithoutNetwork
-                    .subscribeWith(new CurrentWeatherObserver()));
+        if (arguments != null) {
+            mPresenter.restoreState(arguments);
         }
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(final LayoutInflater inflater,
-                             final @Nullable ViewGroup container,
-                             final @Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mPresenter.restoreState(savedInstanceState);
 
-        mCurrentView = inflater.inflate(R.layout.fragment_weather, container, false);
-        ButterKnife.bind(this, mCurrentView);
-        AndroidThreeTen.init(getActivity());
-
-        mDaySwitcherHelper = new DaySwitcherHelper(this,
-                mCurrentView,
-                mCityName);
-
-        refreshLayout = (SwipeRefreshLayout) mCurrentView.findViewById(R.id.refreshLayout);
-        refreshLayout.setColorSchemeColors(Color.parseColor("#ff0099cc"),
-                Color.parseColor("#ff33b5e5"),
-                Color.parseColor("#ff99cc00"),
-                Color.parseColor("#ff669900"));
-
-        refreshLayout.setOnRefreshListener(() -> {
-            refreshLayout.setRefreshing(true);
-            updateData();
-        });
+        }
 
         mParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         mParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        return mCurrentView;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(WEATHER_INFO_KEY, mPresenter.getWeatherInfo());
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState) {
+
+        mFragmentWeatherBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_weather, container, false);
+        mFragmentWeatherBinding.setPresenter(mPresenter);
+        mFragmentWeatherBinding.currentWeatherLayout.setBackgroundResource(ColorManager.newInstance()
+                .getBackgroundColor(mPresenter.getWeatherInfo()
+                        .icon.get()));
+        return mFragmentWeatherBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mHandler.post(this::initialize);
-
-        if (mCurrently != null && AppUtil.isGpsPermissionOn(getActivity())) {
-            mHandler.post(() -> getActivity()
-                    .startService(new Intent(getActivity().getApplicationContext(), LocationTracker.class)));
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        subscriptions.dispose();
-        super.onDestroyView();
-    }
-
-    private void initialize() {
-
-        if (mCurrently != null) {
-            mHandler.post(() -> {
-                mDaySwitcherHelper.setCurrentViews(mCurrentView,
-                        mCurrently,
-                        mTimeZone,
-                        mCurrently.getSunriseTime(),
-                        mCurrently.getSunsetTime());
-
-                showFallingSnowOrRain();
-            });
-
-        } else if (mDailyData != null) {
-            mHandler.post(() ->
-                    mDaySwitcherHelper
-                            .showDayData(mCurrentView,
-                                    WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
-                                    mDailyData, mTimeZone));
+        if (mPresenter.getWeatherInfo().isCurrentWeather.get()) {
+            mPresenter.showFallingSnowOrRain(mFragmentWeatherBinding.currentWeatherLayout,
+                    getActivity().getApplicationContext(), mParams);
         }
 
-    }
-
-    /**
-     *  this function Fetch the layout with the new data
-     */
-    public void updateDisplay() {
-        mHandler.post(() -> {
-            if (mCurrently != null) {
-                mDaySwitcherHelper.setCurrentViews(mCurrentView,
-                        mCurrently,
-                        mTimeZone,
-                        mCurrently.getSunriseTime(),
-                        mCurrently.getSunsetTime());
-
-                showFallingSnowOrRain();
-
-            } else if (mDailyData != null) {
-                mDaySwitcherHelper.showDayData(mCurrentView,
-                        WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone),
-                        mDailyData, mTimeZone);
-            }
-        });
-    }
-
-    private void showFallingSnowOrRain() {
-        if("snow".equalsIgnoreCase(mCurrently.getIcon())) {
-
-            if(mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new SnowFallView(getActivity().getApplicationContext()), mParams);
-            }
-
-            if(mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
-            }
-
-            new Handler().post(() -> AppUtil.setupVideoBackground(R.raw.snow_background,
-                    getActivity()
-                            .getApplicationContext(),
-                    mMainLayout));
-
-        } else if("rain".equalsIgnoreCase(mCurrently.getIcon())) {
-
-            if(mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new RainFallView(getActivity()
-                        .getApplicationContext()),
-                        mParams);
-            }
-
-            if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
-            }
-
-            new Handler().post(() -> AppUtil
-                    .setupVideoBackground(R.raw.rain_background,
-                            getActivity()
-                                    .getApplicationContext(),
-                            mMainLayout));
-
-        } else if ("sleet".equalsIgnoreCase(mCurrently.getIcon())) {
-
-            if (mMainLayout.findViewById(RainFallView.VIEW_ID) == null) {
-                    mMainLayout.addView(new RainFallView(getActivity()
-                            .getApplicationContext()),
-                            mParams);
-            }
-
-            if (mMainLayout.findViewById(SnowFallView.VIEW_ID) == null) {
-                mMainLayout.addView(new SnowFallView(getActivity()
-                        .getApplicationContext()),
-                        mParams);
-            }
-
-        } else {
-
-            if (mMainLayout.findViewById(RainFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(RainFallView.VIEW_ID));
-            }
-
-            if (mMainLayout.findViewById(SnowFallView.VIEW_ID) != null) {
-                mMainLayout.removeView(mMainLayout.findViewById(SnowFallView.VIEW_ID));
-            }
-
-            final VideoView videoView = (VideoView) mCurrentView.findViewById(R.id.backgroundVideo);
-            videoView.stopPlayback();
-            videoView.setVisibility(View.GONE);
-        }
-    }
-
-    private void updateData() {
-        final boolean isNetworkAvailable = AppUtil.isNetworkAvailable(getActivity()
-                .getApplicationContext());
-
-        if (mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false)
-                && mSharedPreferences.contains(SELECTED_CITY_LATITUDE)
-                && isNetworkAvailable) {
-
-            //TODO:DB Need to remove this code after refactoring
-            subscriptions.add(new NetworkWeatherProvider(getContext().getApplicationContext())
-                    .getWeatherForCity(mCityName,
-                            Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0)),
-                            Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0)))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new CurrentWeatherObserver()));
-
-        } else {
-            if (isNetworkAvailable) {
-                subscriptions.add(mWeatherObservableWithNetwork
-                        .subscribeWith(new CurrentWeatherObserver()));
-
-            } else {
-                mWeatherObservableWithoutNetwork
-                        .subscribeWith(new CurrentWeatherObserver());
-
-            }
-        }
-    }
-
-    public void updateDataFromActivity(final Currently currently,
-                                       final String cityName) {
-        mCurrently = currently;
-        mHandler.post(WeatherFragment.this::updateDisplay);
-        mCityName = cityName;
-        mDaySwitcherHelper.updateCityName(mCityName);
-        mAdapter.getParentLayout()
-                .setBackgroundResource(mColorManager
-                        .getBackgroundColor(currently.getIcon()));
-    }
-
-    public void updateDataFromActivity(final String cityName, final DailyData dailyData) {
-        mCityName = cityName;
-        mDailyData = dailyData;
-        mDaySwitcherHelper.updateCityName(cityName);
-        mHandler.post(WeatherFragment.this::updateDisplay);
-    }
-
-
-    private void setupObservables(final Context context) {
-
-        //TODO:DB Need to remove this code after refactoring
-        mWeatherObservableWithNetwork = new NetworkWeatherProvider(context)
-                .getWeather()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        mWeatherObservableWithoutNetwork = new DatabaseWeatherProvider(context)
-                .getWeather()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        mFragmentWeatherBinding.refreshLayout.setOnRefreshListener(this::requestUpdate);
     }
 
     @Override
     public void showData(@NonNull final WeatherInfo weatherInfo) {
         mPresenter.showData(weatherInfo);
+        if (mFragmentWeatherBinding.refreshLayout.isRefreshing()) {
+            mFragmentWeatherBinding.refreshLayout.setRefreshing(false);
+        }
+        mFragmentWeatherBinding.currentWeatherLayout.setBackgroundResource(ColorManager.newInstance()
+                .getBackgroundColor(mPresenter.getWeatherInfo()
+                        .icon.get()));
+
+        if (mPresenter.getWeatherInfo().isCurrentWeather.get()) {
+            mPresenter.showFallingSnowOrRain(mFragmentWeatherBinding.currentWeatherLayout,
+                    mFragmentWeatherBinding.currentWeatherLayout.getContext(),
+                    mParams);
+        }
+
     }
 
     @Override
     public void requestUpdate() {
         final Intent updateRequest = new Intent(ConstantHolder.UPDATE_REQUEST);
         getActivity().sendBroadcast(updateRequest);
-    }
-
-    private final class CurrentWeatherObserver extends DisposableSingleObserver<Weather> {
-        @Override
-        public void onSuccess(final Weather weather) {
-            Log.i(ConstantHolder.TAG, "Inside the currentWeatherObserver Fragment");
-            mCityName = weather.getCityName();
-            mTimeZone = weather.getTimezone();
-            if (mCurrently != null) {
-                mCurrently = weather.getCurrently();
-
-            } else if (mDailyData != null){
-                for (DailyData day: weather.getDaily().getData()) {
-                    if (WeatherUtil.getDayOfTheWeek(day.getTime(), mTimeZone)
-                            .equals(WeatherUtil.getDayOfTheWeek(mDailyData.getTime(), mTimeZone))) {
-                        mDailyData = day;
-                    }
-                }
-            }
-
-            if(mAdapter != null) {
-                if (mCurrently != null) {
-                    mAdapter.getParentLayout()
-                            .setBackgroundResource(mColorManager
-                                    .getBackgroundColor(mCurrently.getIcon()));
-                }
-
-                mAdapter.updateWeatherOnFragment(weather);
-            }
-
-            if (mDaySwitcherHelper != null) {
-                mDaySwitcherHelper.updateCityName(mCityName);
-            }
-
-            mHandler.post(WeatherFragment.this::updateDisplay);
-
-            if (refreshLayout != null) {
-                refreshLayout.setRefreshing(false);
-            }
-        }
-
-        @Override
-        public void onError(final Throwable e) {
-            Log.i(ConstantHolder.TAG, "Error in weather fragment: " + e.getMessage());
-        }
     }
 }

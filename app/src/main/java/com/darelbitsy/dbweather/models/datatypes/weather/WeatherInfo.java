@@ -3,13 +3,15 @@ package com.darelbitsy.dbweather.models.datatypes.weather;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by Darel Bitsy on 21/04/17.
  * Class representing an Weather Info
  */
 
-public class WeatherInfo {
+public class WeatherInfo implements Parcelable {
     public final ObservableBoolean isCurrentWeather = new ObservableBoolean(false);
     public final ObservableBoolean isVideoPlaying = new ObservableBoolean(false);
     public final ObservableInt videoBackgroundFile = new ObservableInt();
@@ -36,11 +38,88 @@ public class WeatherInfo {
 
     private boolean isSleet;
 
+    public WeatherInfo() {
+        //Empty Because i use it to initiate my instance
+    }
+
+    private WeatherInfo(final Parcel in) {
+        isCurrentWeather.set(in.readInt() != 0);
+        isVideoPlaying.set(in.readInt() != 0);
+        videoBackgroundFile.set(in.readInt());
+
+        locationName.set(in.readString());
+        icon.set(in.readInt());
+        summary.set(in.readString());
+        time.set(in.readString());
+
+        temperature.set(in.readInt());
+        apparentTemperature.set(in.readInt());
+
+        windSpeed.set(in.readString());
+        humidity.set(in.readString());
+
+        cloudCover.set(in.readString());
+
+        precipitationType.set(in.readString());
+        precipitationProbability.set(in.readString());
+
+        sunrise.set(in.readString());
+        sunset.set(in.readString());
+
+        isSleet = in.readInt() != 0;
+    }
+
+    public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
+        @Override
+        public WeatherInfo createFromParcel(final Parcel in) {
+            return new WeatherInfo(in);
+        }
+
+        @Override
+        public WeatherInfo[] newArray(final int size) {
+            return new WeatherInfo[size];
+        }
+    };
+
     public boolean isSleet() {
         return isSleet;
     }
 
     public void setSleet(final boolean sleet) {
         isSleet = sleet;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags) {
+
+        dest.writeInt(isCurrentWeather.get() ? 1 : 0);
+        dest.writeInt(isVideoPlaying.get() ? 1 : 0);
+        dest.writeInt(videoBackgroundFile.get());
+
+        dest.writeString(locationName.get());
+        dest.writeInt(icon.get());
+        dest.writeString(summary.get());
+        dest.writeString(time.get());
+
+        dest.writeInt(temperature.get());
+        dest.writeInt(apparentTemperature.get());
+
+        dest.writeString(windSpeed.get());
+        dest.writeString(humidity.get());
+
+        dest.writeString(cloudCover.get());
+
+        dest.writeString(precipitationType.get());
+        dest.writeString(precipitationProbability.get());
+
+        dest.writeString(sunrise.get());
+        dest.writeString(sunset.get());
+
+        dest.writeInt(isSleet ? 1 : 0);
     }
 }
