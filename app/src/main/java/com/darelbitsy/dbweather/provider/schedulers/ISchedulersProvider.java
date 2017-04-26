@@ -1,14 +1,16 @@
 package com.darelbitsy.dbweather.provider.schedulers;
 
+import io.reactivex.Scheduler;
+
 /**
  * Created by Darel Bitsy on 22/04/17.
  */
 
-public interface ISchedulersProvider<SCHEDULER_TYPE> {
+public interface ISchedulersProvider {
 
-    SCHEDULER_TYPE getWeatherScheduler();
+    Scheduler getWeatherScheduler();
 
-    SCHEDULER_TYPE getNewsScheduler();
+    Scheduler getNewsScheduler();
 
-    SCHEDULER_TYPE getDatabaseWorkScheduler();
+    Scheduler getDatabaseWorkScheduler();
 }

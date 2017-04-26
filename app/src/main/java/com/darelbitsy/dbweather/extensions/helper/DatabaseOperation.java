@@ -149,8 +149,6 @@ public class DatabaseOperation {
         applicationDatabase = new ApplicationDatabase(context);
         userCitiesDatabase = new UserCitiesDatabase(context);
 
-        //TODO:DB UNCOMMENT AFTER TESTING
-        AndroidThreeTen.init(context);
     }
 
     /**
@@ -1007,7 +1005,7 @@ public class DatabaseOperation {
 
     public void saveCurrentWeatherForCity(final String cityName, final Currently currently) {
         final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
-        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format("SELECT %s FROM %s WHERE %s=%s",
+        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format("SELECT %s FROM %s WHERE %s=\"%s\"",
                 CITY_NAME, CURRENT_TABLE_NAME, CITY_NAME, cityName), null);
 
         final ContentValues databaseInsert = new ContentValues();
@@ -1132,7 +1130,10 @@ public class DatabaseOperation {
 
     public Currently getCurrentlyWeatherForCity(final String cityName) {
         final Currently currently = new Currently();
-        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format(SELECT_EVERYTHING_FROM + CURRENT_TABLE_NAME + " WHERE %s=%s", CITY_NAME, cityName), null);
+        final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format(Locale.getDefault(),
+                 "%s %s WHERE %s=\"%s\"",
+                SELECT_EVERYTHING_FROM , CURRENT_TABLE_NAME, CITY_NAME, cityName), null);
+
         query.moveToFirst();
         if (!query.isAfterLast()) {
             currently.setTime(query.getLong(query.getColumnIndex(CURRENT_TIME)));
@@ -1157,7 +1158,7 @@ public class DatabaseOperation {
 
         final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format(SELECT_EVERYTHING_FROM +
                         DAYS_TABLE_NAME +
-                        " WHERE %s=%s" + ORDER_BY + DAY_ID + " ASC"
+                        " WHERE %s=\"%s\"" + ORDER_BY + DAY_ID + " ASC"
                 , CITY_NAME, cityName), null);
 
         if (query != null) {

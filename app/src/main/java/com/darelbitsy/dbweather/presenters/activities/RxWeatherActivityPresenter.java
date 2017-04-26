@@ -21,9 +21,7 @@ import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.provider.news.DatabaseNewsProvider;
 import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
@@ -37,7 +35,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
@@ -53,16 +51,21 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
     private final DatabaseNewsProvider mDatabaseNewsProvider;
     private final NetworkNewsProvider mNetworkNewsProvider;
     private final RxSchedulersProvider mSchedulersProvider;
-    private final Context mApplicationContext;
     private final IUserCitiesRepository mUserCitiesRepository;
-    private final IWeatherActivityView<Pair<List<WeatherInfo>, List<HourlyData>>, List<Article>> mMainView;
+    private final IWeatherActivityView mMainView;
     private final CompositeDisposable rxSubscriptions = new CompositeDisposable();
+    private final Scheduler mObserverOnScheduler;
+    private final Context mApplicationContext;
 
-    public RxWeatherActivityPresenter(final Context context,
-                                      final IUserCitiesRepository userCitiesRepository,
-                                      final IWeatherActivityView<Pair<List<WeatherInfo>, List<HourlyData>>, List<Article>> mainView) {
 
-        mApplicationContext = context.getApplicationContext();
+    public RxWeatherActivityPresenter(
+            final Context context,
+            final IUserCitiesRepository userCitiesRepository,
+            final IWeatherActivityView mainView,
+            final Scheduler scheduler) {
+
+        mApplicationContext = context;
+
         mUserCitiesRepository = userCitiesRepository;
 
         mDatabaseWeatherProvider = new DatabaseWeatherProvider(mApplicationContext);
@@ -74,6 +77,8 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         mSchedulersProvider = RxSchedulersProvider.newInstance();
 
         mMainView = mainView;
+
+        mObserverOnScheduler = scheduler;
 
     }
 
@@ -87,7 +92,7 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
     public void loadWeather() {
         rxSubscriptions.add(mDatabaseWeatherProvider.getWeather()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mObserverOnScheduler)
                 .subscribeWith(new WeatherObserver()));
     }
 
@@ -95,7 +100,7 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
     public void loadNews() {
         rxSubscriptions.add(mDatabaseNewsProvider.getNews()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mObserverOnScheduler)
                 .subscribeWith(new NewsObserver()));
     }
 
@@ -113,7 +118,7 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
     public void getWeather() {
         rxSubscriptions.add(mNetworkWeatherProvider.getWeather()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mObserverOnScheduler)
                 .subscribeWith(new WeatherObserver()));
     }
 
@@ -125,11 +130,14 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         if (AppUtil.isNetworkAvailable(mApplicationContext)) {
             rxSubscriptions.add(mNetworkWeatherProvider.getWeatherForCity(cityName, latitude, longitude)
                     .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mObserverOnScheduler)
                     .subscribeWith(new WeatherObserver()));
 
         } else {
-            mMainView.showNetworkWeatherErrorMessage();
+            rxSubscriptions.add(mDatabaseWeatherProvider.getWeatherForCity(cityName, latitude, longitude)
+                    .subscribeOn(mSchedulersProvider.getDatabaseWorkScheduler())
+                    .observeOn(mObserverOnScheduler)
+                    .subscribeWith(new WeatherObserver()));
         }
     }
 
@@ -141,7 +149,7 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         rxSubscriptions.add(mDatabaseWeatherProvider
                 .getWeatherForCity(cityName, latitude, longitude)
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mObserverOnScheduler)
                 .subscribeWith(new WeatherObserver()));
     }
 
@@ -150,7 +158,7 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
 
         rxSubscriptions.add(mUserCitiesRepository.getUserCities()
                 .subscribeOn(mSchedulersProvider.getDatabaseWorkScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mObserverOnScheduler)
                 .subscribeWith(new DisposableSingleObserver<List<GeoName>>() {
                     @Override
                     public void onSuccess(@NonNull final List<GeoName> userCities) {
@@ -177,7 +185,7 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
     public void getNews() {
         rxSubscriptions.add(mNetworkNewsProvider.getNews()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mObserverOnScheduler)
                 .subscribeWith(new NewsObserver()));
     }
 

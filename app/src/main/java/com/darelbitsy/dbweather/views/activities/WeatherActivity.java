@@ -37,6 +37,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 
+import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.ActivityWeatherBinding;
 import com.darelbitsy.dbweather.extensions.helper.ColorManager;
@@ -51,6 +52,7 @@ import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.presenters.activities.RxWeatherActivityPresenter;
 import com.darelbitsy.dbweather.provider.repository.DatabaseUserCitiesRepository;
+import com.darelbitsy.dbweather.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.views.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.HourAdapter;
 import com.darelbitsy.dbweather.views.adapters.listAdapter.NewsAdapter;
@@ -60,6 +62,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import javax.inject.Inject;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.CITY_NAME_KEY;
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.FIRST_RUN;
@@ -84,7 +90,7 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_
 
 public class WeatherActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MenuItem.OnMenuItemClickListener,
-        IWeatherActivityView<Pair<List<WeatherInfo>, List<HourlyData>>, List<Article>> {
+        IWeatherActivityView {
 
     private CustomFragmentAdapter mFragmentAdapter;
     private BroadcastReceiver mLocationBroadcast;
@@ -104,6 +110,8 @@ public class WeatherActivity extends AppCompatActivity
     private SubMenu locationSubMenu;
     private RxWeatherActivityPresenter mMainPresenter;
     private ActivityWeatherBinding mWeatherActivityBinder;
+
+    @Inject Context mContext;
 
 
     @Override
@@ -215,8 +223,14 @@ public class WeatherActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         mWeatherActivityBinder = DataBindingUtil.setContentView(this, R.layout.activity_weather);
 
+        ((DBWeatherApplication) getApplication()).getComponent()
+                .inject(this);
+
         mMainPresenter =
-                new RxWeatherActivityPresenter(this, new DatabaseUserCitiesRepository(this), this);
+                new RxWeatherActivityPresenter(mContext,
+                        new DatabaseUserCitiesRepository(this),
+                        this,
+                        AndroidSchedulers.mainThread());
 
 
         mMainPresenter.configureView();

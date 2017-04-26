@@ -103,7 +103,7 @@ public class AppUtil {
     }
 
     public static boolean isAlarmSet(final Context context) {
-        final int lastAlarm = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        final int lastAlarm = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .getInt(AlarmConfigHelper.LAST_NOTIFICATION_PENDING_INTENT_ID, 0);
         if (lastAlarm == 0 ) { return false; }
 
@@ -136,14 +136,14 @@ public class AppUtil {
     }
 
     public static void setWritePermissionValue(final Context context) {
-        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(IS_WRITE_PERMISSION_GRANTED, true)
                 .apply();
     }
 
     public static boolean isWritePermissionOn(final Context context) {
-        return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .getBoolean(IS_WRITE_PERMISSION_GRANTED, false);
     }
 
@@ -175,24 +175,24 @@ public class AppUtil {
     }
 
     public static boolean isAccountPermissionOn(final Context context) {
-        return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false);
     }
 
     public static void setAccountPermissionValue(final Context context) {
-        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(IS_ACCOUNT_PERMISSION_GRANTED, true)
                 .apply();
     }
 
     public static boolean isGpsPermissionOn(final Context context) {
-        return context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .getBoolean(IS_GPS_PERMISSION_GRANTED, false);
     }
 
     public static void setGpsPermissionValue(final Context context) {
-        context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE)
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
                 .putBoolean(IS_GPS_PERMISSION_GRANTED, true)
                 .apply();
@@ -243,10 +243,13 @@ public class AppUtil {
     public static void setupVideoBackground(final int resourceId,
                                             final Context context,
                                             final View view) {
+
         final VideoView background = (VideoView) view.findViewById(R.id.backgroundVideo);
+
         background.stopPlayback();
         background.setVideoURI(Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId));
         background.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
+
         if (background.getVisibility() != View.VISIBLE) {
             background.setVisibility(View.VISIBLE);
         }

@@ -65,7 +65,7 @@ public class NewsConfigurationActivity extends AppCompatActivity {
             weather.setAlerts(database.getAlerts());
             final Intent intent = new Intent(getApplicationContext(), WeatherActivity.class);
 
-            intent.putParcelableArrayListExtra(ConstantHolder.WEATHER_DATA_KEY, (ArrayList<? extends Parcelable>) WeatherUtil.parseWeather(weather, getApplicationContext()));
+            intent.putParcelableArrayListExtra(ConstantHolder.WEATHER_INFO_KEY, (ArrayList<? extends Parcelable>) WeatherUtil.parseWeather(weather, getApplicationContext()));
             intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, database.getNewFromDatabase());
             startActivity(intent);
             finish();

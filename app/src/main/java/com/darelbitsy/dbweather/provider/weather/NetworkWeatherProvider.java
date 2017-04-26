@@ -20,7 +20,7 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_
  * Weather provider from network using DARK SKY API
  */
 
-public class NetworkWeatherProvider implements IWeatherProvider<Weather> {
+public class NetworkWeatherProvider implements IWeatherProvider {
     private final Context mApplicationContext;
     private final DatabaseOperation database;
     private final WeatherRestAdapter mWeatherRestAdapter;

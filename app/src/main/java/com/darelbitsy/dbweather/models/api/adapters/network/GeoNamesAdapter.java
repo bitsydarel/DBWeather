@@ -9,6 +9,7 @@ import com.darelbitsy.dbweather.models.datatypes.geonames.GeoNamesResult;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
@@ -30,23 +31,16 @@ public class GeoNamesAdapter {
     private static final boolean IS_NAME_REQUIERED = true;
     private static final int MAX_ROWS = 3;
     private GeoNamesService mGeoNamesService;
-    private static GeoNamesAdapter singletonGeoNamesAdapter;
 
-    public static GeoNamesAdapter newInstance(final Context context) {
-        if (singletonGeoNamesAdapter == null) {
-            singletonGeoNamesAdapter = new GeoNamesAdapter(context.getApplicationContext());
-        }
-        return singletonGeoNamesAdapter;
-    }
-
-    private GeoNamesAdapter(final Context context) {
+    private GeoNamesAdapter(final Context context, final OkHttpClient okHttpClient) {
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GEO_NAMES_API_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
-                .client(AppUtil
+                /*.client(AppUtil
                         .geoNameOkHttpClient
                         .cache(AppUtil.getCacheDirectory(context))
-                        .build())
+                        .build())*/
+                .client(okHttpClient)
                 .build();
         if (mGeoNamesService == null) {
             mGeoNamesService = retrofit.create(GeoNamesService.class);
