@@ -1,8 +1,8 @@
-package com.darelbitsy.dbweather.models.api.adapters.network;
+package com.darelbitsy.dbweather.models.api.adapters;
 
-import com.darelbitsy.dbweather.models.api.services.GoogleGeocodeService;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.extensions.utility.AppUtil;
+import com.darelbitsy.dbweather.models.api.services.GoogleGeocodeService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,16 +30,16 @@ public class GoogleGeocodeAdapter {
             "sk", "sl", "sr", "sv", "ta", "te", "th",
             "tl", "tr", "uk", "zh-CN", "zh-TW"
         );
-    private final Retrofit mRestAdapter;
     private GoogleGeocodeService mGeocodeService;
 
     public GoogleGeocodeAdapter() {
-        mRestAdapter = new Retrofit.Builder()
+        final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(GOOGLE_GEOCODE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(AppUtil.translateOkHttpClient)
                 .build();
-        mGeocodeService = mRestAdapter.create(GoogleGeocodeService.class);
+
+        mGeocodeService = restAdapter.create(GoogleGeocodeService.class);
     }
 
     public String getLocationByCoordinate(final double latitude,

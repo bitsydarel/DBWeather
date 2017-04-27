@@ -9,8 +9,8 @@ import java.security.GeneralSecurityException;
  * Created by Darel Bitsy on 22/04/17.
  */
 
-public interface ITranslateProvider<TYPE> {
+public interface ITranslateProvider {
 
-    TYPE translateText(@NonNull final String text) throws GeneralSecurityException, IOException;
+    String translateText(@NonNull final String text) throws GeneralSecurityException, IOException;
 
 }

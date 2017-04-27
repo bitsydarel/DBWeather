@@ -1,19 +1,12 @@
 package com.darelbitsy.dbweather.presenters.fragments;
 
 import android.content.Context;
-import android.databinding.BindingAdapter;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.views.animation.widgets.RainFallView;
 import com.darelbitsy.dbweather.views.animation.widgets.SnowFallView;
@@ -83,38 +76,6 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
         mWeatherInfo.sunset.set(weatherInfo.sunset.get());
 
         mWeatherInfo.setSleet(weatherInfo.isSleet());
-    }
-
-    @BindingAdapter("setFont")
-    public static void setTypeFace(@NonNull final TextView textView, final boolean shouldSet) {
-        if (shouldSet) {
-            final Typeface typeFace = AppUtil.getAppGlobalTypeFace(textView.getContext());
-            textView.setTypeface(typeFace);
-        }
-    }
-
-    @BindingAdapter({"android:src"})
-    public static void setImageViewResource(@NonNull final ImageView imageView, final int resource) {
-        imageView.setImageResource(resource);
-    }
-
-    @BindingAdapter("showVideoBackground")
-    public static void showVideoBackground(@NonNull final VideoView videoView, @NonNull final WeatherInfo weatherInfo) {
-        if (weatherInfo.isCurrentWeather.get() && weatherInfo.videoBackgroundFile.get() != 0) {
-            videoView.stopPlayback();
-
-            videoView.setVideoURI(Uri.parse("android.resource://" +
-                    videoView.getContext().getPackageName() +
-                    "/" +
-                    weatherInfo.videoBackgroundFile.get()));
-
-            videoView.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
-            weatherInfo.isVideoPlaying.set(true);
-            videoView.start();
-
-        } else {
-            weatherInfo.isVideoPlaying.set(false);
-        }
     }
 
     public void showFallingSnowOrRain(@NonNull final ConstraintLayout currentWeatherLayout,

@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers;
  * Scheduler Provider
  */
 
-public class RxSchedulersProvider implements ISchedulersProvider<Scheduler> {
+public class RxSchedulersProvider implements ISchedulersProvider {
     private final Scheduler mNewsScheduler;
     private final Scheduler mWeatherScheduler;
     private final Scheduler mDatabaseTaskScheduler;

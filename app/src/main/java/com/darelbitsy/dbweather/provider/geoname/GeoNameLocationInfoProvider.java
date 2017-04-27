@@ -1,12 +1,15 @@
 package com.darelbitsy.dbweather.provider.geoname;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.darelbitsy.dbweather.models.api.adapters.network.GeoNamesAdapter;
+import com.darelbitsy.dbweather.DBWeatherApplication;
+import com.darelbitsy.dbweather.models.api.adapters.GeoNamesAdapter;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.reactivex.Single;
 
@@ -16,11 +19,13 @@ import io.reactivex.Single;
  * with help of GeoName Api
  */
 
-public class GeoNameLocationInfoProvider implements ILocationInfoProvider<List<GeoName>> {
-    private final GeoNamesAdapter geoNamesAdapter;
+@Singleton
+public class GeoNameLocationInfoProvider implements ILocationInfoProvider {
+    @Inject GeoNamesAdapter geoNamesAdapter;
 
-    public GeoNameLocationInfoProvider(final Context context) {
-        geoNamesAdapter = GeoNamesAdapter.newInstance(context.getApplicationContext());
+    @Inject
+    public GeoNameLocationInfoProvider() {
+        DBWeatherApplication.getComponent().inject(this);
     }
 
     @Override

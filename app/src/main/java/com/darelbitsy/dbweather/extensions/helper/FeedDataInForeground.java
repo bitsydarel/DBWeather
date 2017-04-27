@@ -9,12 +9,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.extensions.broadcastreceivers.SyncDataReceiver;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class FeedDataInForeground {
         if (AppUtil.isNetworkAvailable(mContext)) {
             AndroidThreeTen.init(mContext);
 
-            new NetworkNewsProvider(mContext)
+            new NetworkNewsProvider()
                     .getNews()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.from(Looper.getMainLooper()))
@@ -61,7 +61,7 @@ public class FeedDataInForeground {
                         }
                     });
 
-            new NetworkWeatherProvider(mContext)
+            new NetworkWeatherProvider()
                     .getWeather()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

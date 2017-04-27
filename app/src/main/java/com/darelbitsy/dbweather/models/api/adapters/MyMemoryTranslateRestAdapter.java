@@ -1,10 +1,13 @@
-package com.darelbitsy.dbweather.models.api.adapters.network;
+package com.darelbitsy.dbweather.models.api.adapters;
 
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.api.services.TranslateService;
 import com.darelbitsy.dbweather.models.datatypes.news.MyMemoryJson;
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -14,24 +17,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Translate api adapter
  */
 
+@Singleton
 public class MyMemoryTranslateRestAdapter {
     private final TranslateService mTranslateService;
-    private static MyMemoryTranslateRestAdapter singletonMyMemoryTranslator;
-
-    public static MyMemoryTranslateRestAdapter newInstance() {
-        if (singletonMyMemoryTranslator == null) {
-            singletonMyMemoryTranslator = new MyMemoryTranslateRestAdapter();
-        }
-
-        return singletonMyMemoryTranslator;
-    }
 
 
-    private MyMemoryTranslateRestAdapter() {
+    @Inject
+    public MyMemoryTranslateRestAdapter(final OkHttpClient okHttpClient) {
         final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(ConstantHolder.MYMEMORY_APIURL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(AppUtil.translateOkHttpClient)
+                .client(okHttpClient)
                 .build();
 
         mTranslateService = restAdapter.create(TranslateService.class);

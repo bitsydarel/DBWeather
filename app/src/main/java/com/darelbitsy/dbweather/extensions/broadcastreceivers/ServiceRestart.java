@@ -20,6 +20,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
 /**
  * Created by Darel Bitsy on 08/02/17.
+ * Notification Scheduler Service Restart
  */
 public class ServiceRestart extends BroadcastReceiver {
     @Override

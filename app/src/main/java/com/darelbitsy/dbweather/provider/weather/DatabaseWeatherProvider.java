@@ -7,6 +7,9 @@ import com.darelbitsy.dbweather.models.datatypes.weather.Daily;
 import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.reactivex.Single;
 
 /**
@@ -14,10 +17,12 @@ import io.reactivex.Single;
  * Weather provider from database
  */
 
-public class DatabaseWeatherProvider implements IWeatherProvider<Weather> {
+@Singleton
+public class DatabaseWeatherProvider implements IWeatherProvider {
 
     private final DatabaseOperation database;
 
+    @Inject
     public DatabaseWeatherProvider(final Context context) {
         database = DatabaseOperation.newInstance(context.getApplicationContext());
     }

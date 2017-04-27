@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.models.api.adapters.network.GoogleGeocodeAdapter;
+import com.darelbitsy.dbweather.models.api.adapters.GoogleGeocodeAdapter;
 import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
 import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
@@ -68,7 +68,7 @@ public class WeatherUtil {
         return R.drawable.new_moon;
     }
 
-    public static int getPrecipPourcentage(final double precipProbability) {
+    public static int getPrecipPercentage(final double precipProbability) {
         return (int) (precipProbability * 100);
     }
 
@@ -76,7 +76,7 @@ public class WeatherUtil {
         return (int) Math.round(temperature);
     }
 
-    public static int getHumidityPourcentage(final double humidity) {
+    public static int getHumidityPercentage(final double humidity) {
         return (int) (humidity * 100);
     }
 
@@ -84,7 +84,7 @@ public class WeatherUtil {
         return (int) Math.round(windSpeed);
     }
 
-    public static int getCloudCoverPourcentage(final double cloudCover) {
+    public static int getCloudCoverPercentage(final double cloudCover) {
         return (int) cloudCover * 100;
     }
 
@@ -160,7 +160,7 @@ public class WeatherUtil {
                 .compareTo(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
     }
 
-    public static int compareDay(long firstDay, long secondDay) {
+    public static int compareDay(final long firstDay, final long secondDay) {
         return compareDay(firstDay, secondDay, null);
     }
 
@@ -268,11 +268,11 @@ public class WeatherUtil {
 
                     weatherInfo.humidity.set(String.format(Locale.ENGLISH,
                             context.getString(R.string.humidity_value),
-                            WeatherUtil.getHumidityPourcentage(currently.getHumidity())));
+                            WeatherUtil.getHumidityPercentage(currently.getHumidity())));
 
                     weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
                             context.getString(R.string.cloudCoverValue),
-                            WeatherUtil.getCloudCoverPourcentage(currently.getCloudCover())));
+                            WeatherUtil.getCloudCoverPercentage(currently.getCloudCover())));
 
                     if (currently.getPrecipType() == null) {
                         weatherInfo.precipitationType.set(context.getString(R.string.precipitation_default_value));
@@ -285,7 +285,7 @@ public class WeatherUtil {
 
                     weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
                             context.getString(R.string.precipChanceValue),
-                            WeatherUtil.getPrecipPourcentage(currently.getPrecipProbability())));
+                            WeatherUtil.getPrecipPercentage(currently.getPrecipProbability())));
 
                     weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), weather.getTimezone()));
                     weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), weather.getTimezone()));
@@ -339,11 +339,11 @@ public class WeatherUtil {
 
         weatherInfo.humidity.set(String.format(Locale.ENGLISH,
                 context.getString(R.string.humidity_value),
-                WeatherUtil.getHumidityPourcentage(day.getHumidity())));
+                WeatherUtil.getHumidityPercentage(day.getHumidity())));
 
         weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
                 context.getString(R.string.cloudCoverValue),
-                WeatherUtil.getCloudCoverPourcentage(day.getCloudCover())));
+                WeatherUtil.getCloudCoverPercentage(day.getCloudCover())));
 
         if (day.getPrecipType() == null) {
             weatherInfo.precipitationType
@@ -358,7 +358,7 @@ public class WeatherUtil {
 
         weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
                 context.getString(R.string.precipChanceValue),
-                WeatherUtil.getPrecipPourcentage(day.getPrecipProbability())));
+                WeatherUtil.getPrecipPercentage(day.getPrecipProbability())));
 
         weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), timeZone));
         weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), timeZone));

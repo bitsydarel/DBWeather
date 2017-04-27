@@ -3,11 +3,14 @@ package com.darelbitsy.dbweather.provider.weather;
 import android.content.Context;
 import android.content.Intent;
 
-import com.darelbitsy.dbweather.models.api.adapters.network.WeatherRestAdapter;
+import com.darelbitsy.dbweather.models.api.adapters.WeatherRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.extensions.services.WeatherDatabaseService;
 import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.reactivex.Single;
 
@@ -20,15 +23,15 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_
  * Weather provider from network using DARK SKY API
  */
 
-public class NetworkWeatherProvider implements IWeatherProvider<Weather> {
-    private final Context mApplicationContext;
+@Singleton
+public class NetworkWeatherProvider implements IWeatherProvider {
     private final DatabaseOperation database;
-    private final WeatherRestAdapter mWeatherRestAdapter;
+    @Inject Context mApplicationContext;
+    @Inject WeatherRestAdapter mWeatherRestAdapter;
 
-    public NetworkWeatherProvider(final Context context) {
-        mApplicationContext = context.getApplicationContext();
+    @Inject
+    public NetworkWeatherProvider() {
         database = DatabaseOperation.newInstance(mApplicationContext);
-        mWeatherRestAdapter = WeatherRestAdapter.newInstance(mApplicationContext);
     }
 
     @Override

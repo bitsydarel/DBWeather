@@ -79,7 +79,7 @@ public class AlarmConfigHelper {
         if (calendarMorning.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarMorning;
             currentPendingIntent = mPendingIntentMorning;
-            mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
+            mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                     .edit()
                     .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7124)
                     .apply();
@@ -89,7 +89,7 @@ public class AlarmConfigHelper {
         if (calendarAfternoon.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarAfternoon;
             currentPendingIntent = mPendingIntentAfternoon;
-            mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
+            mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                     .edit()
                     .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7125)
                     .apply();
@@ -98,7 +98,7 @@ public class AlarmConfigHelper {
         if (calendarNight.getTime().compareTo(currentDate) > 0) {
             currentCalendar = calendarNight;
             currentPendingIntent = mPendingIntentNight;
-            mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
+            mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                     .edit()
                     .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7126)
                     .apply();
@@ -108,7 +108,7 @@ public class AlarmConfigHelper {
         calendarMorning.add(Calendar.DATE, +1);
         currentCalendar = calendarMorning;
         currentPendingIntent = mPendingIntentMorning;
-        mContext.getSharedPreferences(PREFS_NAME, mContext.MODE_PRIVATE)
+        mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
                 .putInt(LAST_NOTIFICATION_PENDING_INTENT_ID, 7124)
                 .apply();

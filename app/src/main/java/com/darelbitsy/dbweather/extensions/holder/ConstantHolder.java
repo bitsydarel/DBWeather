@@ -21,7 +21,6 @@ public class ConstantHolder {
     public static final String INTEGER_PRIMARY_KEY = " integer primary key autoincrement not null,";
     public static final String UPDATE_REQUEST = "update_request";
     public static final String WEATHER_INFO_KEY = "weather_info_key";
-    public static final String FRAGMENT_POSITION = "fragment_position";
     public static final String LOCATION_UPDATE = "dbweather_location_update";
 
     private ConstantHolder() {
@@ -44,11 +43,6 @@ public class ConstantHolder {
     public static final String USER_LANGUAGE = Locale.getDefault().getLanguage();
 
     public static final String WEATHER_DATA_KEY = "weather_data_key";
-    public static final String CURRENT_WEATHER_KEY = "current_weather_key";
-    public static final String DAILY_WEATHER_KEY = "daily_weather_key";
-    public static final String DAY_WEATHER_KEY = "day_weather_key";
-    public static final String HOURLY_WEATHER_KEY = "hourly_weather_key";
-    public static final String MINUTELY_WEATHER_KEY = "minutely_weather_key";
 
     public static final String NEWS_DATA_KEY = "news_data_key";
     public static final String CITY_NAME_KEY = "city_name_key";
@@ -57,7 +51,6 @@ public class ConstantHolder {
     public static final String NOTIF_SUMMARY = "notif_summary";
     public static final String NOTIF_TEMPERATURE = "notif_temperature";
 
-    public static final String DRAWER_WAS_OPEN = "drawer_was_open";
     public static final String IS_FROM_CITY_KEY = "is_from_city_key";
     public static final String SELECTED_CITY_LATITUDE = "selected_city_latitude";
     public static final String SELECTED_CITY_LONGITUDE = "selected_city_longitude";
