@@ -141,18 +141,18 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
 
             hourlyPrecipLabelValue.setText(String.format(Locale.getDefault(),
                     mContext.getString(R.string.hourly_precipitation_value),
-                    WeatherUtil.getPrecipPourcentage(hour.getPrecipProbability())));
+                    WeatherUtil.getPrecipPercentage(hour.getPrecipProbability())));
 
             hourlyHumidity.setText(String.format(Locale.getDefault(),
                     mContext.getString(R.string.hourly_humidity_value),
-                    WeatherUtil.getHumidityPourcentage(hour.getHumidity())));
+                    WeatherUtil.getHumidityPercentage(hour.getHumidity())));
 
             hourlyWindSpeed.setText(String.format(Locale.getDefault(),
                     mContext.getString(R.string.hourly_windspeed_value),
                     WeatherUtil.getWindSpeedMeterPerHour(hour.getWindSpeed())));
 
-            hourlyPrecipProgressBar.setProgress(WeatherUtil.getPrecipPourcentage(hour.getPrecipProbability()));
-            hourlyHumidityProgressBar.setProgress(WeatherUtil.getHumidityPourcentage(hour.getHumidity()));
+            hourlyPrecipProgressBar.setProgress(WeatherUtil.getPrecipPercentage(hour.getPrecipProbability()));
+            hourlyHumidityProgressBar.setProgress(WeatherUtil.getHumidityPercentage(hour.getHumidity()));
             hourlyWindSpeedProgressBar.setProgress(WeatherUtil.getWindSpeedMeterPerHour(hour.getWindSpeed()));
         }
 

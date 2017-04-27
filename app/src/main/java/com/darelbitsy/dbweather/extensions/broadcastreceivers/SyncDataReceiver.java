@@ -10,6 +10,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 /**
  * Created by Darel Bitsy on 04/02/17.
+ * Background Sync Adapter
  */
 public class SyncDataReceiver extends WakefulBroadcastReceiver {
     @Override

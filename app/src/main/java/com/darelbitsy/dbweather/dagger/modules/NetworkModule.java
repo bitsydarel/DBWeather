@@ -3,8 +3,10 @@ package com.darelbitsy.dbweather.dagger.modules;
 import android.content.Context;
 
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
-import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.provider.image.IImageProvider;
+import com.darelbitsy.dbweather.provider.image.PicassoImageProvider;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -25,14 +27,10 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public NetworkWeatherProvider providesNetworkWeatherProvider(final Context context) {
-        return new NetworkWeatherProvider(context);
-    }
-
-    @Provides
-    @Singleton
-    public NetworkNewsProvider providesNetworkNewsProvider(final Context context) {
-        return new NetworkNewsProvider(context);
+    public Picasso providesPicasso(final Context context, final OkHttpClient okHttpClient) {
+        return new Picasso.Builder(context)
+                .downloader(new OkHttp3Downloader(okHttpClient))
+                .build();
     }
 
     @Provides
@@ -43,7 +41,6 @@ public class NetworkModule {
     }
 
     @Provides
-    @Singleton
     public OkHttpClient providesOkHttpClient(final Cache cache) {
         return new OkHttpClient.Builder()
                 .connectTimeout(25, TimeUnit.SECONDS)
@@ -52,5 +49,11 @@ public class NetworkModule {
                 .retryOnConnectionFailure(true)
                 .cache(cache)
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    public IImageProvider providesImageProvider(final Picasso picasso) {
+        return new PicassoImageProvider(picasso);
     }
 }

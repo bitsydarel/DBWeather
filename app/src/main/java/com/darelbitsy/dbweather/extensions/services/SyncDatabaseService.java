@@ -24,7 +24,7 @@ public class SyncDatabaseService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(final Intent intent) {
         new FeedDataInForeground(this).performSync();
         Log.i("DBWEATHER", "Feed data from server ");
         Log.i(ConstantHolder.TAG, "DBweather updated weather data from server");

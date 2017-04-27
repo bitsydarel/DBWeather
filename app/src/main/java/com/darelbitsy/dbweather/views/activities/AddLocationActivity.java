@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -41,10 +43,11 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private LocationListAdapter mLocationListAdapter;
-    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private ImageButton mBackToMainActivity;
-
     private DatabaseOperation mDatabaseOperation;
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
+    @Inject GeoNameLocationInfoProvider mLocationInfoProvider;
 
     private void getUserQuery(final Intent intent) {
         if (intent != null &&
@@ -57,7 +60,7 @@ public class AddLocationActivity extends AppCompatActivity {
     private void getUserQuery(final String query) {
         if (!query.isEmpty()) {
             //TODO:DB Need to remove this code after refactoring
-            mCompositeDisposable.add(new GeoNameLocationInfoProvider(getApplicationContext())
+            mCompositeDisposable.add(mLocationInfoProvider
                     .getLocation(query)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -69,8 +72,10 @@ public class AddLocationActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
+
         final Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
         setSupportActionBar(toolbar);
+
         mDatabaseOperation = DatabaseOperation.newInstance(this);
 
         // Get the SearchView and set the searchable configuration

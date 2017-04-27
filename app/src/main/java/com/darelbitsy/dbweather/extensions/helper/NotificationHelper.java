@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
-import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Locale;
 
@@ -12,14 +11,11 @@ public class NotificationHelper {
     private String mIcon;
     private double mTemperature;
     private Context mContext;
-    public static final String NOTIFICATION_DESC = "notification_desc";
-
 
     public NotificationHelper(final Context context, final String icon,final double temperature) {
         mIcon = icon;
         mTemperature = temperature;
         mContext = context;
-        AndroidThreeTen.init(context);
     }
 
     public String getDescription() {

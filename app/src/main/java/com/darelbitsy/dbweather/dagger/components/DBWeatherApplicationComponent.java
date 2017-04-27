@@ -1,14 +1,15 @@
 package com.darelbitsy.dbweather.dagger.components;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.darelbitsy.dbweather.dagger.modules.DBWeatherApplicationModule;
 import com.darelbitsy.dbweather.dagger.modules.DatabaseModule;
 import com.darelbitsy.dbweather.dagger.modules.NetworkModule;
-import com.darelbitsy.dbweather.provider.news.DatabaseNewsProvider;
-import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
-import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.presenters.activities.NewsDialogPresenter;
+import com.darelbitsy.dbweather.presenters.activities.WelcomeActivityPresenter;
+import com.darelbitsy.dbweather.provider.DataProvider;
+import com.darelbitsy.dbweather.provider.geoname.ILocationInfoProvider;
+import com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider;
+import com.darelbitsy.dbweather.provider.translators.ITranslateProvider;
+import com.darelbitsy.dbweather.views.activities.NewsDialogActivity;
 import com.darelbitsy.dbweather.views.activities.WeatherActivity;
 
 import javax.inject.Singleton;
@@ -25,4 +26,18 @@ import dagger.Component;
 public interface DBWeatherApplicationComponent {
 
     void inject(final WeatherActivity activity);
+
+    void inject(final ILocationInfoProvider iLocationInfoProvider);
+
+    void inject(final LocationSuggestionProvider locationSuggestionProvider);
+
+    void inject(final ITranslateProvider iTranslateProvider);
+
+    void inject(final WelcomeActivityPresenter welcomeActivityPresenter);
+
+    void inject(final NewsDialogActivity newsDialogActivity);
+
+    void inject(final NewsDialogPresenter newsDialogPresenter);
+
+    void inject(final DataProvider dataProvider);
 }

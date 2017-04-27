@@ -22,12 +22,9 @@ import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.provider.news.DatabaseNewsProvider;
-import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
+import com.darelbitsy.dbweather.provider.IDataProvider;
 import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
 import com.darelbitsy.dbweather.provider.schedulers.RxSchedulersProvider;
-import com.darelbitsy.dbweather.provider.weather.DatabaseWeatherProvider;
-import com.darelbitsy.dbweather.provider.weather.NetworkWeatherProvider;
 import com.darelbitsy.dbweather.views.activities.IWeatherActivityView;
 
 import java.io.File;
@@ -44,39 +41,29 @@ import io.reactivex.observers.DisposableSingleObserver;
  * MainView Presenter with Rx
  */
 
-public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
+public class RxWeatherActivityPresenter {
 
-    private final DatabaseWeatherProvider mDatabaseWeatherProvider;
-    private final NetworkWeatherProvider mNetworkWeatherProvider;
-    private final DatabaseNewsProvider mDatabaseNewsProvider;
-    private final NetworkNewsProvider mNetworkNewsProvider;
     private final RxSchedulersProvider mSchedulersProvider;
     private final IUserCitiesRepository mUserCitiesRepository;
     private final IWeatherActivityView mMainView;
+    private final IDataProvider mDataProvider;
     private final CompositeDisposable rxSubscriptions = new CompositeDisposable();
     private final Scheduler mObserverOnScheduler;
-    private final Context mApplicationContext;
 
 
     public RxWeatherActivityPresenter(
-            final Context context,
             final IUserCitiesRepository userCitiesRepository,
             final IWeatherActivityView mainView,
+            final IDataProvider dataProvider,
             final Scheduler scheduler) {
-
-        mApplicationContext = context;
 
         mUserCitiesRepository = userCitiesRepository;
 
-        mDatabaseWeatherProvider = new DatabaseWeatherProvider(mApplicationContext);
-        mNetworkWeatherProvider = new NetworkWeatherProvider(mApplicationContext);
+        mMainView = mainView;
 
-        mDatabaseNewsProvider = new DatabaseNewsProvider(mApplicationContext);
-        mNetworkNewsProvider = new NetworkNewsProvider(mApplicationContext);
+        mDataProvider = dataProvider;
 
         mSchedulersProvider = RxSchedulersProvider.newInstance();
-
-        mMainView = mainView;
 
         mObserverOnScheduler = scheduler;
 
@@ -88,72 +75,55 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         loadNews();
     }
 
-    @Override
     public void loadWeather() {
-        rxSubscriptions.add(mDatabaseWeatherProvider.getWeather()
+        rxSubscriptions.add(mDataProvider.getWeatherFromDatabase()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
                 .observeOn(mObserverOnScheduler)
                 .subscribeWith(new WeatherObserver()));
     }
 
-    @Override
     public void loadNews() {
-        rxSubscriptions.add(mDatabaseNewsProvider.getNews()
+        rxSubscriptions.add(mDataProvider.getNewsFromDatabase()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
                 .observeOn(mObserverOnScheduler)
                 .subscribeWith(new NewsObserver()));
     }
 
-    @Override
     public void saveState(final Bundle save) {
     }
 
-    @Override
-    public void clearState() {
+    public void clearState(@NonNull final Context context) {
         rxSubscriptions.clear();
-        cleanCache();
+        cleanCache(context);
     }
 
-    @Override
     public void getWeather() {
-        rxSubscriptions.add(mNetworkWeatherProvider.getWeather()
+        rxSubscriptions.add(mDataProvider.getWeatherFromApi()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
                 .observeOn(mObserverOnScheduler)
                 .subscribeWith(new WeatherObserver()));
     }
 
-    @Override
     public void getWeatherForCity(@NonNull final String cityName,
                                   final double latitude,
                                   final double longitude) {
 
-        if (AppUtil.isNetworkAvailable(mApplicationContext)) {
-            rxSubscriptions.add(mNetworkWeatherProvider.getWeatherForCity(cityName, latitude, longitude)
-                    .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                    .observeOn(mObserverOnScheduler)
-                    .subscribeWith(new WeatherObserver()));
-
-        } else {
-            rxSubscriptions.add(mDatabaseWeatherProvider.getWeatherForCity(cityName, latitude, longitude)
-                    .subscribeOn(mSchedulersProvider.getDatabaseWorkScheduler())
-                    .observeOn(mObserverOnScheduler)
-                    .subscribeWith(new WeatherObserver()));
-        }
-    }
-
-    @Override
-    public void loadWeatherForCity(@NonNull final String cityName,
-                                   final double latitude,
-                                   final double longitude) {
-
-        rxSubscriptions.add(mDatabaseWeatherProvider
-                .getWeatherForCity(cityName, latitude, longitude)
+        rxSubscriptions.add(mDataProvider.getWeatherForCityFromApi(cityName, latitude, longitude)
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
                 .observeOn(mObserverOnScheduler)
                 .subscribeWith(new WeatherObserver()));
     }
 
-    @Override
+    public void loadWeatherForCity(@NonNull final String cityName,
+                                   final double latitude,
+                                   final double longitude) {
+
+        rxSubscriptions.add(mDataProvider.getWeatherForCityFromDatabase(cityName, latitude, longitude)
+                .subscribeOn(mSchedulersProvider.getWeatherScheduler())
+                .observeOn(mObserverOnScheduler)
+                .subscribeWith(new WeatherObserver()));
+    }
+
     public void loadUserCitiesMenu() {
 
         rxSubscriptions.add(mUserCitiesRepository.getUserCities()
@@ -176,39 +146,15 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
                 }));
     }
 
-    @Override
     public void removeCityFromUserCities(@NonNull final GeoName location) {
         mUserCitiesRepository.removeCity(location);
     }
 
-    @Override
     public void getNews() {
-        rxSubscriptions.add(mNetworkNewsProvider.getNews()
+        rxSubscriptions.add(mDataProvider.getNewsFromApi()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
                 .observeOn(mObserverOnScheduler)
                 .subscribeWith(new NewsObserver()));
-    }
-
-    private class NewsObserver extends DisposableSingleObserver<List<Article>> {
-        @Override
-        public void onSuccess(@NonNull final List<Article> articles) {
-            mMainView.showNews(articles);
-        }
-
-        @Override
-        public void onError(final Throwable throwable) {
-            mMainView.showNetworkNewsErrorMessage();
-        }
-    }
-
-    private void cleanCache() {
-        final File dir = AppUtil.getFileCache(mApplicationContext);
-        if (dir.isDirectory()) {
-            for (final File file : dir.listFiles()) {
-                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
-                        + file.delete());
-            }
-        }
     }
 
     public void shareScreenShot(@NonNull final Activity activity) throws IOException {
@@ -223,8 +169,8 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         shareIntent.setType("image/jpeg");
         shareIntent.putExtra(Intent.EXTRA_STREAM, takeScreenShot(activity));
 
-        activity.startActivity(Intent.createChooser(shareIntent,
-                mApplicationContext.getString(R.string.send_to)));
+        mMainView.launchActivity(Intent.createChooser(shareIntent,
+                activity.getString(R.string.send_to)));
     }
 
     private Uri takeScreenShot(@NonNull final Activity activity) throws IOException {
@@ -263,12 +209,46 @@ public class RxWeatherActivityPresenter implements IWeatherActivityPresenter {
         return null;
     }
 
+    private void cleanCache(@NonNull final Context context) {
+        final File dir = AppUtil.getFileCache(context);
+        if (dir.isDirectory()) {
+            for (final File file : dir.listFiles()) {
+                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
+                        + file.delete());
+            }
+        }
+    }
+
+    private class NewsObserver extends DisposableSingleObserver<List<Article>> {
+        @Override
+        public void onSuccess(@NonNull final List<Article> articles) {
+            if (!articles.isEmpty()) {
+                mMainView.showNews(articles);
+
+            } else {
+                mMainView.showNetworkNewsErrorMessage();
+            }
+        }
+
+        @Override
+        public void onError(final Throwable throwable) {
+            mMainView.showNetworkNewsErrorMessage();
+        }
+    }
+
     private class WeatherObserver extends DisposableSingleObserver<Weather> {
 
         @Override
         public void onSuccess(@NonNull final Weather weather) {
-            mMainView.showWeather(new Pair<>(WeatherUtil.parseWeather(weather, mApplicationContext),
-                    weather.getHourly().getData()));
+            if (weather.getCurrently() != null && !weather.getDaily().getData().isEmpty()
+                    && !weather.getHourly().getData().isEmpty()) {
+
+                mMainView.showWeather(new Pair<>(WeatherUtil.parseWeather(weather, mMainView.getAppContext()),
+                        weather.getHourly().getData()));
+
+            } else {
+                mMainView.showNetworkWeatherErrorMessage();
+            }
         }
 
         @Override

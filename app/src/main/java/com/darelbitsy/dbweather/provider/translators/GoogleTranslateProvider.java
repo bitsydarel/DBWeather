@@ -3,6 +3,7 @@ package com.darelbitsy.dbweather.provider.translators;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.R;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.translate.Translate;
@@ -13,27 +14,24 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Locale;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Created by Darel Bitsy on 22/04/17.
  * Google Translate Provider
  */
 
-public class GoogleTranslateProvider implements ITranslateProvider<String> {
+@Singleton
+public class GoogleTranslateProvider implements ITranslateProvider {
     private static final String translateApiKey = "AIzaSyAcFFnbD94RuNav543XpwfrPh0kOznIR3c";
     private final String mUserLanguage = Locale.getDefault().getLanguage();
-    private final Context mApplicationContext;
-    private static GoogleTranslateProvider singletonGoogleTranslator;
+    @Inject Context mApplicationContext;
 
-    public static GoogleTranslateProvider newInstance(final Context context) {
-        if (singletonGoogleTranslator == null) {
-            singletonGoogleTranslator = new GoogleTranslateProvider(context.getApplicationContext());
-        }
-
-        return singletonGoogleTranslator;
-    }
-
-    private GoogleTranslateProvider(final Context context) {
-        mApplicationContext = context.getApplicationContext();
+    @Inject
+    public GoogleTranslateProvider() {
+        DBWeatherApplication.getComponent()
+                .inject(this);
     }
 
     @Override

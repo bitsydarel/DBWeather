@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.api.adapters.network.NewsRestAdapter;
+import com.darelbitsy.dbweather.models.api.adapters.NewsRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.news.NewsResponse;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.reactivex.Single;
 
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
@@ -34,20 +36,18 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NA
  * News Provider by Network
  */
 
-public class NetworkNewsProvider implements INewsProvider<List<Article>> {
+public class NetworkNewsProvider implements INewsProvider {
 
-    private final Context mApplicationContext;
+    @Inject NewsRestAdapter mNewsRestAdapter;
+    @Inject GoogleTranslateProvider mGoogleTranslateProvider;
+    @Inject MyMemoryTranslateProvider mMyMemoryTranslateProvider;
+    @Inject Context mApplicationContext;
+
     private final DatabaseOperation mDatabaseOperation;
-    private final NewsRestAdapter mNewsRestAdapter;
-    private final GoogleTranslateProvider mGoogleTranslateProvider;
-    private MyMemoryTranslateProvider mMyMemoryTranslateProvider;
 
-    public NetworkNewsProvider(final Context context) {
-        mApplicationContext = context.getApplicationContext();
+    @Inject
+    public NetworkNewsProvider() {
         mDatabaseOperation = DatabaseOperation.newInstance(mApplicationContext);
-        mNewsRestAdapter = NewsRestAdapter.newInstance(mApplicationContext);
-        mGoogleTranslateProvider = GoogleTranslateProvider.newInstance(mApplicationContext);
-        mMyMemoryTranslateProvider = new MyMemoryTranslateProvider();
     }
 
     @Override

@@ -1,12 +1,16 @@
 package com.darelbitsy.dbweather.views.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.provider.IDataProvider;
 
 import java.util.List;
 
@@ -29,5 +33,9 @@ public interface IWeatherActivityView {
 
     void setupNavigationDrawerWithNoCities();
 
+    void launchActivity(@NonNull final Intent intent);
+
     void saveState(final Bundle bundle);
+
+    Context getAppContext();
 }

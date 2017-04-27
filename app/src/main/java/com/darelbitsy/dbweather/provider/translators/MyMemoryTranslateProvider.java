@@ -3,12 +3,16 @@ package com.darelbitsy.dbweather.provider.translators;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.darelbitsy.dbweather.models.api.adapters.network.MyMemoryTranslateRestAdapter;
+import com.darelbitsy.dbweather.DBWeatherApplication;
+import com.darelbitsy.dbweather.models.api.adapters.MyMemoryTranslateRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.news.MyMemoryJson;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 
 import java.io.IOException;
 import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import retrofit2.Response;
 
@@ -17,15 +21,18 @@ import retrofit2.Response;
  * MyMemoryTranslate api Provider
  */
 
-public class MyMemoryTranslateProvider implements ITranslateProvider<String> {
+@Singleton
+public class MyMemoryTranslateProvider implements ITranslateProvider {
 
-    private final MyMemoryTranslateRestAdapter mMyMemoryTranslateRestAdapter;
+    @Inject MyMemoryTranslateRestAdapter mMyMemoryTranslateRestAdapter;
+
     private final String languagePair = String.format(Locale.ENGLISH,
             "en|%s",
             ConstantHolder.USER_LANGUAGE);
 
+    @Inject
     public MyMemoryTranslateProvider() {
-        mMyMemoryTranslateRestAdapter = MyMemoryTranslateRestAdapter.newInstance();
+        DBWeatherApplication.getComponent().inject(this);
     }
 
     @Override

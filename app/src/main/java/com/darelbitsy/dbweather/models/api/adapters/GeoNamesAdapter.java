@@ -1,13 +1,13 @@
-package com.darelbitsy.dbweather.models.api.adapters.network;
-
-import android.content.Context;
+package com.darelbitsy.dbweather.models.api.adapters;
 
 import com.darelbitsy.dbweather.models.api.services.GeoNamesService;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoNamesResult;
 
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -18,8 +18,11 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.USER_LAN
 
 /**
  * Created by Darel Bitsy on 03/04/17.
+ * GeoName Retrofit Adapter that provide
+ * Access to the GeoName Api
  */
 
+@Singleton
 public class GeoNamesAdapter {
     private static final String RESULT_STYLE = "MEDIUM";
     private final List<String> listOfSupportedLanguage = Arrays.asList(
@@ -28,20 +31,18 @@ public class GeoNamesAdapter {
 
     private static final String GEO_NAMES_API_URL= "http://api.geonames.org/";
     private static final String USER_NAME = "bitsydarel";
-    private static final boolean IS_NAME_REQUIERED = true;
+    private static final boolean IS_NAME_REQUIRED = true;
     private static final int MAX_ROWS = 3;
     private GeoNamesService mGeoNamesService;
 
-    private GeoNamesAdapter(final Context context, final OkHttpClient okHttpClient) {
+    @Inject
+    public GeoNamesAdapter(final OkHttpClient okHttpClient) {
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GEO_NAMES_API_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
-                /*.client(AppUtil
-                        .geoNameOkHttpClient
-                        .cache(AppUtil.getCacheDirectory(context))
-                        .build())*/
                 .client(okHttpClient)
                 .build();
+
         if (mGeoNamesService == null) {
             mGeoNamesService = retrofit.create(GeoNamesService.class);
         }
@@ -49,7 +50,7 @@ public class GeoNamesAdapter {
 
     public Call<GeoNamesResult> getLocations(final String query) {
         return mGeoNamesService.getLocation(query, USER_NAME, RESULT_STYLE,
-                MAX_ROWS, IS_NAME_REQUIERED,
+                MAX_ROWS, IS_NAME_REQUIRED,
                 listOfSupportedLanguage.contains(USER_LANGUAGE) ? USER_LANGUAGE : "en");
     }
 }

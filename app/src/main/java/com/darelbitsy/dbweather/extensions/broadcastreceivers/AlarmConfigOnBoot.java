@@ -14,7 +14,7 @@ import com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper;
 
 public class AlarmConfigOnBoot extends BroadcastReceiver {
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         new AlarmConfigHelper(context).setClothingNotificationAlarm();
         Log.i("Feed_Data", "Resetting data on reboot");
         FeedDataInForeground.setNextSync(context);

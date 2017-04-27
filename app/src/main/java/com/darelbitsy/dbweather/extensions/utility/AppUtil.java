@@ -60,7 +60,7 @@ public class AppUtil {
             .retryOnConnectionFailure(true)
             .build();
 
-    public static final OkHttpClient.Builder weatherOkHttpClient = new OkHttpClient.Builder()
+    /*public static final OkHttpClient.Builder weatherOkHttpClient = new OkHttpClient.Builder()
             .connectTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)
             .readTimeout(45, TimeUnit.SECONDS)
@@ -76,17 +76,12 @@ public class AppUtil {
             .connectTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)
             .readTimeout(45, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true);
+            .retryOnConnectionFailure(true);*/
 
 
     private AppUtil() {}
 
-    public static Cache getCacheDirectory(Context context) {
-
-        return new Cache(getFileCache(context), ConstantHolder.CACHE_SIZE);
-    }
-
-    public static File getFileCache(Context context) {
+    public static File getFileCache(final Context context) {
         return new File(context.getCacheDir(), "dbweather_cache_dir");
     }
 

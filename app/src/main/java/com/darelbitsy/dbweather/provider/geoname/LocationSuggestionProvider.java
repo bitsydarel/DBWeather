@@ -11,11 +11,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -28,13 +31,12 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class LocationSuggestionProvider extends ContentProvider {
-    private GeoNameLocationInfoProvider mGeoNameLocationInfoProvider;
+    @Inject GeoNameLocationInfoProvider mGeoNameLocationInfoProvider;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     public static final List<GeoName> mListOfLocation = new ArrayList<>();
 
     @Override
     public boolean onCreate() {
-        mGeoNameLocationInfoProvider = new GeoNameLocationInfoProvider(getContext());
         return true;
     }
 
@@ -45,6 +47,10 @@ public class LocationSuggestionProvider extends ContentProvider {
                         @Nullable final String selection,
                         @Nullable final String[] selectionArgs,
                         @Nullable final String sortOrder) {
+
+        if (mGeoNameLocationInfoProvider == null) {
+            injectInstance();
+        }
 
         final String userQuery = uri.getLastPathSegment();
 
@@ -73,6 +79,10 @@ public class LocationSuggestionProvider extends ContentProvider {
         return matrixCursor;
     }
 
+    private void injectInstance() {
+        DBWeatherApplication.getComponent().inject(this);
+    }
+
     private class GetSuggestions extends DisposableSingleObserver<List<GeoName>> {
         @Override
         public void onSuccess(final List<GeoName> geoNames) {
@@ -95,6 +105,10 @@ public class LocationSuggestionProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull final Uri uri, @Nullable final ContentValues values) {
+
+        if (mGeoNameLocationInfoProvider == null) {
+            injectInstance();
+        }
         return null;
     }
 
@@ -102,6 +116,10 @@ public class LocationSuggestionProvider extends ContentProvider {
     public int delete(@NonNull final Uri uri,
                       @Nullable final String selection,
                       @Nullable final String[] selectionArgs) {
+
+        if (mGeoNameLocationInfoProvider == null) {
+            injectInstance();
+        }
         return 0;
     }
 
@@ -110,6 +128,10 @@ public class LocationSuggestionProvider extends ContentProvider {
                       @Nullable final ContentValues values,
                       @Nullable final String selection,
                       @Nullable final String[] selectionArgs) {
+
+        if (mGeoNameLocationInfoProvider == null) {
+            injectInstance();
+        }
         return 0;
     }
 }

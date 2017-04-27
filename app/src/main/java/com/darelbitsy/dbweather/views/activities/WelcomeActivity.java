@@ -17,6 +17,8 @@ import com.darelbitsy.dbweather.presenters.activities.WelcomeActivityPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.NEWS_DATA_KEY;
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.WEATHER_INFO_KEY;
@@ -35,7 +37,7 @@ public class WelcomeActivity extends Activity implements IWelcomeActivityView {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_activity);
-        mPresenter = new WelcomeActivityPresenter(getApplicationContext(), this);
+        mPresenter = new WelcomeActivityPresenter(getApplicationContext(), this, AndroidSchedulers.mainThread());
 
         mIntent = new Intent(getApplicationContext(),
                 WeatherActivity.class);
