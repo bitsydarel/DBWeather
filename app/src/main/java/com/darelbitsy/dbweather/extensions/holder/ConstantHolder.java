@@ -26,8 +26,8 @@ public class ConstantHolder {
     private ConstantHolder() {
         //To disable default constructor
     }
-    public static final String WEEK_SUMMARY = "week_summary";
-    public static final String TAG = "dbweather";
+
+    public static final String TAG = "dbweather_application";
     public static final String IS_ALARM_ON = "is_alarm_set";
     public static final String IS_GPS_PERMISSION_GRANTED = "is_gps_permission_granted";
     public static final String IS_ACCOUNT_PERMISSION_GRANTED = "is_account_granted";

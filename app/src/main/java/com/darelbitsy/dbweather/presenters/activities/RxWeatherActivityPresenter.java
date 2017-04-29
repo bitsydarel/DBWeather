@@ -22,7 +22,7 @@ import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.provider.IDataProvider;
+import com.darelbitsy.dbweather.provider.AppDataProvider;
 import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
 import com.darelbitsy.dbweather.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.views.activities.IWeatherActivityView;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
@@ -46,16 +46,14 @@ public class RxWeatherActivityPresenter {
     private final RxSchedulersProvider mSchedulersProvider;
     private final IUserCitiesRepository mUserCitiesRepository;
     private final IWeatherActivityView mMainView;
-    private final IDataProvider mDataProvider;
+    private final AppDataProvider mDataProvider;
     private final CompositeDisposable rxSubscriptions = new CompositeDisposable();
-    private final Scheduler mObserverOnScheduler;
 
 
     public RxWeatherActivityPresenter(
             final IUserCitiesRepository userCitiesRepository,
             final IWeatherActivityView mainView,
-            final IDataProvider dataProvider,
-            final Scheduler scheduler) {
+            final AppDataProvider dataProvider) {
 
         mUserCitiesRepository = userCitiesRepository;
 
@@ -64,9 +62,6 @@ public class RxWeatherActivityPresenter {
         mDataProvider = dataProvider;
 
         mSchedulersProvider = RxSchedulersProvider.newInstance();
-
-        mObserverOnScheduler = scheduler;
-
     }
 
     public void configureView() {
@@ -78,18 +73,19 @@ public class RxWeatherActivityPresenter {
     public void loadWeather() {
         rxSubscriptions.add(mDataProvider.getWeatherFromDatabase()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new WeatherObserver()));
     }
 
     public void loadNews() {
         rxSubscriptions.add(mDataProvider.getNewsFromDatabase()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new NewsObserver()));
     }
 
     public void saveState(final Bundle save) {
+
     }
 
     public void clearState(@NonNull final Context context) {
@@ -100,7 +96,7 @@ public class RxWeatherActivityPresenter {
     public void getWeather() {
         rxSubscriptions.add(mDataProvider.getWeatherFromApi()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new WeatherObserver()));
     }
 
@@ -110,7 +106,7 @@ public class RxWeatherActivityPresenter {
 
         rxSubscriptions.add(mDataProvider.getWeatherForCityFromApi(cityName, latitude, longitude)
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new WeatherObserver()));
     }
 
@@ -120,7 +116,7 @@ public class RxWeatherActivityPresenter {
 
         rxSubscriptions.add(mDataProvider.getWeatherForCityFromDatabase(cityName, latitude, longitude)
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new WeatherObserver()));
     }
 
@@ -128,7 +124,7 @@ public class RxWeatherActivityPresenter {
 
         rxSubscriptions.add(mUserCitiesRepository.getUserCities()
                 .subscribeOn(mSchedulersProvider.getDatabaseWorkScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<GeoName>>() {
                     @Override
                     public void onSuccess(@NonNull final List<GeoName> userCities) {
@@ -153,8 +149,93 @@ public class RxWeatherActivityPresenter {
     public void getNews() {
         rxSubscriptions.add(mDataProvider.getNewsFromApi()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(mObserverOnScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new NewsObserver()));
+    }
+
+    public boolean isFirstRun() {
+        return mDataProvider.isFirstRun();
+    }
+
+    public void setFirstRun(final boolean isFirstRun) {
+        mDataProvider.setFirstRun(isFirstRun);
+    }
+
+    public boolean didUserSelectedCityFromDrawer() {
+        return mDataProvider.didUserSelectedCityFromDrawer();
+    }
+
+    public void userSelectedCityFromDrawer(final boolean isFromCity) {
+        mDataProvider.userSelectedCityFromDrawer(isFromCity);
+    }
+
+    public Pair<String, double[]> getSelectedUserCity(@NonNull final String locationToFind) {
+        return mDataProvider.getSelectedUserCity(locationToFind);
+    }
+
+    public void saveRecyclerBottomLimit(final float limit) {
+        mDataProvider.saveRecyclerBottomLimit(limit);
+    }
+
+    public float getRecyclerBottomLimit() {
+        return mDataProvider.getRecyclerBottomLimit();
+    }
+
+    public boolean getWeatherNotificationStatus() {
+        return mDataProvider.getWeatherNotificationStatus();
+    }
+
+    public void setWeatherNotificationStatus(final boolean isOn) {
+        mDataProvider.setWeatherNotificationStatus(isOn);
+    }
+
+    public boolean getNewsTranslationStatus() {
+        return mDataProvider.getNewsTranslationStatus();
+    }
+
+    public void setNewsTranslationStatus(final boolean isOn) {
+        mDataProvider.setNewsTranslationStatus(isOn);
+    }
+
+    public void setAccountPermissionStatus(final boolean isPermissionAccorded) {
+        mDataProvider.setAccountPermissionStatus(isPermissionAccorded);
+    }
+
+    public boolean getAccountPermissionStatus() {
+        return mDataProvider.getAccountPermissionStatus();
+    }
+
+    public void setGpsPermissionStatus(final boolean isPermissionAccorded) {
+        mDataProvider.setGpsPermissionStatus(isPermissionAccorded);
+    }
+
+    public boolean getGpsPermissionStatus() {
+        return mDataProvider.getGpsPermissionStatus();
+    }
+
+    public void setWritePermissionStatus(final boolean isPermissionAccorded) {
+        mDataProvider.setWritePermissionStatus(isPermissionAccorded);
+    }
+
+    public boolean getWritePermissionStatus() {
+        return mDataProvider.getWritePermissionStatus();
+    }
+
+    public void setSelectedUserCity(@NonNull final String locationSelected,
+                             final double latitude,
+                             final double longitude) {
+
+        mDataProvider.setSelectedUserCity(locationSelected, latitude, longitude);
+    }
+
+    private void cleanCache(@NonNull final Context context) {
+        final File dir = AppUtil.getFileCache(context);
+        if (dir.isDirectory()) {
+            for (final File file : dir.listFiles()) {
+                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
+                        + file.delete());
+            }
+        }
     }
 
     public void shareScreenShot(@NonNull final Activity activity) throws IOException {
@@ -207,16 +288,6 @@ public class RxWeatherActivityPresenter {
             }
         }
         return null;
-    }
-
-    private void cleanCache(@NonNull final Context context) {
-        final File dir = AppUtil.getFileCache(context);
-        if (dir.isDirectory()) {
-            for (final File file : dir.listFiles()) {
-                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
-                        + file.delete());
-            }
-        }
     }
 
     private class NewsObserver extends DisposableSingleObserver<List<Article>> {

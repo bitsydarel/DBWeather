@@ -5,10 +5,11 @@ import com.darelbitsy.dbweather.dagger.modules.DatabaseModule;
 import com.darelbitsy.dbweather.dagger.modules.NetworkModule;
 import com.darelbitsy.dbweather.presenters.activities.NewsDialogPresenter;
 import com.darelbitsy.dbweather.presenters.activities.WelcomeActivityPresenter;
-import com.darelbitsy.dbweather.provider.DataProvider;
+import com.darelbitsy.dbweather.provider.AppDataProvider;
 import com.darelbitsy.dbweather.provider.geoname.ILocationInfoProvider;
 import com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider;
 import com.darelbitsy.dbweather.provider.translators.ITranslateProvider;
+import com.darelbitsy.dbweather.views.activities.BaseActivity;
 import com.darelbitsy.dbweather.views.activities.NewsDialogActivity;
 import com.darelbitsy.dbweather.views.activities.WeatherActivity;
 
@@ -25,8 +26,6 @@ import dagger.Component;
 @Component(modules = {DBWeatherApplicationModule.class, NetworkModule.class, DatabaseModule.class})
 public interface DBWeatherApplicationComponent {
 
-    void inject(final WeatherActivity activity);
-
     void inject(final ILocationInfoProvider iLocationInfoProvider);
 
     void inject(final LocationSuggestionProvider locationSuggestionProvider);
@@ -39,5 +38,7 @@ public interface DBWeatherApplicationComponent {
 
     void inject(final NewsDialogPresenter newsDialogPresenter);
 
-    void inject(final DataProvider dataProvider);
+    void inject(final AppDataProvider appDataProvider);
+
+    void inject(final BaseActivity baseActivity);
 }

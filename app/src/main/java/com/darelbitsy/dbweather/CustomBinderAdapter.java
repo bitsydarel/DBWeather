@@ -1,16 +1,25 @@
 package com.darelbitsy.dbweather;
 
+import android.content.Context;
 import android.databinding.BindingAdapter;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.LIST_OF_TYPEFACES;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.USER_LANGUAGE;
 
 /**
  * Created by Darel Bitsy on 26/04/17.
@@ -19,19 +28,28 @@ import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 
 public class CustomBinderAdapter {
 
+    private CustomBinderAdapter() {
+        // to prevent this to be instantiate
+    }
+
     @BindingAdapter("setFont")
     public static void setTypeFace(@NonNull final TextView textView, final boolean shouldSet) {
         if (shouldSet) {
-            final Typeface typeFace = AppUtil.getAppGlobalTypeFace(textView.getContext());
-            textView.setTypeface(typeFace);
+            textView.setTypeface(getAppGlobalTypeFace(textView.getContext()));
+        }
+    }
+
+    @BindingAdapter("tintMyBackground")
+    public static void setBackgroundTint(@NonNull final ImageButton button, final boolean shouldTint) {
+        if (shouldTint && Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {
+            button.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 
     @BindingAdapter("setFont")
     public static void setTypeFace(@NonNull final Button button, final boolean shouldSet) {
         if (shouldSet) {
-            final Typeface typeFace = AppUtil.getAppGlobalTypeFace(button.getContext());
-            button.setTypeface(typeFace);
+            button.setTypeface(getAppGlobalTypeFace(button.getContext()));
         }
     }
 
@@ -57,5 +75,18 @@ public class CustomBinderAdapter {
         } else {
             weatherInfo.isVideoPlaying.set(false);
         }
+    }
+
+    private static Typeface getAppGlobalTypeFace(final Context context) {
+        Typeface typeface = null;
+
+        for (final Map.Entry<List<String>, String> languages : LIST_OF_TYPEFACES.entrySet()) {
+            if (languages.getKey().contains(USER_LANGUAGE)) {
+                typeface = Typeface.createFromAsset(context.getAssets(),
+                        languages.getValue());
+            }
+        }
+
+        return typeface;
     }
 }

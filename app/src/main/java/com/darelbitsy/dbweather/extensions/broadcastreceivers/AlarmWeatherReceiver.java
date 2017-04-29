@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -16,7 +18,6 @@ import com.darelbitsy.dbweather.extensions.helper.AlarmConfigHelper;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.extensions.helper.NotificationHelper;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.api.adapters.WeatherRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
@@ -81,7 +82,6 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
                 "notification_lock");
 
         wakeLock.acquire(900000);
-
         try {
 
             Log.i("RECEIVER", "Inside the broadcast receiver");
@@ -90,14 +90,23 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
 
             final Double[] coordinates = mDatabase.getCoordinates();
 
-            if (AppUtil.isNetworkAvailable(context)) {
+            boolean isAvailable = false;
 
+            final NetworkInfo networkInfo;
+            final ConnectivityManager manager = (ConnectivityManager)
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            networkInfo = manager.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.isConnected()) {
+                isAvailable = true;
+            }
+
+            if (isAvailable) {
                 final Weather weather = mNetworkWeatherProvider
                         .getWeather(coordinates[0], coordinates[1]);
 
                 notificationIntent = new Intent(mContext, NotificationActivity.class);
                 notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
                 mTemperature = WeatherUtil
                         .getTemperatureInInt(weather.getCurrently().getTemperature());
 

@@ -38,4 +38,6 @@ public interface IWeatherActivityView {
     void saveState(final Bundle bundle);
 
     Context getAppContext();
+
+    void showScreenshotAttempError();
 }

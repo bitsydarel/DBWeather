@@ -21,7 +21,6 @@ import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.MinutelyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
