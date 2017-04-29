@@ -4,7 +4,7 @@ apply plugin: 'findbugs'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.darelbitsy.dbweather"
         minSdkVersion 17
@@ -56,7 +56,7 @@ dependencies {
 
     //GOOGLE
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.android.gms:play-services-location:10.2.1'
+    compile 'com.google.android.gms:play-services-location:10.2.4'
     compile 'com.google.apis:google-api-services-translate:v2-rev48-1.22.0'
     compile 'com.google.http-client:google-http-client-gson:1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
