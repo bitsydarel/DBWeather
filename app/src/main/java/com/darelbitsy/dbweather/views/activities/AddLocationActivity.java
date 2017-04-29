@@ -5,28 +5,27 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.ImageButton;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.databinding.ActivityAddLocationBinding;
 import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
-import com.darelbitsy.dbweather.provider.geoname.GeoNameLocationInfoProvider;
-import com.darelbitsy.dbweather.views.adapters.listAdapter.LocationListAdapter;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider;
+import com.darelbitsy.dbweather.extensions.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.weather.Daily;
 import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+import com.darelbitsy.dbweather.provider.geoname.GeoNameLocationInfoProvider;
+import com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider;
+import com.darelbitsy.dbweather.views.adapters.listAdapter.LocationListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +40,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AddLocationActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
     private LocationListAdapter mLocationListAdapter;
-    private ImageButton mBackToMainActivity;
     private DatabaseOperation mDatabaseOperation;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Inject GeoNameLocationInfoProvider mLocationInfoProvider;
+    private ActivityAddLocationBinding mAddLocationBinding;
 
     private void getUserQuery(final Intent intent) {
         if (intent != null &&
@@ -59,7 +57,6 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private void getUserQuery(final String query) {
         if (!query.isEmpty()) {
-            //TODO:DB Need to remove this code after refactoring
             mCompositeDisposable.add(mLocationInfoProvider
                     .getLocation(query)
                     .subscribeOn(Schedulers.io())
@@ -71,28 +68,22 @@ public class AddLocationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_location);
+        mAddLocationBinding = DataBindingUtil.setContentView(this, R.layout.activity_add_location);
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.add_location_toolbar);
-        setSupportActionBar(toolbar);
-
+        setSupportActionBar(mAddLocationBinding.addLocationToolbar.addLocationToolbarId);
         mDatabaseOperation = DatabaseOperation.newInstance(this);
 
         // Get the SearchView and set the searchable configuration
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        final SearchView searchView = (SearchView) findViewById(R.id.searchLocationView);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnSuggestionListener(new SuggestionListener());
+        mAddLocationBinding.searchLocationView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mAddLocationBinding.searchLocationView.setIconifiedByDefault(false);
+        mAddLocationBinding.searchLocationView.setSubmitButtonEnabled(true);
+        mAddLocationBinding.searchLocationView.setOnSuggestionListener(new SuggestionListener());
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.locationRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
+        mAddLocationBinding.locationRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
                 false));
-
-        mBackToMainActivity = (ImageButton) findViewById(R.id.backToMainActivity);
 
         getUserQuery(getIntent());
     }
@@ -100,7 +91,7 @@ public class AddLocationActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mBackToMainActivity.setOnClickListener(v -> {
+        mAddLocationBinding.addLocationToolbar.backToMainActivity.setOnClickListener(v -> {
             final DatabaseOperation database = DatabaseOperation.newInstance(this);
             final Weather weather = database.getWeatherData();
             weather.setCurrently(database.getCurrentWeatherFromDatabase());
@@ -157,8 +148,10 @@ public class AddLocationActivity extends AppCompatActivity {
             final DialogInterface.OnClickListener mCancelLocationClick =
                     (dialog, which) -> dialog.cancel();
 
-            final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) ->
-                    mDatabaseOperation.addLocationToDatabase(location);
+            final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) -> {
+                mDatabaseOperation.addLocationToDatabase(location);
+                mAddLocationBinding.addLocationToolbar.backToMainActivity.callOnClick();
+            };
 
             new AlertDialog.Builder(AddLocationActivity.this)
                     .setMessage(String.format(Locale.getDefault(),
@@ -189,7 +182,7 @@ public class AddLocationActivity extends AppCompatActivity {
                 mLocationListAdapter.updateLocationList(listOfLocations);
             } else {
                 mLocationListAdapter = new LocationListAdapter(listOfLocations);
-                mRecyclerView.setAdapter(mLocationListAdapter);
+                mAddLocationBinding.locationRecyclerView.setAdapter(mLocationListAdapter);
             }
         }
 

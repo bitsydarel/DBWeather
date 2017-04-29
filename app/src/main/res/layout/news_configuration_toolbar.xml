@@ -27,7 +27,7 @@
             app:layout_constraintGuide_percent="0.9"/>
 
 
-        <ImageButton
+        <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/backToMainActivity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

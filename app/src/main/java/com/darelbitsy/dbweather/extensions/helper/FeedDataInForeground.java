@@ -4,13 +4,14 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.extensions.broadcastreceivers.SyncDataReceiver;
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.provider.news.NetworkNewsProvider;
@@ -40,7 +41,17 @@ public class FeedDataInForeground {
     }
 
     public void performSync() {
-        if (AppUtil.isNetworkAvailable(mContext)) {
+        final NetworkInfo networkInfo;
+        final ConnectivityManager manager = (ConnectivityManager)
+                mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            isAvailable = true;
+        }
+
+        if (isAvailable) {
             AndroidThreeTen.init(mContext);
 
             new NetworkNewsProvider()
@@ -88,7 +99,6 @@ public class FeedDataInForeground {
                     });
 
             Log.i(ConstantHolder.TAG, "Done fetching data from weather and news api");
-
         } else {
             Log.i(ConstantHolder.TAG, "No internet connection trying to fetch data in one hours");
         }

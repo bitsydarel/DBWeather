@@ -4,18 +4,18 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.extensions.services.NewsDatabaseService;
 import com.darelbitsy.dbweather.models.api.adapters.NewsRestAdapter;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.news.NewsResponse;
-import com.darelbitsy.dbweather.extensions.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
 import com.darelbitsy.dbweather.provider.translators.GoogleTranslateProvider;
 import com.darelbitsy.dbweather.provider.translators.MyMemoryTranslateProvider;
-import com.darelbitsy.dbweather.extensions.services.NewsDatabaseService;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -29,6 +29,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Single;
 
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
 
 /**
@@ -38,10 +39,20 @@ import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NA
 
 public class NetworkNewsProvider implements INewsProvider {
 
-    @Inject NewsRestAdapter mNewsRestAdapter;
-    @Inject GoogleTranslateProvider mGoogleTranslateProvider;
-    @Inject MyMemoryTranslateProvider mMyMemoryTranslateProvider;
-    @Inject Context mApplicationContext;
+    @Inject
+    NewsRestAdapter mNewsRestAdapter;
+
+    @Inject
+    GoogleTranslateProvider mGoogleTranslateProvider;
+
+    @Inject
+    MyMemoryTranslateProvider mMyMemoryTranslateProvider;
+
+    @Inject
+    Context mApplicationContext;
+
+    @Inject
+    SharedPreferences mSharedPreferences;
 
     private final DatabaseOperation mDatabaseOperation;
 
@@ -85,7 +96,7 @@ public class NetworkNewsProvider implements INewsProvider {
         final ArrayList<Article> newses = new ArrayList<>();
         Account[] accounts = null;
 
-        if (AppUtil.isAccountPermissionOn(context)) {
+        if (mSharedPreferences.getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false)) {
             accounts = AccountManager.get(context)
                     .getAccountsByType("com.google");
         }

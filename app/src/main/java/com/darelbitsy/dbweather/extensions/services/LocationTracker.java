@@ -14,13 +14,14 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
 import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.LOCATION_UPDATE;
+import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 23/02/17.
@@ -50,10 +51,11 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
                     .build();
 
         mGoogleApiClient.connect();
-
         mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        final boolean isGpsPermissionOn = getApplicationContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .getBoolean(IS_GPS_PERMISSION_GRANTED, false);
 
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && AppUtil.isGpsPermissionOn(this)) {
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && isGpsPermissionOn) {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     300000,
                     0,

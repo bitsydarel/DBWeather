@@ -4,7 +4,7 @@ import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.presenters.activities.RxWeatherActivityPresenter;
-import com.darelbitsy.dbweather.provider.IDataProvider;
+import com.darelbitsy.dbweather.provider.AppDataProvider;
 import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
 import com.darelbitsy.dbweather.views.activities.IWeatherActivityView;
 
@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Single;
+import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
@@ -42,7 +43,7 @@ public class RxWeatherActivityPresenterTest {
     IWeatherActivityView view;
 
     @Mock
-    IDataProvider mDataProvider;
+    AppDataProvider mDataProvider;
 
     @Mock
     Weather mWeather;
@@ -57,12 +58,12 @@ public class RxWeatherActivityPresenterTest {
     @Before
     public void setUp() {
         RxJavaPlugins.setIoSchedulerHandler(schedulerCallable -> Schedulers.trampoline());
+        RxAndroidPlugins.setMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
 
         mPresenter = new RxWeatherActivityPresenter(
                 repository,
                 view,
-                mDataProvider,
-                Schedulers.trampoline());
+                mDataProvider);
 
     }
 
@@ -86,7 +87,6 @@ public class RxWeatherActivityPresenterTest {
 
     @Test
     public void shouldPassUserCitiesToPresenter() {
-
         Mockito.when(repository.getUserCities()).thenReturn(Single.just(MANY_GEONAMES));
 
         mPresenter.loadUserCitiesMenu();
