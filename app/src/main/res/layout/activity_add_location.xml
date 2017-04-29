@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#E0E0E0"
-        tools:context="com.darelbitsy.dbweather.views.activities.AddLocationActivity">
+        tools:context="com.darelbitsy.dbweather.ui.addlocation.AddLocationActivity">
 
         <include
             android:id="@+id/add_location_toolbar"

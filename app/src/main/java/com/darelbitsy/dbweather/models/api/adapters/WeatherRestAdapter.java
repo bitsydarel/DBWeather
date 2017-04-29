@@ -2,7 +2,7 @@ package com.darelbitsy.dbweather.models.api.adapters;
 
 import android.support.annotation.NonNull;
 
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.api.services.WeatherService;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 
@@ -16,7 +16,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.supportedLang;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.supportedLang;
 
 /**
  * Created by Darel Bitsy on 20/02/17.

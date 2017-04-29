@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_EXPIRES;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_ID;

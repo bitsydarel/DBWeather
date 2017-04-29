@@ -5,7 +5,7 @@
         <import type="android.view.View"/>
         <variable
             name="Presenter"
-            type="com.darelbitsy.dbweather.presenters.fragments.WeatherFragmentPresenter"/>
+            type="com.darelbitsy.dbweather.ui.main.fragment.WeatherFragmentPresenter"/>
     </data>
     
     <android.support.constraint.ConstraintLayout

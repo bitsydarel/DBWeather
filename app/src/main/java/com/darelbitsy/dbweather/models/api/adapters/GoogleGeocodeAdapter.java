@@ -1,7 +1,7 @@
 package com.darelbitsy.dbweather.models.api.adapters;
 
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.extensions.utility.AppUtil;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
+import com.darelbitsy.dbweather.utils.utility.AppUtil;
 import com.darelbitsy.dbweather.models.api.services.GoogleGeocodeService;
 
 import java.io.IOException;

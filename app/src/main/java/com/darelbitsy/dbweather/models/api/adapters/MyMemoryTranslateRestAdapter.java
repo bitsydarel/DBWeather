@@ -1,6 +1,6 @@
 package com.darelbitsy.dbweather.models.api.adapters;
 
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.api.services.TranslateService;
 import com.darelbitsy.dbweather.models.datatypes.news.MyMemoryJson;
 

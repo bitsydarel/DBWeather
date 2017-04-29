@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".extensions.helper.NotificationHelper">
+    tools:context=".utils.helper.NotificationHelper">
 
     <include android:id="@+id/notificationToolbar"
              layout="@layout/notification_toolbar"/>

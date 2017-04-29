@@ -18,8 +18,8 @@ import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import java.util.List;
 import java.util.Map;
 
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.LIST_OF_TYPEFACES;
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.USER_LANGUAGE;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.LIST_OF_TYPEFACES;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.USER_LANGUAGE;
 
 /**
  * Created by Darel Bitsy on 26/04/17.

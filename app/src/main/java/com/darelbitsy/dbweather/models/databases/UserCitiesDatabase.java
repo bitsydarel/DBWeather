@@ -69,7 +69,7 @@ import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LATITUDE;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LONGITUDE;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_NAME;
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
 
 /**
  * Created by Darel Bitsy on 04/04/17.

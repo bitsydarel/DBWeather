@@ -2,8 +2,8 @@ package com.darelbitsy.dbweather.dagger.modules;
 
 import android.content.Context;
 
-import com.darelbitsy.dbweather.provider.news.DatabaseNewsProvider;
-import com.darelbitsy.dbweather.provider.weather.DatabaseWeatherProvider;
+import com.darelbitsy.dbweather.models.provider.news.DatabaseNewsProvider;
+import com.darelbitsy.dbweather.models.provider.weather.DatabaseWeatherProvider;
 
 import javax.inject.Singleton;
 

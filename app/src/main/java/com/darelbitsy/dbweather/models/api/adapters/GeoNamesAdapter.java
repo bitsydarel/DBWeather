@@ -14,7 +14,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.USER_LANGUAGE;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.USER_LANGUAGE;
 
 /**
  * Created by Darel Bitsy on 03/04/17.

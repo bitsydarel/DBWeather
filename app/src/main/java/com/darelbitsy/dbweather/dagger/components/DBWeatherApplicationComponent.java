@@ -3,15 +3,14 @@ package com.darelbitsy.dbweather.dagger.components;
 import com.darelbitsy.dbweather.dagger.modules.DBWeatherApplicationModule;
 import com.darelbitsy.dbweather.dagger.modules.DatabaseModule;
 import com.darelbitsy.dbweather.dagger.modules.NetworkModule;
-import com.darelbitsy.dbweather.presenters.activities.NewsDialogPresenter;
-import com.darelbitsy.dbweather.presenters.activities.WelcomeActivityPresenter;
-import com.darelbitsy.dbweather.provider.AppDataProvider;
-import com.darelbitsy.dbweather.provider.geoname.ILocationInfoProvider;
-import com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider;
-import com.darelbitsy.dbweather.provider.translators.ITranslateProvider;
-import com.darelbitsy.dbweather.views.activities.BaseActivity;
-import com.darelbitsy.dbweather.views.activities.NewsDialogActivity;
-import com.darelbitsy.dbweather.views.activities.WeatherActivity;
+import com.darelbitsy.dbweather.ui.main.newsdetails.NewsDialogPresenter;
+import com.darelbitsy.dbweather.ui.welcome.WelcomeActivityPresenter;
+import com.darelbitsy.dbweather.models.provider.AppDataProvider;
+import com.darelbitsy.dbweather.models.provider.geoname.ILocationInfoProvider;
+import com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider;
+import com.darelbitsy.dbweather.models.provider.translators.ITranslateProvider;
+import com.darelbitsy.dbweather.ui.BaseActivity;
+import com.darelbitsy.dbweather.ui.main.newsdetails.NewsDialogActivity;
 
 import javax.inject.Singleton;
 

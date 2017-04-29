@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-import static com.darelbitsy.dbweather.extensions.holder.ConstantHolder.PREFS_NAME;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.PREFS_NAME;
 
 /**
  * Created by Darel Bitsy on 24/04/17.

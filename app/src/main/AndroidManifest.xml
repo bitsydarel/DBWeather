@@ -28,7 +28,7 @@
             android:value="@string/google_maps_key"/>
 
         <activity
-            android:name=".views.activities.WelcomeActivity"
+            android:name=".ui.welcome.WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.activities.NotificationActivity"
+            android:name=".ui.notifications.NotificationActivity"
             android:noHistory="true"
             android:theme="@style/NewsActivityTheme">
             <intent-filter>
@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.activities.NewsDialogActivity"
+            android:name=".ui.main.newsdetails.NewsDialogActivity"
             android:noHistory="true"
             android:theme="@style/NewsActivityTheme">
             <intent-filter>
@@ -53,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.activities.WeatherActivity"
+            android:name=".ui.main.WeatherActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -62,32 +62,32 @@
         </activity>
 
         <service
-            android:name=".extensions.services.SyncDatabaseService"
+            android:name=".utils.services.SyncDatabaseService"
             android:enabled="true"
             android:process=":remote"/>
         <service
-            android:name=".extensions.services.KillCheckerService"
+            android:name=".utils.services.KillCheckerService"
             android:enabled="true"
             android:process=":remote"
             android:stopWithTask="false"/>
         <service
-            android:name=".extensions.services.LocationTracker"
+            android:name=".utils.services.LocationTracker"
             android:enabled="true"
             android:stopWithTask="true">
         </service>
         <service
-            android:name=".extensions.services.NewsDatabaseService"
+            android:name=".utils.services.NewsDatabaseService"
             android:enabled="true"
             android:process=":remote"
             android:stopWithTask="false"/>
         <service
-            android:name=".extensions.services.WeatherDatabaseService"
+            android:name=".utils.services.WeatherDatabaseService"
             android:enabled="true"
             android:process=":remote"
             android:stopWithTask="false"/>
 
         <receiver
-            android:name=".extensions.broadcastreceivers.AlarmWeatherReceiver"
+            android:name=".utils.broadcastreceivers.AlarmWeatherReceiver"
             android:enabled="true"
             android:exported="true"
             android:process=":remote">
@@ -96,12 +96,12 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".extensions.broadcastreceivers.SyncDataReceiver"
+            android:name=".utils.broadcastreceivers.SyncDataReceiver"
             android:enabled="true"
             android:exported="true"
             android:process=":remote"/>
         <receiver
-            android:name=".extensions.broadcastreceivers.AlarmConfigOnBoot"
+            android:name=".utils.broadcastreceivers.AlarmConfigOnBoot"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
@@ -115,7 +115,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".extensions.broadcastreceivers.ServiceRestart"
+            android:name=".utils.broadcastreceivers.ServiceRestart"
             android:enabled="true"
             android:exported="true"
             android:process=":remote">
@@ -128,7 +128,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".views.activities.AddLocationActivity"
+        <activity android:name=".ui.addlocation.AddLocationActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
@@ -137,7 +137,7 @@
                        android:resource="@xml/searchable"/>
         </activity>
 
-        <activity android:name=".views.activities.NewsConfigurationActivity"
+        <activity android:name=".ui.config.NewsConfigurationActivity"
                   android:noHistory="true">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -147,8 +147,8 @@
         <provider
             android:enabled="true"
             android:exported="true"
-            android:authorities="com.darelbitsy.dbweather.provider.geoname.LocationSuggestionProvider"
-            android:name=".provider.geoname.LocationSuggestionProvider"/>
+            android:authorities="com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider"
+            android:name=".models.provider.geoname.LocationSuggestionProvider"/>
         
     </application>
 

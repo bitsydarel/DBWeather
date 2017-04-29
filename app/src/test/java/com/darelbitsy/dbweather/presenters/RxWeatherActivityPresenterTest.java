@@ -3,10 +3,10 @@ package com.darelbitsy.dbweather.presenters;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
-import com.darelbitsy.dbweather.presenters.activities.RxWeatherActivityPresenter;
-import com.darelbitsy.dbweather.provider.AppDataProvider;
-import com.darelbitsy.dbweather.provider.repository.IUserCitiesRepository;
-import com.darelbitsy.dbweather.views.activities.IWeatherActivityView;
+import com.darelbitsy.dbweather.ui.main.RxWeatherActivityPresenter;
+import com.darelbitsy.dbweather.models.provider.AppDataProvider;
+import com.darelbitsy.dbweather.models.provider.repository.IUserCitiesRepository;
+import com.darelbitsy.dbweather.ui.main.IWeatherActivityView;
 
 import org.junit.After;
 import org.junit.Before;

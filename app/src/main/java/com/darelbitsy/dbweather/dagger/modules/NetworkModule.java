@@ -2,9 +2,9 @@ package com.darelbitsy.dbweather.dagger.modules;
 
 import android.content.Context;
 
-import com.darelbitsy.dbweather.extensions.holder.ConstantHolder;
-import com.darelbitsy.dbweather.provider.image.IImageProvider;
-import com.darelbitsy.dbweather.provider.image.PicassoImageProvider;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
+import com.darelbitsy.dbweather.models.provider.image.IImageProvider;
+import com.darelbitsy.dbweather.models.provider.image.PicassoImageProvider;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
