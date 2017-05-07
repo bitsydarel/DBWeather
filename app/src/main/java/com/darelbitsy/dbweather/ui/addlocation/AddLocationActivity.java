@@ -102,7 +102,7 @@ public class AddLocationActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         mAddLocationBinding.addLocationToolbar.backToMainActivity.setOnClickListener(v -> {
             final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.newInstance();
-            mAppDataProvider.getWeatherFromDatabase()
+            mCompositeDisposable.add(mAppDataProvider.getWeatherFromDatabase()
                     .subscribeOn(schedulersProvider.getWeatherScheduler())
                     .observeOn(schedulersProvider.getComputationThread())
                     .map(weather -> WeatherUtil.parseWeather(weather, getApplicationContext()))
@@ -121,7 +121,7 @@ public class AddLocationActivity extends AppCompatActivity {
                         public void onError(final Throwable throwable) {
                             //TODO: Show Message Error and Prompt for retry
                         }
-                    });
+                    }));
 
             /*final DatabaseOperation database = DatabaseOperation.getInstance(this);
             final Weather weather = database.getWeatherData();
@@ -139,7 +139,7 @@ public class AddLocationActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mCompositeDisposable.dispose();
+        mCompositeDisposable.clear();
         super.onDestroy();
     }
 
@@ -156,7 +156,7 @@ public class AddLocationActivity extends AppCompatActivity {
      * @param intent received by the edit text
      */
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         getUserQuery(intent);
     }

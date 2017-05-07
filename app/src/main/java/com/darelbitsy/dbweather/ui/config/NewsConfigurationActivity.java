@@ -24,6 +24,7 @@ import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
 /**
@@ -33,6 +34,7 @@ public class NewsConfigurationActivity extends AppCompatActivity {
     private DatabaseOperation database;
     private NewsConfigurationActivityBinding mNewsBinding;
     private AppDataProvider mAppDataProvider;
+    private final CompositeDisposable rxSubscriptions = new CompositeDisposable();
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class NewsConfigurationActivity extends AppCompatActivity {
         mNewsBinding.newsConfigToolbar.backToMainActivity.setOnClickListener(v -> {
 
             final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.newInstance();
-            mAppDataProvider.getWeatherFromDatabase()
+            rxSubscriptions.add(mAppDataProvider.getWeatherFromDatabase()
                     .subscribeOn(schedulersProvider.getWeatherScheduler())
                     .observeOn(schedulersProvider.getComputationThread())
                     .map(weather -> WeatherUtil.parseWeather(weather, getApplicationContext()))
@@ -77,7 +79,7 @@ public class NewsConfigurationActivity extends AppCompatActivity {
                         public void onError(final Throwable throwable) {
                             //TODO: Show Message Error and Prompt for retry
                         }
-                    });
+                    }));
 
             /*final Weather weather = database.getWeatherData();
             weather.setCurrently(database.getCurrentWeatherFromDatabase());
@@ -95,5 +97,11 @@ public class NewsConfigurationActivity extends AppCompatActivity {
             startActivity(intent);
             finish();*/
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        rxSubscriptions.clear();
     }
 }

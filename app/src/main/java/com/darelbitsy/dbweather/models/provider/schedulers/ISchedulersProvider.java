@@ -15,4 +15,6 @@ public interface ISchedulersProvider {
     Scheduler getDatabaseWorkScheduler();
 
     Scheduler getUIScheduler();
+
+    Scheduler getComputationThread();
 }

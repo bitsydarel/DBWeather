@@ -11,6 +11,7 @@ import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.models.provider.AppDataProvider;
 import com.darelbitsy.dbweather.models.provider.repository.IUserCitiesRepository;
+import com.darelbitsy.dbweather.models.provider.schedulers.ISchedulersProvider;
 import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.utils.utility.AppUtil;
@@ -29,7 +30,7 @@ import io.reactivex.observers.DisposableSingleObserver;
 
 public class RxWeatherActivityPresenter {
 
-    private final RxSchedulersProvider mSchedulersProvider;
+    private final ISchedulersProvider mSchedulersProvider;
     private final IUserCitiesRepository mUserCitiesRepository;
     private final IWeatherActivityView mMainView;
     private final AppDataProvider mDataProvider;
@@ -72,9 +73,9 @@ public class RxWeatherActivityPresenter {
                 .subscribeWith(new NewsObserver()));
     }
 
-    void clearState(@NonNull final Context context) {
+    void clearState() {
         rxSubscriptions.clear();
-        cleanCache(context);
+        cleanCache(mMainView.getAppContext());
     }
 
     public void getWeather() {
@@ -239,5 +240,13 @@ public class RxWeatherActivityPresenter {
         public void onError(final Throwable throwable) {
             mMainView.showNetworkWeatherErrorMessage();
         }
+    }
+
+    CompositeDisposable getRxSubscriptions() {
+        return rxSubscriptions;
+    }
+
+    ISchedulersProvider getSchedulersProvider() {
+        return mSchedulersProvider;
     }
 }

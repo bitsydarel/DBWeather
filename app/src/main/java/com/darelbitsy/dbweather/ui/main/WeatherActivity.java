@@ -59,8 +59,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.observers.DisposableObserver;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
@@ -377,7 +381,7 @@ public class WeatherActivity extends BaseActivity
         super.onStop();
         if (mLocationBroadcast != null) { unregisterReceiver(mLocationBroadcast); }
         mMainPresenter.userSelectedCityFromDrawer(false);
-        mMainPresenter.clearState(getApplicationContext());
+        mMainPresenter.clearState();
     }
 
     @Override
@@ -530,29 +534,29 @@ public class WeatherActivity extends BaseActivity
         mWeatherActivityBinder.newsRecyclerView.setHasFixedSize(true);
 
         final int speedScroll = 4000;
-        final Runnable runnable = new Runnable() {
-            int count = 0;
-            boolean flag = true;
-
-            @Override
-            public void run() {
-                if(count < mNewsAdapter.getItemCount()){
-                    if(count == mNewsAdapter.getItemCount() -1){
-                        flag = false;
-
-                    } else if(count == 0){ flag = true; }
-
-                    if(flag) { count++; }
-                    else { count--; }
-
-                    mWeatherActivityBinder.newsRecyclerView.smoothScrollToPosition(count);
-                    if (mWeatherActivityBinder.newsRecyclerView.getVisibility() == View.VISIBLE) {
-                        mMyHandler.postDelayed(this, speedScroll);
+        mMainPresenter.getRxSubscriptions()
+                .add(moveNewsRecyclerView(speedScroll, 0, mNewsAdapter.getItemCount())
+                .map(Long::intValue)
+                .observeOn(mMainPresenter.getSchedulersProvider().getUIScheduler())
+                .subscribeWith(new DisposableObserver<Integer>() {
+                    @Override
+                    public void onNext(final Integer position) {
+                        mWeatherActivityBinder.newsRecyclerView
+                                .smoothScrollToPosition(position);
                     }
-                }
-            }
-        };
-        mMyHandler.postDelayed(runnable, speedScroll);
+
+                    @Override
+                    public void onError(final Throwable throwable) {}
+
+                    @Override
+                    public void onComplete() {
+                        moveNewsRecyclerView(speedScroll, mNewsAdapter.getItemCount(), 0);
+                    }
+                }));
+    }
+
+    public Observable<Long> moveNewsRecyclerView(final int speedScroll, final int startAt, final int endAt) {
+        return Observable.intervalRange(startAt, endAt, 1, speedScroll, TimeUnit.MILLISECONDS, mMainPresenter.getSchedulersProvider().getComputationThread());
     }
 
     private boolean respondToMenuItemClick(final MenuItem item) {
