@@ -1,9 +1,7 @@
 package com.darelbitsy.dbweather.ui.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
@@ -31,8 +29,6 @@ public interface IWeatherActivityView {
     void setupNavigationDrawerWithCities(final List<GeoName> listOfLocation);
 
     void setupNavigationDrawerWithNoCities();
-
-    void launchActivity(@NonNull final Intent intent);
 
     void saveState(final Bundle bundle);
 

@@ -1,6 +1,7 @@
 package com.darelbitsy.dbweather.models.provider.schedulers;
 
 import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -12,6 +13,8 @@ public class RxSchedulersProvider implements ISchedulersProvider {
     private final Scheduler mNewsScheduler;
     private final Scheduler mWeatherScheduler;
     private final Scheduler mDatabaseTaskScheduler;
+    private final Scheduler mUiScheduler;
+    private final Scheduler computationThread;
     private static RxSchedulersProvider singletonProvider;
 
     public static RxSchedulersProvider newInstance() {
@@ -25,6 +28,8 @@ public class RxSchedulersProvider implements ISchedulersProvider {
         mNewsScheduler = Schedulers.io();
         mWeatherScheduler = Schedulers.io();
         mDatabaseTaskScheduler = Schedulers.io();
+        computationThread = Schedulers.computation();
+        mUiScheduler = AndroidSchedulers.mainThread();
     }
 
     @Override
@@ -40,5 +45,13 @@ public class RxSchedulersProvider implements ISchedulersProvider {
     @Override
     public Scheduler getDatabaseWorkScheduler() { return mDatabaseTaskScheduler; }
 
+    @Override
+    public Scheduler getUIScheduler() {
+        return mUiScheduler;
+    }
 
+
+    public Scheduler getComputationThread() {
+        return computationThread;
+    }
 }

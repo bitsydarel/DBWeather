@@ -23,6 +23,18 @@ public class ConstantHolder {
     public static final String WEATHER_INFO_KEY = "weather_info_key";
     public static final String LOCATION_UPDATE = "dbweather_location_update";
 
+    public static final String REQUEST_WEATHER = "REQUEST_WEATHER";
+    public static final String REQUEST_NEWS_FEED = "REQUEST_NEWS_FEED";
+    public static final String RECEIVED_NEWS_FEED = "RECEIVED_NEWS_FEED";
+    public static final String RECEIVED_WEATHER = "RECEIVED_WEATHER";
+    public static final String PERMISSION_ID = "PERMISSION_ID";
+    public static final String NEWS_PERMISSION_GRANTED = "NEWS_PERMISSION_GRANTED";
+    public static final String NEWS_PERMISSION_DECLINED = "NEWS_PERMISSION_DECLINED";
+    public static final String LOCATION_PERMISSION_GRANTED = "LOCATION_PERMISSION_GRANTED";
+    public static final String LOCATION_PERMISSION_DECLINED = "LOCATION_PERMISSION_DECLINED";
+    public static final String WRITE_PERMISSION_GRANTED = "WRITE_PERMISSION_GRANTED";
+    public static final String WRITE_PERMISSION_DECLINED = "WRITE_PERMISSION_DECLINED";
+
     private ConstantHolder() {
         //To disable default constructor
     }

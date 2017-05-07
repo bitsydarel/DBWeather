@@ -119,7 +119,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
         LocationViewHolder(final View itemView) {
             super(itemView);
-            mDatabaseOperation = DatabaseOperation.newInstance(itemView.getContext());
+            mDatabaseOperation = DatabaseOperation.getInstance(itemView.getContext());
             mLayout = (ConstraintLayout) itemView.findViewById(R.id.locationListItemLayout);
             cityName = (TextView) itemView.findViewById(R.id.cityName);
             countryName = (TextView) itemView.findViewById(R.id.countryName);

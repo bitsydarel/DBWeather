@@ -24,7 +24,7 @@ public class DatabaseNewsProvider implements INewsProvider {
 
     @Inject
     public DatabaseNewsProvider(final Context context) {
-        mDatabaseOperation = DatabaseOperation.newInstance(context.getApplicationContext());
+        mDatabaseOperation = DatabaseOperation.getInstance(context.getApplicationContext());
     }
 
     @Override

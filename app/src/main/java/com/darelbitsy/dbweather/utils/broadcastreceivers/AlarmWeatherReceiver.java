@@ -86,7 +86,7 @@ public class AlarmWeatherReceiver extends BroadcastReceiver {
 
             Log.i("RECEIVER", "Inside the broadcast receiver");
             mContext = context;
-            mDatabase = DatabaseOperation.newInstance(context);
+            mDatabase = DatabaseOperation.getInstance(context);
 
             final Double[] coordinates = mDatabase.getCoordinates();
 

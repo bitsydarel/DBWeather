@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -79,17 +80,17 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(final int i) {
         //Empty for now, will be implemented later if needed
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull final ConnectionResult connectionResult) {
         //Leaving this empty because if not available we will use the gps card
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(final Location location) {
         Log.i(ConstantHolder.TAG, "Inside the service location , the location just changed");
         sendLocationToActivity(location);
     }
@@ -168,10 +169,12 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
      * @param location represent the user location
      */
     private void sendLocationToActivity(final Location location) {
-        final Intent coordonateIntent = new Intent(LOCATION_UPDATE);
-        coordonateIntent.putExtra("latitude", location.getLatitude());
-        coordonateIntent.putExtra("longitude", location.getLongitude());
-        sendBroadcast(coordonateIntent);
+        final Intent coordinateIntent = new Intent(LOCATION_UPDATE);
+
+        if (DatabaseOperation.getInstance(getApplicationContext())
+                .saveCoordinates(location.getLatitude(), location.getLongitude())) {
+            sendBroadcast(coordinateIntent);
+        }
     }
 
 }

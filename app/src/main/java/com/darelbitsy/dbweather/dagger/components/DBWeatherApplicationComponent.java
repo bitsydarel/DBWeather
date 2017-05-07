@@ -3,14 +3,16 @@ package com.darelbitsy.dbweather.dagger.components;
 import com.darelbitsy.dbweather.dagger.modules.DBWeatherApplicationModule;
 import com.darelbitsy.dbweather.dagger.modules.DatabaseModule;
 import com.darelbitsy.dbweather.dagger.modules.NetworkModule;
-import com.darelbitsy.dbweather.ui.main.newsdetails.NewsDialogPresenter;
+import com.darelbitsy.dbweather.ui.addlocation.AddLocationActivity;
+import com.darelbitsy.dbweather.ui.newsdetails.NewsDialogPresenter;
+import com.darelbitsy.dbweather.ui.welcome.WelcomeActivity;
 import com.darelbitsy.dbweather.ui.welcome.WelcomeActivityPresenter;
 import com.darelbitsy.dbweather.models.provider.AppDataProvider;
 import com.darelbitsy.dbweather.models.provider.geoname.ILocationInfoProvider;
 import com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider;
 import com.darelbitsy.dbweather.models.provider.translators.ITranslateProvider;
 import com.darelbitsy.dbweather.ui.BaseActivity;
-import com.darelbitsy.dbweather.ui.main.newsdetails.NewsDialogActivity;
+import com.darelbitsy.dbweather.ui.newsdetails.NewsDialogActivity;
 
 import javax.inject.Singleton;
 
@@ -40,4 +42,8 @@ public interface DBWeatherApplicationComponent {
     void inject(final AppDataProvider appDataProvider);
 
     void inject(final BaseActivity baseActivity);
+
+    void inject(final AddLocationActivity addLocationActivity);
+
+    void inject(final WelcomeActivity welcomeActivity);
 }

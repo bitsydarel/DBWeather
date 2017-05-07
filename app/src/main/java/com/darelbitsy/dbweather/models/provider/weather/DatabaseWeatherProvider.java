@@ -24,7 +24,7 @@ public class DatabaseWeatherProvider implements IWeatherProvider {
 
     @Inject
     public DatabaseWeatherProvider(final Context context) {
-        database = DatabaseOperation.newInstance(context.getApplicationContext());
+        database = DatabaseOperation.getInstance(context.getApplicationContext());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.darelbitsy.dbweather.ui.main.adapters;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +12,8 @@ import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.ui.main.newsdetails.NewsDialogActivity;
+import com.darelbitsy.dbweather.models.provider.firebase.IAnalyticProvider;
+import com.darelbitsy.dbweather.ui.newsdetails.NewsDialogActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +28,11 @@ import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>  {
     private final List<Article> mNewses = new ArrayList<>();
+    private final IAnalyticProvider analyticProvider;
 
-    public NewsAdapter(final List<Article> newses) {
+    public NewsAdapter(final List<Article> newses, final IAnalyticProvider analyticProvider) {
         mNewses.addAll(newses);
+        this.analyticProvider = analyticProvider;
     }
 
     @Override
@@ -65,6 +69,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
             final Intent newsActivity = new Intent(view.getContext(), NewsDialogActivity.class);
             newsActivity.putExtra(NEWS_DATA_KEY, mNews);
+            analyticProvider.logEvent("NEWS_FEED_OPENED", new Bundle());
             view.getContext().startActivity(newsActivity);
         };
 

@@ -21,7 +21,7 @@ public class DatabaseUserCitiesRepository implements IUserCitiesRepository {
     private final DatabaseOperation mDatabaseOperation;
 
     public DatabaseUserCitiesRepository(@NonNull final Context context) {
-        mDatabaseOperation = DatabaseOperation.newInstance(context);
+        mDatabaseOperation = DatabaseOperation.getInstance(context);
     }
 
     @Override

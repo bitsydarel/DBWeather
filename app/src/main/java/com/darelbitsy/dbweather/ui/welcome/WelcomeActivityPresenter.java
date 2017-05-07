@@ -2,22 +2,23 @@ package com.darelbitsy.dbweather.ui.welcome;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.models.provider.news.DatabaseNewsProvider;
 import com.darelbitsy.dbweather.models.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.models.provider.weather.DatabaseWeatherProvider;
 import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
@@ -36,58 +37,60 @@ public class WelcomeActivityPresenter {
     private final RxSchedulersProvider mSchedulersProvider;
     private final CompositeDisposable subscriptions = new CompositeDisposable();
     private final IWelcomeActivityView mView;
-    private Scheduler mObserveOnScheduler;
 
-    public WelcomeActivityPresenter(@NonNull final Context applicationContext,
-                                    @NonNull final IWelcomeActivityView view,
-                                    @NonNull final Scheduler observeOnScheduler) {
+    WelcomeActivityPresenter(@NonNull final Context applicationContext,
+                             @NonNull final IWelcomeActivityView view) {
 
         DBWeatherApplication.getComponent()
                 .inject(this);
 
         mApplicationContext = applicationContext;
         mView = view;
-        mObserveOnScheduler = observeOnScheduler;
         mSchedulersProvider = RxSchedulersProvider.newInstance();
     }
 
-    public void loadWeather() {
+    void loadWeather() {
         mDatabaseWeatherProvider.getWeather()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(mObserveOnScheduler)
+                .observeOn(mSchedulersProvider.getComputationThread())
+                .map(weather -> WeatherUtil.parseWeather(weather, mView.getContext()))
+                .observeOn(mSchedulersProvider.getUIScheduler())
                 .subscribeWith(new WeatherObserver());
     }
 
     public void getWeather() {
         mNetworkWeatherProvider.getWeather()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
-                .observeOn(mObserveOnScheduler)
+                .observeOn(mSchedulersProvider.getComputationThread())
+                .map(weather -> WeatherUtil.parseWeather(weather, mView.getContext()))
+                .observeOn(mSchedulersProvider.getUIScheduler())
                 .subscribeWith(new WeatherObserver());
     }
 
-    public void loadNews() {
+    void loadNews() {
         mDatabaseNewsProvider.getNews()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(mObserveOnScheduler)
+                .observeOn(mSchedulersProvider.getUIScheduler())
                 .subscribeWith(new NewsObserver());
     }
 
     public void getNews() {
         mNetworkNewsProvider.getNews()
                 .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(mObserveOnScheduler)
+                .observeOn(mSchedulersProvider.getUIScheduler())
                 .subscribeWith(new NewsObserver());
     }
 
-    public void clearData() {
+    void clearData() {
         subscriptions.clear();
     }
 
-    private class WeatherObserver extends DisposableSingleObserver<Weather> {
+    private class WeatherObserver extends DisposableSingleObserver<Pair<List<WeatherInfo>,List<HourlyData>>> {
+
         @Override
-        public void onSuccess(@NonNull final Weather weather) {
-            mView.addWeatherToWeatherActivityIntent(WeatherUtil
-                    .parseWeather(weather, mApplicationContext));
+        public void onSuccess(@NonNull final Pair<List<WeatherInfo>,List<HourlyData>> weather) {
+            mView.addWeatherToWeatherActivityIntent(weather.first);
+            //TODO: PASS HOURLY INFO TOO
         }
 
         @Override

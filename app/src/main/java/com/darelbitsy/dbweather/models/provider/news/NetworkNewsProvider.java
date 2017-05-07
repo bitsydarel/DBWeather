@@ -58,7 +58,7 @@ public class NetworkNewsProvider implements INewsProvider {
 
     @Inject
     public NetworkNewsProvider() {
-        mDatabaseOperation = DatabaseOperation.newInstance(mApplicationContext);
+        mDatabaseOperation = DatabaseOperation.getInstance(mApplicationContext);
     }
 
     @Override

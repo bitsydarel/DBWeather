@@ -8,7 +8,7 @@ import android.view.View;
 
 public class CubeOutTransformer extends BasePageTransformer {
     @Override
-    protected void onTransform(View view, float position) {
+    protected void onTransform(final View view, final float position) {
         view.setPivotX(position < 0f ? view.getWidth() : 0f);
         view.setPivotY(view.getHeight() * 0.5f);
         view.setRotationY(90f * position);

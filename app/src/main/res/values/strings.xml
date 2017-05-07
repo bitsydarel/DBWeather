@@ -100,4 +100,22 @@
     <string name="remove">Remove</string>
     <string name="display">Display</string>
     <string name="precipitation_default_value">Rain/Snow</string>
+
+    <!-- *************************Introduction layout ****************************-->
+    <string name="back_btn">Back</string>
+    <string name="next_btn">Next</string>
+    <string name="request_permission">Please grant the permission first!</string>
+    <string name="ask_again">Ask Again</string>
+
+    <string name="welcome_page_title">Welcome To DBWeather</string>
+    <string name="welcome_page_desc">DBWeather it\'s an weather app with news feed and more features.</string>
+    <string name="welcome_page_banner">Made with love by Darel Bitsy</string>
+
+    <string name="location_permission_page_title">Weather by Location</string>
+    <string name="location_permission_page_desc">We provide the best weather info, in all the location on Earth and in more than 20 languages.</string>
+    <string name="news_permission_page_title">News feed &amp; News translation</string>
+    <string name="news_permission_page_desc">All your news feeds in one app.\nWe offer more than 50 news source for Sport, Politics, Finance, Music and more.\nWe use Google and MyMemory Translators to provide the best translation for all languages.</string>
+    <string name="news_powered_by">Powered By newsapi.org</string>
+    <string name="last_page_title">We are loading the data…</string>
+    <string name="last_page_desc">Your Weather data has Already been downloaded.\n Now we are translating your news feed in your phone language.\n The weather screen will automatically launch when everything will be translated.\n\nTips: When You click on a news feed you have a windows with more details :) </string>
 </resources>

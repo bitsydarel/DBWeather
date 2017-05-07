@@ -5,8 +5,11 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
+import android.util.Log;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.models.api.adapters.GoogleGeocodeAdapter;
 import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
@@ -26,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.TAG;
+
 /**
  * Created by Darel Bitsy on 19/02/17.
  * Weather Utility class
@@ -43,11 +48,6 @@ public class WeatherUtil {
 
     public static Double[] getCoordinates(@NonNull final DatabaseOperation database) {
         return database.getCoordinates();
-
-    }
-
-    public static void saveCoordinates(final double latitude, final double longitude, @NonNull final DatabaseOperation database) {
-        database.saveCoordinates(latitude, longitude);
 
     }
 
@@ -210,12 +210,14 @@ public class WeatherUtil {
         return iconId;
     }
 
-    public static List<WeatherInfo> parseWeather(@NonNull final Weather weather, @NonNull final Context context) {
+    public static Pair<List<WeatherInfo>, List<HourlyData>> parseWeather(@NonNull final Weather weather, @NonNull final Context context) {
         final List<WeatherInfo> weatherInfoList = new ArrayList<>();
         final Calendar calendar = Calendar.getInstance();
         final String currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
                 Calendar.LONG,
                 Locale.getDefault());
+
+        Log.i(TAG, "CITY NAME + " + weather.getCityName());
 
         int count = 0;
         boolean isTodaySet = false;
@@ -313,7 +315,7 @@ public class WeatherUtil {
                 }
             }
         }
-        return weatherInfoList;
+        return new Pair<>(weatherInfoList, weather.getHourly().getData());
     }
 
     private static WeatherInfo convertToWeatherInfo(@NonNull final String locationName,

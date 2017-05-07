@@ -32,7 +32,7 @@ public class ColorManager {
         mColors.put(R.drawable.cloudy_night, R.drawable.cloudy_night_background);
         mColors.put(R.drawable.cloudy, R.drawable.cloudy_background);
         mColors.put(R.drawable.fog, R.drawable.fog_background);
-        mColors.put(R.drawable.sleet, R.drawable.sleet_background);
+        mColors.put(R.drawable.sleet, R.drawable.clear_day_background);
         mColors.put(R.drawable.snow, R.drawable.snow_background);
         mColors.put(R.drawable.wind, R.drawable.wind_background);
         mColors.put(R.drawable.rain, R.drawable.rain_background);

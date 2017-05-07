@@ -37,7 +37,7 @@ public class FeedDataInForeground {
 
     public FeedDataInForeground(final Context context) {
         mContext = context;
-        mDatabase = DatabaseOperation.newInstance(context);
+        mDatabase = DatabaseOperation.getInstance(context);
     }
 
     public void performSync() {

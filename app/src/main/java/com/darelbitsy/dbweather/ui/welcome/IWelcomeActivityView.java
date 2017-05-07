@@ -1,5 +1,6 @@
 package com.darelbitsy.dbweather.ui.welcome;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
@@ -16,4 +17,6 @@ public interface IWelcomeActivityView {
     void addWeatherToWeatherActivityIntent(@NonNull final List<WeatherInfo> weatherInfoList);
 
     void addNewsToWeatherActivityIntent(@NonNull final List<Article> articles);
+
+    Context getContext();
 }

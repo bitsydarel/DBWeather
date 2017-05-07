@@ -21,7 +21,7 @@
                     <item android:id="@+id/current_location"
                           android:title="@string/current_location_title"
                           android:enabled="true"
-                          android:icon="@drawable/city_location_icon"/>
+                          android:icon="@drawable/location_config_icon"/>
                 </group>
             </menu>
         </item>

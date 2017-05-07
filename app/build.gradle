@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'findbugs'
 
 android {
@@ -22,10 +21,23 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+            minifyEnabled false
+            useProguard false
+        }
+
         release {
-            //Was false before
             minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //Show all the result of unitTest
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
 
@@ -38,7 +50,7 @@ android {
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEX.LIST'
     }
-    
+
     dataBinding {
         enabled = true
     }
@@ -68,6 +80,7 @@ dependencies {
     compile 'com.android.support:support-core-utils:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
+    compile "com.google.firebase:firebase-core:10.2.4"
 
     //Dagger
     compile 'com.google.dagger:dagger:2.10'
@@ -90,12 +103,19 @@ dependencies {
 
     //OTHER
     compile 'org.apache.commons:commons-lang3:3.5'
-
+    compile 'me.relex:circleindicator:1.2.2@aar'
+    compile 'com.airbnb.android:lottie:2.0.0-beta4'
+    compile 'com.github.markzhai:blockcanary-android:1.5.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.22'
 
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.10'
 }
+
+apply plugin: 'com.google.gms.google-services'

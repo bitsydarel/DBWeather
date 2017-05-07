@@ -32,5 +32,5 @@ public interface IDataProvider {
                                                   final double latitude,
                                                   final double longitude);
 
-
+    void saveCoordinates(final double latitude, final double longitude);
 }

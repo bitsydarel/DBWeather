@@ -3,9 +3,11 @@ package com.darelbitsy.dbweather.ui.main.fragment;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +15,13 @@ import android.widget.RelativeLayout;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.FragmentWeatherBinding;
+import com.darelbitsy.dbweather.ui.BaseActivity;
 import com.darelbitsy.dbweather.utils.helper.ColorManager;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.REQUEST_WEATHER;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
 /**
@@ -115,6 +120,11 @@ public class WeatherFragment extends Fragment implements IWeatherFragmentView<We
     @Override
     public void requestUpdate() {
         final Intent updateRequest = new Intent(ConstantHolder.UPDATE_REQUEST);
-        getActivity().sendBroadcast(updateRequest);
+        final BaseActivity activity = (BaseActivity) getActivity();
+        final Bundle firebaseLog = new Bundle();
+
+        firebaseLog.putString(REQUEST_WEATHER, String.format("Request weather update at %s", WeatherUtil.getHour(System.currentTimeMillis(), null)));
+        activity.mAnalyticProvider.logEvent(REQUEST_WEATHER, firebaseLog);
+        activity.sendBroadcast(updateRequest);
     }
 }

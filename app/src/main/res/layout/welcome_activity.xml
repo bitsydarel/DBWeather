@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:background="@drawable/clear_night_background"
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="Presenter"
+            type="com.darelbitsy.dbweather.ui.welcome.WelcomeActivityPresenter"/>
+    </data>
+<android.support.constraint.ConstraintLayout
+                android:background="@drawable/clear_day_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <android.support.constraint.Guideline
+        android:id="@+id/powered_by_top_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9"/>
+
     <ImageView
+        android:id="@+id/imv_app_logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/about_us"
-        android:layout_centerInParent="true"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="#FFFF00"
+        android:gravity="center_horizontal"
         android:text="Powered by Dark Sky"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="15dp"/>
-</RelativeLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/powered_by_top_limit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="8dp"/>
+</android.support.constraint.ConstraintLayout>
+</layout>

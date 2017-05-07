@@ -38,23 +38,22 @@ import android.widget.CompoundButton;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.ActivityWeatherBinding;
-import com.darelbitsy.dbweather.utils.helper.ColorManager;
-import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
-import com.darelbitsy.dbweather.utils.services.LocationTracker;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.models.provider.repository.DatabaseUserCitiesRepository;
-import com.darelbitsy.dbweather.ui.addlocation.AddLocationActivity;
 import com.darelbitsy.dbweather.ui.BaseActivity;
+import com.darelbitsy.dbweather.ui.addlocation.AddLocationActivity;
+import com.darelbitsy.dbweather.ui.animation.CubeOutTransformer;
 import com.darelbitsy.dbweather.ui.config.NewsConfigurationActivity;
 import com.darelbitsy.dbweather.ui.main.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.ui.main.adapters.HourAdapter;
 import com.darelbitsy.dbweather.ui.main.adapters.NewsAdapter;
-import com.darelbitsy.dbweather.ui.animation.CubeOutTransformer;
+import com.darelbitsy.dbweather.utils.helper.ColorManager;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
+import com.darelbitsy.dbweather.utils.services.LocationTracker;
+import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,9 +64,12 @@ import javax.inject.Inject;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.RECEIVED_NEWS_FEED;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.RECEIVED_WEATHER;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.REQUEST_NEWS_FEED;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.REQUEST_WEATHER;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.UPDATE_REQUEST;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
@@ -120,28 +122,32 @@ public class WeatherActivity extends BaseActivity
 
     @Override
     public void showWeather(final Pair<List<WeatherInfo>, List<HourlyData>> weatherInfo) {
+        final Bundle firebaseLog = new Bundle();
+        firebaseLog.putString(RECEIVED_WEATHER, String.format("RECEIVED WEATHER DATA at %s",
+                WeatherUtil.getHour(System.currentTimeMillis(), null)));
+
         mWeatherInfoList.clear();
         mWeatherInfoList.addAll(weatherInfo.first);
         mWeatherActivityBinder.dbweatherMainLayout
                 .setBackgroundResource(mColorPicker
                         .getBackgroundColor(weatherInfo.first.get(0).icon.get()));
 
-        if (mFragmentAdapter != null) {
-            mUpdateHandler.post(() -> mFragmentAdapter.updateFragments(weatherInfo.first));
-        }
-        if (mHourAdapter != null) {
-
-            mHourAdapter.updateData(weatherInfo.second);
-        } else {
-
+        if (mFragmentAdapter != null) { mUpdateHandler.post(() -> mFragmentAdapter.updateFragments(weatherInfo.first)); }
+        if (mHourAdapter != null) { mHourAdapter.updateData(weatherInfo.second); }
+        else {
             mHourAdapter = new HourAdapter(weatherInfo.second);
             setupHourlyRecyclerView();
         }
+        mAnalyticProvider.logEvent(RECEIVED_WEATHER, firebaseLog);
         Log.i(ConstantHolder.TAG, "City Name: " + weatherInfo.first.get(0).locationName.get());
     }
 
     @Override
     public void showNews(final List<Article> articles) {
+        final Bundle firebaseLog = new Bundle();
+        firebaseLog.putString(RECEIVED_NEWS_FEED, String.format("RECEIVED NEWS FEED at %s",
+                WeatherUtil.getHour(System.currentTimeMillis(), null)));
+
         mNewses.clear();
         mNewses.addAll(articles);
 
@@ -150,6 +156,8 @@ public class WeatherActivity extends BaseActivity
         } else {
             mMyHandler.post(() -> mNewsAdapter.updateContent(articles));
         }
+
+        mAnalyticProvider.logEvent(RECEIVED_NEWS_FEED, firebaseLog);
     }
 
     @Override
@@ -196,7 +204,7 @@ public class WeatherActivity extends BaseActivity
 
     @Override
     public void saveState(final Bundle bundle) {
-        mMainPresenter.saveState(bundle);
+        //
     }
 
     @Override
@@ -210,11 +218,6 @@ public class WeatherActivity extends BaseActivity
     }
 
     @Override
-    public void launchActivity(@NonNull final Intent intent) {
-        startActivity(intent);
-    }
-
-    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -225,6 +228,17 @@ public class WeatherActivity extends BaseActivity
                         mAppDataProvider);
 
         mMainPresenter.configureView();
+        final Bundle firebaseLog = new Bundle();
+
+        firebaseLog.putString(REQUEST_WEATHER, String.format("RECEIVED WEATHER DATA at %s",
+                WeatherUtil.getHour(System.currentTimeMillis(), null)));
+        mAnalyticProvider.logEvent(REQUEST_WEATHER, firebaseLog);
+
+        firebaseLog.clear();
+
+        firebaseLog.putString(REQUEST_NEWS_FEED, String.format("RECEIVED NEWS FEED at %s",
+                WeatherUtil.getHour(System.currentTimeMillis(), null)));
+        mAnalyticProvider.logEvent(REQUEST_NEWS_FEED, firebaseLog);
 
         if (getIntent() != null) {
 
@@ -280,7 +294,7 @@ public class WeatherActivity extends BaseActivity
             @Override
             public void onReceive(final Context context,
                                   final Intent intent) {
-                receiveBroadcast(intent.getAction(), intent);
+                receiveBroadcast(intent.getAction());
             }
         };
 
@@ -361,9 +375,7 @@ public class WeatherActivity extends BaseActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (mLocationBroadcast != null) {
-            unregisterReceiver(mLocationBroadcast);
-        }
+        if (mLocationBroadcast != null) { unregisterReceiver(mLocationBroadcast); }
         mMainPresenter.userSelectedCityFromDrawer(false);
         mMainPresenter.clearState(getApplicationContext());
     }
@@ -373,27 +385,22 @@ public class WeatherActivity extends BaseActivity
                                            final @NonNull String[] permissions,
                                            final @NonNull int[] grantResults) {
 
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         // Checking if the user cancelled, the permission
         if(requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
                 && (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-            mMainPresenter.setGpsPermissionStatus(true);
             startService(new Intent(getApplicationContext(), LocationTracker.class));
-        }
-        if (requestCode == MY_PERMISSIONS_REQUEST_GET_ACCOUNT
+
+        } else if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
                 && (grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 
-            mMainPresenter.setAccountPermissionStatus(true);
-        }
-        if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-                && (grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-
-            mMainPresenter.setWritePermissionStatus(true);
             shareWeatherInfo();
         }
+
         super.askAccountInfoPermIfNeeded();
         mMainPresenter.getNews();
     }
@@ -401,7 +408,7 @@ public class WeatherActivity extends BaseActivity
     private void shareWeatherInfo() {
         if (mMainPresenter.getWritePermissionStatus()) {
             try {
-                mMainPresenter.shareScreenShot(this);
+                shareScreenShot();
             } catch (final IOException e) {
                 showScreenshotAttempError();
             }
@@ -410,20 +417,14 @@ public class WeatherActivity extends BaseActivity
         }
     }
 
-    private void receiveBroadcast(@NonNull final String action, @NonNull final Intent intent) {
+    private void receiveBroadcast(@NonNull final String action) {
         if (action.equalsIgnoreCase(LOCATION_UPDATE)) {
-            WeatherUtil.saveCoordinates(intent.getExtras().getDouble("latitude"),
-                    intent.getExtras().getDouble("longitude"),
-                    DatabaseOperation.newInstance(getApplicationContext()));
-
-            if (!mMainPresenter.didUserSelectedCityFromDrawer()) {
-                mMainPresenter.getWeather();
-            }
+            if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.getWeather(); }
 
         } else if (action.equalsIgnoreCase(UPDATE_REQUEST)) {
-            if (!mMainPresenter.didUserSelectedCityFromDrawer()) {
-                mMainPresenter.getWeather();
-            } else {
+            if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.getWeather(); }
+
+            else {
                 final Pair<String, double[]> selectedUserCity = mMainPresenter.getSelectedUserCity(mWeatherInfoList.get(0).locationName.get());
                 final double[] coordinates = selectedUserCity.second;
 
@@ -455,16 +456,20 @@ public class WeatherActivity extends BaseActivity
         final Menu menu = mWeatherActivityBinder.navigationView.getMenu();
         final CompoundButton.OnCheckedChangeListener notificationConfigurationListener = (buttonView, isChecked) -> {
             if (isChecked) {
+                mAnalyticProvider.logEvent("WEATHER_NOTIFICATION_ENABLED", new Bundle());
                 mMainPresenter.setWeatherNotificationStatus(true);
             } else {
+                mAnalyticProvider.logEvent("WEATHER_NOTIFICATION_DISABLED", new Bundle());
                 mMainPresenter.setWeatherNotificationStatus(false);
             }
         };
 
         final CompoundButton.OnCheckedChangeListener newsConfigurationListener = (buttonView, isChecked) -> {
             if (isChecked) {
+                mAnalyticProvider.logEvent("NEWS_TRANSLATION_ENABLED", new Bundle());
                 mMainPresenter.setNewsTranslationStatus(true);
             } else {
+                mAnalyticProvider.logEvent("NEWS_TRANSLATION_DISABLED", new Bundle());
                 mMainPresenter.setNewsTranslationStatus(false);
             }
         };
@@ -494,7 +499,7 @@ public class WeatherActivity extends BaseActivity
 
     // Setup the news scroll view and fetch it with data if available
     private void setupNewsScrollView() {
-        mNewsAdapter = new NewsAdapter(mNewses);
+        mNewsAdapter = new NewsAdapter(mNewses, mAnalyticProvider);
         mWeatherActivityBinder.newsRecyclerView.setAdapter(mNewsAdapter);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),
@@ -554,10 +559,12 @@ public class WeatherActivity extends BaseActivity
         final int id = item.getItemId();
         if (id == R.id.add_location_id) {
             startActivity(new Intent(getApplicationContext(), AddLocationActivity.class));
+            mAnalyticProvider.logEvent("ADD_LOCATION_OPENED", new Bundle());
             finish();
 
         } else if (id == R.id.select_news_source_config_id) {
             startActivity(new Intent(getApplicationContext(), NewsConfigurationActivity.class));
+            mAnalyticProvider.logEvent("NEWS_CONFIG_OPENED", new Bundle());
             finish();
 
         } else if (id == R.id.current_location) {

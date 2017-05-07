@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.darelbitsy.dbweather">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.darelbitsy.dbweather">
 
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".DBWeatherApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
         android:testOnly="false"
+        android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -41,50 +42,50 @@
             android:noHistory="true"
             android:theme="@style/NewsActivityTheme">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.main.newsdetails.NewsDialogActivity"
+            android:name=".ui.newsdetails.NewsDialogActivity"
             android:noHistory="true"
             android:theme="@style/NewsActivityTheme">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.main.WeatherActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".utils.services.SyncDatabaseService"
             android:enabled="true"
-            android:process=":remote"/>
+            android:process=":remote" />
         <service
             android:name=".utils.services.KillCheckerService"
             android:enabled="true"
             android:process=":remote"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false" />
         <service
             android:name=".utils.services.LocationTracker"
             android:enabled="true"
-            android:stopWithTask="true">
-        </service>
+            android:stopWithTask="true" />
         <service
             android:name=".utils.services.NewsDatabaseService"
             android:enabled="true"
             android:process=":remote"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false" />
         <service
             android:name=".utils.services.WeatherDatabaseService"
             android:enabled="true"
             android:process=":remote"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false" />
 
         <receiver
             android:name=".utils.broadcastreceivers.AlarmWeatherReceiver"
@@ -92,26 +93,26 @@
             android:exported="true"
             android:process=":remote">
             <intent-filter android:priority="999">
-                <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION"/>
+                <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".utils.broadcastreceivers.SyncDataReceiver"
             android:enabled="true"
             android:exported="true"
-            android:process=":remote"/>
+            android:process=":remote" />
         <receiver
             android:name=".utils.broadcastreceivers.AlarmConfigOnBoot"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
         <receiver
@@ -120,36 +121,40 @@
             android:exported="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_RESTARTED"/>
+                <action android:name="android.intent.action.PACKAGE_RESTARTED" />
 
                 <data
                     android:scheme="package"
-                    android:sspPrefix="com.darelbitsy.dbweather"/>
+                    android:sspPrefix="com.darelbitsy.dbweather" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.addlocation.AddLocationActivity"
+        <activity
+            android:name=".ui.addlocation.AddLocationActivity"
             android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/searchable"/>
-        </activity>
 
-        <activity android:name=".ui.config.NewsConfigurationActivity"
-                  android:noHistory="true">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".ui.config.NewsConfigurationActivity"
+            android:noHistory="true">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <provider
-            android:enabled="true"
-            android:exported="true"
+            android:name=".models.provider.geoname.LocationSuggestionProvider"
             android:authorities="com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider"
-            android:name=".models.provider.geoname.LocationSuggestionProvider"/>
-        
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".ui.introduction.IntroductionActivity"></activity>
     </application>
 
 </manifest>

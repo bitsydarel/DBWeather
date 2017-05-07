@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "141164633720",
+    "firebase_url": "https://dbweather-ecb75.firebaseio.com",
+    "project_id": "dbweather-ecb75",
+    "storage_bucket": "dbweather-ecb75.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141164633720:android:0fd17e580040655e",
+        "android_client_info": {
+          "package_name": "com.darelbitsy.dbweather"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "141164633720-c3bl0h4dht56t9c1p4bl6rq6kpvtjc37.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.darelbitsy.dbweather",
+            "certificate_hash": "2a2ee555f84f9f33d1a65454e81a671e93a6054c"
+          }
+        },
+        {
+          "client_id": "141164633720-komf3rqeukrpcatf5og7gl4d3iao76gu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8fIjGv1-SmC0raVWHyZREj1zvmZYbq54"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "141164633720-komf3rqeukrpcatf5og7gl4d3iao76gu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 package com.darelbitsy.dbweather.models.provider;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
@@ -12,10 +13,12 @@ import com.darelbitsy.dbweather.models.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.models.provider.preferences.IPreferencesProvider;
 import com.darelbitsy.dbweather.models.provider.weather.DatabaseWeatherProvider;
 import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.reactivex.Single;
 
@@ -36,6 +39,7 @@ import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.SELECTED_CITY
  * Data Provider for the application
  */
 
+@Singleton
 public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     @Inject
     DatabaseWeatherProvider mDatabaseWeatherProvider;
@@ -47,11 +51,13 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     NetworkNewsProvider mNetworkNewsProvider;
     @Inject
     SharedPreferences mSharedPreferences;
+    private final DatabaseOperation databaseOperation;
 
     @Inject
-    public AppDataProvider() {
+    public AppDataProvider(@NonNull final Context context) {
         DBWeatherApplication.getComponent()
                 .inject(this);
+        databaseOperation = DatabaseOperation.getInstance(context);
     }
 
     @Override
@@ -80,6 +86,11 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     @Override
     public Single<Weather> getWeatherForCityFromDatabase(@NonNull final String cityName, final double latitude, final double longitude) {
         return mDatabaseWeatherProvider.getWeatherForCity(cityName, latitude, longitude);
+    }
+
+    @Override
+    public void saveCoordinates(final double latitude, final double longitude) {
+        databaseOperation.saveCoordinates(latitude, longitude);
     }
 
     @Override

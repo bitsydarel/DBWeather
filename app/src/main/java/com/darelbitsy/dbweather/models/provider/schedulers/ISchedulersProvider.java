@@ -13,4 +13,6 @@ public interface ISchedulersProvider {
     Scheduler getNewsScheduler();
 
     Scheduler getDatabaseWorkScheduler();
+
+    Scheduler getUIScheduler();
 }

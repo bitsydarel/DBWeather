@@ -137,7 +137,7 @@ public class DatabaseOperation {
 
     private static DatabaseOperation singletonDatabaseOperation;
 
-    public static DatabaseOperation newInstance(final Context context) {
+    public static DatabaseOperation getInstance(final Context context) {
         if (singletonDatabaseOperation == null) {
             singletonDatabaseOperation = new DatabaseOperation(context.getApplicationContext());
         }
@@ -247,16 +247,16 @@ public class DatabaseOperation {
                     ALERT_ID + " = ?",
                     new String[] {Integer.toString(id.get())});
 
-            Log.i(ConstantHolder.TAG, "Row " + result + " With " + alert + " On Alerts table");
+            Log.i(ConstantHolder.TAG, String.format("Row %d With %s  On Alerts table", result , alert));
 
             if (result == 0) {
                 final long insert = database.insert(ALERT_TABLE, null, contentValues);
 
                 if ( insert == -1) {
-                    Log.i(ConstantHolder.TAG, id.get() + " With " + alert+ " On Alerts Table Not Inserted");
+                    Log.i(ConstantHolder.TAG, String.format("%d With %s On Alerts Table Not Inserted", id.get() , alert));
 
                 } else {
-                    Log.i(ConstantHolder.TAG, id.get() + " With "+ alert + " On Alerts Table Inserted");
+                    Log.i(ConstantHolder.TAG, String.format("%d With %s On Alerts Table Inserted", id.get() , alert));
                 }
             }
 
@@ -555,19 +555,26 @@ public class DatabaseOperation {
         return current;
     }
 
-    public void saveCoordinates(final double latitude, final double longitude) {
+    public boolean saveCoordinates(final double latitude, final double longitude) {
         final ContentValues contentValues = new ContentValues();
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
+        try {
+            contentValues.put(LAST_KNOW_LATITUDE, latitude);
+            contentValues.put(LAST_KNOW_LONGITUDE, longitude);
 
-        contentValues.put(LAST_KNOW_LATITUDE, latitude);
-        contentValues.put(LAST_KNOW_LONGITUDE, longitude);
+            final int result = database.update(WEATHER_TABLE,
+                    contentValues,
+                    null,
+                    null);
+            Log.i(ConstantHolder.TAG, String.format("Saving Coordinates %f, %f, result : %d", latitude, longitude, result));
 
-        final int result = database.update(WEATHER_TABLE,
-                        contentValues,
-                        null,
-                        null);
-        Log.i(ConstantHolder.TAG, "Saving Coordinates, result : "+ result);
-        database.close();
+        } catch (Exception e) {
+            database.close();
+            return false;
+        } finally {
+            database.close();
+        }
+        return true;
     }
 
     /**

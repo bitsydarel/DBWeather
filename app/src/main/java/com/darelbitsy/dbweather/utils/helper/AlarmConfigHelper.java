@@ -171,7 +171,7 @@ public class AlarmConfigHelper {
     }
 
     private static String getCurrentTimeZone(final Context context) {
-        final String timezone = DatabaseOperation.newInstance(context)
+        final String timezone = DatabaseOperation.getInstance(context)
                 .getWeatherData().getTimezone();
         return timezone == null ? TimeZone.getDefault().getID() : timezone;
     }

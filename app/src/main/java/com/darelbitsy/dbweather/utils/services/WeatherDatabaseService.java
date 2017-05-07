@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 
 import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.IS_FROM_CITY_KEY;
@@ -27,7 +26,7 @@ public class WeatherDatabaseService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        final DatabaseOperation database = DatabaseOperation.newInstance(this);
+        final DatabaseOperation database = DatabaseOperation.getInstance(this);
 
         final Weather weather = intent.getParcelableExtra(ConstantHolder.WEATHER_DATA_KEY);
 
@@ -55,9 +54,8 @@ public class WeatherDatabaseService extends Service {
 
     private void saveWeatherForCurrentLocation(final DatabaseOperation database, final Weather weather) {
         database.saveWeatherData(weather);
-        WeatherUtil.saveCoordinates(weather.getLatitude(),
-                weather.getLongitude(),
-                database);
+        database.saveCoordinates(weather.getLatitude(),
+                weather.getLongitude());
 
         if (weather.getCurrently() != null) {
             database.saveCurrentWeather(weather.getCurrently());
