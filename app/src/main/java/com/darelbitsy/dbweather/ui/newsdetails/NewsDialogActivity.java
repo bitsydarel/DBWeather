@@ -2,13 +2,11 @@ package com.darelbitsy.dbweather.ui.newsdetails;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.R;
@@ -17,8 +15,6 @@ import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.provider.image.IImageProvider;
 
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
 
@@ -34,16 +30,8 @@ public class NewsDialogActivity extends AppCompatActivity implements INewsDialog
     @Inject IImageProvider mImageDownloader;
 
     @Override
-    public void showImage(@NonNull final Bitmap image) {
-        mNewsDialogBinder.newsProgressBar.setVisibility(View.INVISIBLE);
-        mNewsDialogBinder.articleImage.setImageBitmap(image);
-        mNewsDialogBinder.articleImage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showDefaultImage() {
-        mNewsDialogBinder.articleImage.setVisibility(View.VISIBLE);
-        mNewsDialogBinder.newsProgressBar.setVisibility(View.INVISIBLE);
+    public void showImage(@NonNull final String url) {
+        mPresenter.getImage(this, mNewsDialogBinder.articleImage, R.drawable.no_image_icon, mNewsDialogBinder.newsProgressBar, url);
     }
 
     @Override
@@ -53,64 +41,47 @@ public class NewsDialogActivity extends AppCompatActivity implements INewsDialog
                 .inject(this);
 
         mNewsDialogBinder = DataBindingUtil.setContentView(this, R.layout.news_activity);
-        mPresenter = new NewsDialogPresenter(this, mImageDownloader, AndroidSchedulers.mainThread());
+        mPresenter = new NewsDialogPresenter(mImageDownloader);
 
         final Article article = getIntent().getParcelableExtra(NEWS_DATA_KEY);
         mNewsDialogBinder.setArticle(article);
         setSupportActionBar(mNewsDialogBinder.newsToolbar.toolbarId);
 
-        mNewsDialogBinder.closeButton.setOnClickListener(view -> finish());
+        mNewsDialogBinder.closeButton.setOnClickListener(view -> closeView());
 
         if(!article.getUrlToImage().isEmpty()) {
-
-            mPresenter.getImage(article.getUrlToImage());
-            mNewsDialogBinder.newsProgressBar.setVisibility(View.VISIBLE);
-            mNewsDialogBinder.articleImage.setVisibility(View.INVISIBLE);
+            showImage(article.getUrlToImage());
         }
 
-        mNewsDialogBinder.openInBrowserButton.setOnClickListener(view -> {
-            final String url = article.getArticleUrl().isEmpty() ?
-                    "https://github.com/404" : article.getArticleUrl();
-
-                    final Intent browserIntent = new Intent()
-                    .setAction(Intent.ACTION_VIEW)
-                    .setData(Uri.parse(url))
-                    .addCategory(Intent.CATEGORY_BROWSABLE);
-
-            startActivity(browserIntent);
-        });
+        mNewsDialogBinder.openInBrowserButton.setOnClickListener(view ->
+                openArticleInBrowser(article.getArticleUrl()));
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    public void openArticleInBrowser(@NonNull final String articleUrl) {
+        final Intent browserIntent = new Intent()
+        .setAction(Intent.ACTION_VIEW)
+        .setData(Uri.parse(articleUrl.isEmpty() ? "https://github.com/404" : articleUrl))
+        .addCategory(Intent.CATEGORY_BROWSABLE);
+        startActivity(browserIntent);
+    }
+
+    @Override
+    public void closeView() {
+        finish();
+    }
+
+    @Override
+    protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         final Article article = getIntent().getParcelableExtra(NEWS_DATA_KEY);
-
         mNewsDialogBinder.setArticle(article);
 
         if(!article.getUrlToImage().isEmpty()) {
-
-            mPresenter.getImage(article.getUrlToImage());
-            mNewsDialogBinder.newsProgressBar.setVisibility(View.VISIBLE);
-            mNewsDialogBinder.articleImage.setVisibility(View.INVISIBLE);
+            showImage(article.getUrlToImage());
         }
 
-        mNewsDialogBinder.openInBrowserButton.setOnClickListener(view -> {
-            final String url = article.getArticleUrl().isEmpty() ?
-                    "https://github.com/404" : article.getArticleUrl();
-
-            final Intent browserIntent = new Intent()
-                    .setAction(Intent.ACTION_VIEW)
-                    .setData(Uri.parse(url))
-                    .addCategory(Intent.CATEGORY_BROWSABLE);
-
-            startActivity(browserIntent);
-        });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mPresenter.cleanUp();
+        mNewsDialogBinder.openInBrowserButton.setOnClickListener(view ->
+                openArticleInBrowser(article.getArticleUrl()));
     }
 }

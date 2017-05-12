@@ -3,6 +3,7 @@ package com.darelbitsy.dbweather.ui.addlocation.adapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +11,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 
 /**
  * Created by Darel Bitsy on 02/04/17.
@@ -24,12 +29,16 @@ import java.util.Locale;
 
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.LocationViewHolder> {
     private final List<GeoName> mListOfLocations = new ArrayList<>();
+    private final CompositeDisposable compositeDisposable;
+    private final RxSchedulersProvider schedulersProvider;
 
-    public LocationListAdapter(List<GeoName> listOfLocations) {
+    public LocationListAdapter(final List<GeoName> listOfLocations, final CompositeDisposable compositeDisposable , final RxSchedulersProvider rxSchedulersProvider) {
         mListOfLocations.addAll(listOfLocations);
+        this.compositeDisposable = compositeDisposable;
+        schedulersProvider = rxSchedulersProvider;
     }
 
-    public void updateLocationList(List<GeoName> listOfLocations) {
+    public void updateLocationList(final List<GeoName> listOfLocations) {
         mListOfLocations.clear();
         mListOfLocations.addAll(listOfLocations);
         notifyDataSetChanged();
@@ -56,7 +65,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      * see onBindViewHolder(ViewHolder, int)
      */
     @Override
-    public LocationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LocationViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         return new LocationViewHolder(LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.location_list_item, parent, false));
@@ -105,7 +114,24 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
         final DialogInterface.OnClickListener mCancelLocationClick = (dialog, which) -> dialog.cancel();
         final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) ->
-                mDatabaseOperation.addLocationToDatabase(mLocation);
+                compositeDisposable.add(mDatabaseOperation.addLocationToDatabase(mLocation)
+                        .subscribeOn(schedulersProvider.getDatabaseWorkScheduler())
+                        .observeOn(schedulersProvider.getUIScheduler())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
+                                Snackbar.make(mLayout.getRootView(),
+                                        mLayout.getContext().getString(R.string.successfully_saved),
+                                        Snackbar.LENGTH_LONG);
+                            }
+
+                            @Override
+                            public void onError(final Throwable throwable) {
+                                Snackbar.make(mLayout.getRootView(),
+                                        mLayout.getContext().getString(R.string.unsuccessfully_saved),
+                                        Snackbar.LENGTH_LONG);
+                            }
+                        }));
 
         final View.OnClickListener mLocationOnClickListener = view -> new AlertDialog.Builder(view.getContext())
                 .setMessage(String.format(Locale.getDefault(),

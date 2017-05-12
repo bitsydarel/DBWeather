@@ -85,21 +85,6 @@ public class RxWeatherActivityPresenterTest {
         RxJavaPlugins.reset();
     }
 
-    /**
-     * Test if the view being properly configured
-     */
-    @Test
-    public void shouldConfigureViewWithData() {
-        Mockito.when(mDataProvider.getNewsFromDatabase()).thenReturn(Single.just(articles));
-        Mockito.when(mDataProvider.getWeatherFromDatabase()).thenReturn(Single.just(mWeather));
-        Mockito.when(repository.getUserCities()).thenReturn(Single.just(MANY_GEONAMES));
-
-        mPresenter.configureView();
-
-        Mockito.verify(view).showNews(articles);
-        Mockito.verify(view).showNetworkWeatherErrorMessage();
-        Mockito.verify(view).setupNavigationDrawerWithCities(MANY_GEONAMES);
-    }
 
     /**
      * Testing case when presenter should receive user
@@ -149,18 +134,6 @@ public class RxWeatherActivityPresenterTest {
         mPresenter.loadNews();
 
         Mockito.verify(view).showNews(articles);
-    }
-
-    /**
-     * Test case when presenter don't receive weather from api
-     */
-    @Test
-    public void shouldNotPassWeatherInfoToPresenter() {
-        Mockito.when(mDataProvider.getWeatherFromApi()).thenReturn(Single.just(mWeather));
-
-        mPresenter.getWeather();
-
-        Mockito.verify(view).showNetworkWeatherErrorMessage();
     }
 
     /**

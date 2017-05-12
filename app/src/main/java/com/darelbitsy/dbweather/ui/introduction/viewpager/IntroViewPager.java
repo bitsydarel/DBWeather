@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 
 public class IntroViewPager extends ViewPager {
 
-    private boolean isPagingEnabled;
+    private boolean pagingStatus;
 
     public IntroViewPager(@NonNull final Context context) {
         super(context);
@@ -25,18 +25,18 @@ public class IntroViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(final MotionEvent ev) {
-        return isPagingEnabled && super.onInterceptTouchEvent(ev);
+        return pagingStatus && super.onInterceptTouchEvent(ev);
     }
 
     @Override
-    public boolean onTouchEvent(final MotionEvent ev) { return isPagingEnabled && super.onTouchEvent(ev); }
+    public boolean onTouchEvent(final MotionEvent ev) { return pagingStatus && super.onTouchEvent(ev); }
 
     public boolean isPagingEnabled() {
-        return isPagingEnabled;
+        return pagingStatus;
     }
 
     public void setPagingEnabled(final boolean pagingEnabled) {
-        isPagingEnabled = pagingEnabled;
+        pagingStatus = pagingEnabled;
     }
 
 

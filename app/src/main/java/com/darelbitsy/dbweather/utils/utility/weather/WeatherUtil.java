@@ -5,17 +5,17 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
-import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.models.api.adapters.GoogleGeocodeAdapter;
 import com.darelbitsy.dbweather.models.datatypes.weather.Currently;
 import com.darelbitsy.dbweather.models.datatypes.weather.DailyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.TAG;
 
 /**
  * Created by Darel Bitsy on 19/02/17.
@@ -84,7 +82,7 @@ public class WeatherUtil {
         return (int) Math.round(windSpeed);
     }
 
-    public static int getCloudCoverPercentage(final double cloudCover) {
+    private static int getCloudCoverPercentage(final double cloudCover) {
         return (int) cloudCover * 100;
     }
 
@@ -146,7 +144,7 @@ public class WeatherUtil {
         return new GoogleGeocodeAdapter().getLocationByCoordinate(latitude, longitude);
     }
 
-    public static String getDayOfTheWeek(final long timeInMilliseconds, final String timeZone) {
+    private static String getDayOfTheWeek(final long timeInMilliseconds, final String timeZone) {
         final DateTimeFormatter format =
                 DateTimeFormatter.ofPattern("EEEE");
 
@@ -210,14 +208,19 @@ public class WeatherUtil {
         return iconId;
     }
 
-    public static Pair<List<WeatherInfo>, List<HourlyData>> parseWeather(@NonNull final Weather weather, @NonNull final Context context) {
+    public static WeatherData parseWeather(@NonNull final Weather weather, @NonNull final Context context) {
+        final WeatherData weatherData = new WeatherData();
+
+        weatherData.setHourlyWeatherList(weather.getHourly().getData());
+        if (weather.getAlerts() != null && !weather.getAlerts().isEmpty()) {
+            weatherData.setAlertList(weather.getAlerts());
+        }
+
         final List<WeatherInfo> weatherInfoList = new ArrayList<>();
         final Calendar calendar = Calendar.getInstance();
         final String currentDayName = calendar.getDisplayName(Calendar.DAY_OF_WEEK,
                 Calendar.LONG,
                 Locale.getDefault());
-
-        Log.i(TAG, "CITY NAME + " + weather.getCityName());
 
         int count = 0;
         boolean isTodaySet = false;
@@ -227,9 +230,7 @@ public class WeatherUtil {
 
         while (count < 7) {
             for (final DailyData day : weather.getDaily().getData()) {
-                if (count == 7) {
-                    break;
-                }
+                if (count == 7) { break; }
 
                 final WeatherInfo weatherInfo = new WeatherInfo();
 
@@ -315,7 +316,9 @@ public class WeatherUtil {
                 }
             }
         }
-        return new Pair<>(weatherInfoList, weather.getHourly().getData());
+        Log.i(ConstantHolder.TAG, "City Name: " + weather.getCityName());
+        weatherData.setWeatherInfoList(weatherInfoList);
+        return weatherData;
     }
 
     private static WeatherInfo convertToWeatherInfo(@NonNull final String locationName,

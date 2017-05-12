@@ -5,8 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
 import com.darelbitsy.dbweather.models.provider.AppDataProvider;
 import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
@@ -150,14 +149,17 @@ public class IntroPresenter {
         return doneGettingNewsData && doneGettingWeatherData && requieredPagesWatch == 2;
     }
 
-    private class WeatherObserver extends DisposableSingleObserver<Pair<List<WeatherInfo>,List<HourlyData>>> {
+    private class WeatherObserver extends DisposableSingleObserver<WeatherData> {
+
         @Override
-        public void onSuccess(@NonNull final Pair<List<WeatherInfo>,List<HourlyData>> weather) {
-            view.getViewData().putParcelableArrayListExtra(WEATHER_INFO_KEY, (ArrayList<? extends Parcelable>) weather.first);
+        public void onSuccess(@NonNull final WeatherData weather) {
+            view.getViewData().putExtra(WEATHER_INFO_KEY, weather);
             doneGettingWeatherData = true;
         }
         @Override
-        public void onError(final Throwable throwable) { view.showWeatherErrorMessage(); }
+        public void onError(final Throwable throwable) {
+            view.showWeatherErrorMessage();
+        }
     }
 
     private class NewsObserver extends DisposableSingleObserver<List<Article>> {

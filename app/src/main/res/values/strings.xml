@@ -118,4 +118,12 @@
     <string name="news_powered_by">Powered By newsapi.org</string>
     <string name="last_page_title">We are loading the data…</string>
     <string name="last_page_desc">Your Weather data has Already been downloaded.\n Now we are translating your news feed in your phone language.\n The weather screen will automatically launch when everything will be translated.\n\nTips: When You click on a news feed you have a windows with more details :) </string>
+    <string name="successfully_saved_configuration">Successfully Saved Configuration</string>
+    <string name="unsuccessfully_saved_configuration">Issue while saving Configuration</string>
+    <string name="successfully_saved">Successfully Saved</string>
+    <string name="unsuccessfully_saved">Unsuccesfully Saved</string>
+    <string name="weather_error_message">Error while getting the weather data</string>
+    <string name="news_error_message">Error while loading the news</string>
+    <string name="successfully_added_city">Successfully added city to your list</string>
+    <string name="unsuccessfully_added_city">Could not add city to your list, please try again</string>
 </resources>

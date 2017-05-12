@@ -1,5 +1,6 @@
 package com.darelbitsy.dbweather.dagger.components;
 
+import com.darelbitsy.dbweather.GlideConfiguration;
 import com.darelbitsy.dbweather.dagger.modules.DBWeatherApplicationModule;
 import com.darelbitsy.dbweather.dagger.modules.DatabaseModule;
 import com.darelbitsy.dbweather.dagger.modules.NetworkModule;
@@ -46,4 +47,6 @@ public interface DBWeatherApplicationComponent {
     void inject(final AddLocationActivity addLocationActivity);
 
     void inject(final WelcomeActivity welcomeActivity);
+
+    void inject(final GlideConfiguration glideConfiguration);
 }

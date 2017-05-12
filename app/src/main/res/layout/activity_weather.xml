@@ -82,7 +82,7 @@
                 android:background="@android:color/white"
                 app:itemIconTint="@android:color/black"
                 app:itemTextColor="@android:color/black"
-                app:menu="@menu/drawer"/>
+                app:menu="@menu/drawer" />
         </android.support.v4.widget.DrawerLayout>
 
     </android.support.constraint.ConstraintLayout>

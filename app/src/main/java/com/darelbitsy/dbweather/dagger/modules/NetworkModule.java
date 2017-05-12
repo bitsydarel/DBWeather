@@ -2,11 +2,9 @@ package com.darelbitsy.dbweather.dagger.modules;
 
 import android.content.Context;
 
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
+import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
+import com.darelbitsy.dbweather.models.provider.image.GlideImageProvider;
 import com.darelbitsy.dbweather.models.provider.image.IImageProvider;
-import com.darelbitsy.dbweather.models.provider.image.PicassoImageProvider;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +16,8 @@ import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.CACHE_SIZE;
+
 /**
  * Created by Darel Bitsy on 24/04/17.
  */
@@ -27,21 +27,19 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public Picasso providesPicasso(final Context context, final OkHttpClient okHttpClient) {
-        return new Picasso.Builder(context)
-                .downloader(new OkHttp3Downloader(okHttpClient))
-                .build();
-    }
-
-    @Provides
-    @Singleton
-    public Cache providesNetworkCache(final Context context) {
+    Cache providesNetworkCache(final Context context) {
         return new Cache(new File(context.getCacheDir(), "dbweather_cache_dir"),
-                ConstantHolder.CACHE_SIZE);
+                CACHE_SIZE);
+    }
+
+    @Singleton
+    @Provides
+    InternalCacheDiskCacheFactory providesGlideCache(final Context context) {
+        return new InternalCacheDiskCacheFactory(context, "dbweather_cache_dir", CACHE_SIZE);
     }
 
     @Provides
-    public OkHttpClient providesOkHttpClient(final Cache cache) {
+    OkHttpClient providesOkHttpClient(final Cache cache) {
         return new OkHttpClient.Builder()
                 .connectTimeout(25, TimeUnit.SECONDS)
                 .writeTimeout(25, TimeUnit.SECONDS)
@@ -53,7 +51,7 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public IImageProvider providesImageProvider(final Picasso picasso) {
-        return new PicassoImageProvider(picasso);
+    IImageProvider providesImageProvider() {
+        return new GlideImageProvider();
     }
 }

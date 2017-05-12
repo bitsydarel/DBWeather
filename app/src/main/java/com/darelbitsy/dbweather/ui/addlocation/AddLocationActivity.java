@@ -7,9 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
@@ -19,36 +18,34 @@ import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.ActivityAddLocationBinding;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 import com.darelbitsy.dbweather.models.provider.AppDataProvider;
 import com.darelbitsy.dbweather.models.provider.geoname.GeoNameLocationInfoProvider;
-import com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider;
 import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.ui.addlocation.adapter.LocationListAdapter;
 import com.darelbitsy.dbweather.ui.main.WeatherActivity;
 import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class AddLocationActivity extends AppCompatActivity {
 
     private LocationListAdapter mLocationListAdapter;
     private DatabaseOperation mDatabaseOperation;
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private final RxSchedulersProvider rxSchedulersProvider = RxSchedulersProvider.newInstance();
 
-    @Inject GeoNameLocationInfoProvider mLocationInfoProvider;
+    @Inject
+    List<GeoName> mListOfLocation;
+    @Inject
+    GeoNameLocationInfoProvider mLocationInfoProvider;
     @Inject
     AppDataProvider mAppDataProvider;
 
@@ -66,8 +63,8 @@ public class AddLocationActivity extends AppCompatActivity {
         if (!query.isEmpty()) {
             mCompositeDisposable.add(mLocationInfoProvider
                     .getLocation(query)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(rxSchedulersProvider.getWeatherScheduler())
+                    .observeOn(rxSchedulersProvider.getUIScheduler())
                     .subscribeWith(new GetLocationHelper()));
         }
     }
@@ -101,46 +98,15 @@ public class AddLocationActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mAddLocationBinding.addLocationToolbar.backToMainActivity.setOnClickListener(v -> {
-            final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.newInstance();
-            mCompositeDisposable.add(mAppDataProvider.getWeatherFromDatabase()
-                    .subscribeOn(schedulersProvider.getWeatherScheduler())
-                    .observeOn(schedulersProvider.getComputationThread())
-                    .map(weather -> WeatherUtil.parseWeather(weather, getApplicationContext()))
-                    .observeOn(schedulersProvider.getUIScheduler())
-                    .subscribeWith(new DisposableSingleObserver<Pair<List<WeatherInfo>, List<HourlyData>>>() {
-                        @Override
-                        public void onSuccess(final Pair<List<WeatherInfo>, List<HourlyData>> weather) {
-                            final Intent intent = new Intent(getApplicationContext(), WeatherActivity.class);
-                            intent.putParcelableArrayListExtra(ConstantHolder.WEATHER_INFO_KEY, (ArrayList<? extends Parcelable>) weather.first);
-                            intent.putParcelableArrayListExtra(ConstantHolder.NEWS_DATA_KEY, DatabaseOperation.getInstance(getApplicationContext()).getNewFromDatabase());
-                            startActivity(intent);
-                            finish();
-                        }
-
-                        @Override
-                        public void onError(final Throwable throwable) {
-                            //TODO: Show Message Error and Prompt for retry
-                        }
-                    }));
-
-            /*final DatabaseOperation database = DatabaseOperation.getInstance(this);
-            final Weather weather = database.getWeatherData();
-            weather.setCurrently(database.getCurrentWeatherFromDatabase());
-
-            weather.setDaily(new Daily());
-            weather.getDaily().setData(database.getDailyWeatherFromDatabase());
-
-            weather.setHourly(new Hourly());
-            weather.getHourly().setData(database.getHourlyWeatherFromDatabase());
-
-            weather.setAlerts(database.getAlerts());*/
+            startActivity(new Intent(getApplicationContext(), WeatherActivity.class));
+            finish();
         });
     }
 
     @Override
     protected void onDestroy() {
-        mCompositeDisposable.clear();
         super.onDestroy();
+        mCompositeDisposable.clear();
     }
 
     /**
@@ -169,13 +135,26 @@ public class AddLocationActivity extends AppCompatActivity {
 
         @Override
         public boolean onSuggestionClick(final int position) {
-            final GeoName location = LocationSuggestionProvider.mListOfLocation.get(position);
+            final GeoName location = mListOfLocation.get(position);
 
             final DialogInterface.OnClickListener mCancelLocationClick =
                     (dialog, which) -> dialog.cancel();
 
             final DialogInterface.OnClickListener mAddLocationClick = (dialog, which) -> {
-                mDatabaseOperation.addLocationToDatabase(location);
+                mDatabaseOperation.addLocationToDatabase(location)
+                        .subscribeOn(rxSchedulersProvider.getDatabaseWorkScheduler())
+                        .observeOn(rxSchedulersProvider.getUIScheduler())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
+                                Snackbar.make(mAddLocationBinding.getRoot(), getString(R.string.successfully_added_city), Snackbar.LENGTH_LONG);
+                            }
+
+                            @Override
+                            public void onError(final Throwable throwable) {
+                                Snackbar.make(mAddLocationBinding.getRoot(), getString(R.string.unsuccessfully_added_city), Snackbar.LENGTH_LONG);
+                            }
+                        });
                 mAddLocationBinding.addLocationToolbar.backToMainActivity.callOnClick();
             };
 
@@ -204,10 +183,9 @@ public class AddLocationActivity extends AppCompatActivity {
          */
         @Override
         public void onSuccess(final List<GeoName> listOfLocations) {
-            if (mLocationListAdapter != null) {
-                mLocationListAdapter.updateLocationList(listOfLocations);
-            } else {
-                mLocationListAdapter = new LocationListAdapter(listOfLocations);
+            if (mLocationListAdapter != null) { mLocationListAdapter.updateLocationList(listOfLocations); }
+            else {
+                mLocationListAdapter = new LocationListAdapter(listOfLocations, mCompositeDisposable, rxSchedulersProvider);
                 mAddLocationBinding.locationRecyclerView.setAdapter(mLocationListAdapter);
             }
         }
@@ -223,5 +201,11 @@ public class AddLocationActivity extends AppCompatActivity {
         public void onError(final Throwable e) {
             Log.i(ConstantHolder.TAG, "Error in AddLocationActivity: " + e.getMessage());
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mCompositeDisposable.clear();
     }
 }

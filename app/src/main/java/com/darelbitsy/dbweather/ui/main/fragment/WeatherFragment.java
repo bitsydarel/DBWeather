@@ -1,13 +1,10 @@
 package com.darelbitsy.dbweather.ui.main.fragment;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +12,10 @@ import android.widget.RelativeLayout;
 
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.FragmentWeatherBinding;
-import com.darelbitsy.dbweather.ui.BaseActivity;
-import com.darelbitsy.dbweather.utils.helper.ColorManager;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.ui.main.IWeatherActivityView;
+import com.darelbitsy.dbweather.utils.helper.ColorManager;
 
-import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.REQUEST_WEATHER;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
 /**
@@ -36,7 +30,6 @@ public class WeatherFragment extends Fragment implements IWeatherFragmentView<We
     private RelativeLayout.LayoutParams mParams;
 
     public static WeatherFragment newInstance(@NonNull final WeatherInfo weatherInfo) {
-
         final WeatherFragment weatherFragment = new WeatherFragment();
 
         final Bundle args = new Bundle();
@@ -53,14 +46,8 @@ public class WeatherFragment extends Fragment implements IWeatherFragmentView<We
         mPresenter = new WeatherFragmentPresenter(this);
         final Bundle arguments = getArguments();
 
-        if (arguments != null) {
-            mPresenter.restoreState(arguments);
-        }
-
-        if (savedInstanceState != null) {
-            mPresenter.restoreState(savedInstanceState);
-
-        }
+        if (arguments != null) { mPresenter.restoreState(arguments); }
+        else if (savedInstanceState != null) { mPresenter.restoreState(savedInstanceState); }
 
         mParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -95,7 +82,6 @@ public class WeatherFragment extends Fragment implements IWeatherFragmentView<We
             mPresenter.showFallingSnowOrRain(mFragmentWeatherBinding.currentWeatherLayout,
                     getActivity().getApplicationContext(), mParams);
         }
-
         mFragmentWeatherBinding.refreshLayout.setOnRefreshListener(this::requestUpdate);
     }
 
@@ -114,17 +100,8 @@ public class WeatherFragment extends Fragment implements IWeatherFragmentView<We
                     mFragmentWeatherBinding.currentWeatherLayout.getContext(),
                     mParams);
         }
-
     }
 
     @Override
-    public void requestUpdate() {
-        final Intent updateRequest = new Intent(ConstantHolder.UPDATE_REQUEST);
-        final BaseActivity activity = (BaseActivity) getActivity();
-        final Bundle firebaseLog = new Bundle();
-
-        firebaseLog.putString(REQUEST_WEATHER, String.format("Request weather update at %s", WeatherUtil.getHour(System.currentTimeMillis(), null)));
-        activity.mAnalyticProvider.logEvent(REQUEST_WEATHER, firebaseLog);
-        activity.sendBroadcast(updateRequest);
-    }
+    public void requestUpdate() { ((IWeatherActivityView) getActivity()).requestUpdate(); }
 }

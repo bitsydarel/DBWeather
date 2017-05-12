@@ -2,15 +2,17 @@ package com.darelbitsy.dbweather.dagger.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
+import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.provider.firebase.FirebaseAnalyticProvider;
 import com.darelbitsy.dbweather.models.provider.firebase.IAnalyticProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -36,22 +38,22 @@ public class DBWeatherApplicationModule {
 
     @Provides
     @Singleton
-    public DBWeatherApplication providesApplication() {
+    DBWeatherApplication providesApplication() {
         return mDbWeatherApplication;
     }
 
     @Provides
     @Singleton
-    public Context providesApplicationContext() { return mDbWeatherApplication.getApplicationContext(); }
+    Context providesApplicationContext() { return mDbWeatherApplication.getApplicationContext(); }
 
     @Provides
     @Singleton
-    public SharedPreferences providesSharedPreferences(final Context context) {
+    SharedPreferences providesSharedPreferences(final Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
     @Provides
-    public IAnalyticProvider providesFirebaseAnalytics(final Context context) {
+    IAnalyticProvider providesFirebaseAnalytics(final Context context) {
         final int googlePlayServicesAvailable = GoogleApiAvailability
                 .getInstance()
                 .isGooglePlayServicesAvailable(context);
@@ -62,4 +64,8 @@ public class DBWeatherApplicationModule {
             return (eventType, messageData) -> Log.i(TAG, "GOOGLE API NOT AVAILABLE, FIREBASE NOT AVAILABLE");
         }
     }
+
+    @Provides
+    @Singleton
+    List<GeoName> providesLocationsList() { return new ArrayList<>(); }
 }

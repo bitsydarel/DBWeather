@@ -7,21 +7,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
 import com.darelbitsy.dbweather.ui.introduction.IntroductionActivity;
 import com.darelbitsy.dbweather.ui.main.WeatherActivity;
-import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.FIRST_RUN;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
@@ -53,7 +51,7 @@ public class WelcomeActivity extends Activity implements IWelcomeActivityView {
             sharedPreferences.edit()
                     .putBoolean(FIRST_RUN, true)
                     .apply();
-            DatabaseOperation.getInstance(this).initiateNewsSourcesTable();
+            mPresenter.populateNewsDatabase();
 
         } else {
             mIntent = new Intent(getApplicationContext(),
@@ -78,8 +76,8 @@ public class WelcomeActivity extends Activity implements IWelcomeActivityView {
     }
 
     @Override
-    public void addWeatherToWeatherActivityIntent(@NonNull final List<WeatherInfo> weatherInfoList) {
-        mIntent.putParcelableArrayListExtra(WEATHER_INFO_KEY, (ArrayList<? extends Parcelable>) weatherInfoList);
+    public void addWeatherToWeatherActivityIntent(@NonNull final WeatherData weatherData) {
+        mIntent.putExtra(WEATHER_INFO_KEY, weatherData);
         mPresenter.loadNews();
     }
 
@@ -94,5 +92,15 @@ public class WelcomeActivity extends Activity implements IWelcomeActivityView {
     @Override
     public Context getContext() {
         return getApplicationContext();
+    }
+
+    @Override
+    public void showWeatherErrorMessage() {
+        Snackbar.make(getWindow().getDecorView().getRootView(), getString(R.string.weather_error_message), Snackbar.LENGTH_LONG);
+    }
+
+    @Override
+    public void showNewsErrorMessage() {
+        Snackbar.make(getWindow().getDecorView().getRootView(), getString(R.string.news_error_message), Snackbar.LENGTH_LONG);
     }
 }

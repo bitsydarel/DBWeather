@@ -1,4 +1,4 @@
-package com.darelbitsy.dbweather.models.datatypes.GoogleGeocoderApi;
+package com.darelbitsy.dbweather.models.datatypes.googlegeocoderapi;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

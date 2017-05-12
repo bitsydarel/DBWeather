@@ -1,6 +1,5 @@
 package com.darelbitsy.dbweather.models.provider;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
@@ -13,7 +12,6 @@ import com.darelbitsy.dbweather.models.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.models.provider.preferences.IPreferencesProvider;
 import com.darelbitsy.dbweather.models.provider.weather.DatabaseWeatherProvider;
 import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
-import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 
 import java.util.List;
 
@@ -51,13 +49,11 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     NetworkNewsProvider mNetworkNewsProvider;
     @Inject
     SharedPreferences mSharedPreferences;
-    private final DatabaseOperation databaseOperation;
 
     @Inject
-    public AppDataProvider(@NonNull final Context context) {
+    public AppDataProvider() {
         DBWeatherApplication.getComponent()
                 .inject(this);
-        databaseOperation = DatabaseOperation.getInstance(context);
     }
 
     @Override
@@ -89,11 +85,6 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     }
 
     @Override
-    public void saveCoordinates(final double latitude, final double longitude) {
-        databaseOperation.saveCoordinates(latitude, longitude);
-    }
-
-    @Override
     public boolean isFirstRun() {
         return mSharedPreferences.getBoolean(FIRST_RUN, true);
     }
@@ -120,14 +111,14 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     }
 
     @Override
-    public Pair<String, double[]> getSelectedUserCity(@NonNull final String locationToFind) {
+    public Pair<String, double[]> getSelectedUserCity(@NonNull final String messageIfNotFound) {
         final double[] coordinates = new double[2];
 
         coordinates[0] = Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0));
 
         coordinates[1] = Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0));
 
-        return new Pair<>(mSharedPreferences.getString(CITY_NAME_KEY, locationToFind), coordinates);
+        return new Pair<>(mSharedPreferences.getString(CITY_NAME_KEY, messageIfNotFound), coordinates);
     }
 
     @Override

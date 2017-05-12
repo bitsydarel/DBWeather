@@ -21,13 +21,13 @@ public class DatabaseModule {
 
     @Provides
     @Singleton
-    public DatabaseWeatherProvider providesDatabaseWeatherProvider(final Context context) {
+    DatabaseWeatherProvider providesDatabaseWeatherProvider(final Context context) {
         return new DatabaseWeatherProvider(context);
     }
 
     @Provides
     @Singleton
-    public DatabaseNewsProvider providesDatabaseNewProvider(final Context context) {
+    DatabaseNewsProvider providesDatabaseNewProvider(final Context context) {
         return new DatabaseNewsProvider(context);
     }
 }

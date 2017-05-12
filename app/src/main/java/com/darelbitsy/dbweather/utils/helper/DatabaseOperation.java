@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.models.databases.ApplicationDatabase;
 import com.darelbitsy.dbweather.models.databases.UserCitiesDatabase;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
@@ -21,6 +19,8 @@ import com.darelbitsy.dbweather.models.datatypes.weather.Hourly;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.MinutelyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
+import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -30,6 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.reactivex.Completable;
 
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_EXPIRES;
@@ -137,7 +139,7 @@ public class DatabaseOperation {
 
     private static DatabaseOperation singletonDatabaseOperation;
 
-    public static DatabaseOperation getInstance(final Context context) {
+    public static synchronized DatabaseOperation getInstance(final Context context) {
         if (singletonDatabaseOperation == null) {
             singletonDatabaseOperation = new DatabaseOperation(context.getApplicationContext());
         }
@@ -173,7 +175,7 @@ public class DatabaseOperation {
      * has been updated
      * I use it for debugging
      */
-    public void saveLastNewsServerSync() {
+    void saveLastNewsServerSync() {
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
         final ContentValues contentValues = new ContentValues();
         contentValues.put(LAST_NEWS_SERVER_SYNC, new Date().toString());
@@ -236,7 +238,7 @@ public class DatabaseOperation {
         final ContentValues contentValues = new ContentValues();
         final AtomicInteger id = new AtomicInteger(1);
 
-        for (Alert alert : alerts) {
+        for (final Alert alert : alerts) {
             contentValues.put(ALERT_TITLE, alert.getTitle());
             contentValues.put(ALERT_TIME, alert.getTime());
             contentValues.put(ALERT_EXPIRES, alert.getExpires());
@@ -558,22 +560,17 @@ public class DatabaseOperation {
     public boolean saveCoordinates(final double latitude, final double longitude) {
         final ContentValues contentValues = new ContentValues();
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
-        try {
-            contentValues.put(LAST_KNOW_LATITUDE, latitude);
-            contentValues.put(LAST_KNOW_LONGITUDE, longitude);
 
-            final int result = database.update(WEATHER_TABLE,
-                    contentValues,
-                    null,
-                    null);
-            Log.i(ConstantHolder.TAG, String.format("Saving Coordinates %f, %f, result : %d", latitude, longitude, result));
+        contentValues.put(LAST_KNOW_LATITUDE, latitude);
+        contentValues.put(LAST_KNOW_LONGITUDE, longitude);
 
-        } catch (Exception e) {
-            database.close();
-            return false;
-        } finally {
-            database.close();
-        }
+        final int result = database.update(WEATHER_TABLE,
+                contentValues,
+                null,
+                null);
+        Log.i(ConstantHolder.TAG, String.format("Saving Coordinates %f, %f, result : %d", latitude, longitude, result));
+        database.close();
+
         return true;
     }
 
@@ -805,23 +802,26 @@ public class DatabaseOperation {
         writableDatabase.close();
     }
 
-    public void addLocationToDatabase(final GeoName location) {
-        final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
-        final ContentValues dataToInsert = new ContentValues();
+    public Completable addLocationToDatabase(final GeoName location) {
 
-        dataToInsert.put(THE_CITY_NAME, location.getName());
-        dataToInsert.put(THE_CITY_COUNTRY, location.getCountryName());
-        dataToInsert.put(THE_CITY_LATITUDE, location.getLatitude());
-        dataToInsert.put(THE_CITY_LONGITUDE, location.getLongitude());
+        return Completable.fromAction(() -> {
+            final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
+            final ContentValues dataToInsert = new ContentValues();
 
-        final long insertResult = writableDatabase.insert(CITIES_TABLE, null, dataToInsert);
-        dataToInsert.clear();
-        if (insertResult == -1) {
-            Log.i(ConstantHolder.TAG, "CITY " + location.getName() + " NOT INSERTED");
-        } else {
-            Log.i(ConstantHolder.TAG, "CITY " + location.getName() + " TABLE INSERTED");
-        }
-        writableDatabase.close();
+            dataToInsert.put(THE_CITY_NAME, location.getName());
+            dataToInsert.put(THE_CITY_COUNTRY, location.getCountryName());
+            dataToInsert.put(THE_CITY_LATITUDE, location.getLatitude());
+            dataToInsert.put(THE_CITY_LONGITUDE, location.getLongitude());
+
+            final long insertResult = writableDatabase.insert(CITIES_TABLE, null, dataToInsert);
+            dataToInsert.clear();
+            if (insertResult == -1) {
+                Log.i(ConstantHolder.TAG, "CITY " + location.getName() + " NOT INSERTED");
+            } else {
+                Log.i(ConstantHolder.TAG, "CITY " + location.getName() + " TABLE INSERTED");
+            }
+            writableDatabase.close();
+        });
     }
 
     public List<GeoName> getUserCitiesFromDatabase() {
@@ -960,19 +960,21 @@ public class DatabaseOperation {
         writableDatabase.close();
     }
 
-    public void saveNewsSourceConfiguration(final String nameOfTheSource,
-                                            final int count,
-                                            final int isOn) {
+    public Completable saveNewsSourceConfiguration(final String nameOfTheSource,
+                                                   final int count,
+                                                   final int isOn) {
 
-        final SQLiteDatabase writableDatabase = applicationDatabase.getWritableDatabase();
-        final ContentValues dataToInsert = new ContentValues();
-        dataToInsert.put(NEWS_SOURCE_NAME, nameOfTheSource);
-        dataToInsert.put(NEWS_SOURCE_COUNT, count);
-        dataToInsert.put(NEWS_SOURCE_STATUS, isOn);
-        writableDatabase.update(NEWS_SOURCES_TABLE, dataToInsert,
-                String.format(Locale.getDefault(), "%s=\"%s\"", NEWS_SOURCE_NAME, nameOfTheSource), null);
+        return Completable.fromAction(() -> {
+            final SQLiteDatabase writableDatabase = applicationDatabase.getWritableDatabase();
+            final ContentValues dataToInsert = new ContentValues();
+            dataToInsert.put(NEWS_SOURCE_NAME, nameOfTheSource);
+            dataToInsert.put(NEWS_SOURCE_COUNT, count);
+            dataToInsert.put(NEWS_SOURCE_STATUS, isOn);
+            writableDatabase.update(NEWS_SOURCES_TABLE, dataToInsert,
+                    String.format(Locale.getDefault(), "%s=\"%s\"", NEWS_SOURCE_NAME, nameOfTheSource), null);
 
-        writableDatabase.close();
+            writableDatabase.close();
+        });
     }
 
     public Map<String, Pair<Integer, Integer>> getNewsSources() {

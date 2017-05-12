@@ -1,6 +1,6 @@
 package com.darelbitsy.dbweather.models.api.services;
 
-import com.darelbitsy.dbweather.models.datatypes.GoogleGeocoderApi.GoogleGeocodeResponse;
+import com.darelbitsy.dbweather.models.datatypes.googlegeocoderapi.GoogleGeocodeResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

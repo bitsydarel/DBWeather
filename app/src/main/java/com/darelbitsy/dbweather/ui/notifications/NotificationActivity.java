@@ -2,23 +2,12 @@ package com.darelbitsy.dbweather.ui.notifications;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.ui.welcome.WelcomeActivity;
-import com.darelbitsy.dbweather.utils.helper.AlarmConfigHelper;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 import com.darelbitsy.dbweather.utils.services.KillCheckerService;
-import com.darelbitsy.dbweather.utils.helper.NotificationHelper;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NOTIF_ICON;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NOTIF_SUMMARY;
@@ -30,7 +19,9 @@ import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NOTIF_TEMPERA
  * User about notification
  */
 public class NotificationActivity extends AppCompatActivity {
-    @BindView(R.id.notification_description_label)
+    //TODO Migrate from butterknife to databinding
+
+    /*@BindView(R.id.notification_description_label)
     TextView notification_description_label;
 
     @BindView(R.id.notificationSummaryWeather)
@@ -46,7 +37,7 @@ public class NotificationActivity extends AppCompatActivity {
     ImageButton notification_close_button;
 
     @BindView(R.id.notification_expand_button)
-    ImageButton notification_expand_button;
+    ImageButton notification_expand_button;*/
 
     private Toolbar mToolbar;
 
@@ -54,7 +45,6 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notif_advice);
-        ButterKnife.bind(this);
 
         mToolbar = (Toolbar) findViewById(R.id.notificationToolbar);
         setSupportActionBar(mToolbar);
@@ -71,9 +61,9 @@ public class NotificationActivity extends AppCompatActivity {
         );
         startService(new Intent(getApplication(), KillCheckerService.class));
 
-        NotificationHelper notificationHelper = new NotificationHelper(this, icon, temperature);
+//        NotificationHelper notificationHelper = new NotificationHelper(this, icon, temperature);
 
-        notificationIconWeather.setImageResource(WeatherUtil.getIconId(icon));
+        /*notificationIconWeather.setImageResource(WeatherUtil.getIconId(icon));
         notification_title_text.setText(notificationHelper.getTitleFromIcon());
         notificationSummaryWeather.setText(summary);
         notification_description_label.setText(notificationHelper.getDescription());
@@ -84,6 +74,6 @@ public class NotificationActivity extends AppCompatActivity {
         });
 
         notification_expand_button.setOnClickListener(view ->
-            startActivity(new Intent(this, WelcomeActivity.class)));
+            startActivity(new Intent(this, WelcomeActivity.class)));*/
     }
 }

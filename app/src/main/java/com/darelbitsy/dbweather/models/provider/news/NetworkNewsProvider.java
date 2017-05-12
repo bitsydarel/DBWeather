@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -120,29 +121,39 @@ public class NetworkNewsProvider implements INewsProvider {
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
                                     .translateText(newsTitle, account)));
 
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
-                                    .translateText(newsDescription, account)));
+                            if (newsDescription != null && !newsDescription.isEmpty()) {
+                                news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
+                                        .translateText(newsDescription, account)));
+
+                            } else { news.setDescription(""); }
 
                         } else {
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
                                     .translateText(newsTitle)));
 
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
-                                    .translateText(newsDescription)));
+                            if (newsDescription != null && !newsDescription.isEmpty()) {
+                                news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
+                                        .translateText(newsDescription)));
+
+                            } else { news.setDescription(""); }
 
                         }
 
                         if (news.getTitle().equalsIgnoreCase(newsTitle) ||
-                                news.getTitle().contains("MYMEMORY WARNING")) {
+                                news.getTitle().toUpperCase(Locale.getDefault())
+                                        .contains("MYMEMORY WARNING") ||
+                                news.getTitle().toUpperCase(Locale.getDefault())
+                                        .contains("QUERY LENGTH LIMIT")) {
 
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
                                     .translateText(newsTitle)));
                         }
-                        if (news.getDescription().equalsIgnoreCase(newsDescription) ||
-                                news.getDescription().contains("MYMEMORY WARNING")) {
+                        if (!news.getDescription().isEmpty() &&
+                                (news.getDescription().equalsIgnoreCase(newsDescription) || news.getDescription().contains("MYMEMORY WARNING") ||
+                                        news.getDescription().toUpperCase(Locale.getDefault()).contains("QUERY LENGTH LIMIT"))) {
 
                             news.setDescription(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(newsDescription)));
+                                    .translateText(news.getDescription())));
                         }
 
                     } else {

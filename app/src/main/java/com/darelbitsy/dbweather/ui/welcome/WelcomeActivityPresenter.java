@@ -2,17 +2,16 @@ package com.darelbitsy.dbweather.ui.welcome;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
 import com.darelbitsy.dbweather.models.provider.news.DatabaseNewsProvider;
 import com.darelbitsy.dbweather.models.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.models.provider.weather.DatabaseWeatherProvider;
 import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
 import java.util.List;
@@ -85,18 +84,19 @@ public class WelcomeActivityPresenter {
         subscriptions.clear();
     }
 
-    private class WeatherObserver extends DisposableSingleObserver<Pair<List<WeatherInfo>,List<HourlyData>>> {
+    void populateNewsDatabase() {
+        DatabaseOperation.getInstance(mApplicationContext).initiateNewsSourcesTable();
+    }
+
+    private class WeatherObserver extends DisposableSingleObserver<WeatherData> {
 
         @Override
-        public void onSuccess(@NonNull final Pair<List<WeatherInfo>,List<HourlyData>> weather) {
-            mView.addWeatherToWeatherActivityIntent(weather.first);
-            //TODO: PASS HOURLY INFO TOO
+        public void onSuccess(@NonNull final WeatherData weather) {
+            mView.addWeatherToWeatherActivityIntent(weather);
         }
 
         @Override
-        public void onError(final Throwable throwable) {
-
-        }
+        public void onError(final Throwable throwable) { mView.showWeatherErrorMessage(); }
     }
 
     private class NewsObserver extends DisposableSingleObserver<List<Article>> {
@@ -107,7 +107,7 @@ public class WelcomeActivityPresenter {
 
         @Override
         public void onError(final Throwable throwable) {
-
+            mView.showNewsErrorMessage();
         }
     }
 }

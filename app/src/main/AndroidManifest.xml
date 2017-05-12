@@ -74,6 +74,7 @@
             android:stopWithTask="false" />
         <service
             android:name=".utils.services.LocationTracker"
+            android:exported="false"
             android:enabled="true"
             android:stopWithTask="true" />
         <service
@@ -90,7 +91,7 @@
         <receiver
             android:name=".utils.broadcastreceivers.AlarmWeatherReceiver"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:process=":remote">
             <intent-filter android:priority="999">
                 <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION" />
@@ -99,7 +100,7 @@
         <receiver
             android:name=".utils.broadcastreceivers.SyncDataReceiver"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:process=":remote" />
         <receiver
             android:name=".utils.broadcastreceivers.AlarmConfigOnBoot"
@@ -125,7 +126,8 @@
 
                 <data
                     android:scheme="package"
-                    android:sspPrefix="com.darelbitsy.dbweather" />
+                    android:sspPrefix="com.darelbitsy.dbweather"
+                    tools:targetApi="kitkat" />
             </intent-filter>
         </receiver>
 
@@ -152,9 +154,9 @@
             android:name=".models.provider.geoname.LocationSuggestionProvider"
             android:authorities="com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false"/>
 
-        <activity android:name=".ui.introduction.IntroductionActivity"></activity>
+        <activity android:name=".ui.introduction.IntroductionActivity" />
     </application>
 
 </manifest>

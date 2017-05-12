@@ -12,10 +12,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
+import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,9 +30,12 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class LocationSuggestionProvider extends ContentProvider {
-    @Inject GeoNameLocationInfoProvider mGeoNameLocationInfoProvider;
+    @Inject
+    GeoNameLocationInfoProvider mGeoNameLocationInfoProvider;
+    @Inject
+    List<GeoName> mListOfLocation;
+
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-    public static final List<GeoName> mListOfLocation = new ArrayList<>();
 
     @Override
     public boolean onCreate() {
@@ -65,7 +67,18 @@ public class LocationSuggestionProvider extends ContentProvider {
                     .getLocation(userQuery)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new GetSuggestions()));
+                    .subscribeWith(new DisposableSingleObserver<List<GeoName>>() {
+                        @Override
+                        public void onSuccess(@NonNull final List<GeoName> geoNames) {
+                            mListOfLocation.clear();
+                            mListOfLocation.addAll(geoNames);
+                        }
+
+                        @Override
+                        public void onError(@NonNull final Throwable throwable) {
+                            Log.i(ConstantHolder.TAG, "Error in location provider: " + throwable.getMessage());
+                        }
+                    }));
 
             final int mListOfLocation_size = mListOfLocation.size();
 
@@ -80,20 +93,8 @@ public class LocationSuggestionProvider extends ContentProvider {
     }
 
     private void injectInstance() {
-        DBWeatherApplication.getComponent().inject(this);
-    }
-
-    private class GetSuggestions extends DisposableSingleObserver<List<GeoName>> {
-        @Override
-        public void onSuccess(final List<GeoName> geoNames) {
-            mListOfLocation.clear();
-            mListOfLocation.addAll(geoNames);
-        }
-
-        @Override
-        public void onError(final Throwable e) {
-            Log.i(ConstantHolder.TAG, "Error in location provider: " + e.getMessage());
-        }
+        DBWeatherApplication.getComponent()
+                .inject(this);
     }
 
     @Nullable

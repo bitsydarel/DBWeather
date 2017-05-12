@@ -1,16 +1,12 @@
 package com.darelbitsy.dbweather.ui.newsdetails;
 
-import android.graphics.Bitmap;
+import android.app.Activity;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.darelbitsy.dbweather.models.provider.image.IImageProvider;
-import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
-
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
 
 /**
  * Created by Darel Bitsy on 26/04/17.
@@ -19,43 +15,13 @@ import io.reactivex.observers.DisposableSingleObserver;
 
 public class NewsDialogPresenter {
 
-    private final CompositeDisposable subscriptions = new CompositeDisposable();
-    private final INewsDialogView mMainView;
-    private final RxSchedulersProvider mSchedulersProvider;
-    private final Scheduler mObserveOnScheduler;
     private final IImageProvider mIImageProvider;
 
-    public NewsDialogPresenter(@NonNull final INewsDialogView view,
-                               @NonNull final IImageProvider imageProvider,
-                               @NonNull final Scheduler observeOnScheduler) {
-
-        mMainView = view;
+    NewsDialogPresenter(@NonNull final IImageProvider imageProvider) {
         mIImageProvider = imageProvider;
-        mSchedulersProvider = RxSchedulersProvider.newInstance();
-        mObserveOnScheduler = observeOnScheduler;
     }
 
-    public void getImage(@NonNull final String imageUrl) {
-        subscriptions.add(mIImageProvider.getBitmapImage(imageUrl)
-                .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(mObserveOnScheduler)
-                .subscribeWith(new ImageObserver()));
-    }
-
-    public void cleanUp() {
-        subscriptions.clear();
-    }
-
-    private class ImageObserver extends DisposableSingleObserver<Bitmap> {
-        @Override
-        public void onSuccess(final Bitmap bitmap) {
-            mMainView.showImage(bitmap);
-        }
-
-        @Override
-        public void onError(final Throwable e) {
-            Log.i(ConstantHolder.TAG, "Error while downloading news Image!");
-            mMainView.showDefaultImage();
-        }
+    void getImage(@NonNull final Activity activity, @NonNull final ImageView imageView, @DrawableRes final int errorImage, @NonNull final ProgressBar progressBar, @NonNull final String imageUrl) {
+        mIImageProvider.loadImageToView(activity, imageView, errorImage, progressBar, imageUrl);
     }
 }

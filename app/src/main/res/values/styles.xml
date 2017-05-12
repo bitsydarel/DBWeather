@@ -24,7 +24,7 @@
 
     <style name="NewsActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@android:drawable/dialog_holo_light_frame</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:windowNoTitle">true</item>
@@ -37,7 +37,7 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:colorBackground">@color/colorPrimaryDark</item>
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:minHeight">@dimen/abc_action_bar_default_height_material</item>
+        <item name="android:minHeight">@dimen/action_bar_default_height_material</item>
     </style>
 
     <style name="Theme.Switch" parent="Theme.AppCompat.Light">

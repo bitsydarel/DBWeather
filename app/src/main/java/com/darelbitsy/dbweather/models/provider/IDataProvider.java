@@ -31,6 +31,4 @@ public interface IDataProvider {
     Single<Weather> getWeatherForCityFromDatabase(@NonNull final String cityName,
                                                   final double latitude,
                                                   final double longitude);
-
-    void saveCoordinates(final double latitude, final double longitude);
 }

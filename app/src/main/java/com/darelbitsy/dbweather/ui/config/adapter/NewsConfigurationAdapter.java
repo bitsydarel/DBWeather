@@ -1,6 +1,6 @@
 package com.darelbitsy.dbweather.ui.config.adapter;
 
-import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Pair;
@@ -12,9 +12,13 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
+import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 
 import java.util.Map;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
 
 /**
  * Created by Darel Bitsy on 09/04/17.
@@ -24,12 +28,17 @@ public class NewsConfigurationAdapter extends RecyclerView.Adapter<NewsConfigura
     private final Map<String, Pair<Integer, Integer>> newsSources;
     private final DatabaseOperation mDatabaseOperation;
     private final String[] sourceNames;
+    private final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.newInstance();
+    private final CompositeDisposable rxSubscription = new CompositeDisposable();
+    private View viewGroup;
 
     public NewsConfigurationAdapter(final Map<String, Pair<Integer, Integer>> newsSources,
-                                    final DatabaseOperation databaseOperation) {
+                                    final DatabaseOperation databaseOperation,
+                                    final View viewGroup) {
         this.newsSources = newsSources;
         mDatabaseOperation = databaseOperation;
         sourceNames = newsSources.keySet().toArray(new String[0]);
+        this.viewGroup = viewGroup;
     }
 
     @Override
@@ -56,24 +65,28 @@ public class NewsConfigurationAdapter extends RecyclerView.Adapter<NewsConfigura
         final TextView newsSourceTitle;
         final NumberPicker newsCount;
         final SwitchCompat onOffSwitch;
-        final ConstraintLayout mainLayout;
         final CompoundButton.OnCheckedChangeListener mCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                 if (isChecked) {
-                    mDatabaseOperation.saveNewsSourceConfiguration(newsSourceTitle.getText().toString(),
-                            newsCount.getValue(), 1);
+                    rxSubscription.add(mDatabaseOperation.saveNewsSourceConfiguration(newsSourceTitle.getText().toString(),
+                            newsCount.getValue(), 1)
+                            .subscribeOn(schedulersProvider.getDatabaseWorkScheduler())
+                            .observeOn(schedulersProvider.getUIScheduler())
+                            .subscribeWith(new SwitchObserver()));
 
                 } else {
-                    mDatabaseOperation.saveNewsSourceConfiguration(newsSourceTitle.getText().toString(),
-                            newsCount.getValue(), 0);
+                    rxSubscription.add(mDatabaseOperation.saveNewsSourceConfiguration(newsSourceTitle.getText().toString(),
+                            newsCount.getValue(), 0)
+                            .subscribeOn(schedulersProvider.getDatabaseWorkScheduler())
+                            .observeOn(schedulersProvider.getUIScheduler())
+                            .subscribeWith(new SwitchObserver()));
                 }
             }
         };
 
         NewsConfigViewHolder(final View itemView) {
             super(itemView);
-            mainLayout = (ConstraintLayout) itemView;
             newsSourceTitle = (TextView) itemView.findViewById(R.id.newsSourceTitle);
             newsCount = (NumberPicker) itemView.findViewById(R.id.news_count_picker);
             onOffSwitch = (SwitchCompat) itemView.findViewById(R.id.news_source_switch);
@@ -91,5 +104,26 @@ public class NewsConfigurationAdapter extends RecyclerView.Adapter<NewsConfigura
             onOffSwitch.setChecked(countAndStatus.second != 0);
             onOffSwitch.setOnCheckedChangeListener(mCheckedChangeListener);
         }
+    }
+
+    private class SwitchObserver extends DisposableCompletableObserver {
+
+        @Override
+        public void onComplete() {
+            Snackbar.make(viewGroup,
+                    viewGroup.getContext().getString(R.string.successfully_saved_configuration), Snackbar.LENGTH_LONG)
+                    .show();
+        }
+
+        @Override
+        public void onError(final Throwable throwable) {
+            Snackbar.make(viewGroup,
+                    viewGroup.getContext().getString(R.string.unsuccessfully_saved_configuration), Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    public CompositeDisposable getRxSubscription() {
+        return rxSubscription;
     }
 }

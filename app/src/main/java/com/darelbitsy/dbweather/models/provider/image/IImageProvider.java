@@ -1,9 +1,11 @@
 package com.darelbitsy.dbweather.models.provider.image;
 
-import android.graphics.Bitmap;
+import android.app.Activity;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-
-import io.reactivex.Single;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 /**
  * Created by Darel Bitsy on 26/04/17.
@@ -11,6 +13,9 @@ import io.reactivex.Single;
  */
 
 public interface IImageProvider {
+    void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @NonNull final String url);
 
-    Single<Bitmap> getBitmapImage(@NonNull final String url);
+    void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @NonNull final ProgressBar progressBar, @NonNull final String url);
+
+    void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @DrawableRes final int errorImage, final ProgressBar progressBar, @NonNull final String url);
 }

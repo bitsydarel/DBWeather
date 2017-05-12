@@ -419,9 +419,9 @@ public class DailyData implements Parcelable, Comparable<DailyData> {
 
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DailyData)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof DailyData)) { return false; }
 
         final DailyData dailyData = (DailyData) o;
 

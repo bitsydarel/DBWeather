@@ -7,6 +7,7 @@ import android.support.v4.util.Pair;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public interface IWeatherActivityView {
 
-    void showWeather(final Pair<List<WeatherInfo>, List<HourlyData>> weather);
+    void showWeather(final WeatherData weather);
 
     void showNews(final List<Article> news);
 
@@ -30,7 +31,7 @@ public interface IWeatherActivityView {
 
     void setupNavigationDrawerWithNoCities();
 
-    void saveState(final Bundle bundle);
+    void requestUpdate();
 
     Context getAppContext();
 

@@ -4,8 +4,6 @@
     <color name="colorPrimaryDark">#1976D2</color>
     <color name="colorAccent">#536DFE</color>
     <color name="transparentWhite">#80ffffff</color>
-    <!--<color name="themeColor">#f9d34c</color>-->
-    <color name="transButton">#00000000</color>
     <color name="switchColorOn">#7FFF00</color>
     <color name="switchColorNormal">#bdbdbd</color>
     <color name="switchColorThumbNormal">#A9A9A9</color>

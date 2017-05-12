@@ -36,7 +36,7 @@ public class WeatherInfo implements Parcelable {
     public final ObservableField<String> sunrise = new ObservableField<>();
     public final ObservableField<String> sunset = new ObservableField<>();
 
-    private boolean isSleet;
+    private boolean sleet;
 
     public WeatherInfo() {
         //Empty Because i use it to initiate my instance
@@ -66,7 +66,7 @@ public class WeatherInfo implements Parcelable {
         sunrise.set(in.readString());
         sunset.set(in.readString());
 
-        isSleet = in.readInt() != 0;
+        sleet = in.readInt() != 0;
     }
 
     public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
@@ -82,11 +82,11 @@ public class WeatherInfo implements Parcelable {
     };
 
     public boolean isSleet() {
-        return isSleet;
+        return sleet;
     }
 
     public void setSleet(final boolean sleet) {
-        isSleet = sleet;
+        this.sleet = sleet;
     }
 
     @Override
@@ -120,6 +120,6 @@ public class WeatherInfo implements Parcelable {
         dest.writeString(sunrise.get());
         dest.writeString(sunset.get());
 
-        dest.writeInt(isSleet ? 1 : 0);
+        dest.writeInt(sleet ? 1 : 0);
     }
 }

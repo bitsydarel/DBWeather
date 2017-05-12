@@ -15,9 +15,11 @@ import com.darelbitsy.dbweather.utils.helper.AlarmConfigHelper;
 public class AlarmConfigOnBoot extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        new AlarmConfigHelper(context).setClothingNotificationAlarm();
-        Log.i("Feed_Data", "Resetting data on reboot");
-        FeedDataInForeground.setNextSync(context);
-        Log.i("Feed_Data", "Setted the hourly sync from Boot Up");
+        if ("android.intent.action.BOOT_COMPLETED".equalsIgnoreCase(intent.getAction())) {
+            new AlarmConfigHelper(context).setClothingNotificationAlarm();
+            Log.i("Feed_Data", "Resetting data on reboot");
+            FeedDataInForeground.setNextSync(context);
+            Log.i("Feed_Data", "Setted the hourly sync from Boot Up");
+        }
     }
 }

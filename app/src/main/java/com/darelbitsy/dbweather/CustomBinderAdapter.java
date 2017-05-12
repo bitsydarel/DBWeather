@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,9 +14,6 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
-import com.darelbitsy.dbweather.ui.introduction.IntroPresenter;
-import com.darelbitsy.dbweather.ui.introduction.viewpager.IntroViewPager;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 
 import java.util.List;
 import java.util.Map;

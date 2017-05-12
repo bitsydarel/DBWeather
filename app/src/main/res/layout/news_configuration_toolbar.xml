@@ -17,14 +17,14 @@
             android:layout_height="match_parent">
 
             <android.support.constraint.Guideline
-                android:id="@+id/leftVerticalGuideline"
+                android:id="@+id/leftVerticalGDL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.15" />
 
             <android.support.constraint.Guideline
-                android:id="@+id/RightVerticalGuideline"
+                android:id="@+id/RightVerticalGDL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+                app:layout_constraintRight_toLeftOf="@id/leftVerticalGDL"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/home_icon"
                 app:tintMyBackground="@{true}" />
@@ -50,8 +50,8 @@
                 android:text="@string/news_configuration_toolbar_label"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
-                app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+                app:layout_constraintLeft_toRightOf="@id/leftVerticalGDL"
+                app:layout_constraintRight_toLeftOf="@id/RightVerticalGDL"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>

@@ -17,7 +17,7 @@ public class RxSchedulersProvider implements ISchedulersProvider {
     private final Scheduler computationThread;
     private static RxSchedulersProvider singletonProvider;
 
-    public static RxSchedulersProvider newInstance() {
+    public static synchronized RxSchedulersProvider newInstance() {
         if (singletonProvider == null) {
             singletonProvider = new RxSchedulersProvider();
         }

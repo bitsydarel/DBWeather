@@ -9,14 +9,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.constraint.Guideline
-        android:id="@+id/leftVerticalGuideline"
+        android:id="@+id/leftVerticalGDL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.05"/>
 
     <android.support.constraint.Guideline
-        android:id="@+id/RightVerticalGuideline"
+        android:id="@+id/RightVerticalGDL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+        app:layout_constraintLeft_toRightOf="@id/leftVerticalGDL"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/countryName"
@@ -60,7 +60,7 @@
         app:layout_constraintLeft_toRightOf="@id/countryName"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+        app:layout_constraintRight_toLeftOf="@id/RightVerticalGDL"
         tools:text="America"
         android:gravity="end"
         android:textColor="@android:color/black"/>

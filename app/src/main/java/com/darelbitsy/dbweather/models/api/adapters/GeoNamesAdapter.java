@@ -25,15 +25,15 @@ import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.USER_LANGUAGE
 @Singleton
 public class GeoNamesAdapter {
     private static final String RESULT_STYLE = "MEDIUM";
-    private final List<String> listOfSupportedLanguage = Arrays.asList(
-            "cs", "en", "eo", "fi", "he", "iata", "it", "nl", "no",
-            "pl", "ru", "uk", "unlc");
-
     private static final String GEO_NAMES_API_URL= "http://api.geonames.org/";
     private static final String USER_NAME = "bitsydarel";
     private static final boolean IS_NAME_REQUIRED = true;
     private static final int MAX_ROWS = 3;
-    private GeoNamesService mGeoNamesService;
+
+    private final List<String> listOfSupportedLanguage = Arrays.asList(
+            "cs", "en", "eo", "fi", "he", "iata", "it", "nl", "no",
+            "pl", "ru", "uk", "unlc");
+    private final GeoNamesService mGeoNamesService;
 
     @Inject
     public GeoNamesAdapter(final OkHttpClient okHttpClient) {
@@ -43,9 +43,7 @@ public class GeoNamesAdapter {
                 .client(okHttpClient)
                 .build();
 
-        if (mGeoNamesService == null) {
-            mGeoNamesService = retrofit.create(GeoNamesService.class);
-        }
+        mGeoNamesService = retrofit.create(GeoNamesService.class);
     }
 
     public Call<GeoNamesResult> getLocations(final String query) {

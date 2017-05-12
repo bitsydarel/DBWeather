@@ -19,7 +19,7 @@
             android:layout_height="match_parent">
 
             <android.support.constraint.Guideline
-                android:id="@+id/RightVerticalGuideline"
+                android:id="@+id/RightVerticalGDL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -43,7 +43,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/RightVerticalGuideline"
+                app:layout_constraintRight_toLeftOf="@+id/RightVerticalGDL"
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageButton
@@ -54,7 +54,7 @@
                 android:contentDescription="Share Icon"
                 app:tintMyBackground="@{true}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+                app:layout_constraintLeft_toRightOf="@id/RightVerticalGDL"
                 app:layout_constraintRight_toLeftOf="@id/shareLimit"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/share_icon"/>

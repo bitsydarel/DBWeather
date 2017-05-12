@@ -36,7 +36,7 @@ public class NetworkWeatherProvider implements IWeatherProvider {
 
     @Override
     public Single<Weather> getWeather() {
-        return io.reactivex.Single.fromCallable(() -> {
+        return Single.fromCallable(() -> {
             final Double[] coordinates = WeatherUtil.getCoordinates(database);
             final Weather weather = mWeatherRestAdapter.getWeather(coordinates[0],
                     coordinates[1]);

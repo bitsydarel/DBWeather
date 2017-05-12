@@ -31,7 +31,7 @@
             tools:layout_editor_absoluteX="0dp"/>
 
         <android.support.constraint.Guideline
-            android:id="@+id/leftVerticalGuideline"
+            android:id="@+id/leftVerticalGDL"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
@@ -40,7 +40,7 @@
             tools:layout_editor_absoluteY="0dp"/>
 
         <android.support.constraint.Guideline
-            android:id="@+id/RightVerticalGuideline"
+            android:id="@+id/RightVerticalGDL"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
@@ -96,8 +96,8 @@
             android:text="@{Presenter.weatherInfo.summary}"
             android:textColor="@android:color/white"
             app:setFont="@{true}"
-            app:layout_constraintLeft_toLeftOf="@+id/leftVerticalGuideline"
-            app:layout_constraintRight_toLeftOf="@+id/RightVerticalGuideline"
+            app:layout_constraintLeft_toLeftOf="@+id/leftVerticalGDL"
+            app:layout_constraintRight_toLeftOf="@+id/RightVerticalGDL"
             app:layout_constraintTop_toTopOf="@+id/summaryTopGuideline"/>
 
         <android.support.constraint.Guideline
@@ -177,7 +177,7 @@
             android:textColor="@color/transparentWhite"
             app:setFont="@{true}"
             app:layout_constraintBottom_toTopOf="@id/precipValue"
-            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/RightVerticalGDL"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detailsTopGuideline"/>
 
@@ -193,7 +193,7 @@
             app:layout_constraintBottom_toTopOf="@id/cloudCoverValue"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintLeft_toRightOf="@+id/humidityLabel"
-            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGDL"
             app:layout_constraintTop_toBottomOf="@id/detailsTopGuideline"
             tools:layout_editor_absoluteX="241dp"
             tools:layout_editor_absoluteY="436dp"/>
@@ -208,7 +208,7 @@
             android:textColor="@color/transparentWhite"
             app:setFont="@{true}"
             app:layout_constraintBottom_toTopOf="@id/humidityValue"
-            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGDL"
             app:layout_constraintRight_toLeftOf="@+id/cloudCoverLabel"
             app:layout_constraintTop_toBottomOf="@id/detailsTopGuideline"/>
 
@@ -223,7 +223,7 @@
             app:setFont="@{true}"
             app:layout_constraintBottom_toTopOf="@id/windSpeedValue"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGDL"
             app:layout_constraintTop_toBottomOf="@id/detailsTopGuideline"/>
 
         <android.support.constraint.Guideline
@@ -242,8 +242,8 @@
             android:textColor="@android:color/white"
             app:setFont="@{true}"
             app:layout_constraintBottom_toTopOf="@id/sunBottomGuideline"
-            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
-            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGDL"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGDL"
             app:layout_constraintTop_toBottomOf="@+id/temperatureLabel"
             tools:layout_editor_absoluteX="156dp"
             tools:layout_editor_absoluteY="379dp"/>
@@ -256,8 +256,8 @@
             android:textColor="@android:color/white"
             android:textSize="128sp"
             app:setFont="@{true}"
-            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
-            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGDL"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGDL"
             app:layout_constraintTop_toBottomOf="@+id/timeLabel"
             tools:layout_editor_absoluteX="170dp"
             tools:layout_editor_absoluteY="206dp"/>
@@ -277,7 +277,7 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/sunsetTime"
             app:layout_constraintBottom_toTopOf="@id/sunBottomGuideline"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"/>
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGDL"/>
 
         <TextView
             android:id="@+id/sunsetTime"
@@ -290,7 +290,7 @@
             android:textSize="16sp"
             app:setFont="@{true}"
             app:layout_constraintBottom_toTopOf="@id/sunBottomGuideline"
-            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/RightVerticalGDL"
             app:layout_constraintRight_toRightOf="parent"
             tools:layout_editor_absoluteX="351dp"
             tools:layout_editor_absoluteY="310dp"/>
@@ -306,7 +306,7 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/sunsetTimeLabel"
             app:layout_constraintBottom_toTopOf="@id/sunriseTime"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGDL"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="279dp"/>
 
@@ -319,7 +319,7 @@
             android:textColor="@android:color/white"
             app:setFont="@{true}"
             app:layout_constraintBottom_toTopOf="@id/sunsetTime"
-            app:layout_constraintLeft_toRightOf="@id/RightVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/RightVerticalGDL"
             app:layout_constraintRight_toRightOf="parent"
             tools:layout_editor_absoluteX="352dp"
             tools:layout_editor_absoluteY="279dp"/>
@@ -358,8 +358,8 @@
             android:textColor="@color/transparentWhite"
             android:textSize="16sp"
             app:setFont="@{true}"
-            app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
-            app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"
+            app:layout_constraintLeft_toRightOf="@id/leftVerticalGDL"
+            app:layout_constraintRight_toLeftOf="@id/RightVerticalGDL"
             app:layout_constraintTop_toBottomOf="@+id/locationLabel"/>
 
         <android.support.constraint.Guideline
@@ -399,7 +399,7 @@
             android:contentDescription="Weather Icon"
             android:src="@{Presenter.weatherInfo.icon, default=@drawable/sleet}"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/leftVerticalGuideline"
+            app:layout_constraintRight_toLeftOf="@id/leftVerticalGDL"
             app:layout_constraintTop_toBottomOf="@id/locationBottomGuideline"/>
 
     </android.support.constraint.ConstraintLayout>

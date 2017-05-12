@@ -15,7 +15,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -28,7 +27,6 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,8 +38,7 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.ActivityWeatherBinding;
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
 import com.darelbitsy.dbweather.models.provider.repository.DatabaseUserCitiesRepository;
 import com.darelbitsy.dbweather.ui.BaseActivity;
 import com.darelbitsy.dbweather.ui.addlocation.AddLocationActivity;
@@ -51,10 +48,10 @@ import com.darelbitsy.dbweather.ui.main.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.ui.main.adapters.HourAdapter;
 import com.darelbitsy.dbweather.ui.main.adapters.NewsAdapter;
 import com.darelbitsy.dbweather.utils.helper.ColorManager;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 import com.darelbitsy.dbweather.utils.services.LocationTracker;
 import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +69,6 @@ import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.MY_PERMISSION
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.RECEIVED_NEWS_FEED;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.RECEIVED_WEATHER;
-import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.REQUEST_NEWS_FEED;
-import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.REQUEST_WEATHER;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.UPDATE_REQUEST;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
@@ -87,63 +82,56 @@ public class WeatherActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, MenuItem.OnMenuItemClickListener,
         IWeatherActivityView {
 
+    private static final int RECYCLER_NEWS_SPEED_SCROLL = 4000;
     private CustomFragmentAdapter mFragmentAdapter;
     private BroadcastReceiver mLocationBroadcast;
-    private final Handler mUpdateHandler = new Handler();
     private ActionBarDrawerToggle mDrawerToggle;
-
     private NewsAdapter mNewsAdapter;
     private HourAdapter mHourAdapter;
-
-    private final List<WeatherInfo> mWeatherInfoList = new ArrayList<>();
-    private final List<Article> mNewses = new ArrayList<>();
-    private final Handler mMyHandler = new Handler();
-    private final SparseArray<GeoName> sparseArrayOfIdAndLocation = new SparseArray<>();
-
-    private final ColorManager mColorPicker = ColorManager.newInstance();
     private SubMenu locationSubMenu;
     private RxWeatherActivityPresenter mMainPresenter;
     private ActivityWeatherBinding mWeatherActivityBinder;
-
     @Inject
     SharedPreferences sharedPreferences;
 
+    private final WeatherData mWeatherData = new WeatherData();
+    private final List<Article> mNewses = new ArrayList<>();
+    private final Handler mUpdateHandler = new Handler();
+    private final Handler mMyHandler = new Handler();
+    private final SparseArray<GeoName> sparseArrayOfIdAndLocation = new SparseArray<>();
+    private final ColorManager mColorPicker = ColorManager.newInstance();
+
 
     @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        return respondToMenuItemClick(item);
-    }
+    public boolean onOptionsItemSelected(final MenuItem item) { return respondToMenuItemClick(item); }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-        return respondToMenuItemClick(item);
-    }
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) { return respondToMenuItemClick(item); }
 
     @Override
-    public boolean onMenuItemClick(final MenuItem item) {
-        return respondToMenuItemClick(item);
-    }
+    public boolean onMenuItemClick(final MenuItem item) { return respondToMenuItemClick(item); }
 
     @Override
-    public void showWeather(final Pair<List<WeatherInfo>, List<HourlyData>> weatherInfo) {
+    public void showWeather(final WeatherData weatherData) {
         final Bundle firebaseLog = new Bundle();
         firebaseLog.putString(RECEIVED_WEATHER, String.format("RECEIVED WEATHER DATA at %s",
                 WeatherUtil.getHour(System.currentTimeMillis(), null)));
 
-        mWeatherInfoList.clear();
-        mWeatherInfoList.addAll(weatherInfo.first);
+        setWeatherData(weatherData);
         mWeatherActivityBinder.dbweatherMainLayout
                 .setBackgroundResource(mColorPicker
-                        .getBackgroundColor(weatherInfo.first.get(0).icon.get()));
+                        .getBackgroundColor(mWeatherData.getWeatherInfoList().get(0).icon.get()));
 
-        if (mFragmentAdapter != null) { mUpdateHandler.post(() -> mFragmentAdapter.updateFragments(weatherInfo.first)); }
-        if (mHourAdapter != null) { mHourAdapter.updateData(weatherInfo.second); }
+        if (mFragmentAdapter != null) { mUpdateHandler.post(() -> mFragmentAdapter.updateFragments(mWeatherData.getWeatherInfoList())); }
         else {
-            mHourAdapter = new HourAdapter(weatherInfo.second);
-            setupHourlyRecyclerView();
+            mFragmentAdapter = new CustomFragmentAdapter(getSupportFragmentManager(), mWeatherData.getWeatherInfoList());
+            mWeatherActivityBinder.viewPager.setAdapter(mFragmentAdapter);
         }
+
+        if (mHourAdapter != null) { mHourAdapter.updateData(mWeatherData.getHourlyWeatherList()); }
+        else { setupHourlyRecyclerView(); }
+
         mAnalyticProvider.logEvent(RECEIVED_WEATHER, firebaseLog);
-        Log.i(ConstantHolder.TAG, "City Name: " + weatherInfo.first.get(0).locationName.get());
     }
 
     @Override
@@ -155,11 +143,9 @@ public class WeatherActivity extends BaseActivity
         mNewses.clear();
         mNewses.addAll(articles);
 
-        if(mNewsAdapter == null) {
-            setupNewsScrollView();
-        } else {
-            mMyHandler.post(() -> mNewsAdapter.updateContent(articles));
-        }
+        if(mNewsAdapter == null) { setupNewsScrollView(); }
+
+        else { mMyHandler.post(() -> mNewsAdapter.updateContent(articles)); }
 
         mAnalyticProvider.logEvent(RECEIVED_NEWS_FEED, firebaseLog);
     }
@@ -207,8 +193,17 @@ public class WeatherActivity extends BaseActivity
     }
 
     @Override
-    public void saveState(final Bundle bundle) {
-        //
+    public void requestUpdate() {
+        if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.getWeather(); }
+        else {
+            final Pair<String, double[]> selectedUserCity = mMainPresenter.getSelectedUserCity();
+            final double[] coordinates = selectedUserCity.second;
+
+            if (super.isNetworkAvailable()) {
+                mMainPresenter.getWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]);
+            }
+            else { mMainPresenter.loadWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]); }
+        }
     }
 
     @Override
@@ -224,54 +219,36 @@ public class WeatherActivity extends BaseActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mWeatherActivityBinder = DataBindingUtil.setContentView(this, R.layout.activity_weather);
-        mMainPresenter =
-                new RxWeatherActivityPresenter(new DatabaseUserCitiesRepository(this),
+        mMainPresenter = new RxWeatherActivityPresenter(new DatabaseUserCitiesRepository(this),
                         this,
                         mAppDataProvider);
+        final Intent intent = getIntent();
 
-        mMainPresenter.configureView();
-        final Bundle firebaseLog = new Bundle();
+        if (intent != null && intent.hasExtra(WEATHER_INFO_KEY)) {
 
-        firebaseLog.putString(REQUEST_WEATHER, String.format("RECEIVED WEATHER DATA at %s",
-                WeatherUtil.getHour(System.currentTimeMillis(), null)));
-        mAnalyticProvider.logEvent(REQUEST_WEATHER, firebaseLog);
-
-        firebaseLog.clear();
-
-        firebaseLog.putString(REQUEST_NEWS_FEED, String.format("RECEIVED NEWS FEED at %s",
-                WeatherUtil.getHour(System.currentTimeMillis(), null)));
-        mAnalyticProvider.logEvent(REQUEST_NEWS_FEED, firebaseLog);
-
-        if (getIntent() != null) {
-
-            mWeatherInfoList.clear();
-            mWeatherInfoList.addAll(getIntent().getParcelableArrayListExtra(WEATHER_INFO_KEY));
+            setWeatherData(intent.getParcelableExtra(WEATHER_INFO_KEY));
             mNewses.clear();
-            mNewses.addAll(getIntent().getParcelableArrayListExtra(NEWS_DATA_KEY));
+            mNewses.addAll(intent.getParcelableArrayListExtra(NEWS_DATA_KEY));
+            mMainPresenter.loadUserCitiesMenu();
 
-        } else if (savedInstanceState != null && savedInstanceState.containsKey(WEATHER_INFO_KEY)) {
+            mFragmentAdapter = new CustomFragmentAdapter(getSupportFragmentManager(),
+                    mWeatherData.getWeatherInfoList());
+            mWeatherActivityBinder.viewPager.setAdapter(mFragmentAdapter);
 
-            mWeatherInfoList.clear();
-            mWeatherInfoList.addAll(savedInstanceState.getParcelableArrayList(WEATHER_INFO_KEY));
-            mWeatherInfoList.clear();
-            mWeatherInfoList.addAll(savedInstanceState.getParcelableArrayList(NEWS_DATA_KEY));
-        }
+        } else { mMainPresenter.configureView(); }
 
         setSupportActionBar(mWeatherActivityBinder.weatherToolbar.toolbarId);
 
-        if (mAppDataProvider.getGpsPermissionStatus()) {
-            startService(new Intent(getApplicationContext(), LocationTracker.class));
-        } else { super.askLocationPermIfNeeded(); }
+        if (mAppDataProvider.getGpsPermissionStatus()) { startService(new Intent(getApplicationContext(), LocationTracker.class));}
+        else { super.askLocationPermIfNeeded(); }
 
-        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M) && !mAppDataProvider.getAccountPermissionStatus()) {
+        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+                && !mAppDataProvider.getAccountPermissionStatus()) {
+
             super.askAccountInfoPermIfNeeded();
         }
 
-        mFragmentAdapter = new CustomFragmentAdapter(getSupportFragmentManager(),
-                mWeatherInfoList);
-        mWeatherActivityBinder.viewPager.setAdapter(mFragmentAdapter);
         mWeatherActivityBinder.viewPager.setPageTransformer(false, new CubeOutTransformer());
 
         mDrawerToggle = new ActionBarDrawerToggle(this,
@@ -292,8 +269,7 @@ public class WeatherActivity extends BaseActivity
             }
         };
 
-        mWeatherActivityBinder.weatherDrawerLayout
-                .addDrawerListener(mDrawerToggle);
+        mWeatherActivityBinder.weatherDrawerLayout.addDrawerListener(mDrawerToggle);
         mLocationBroadcast = new BroadcastReceiver() {
             @Override
             public void onReceive(final Context context,
@@ -304,15 +280,6 @@ public class WeatherActivity extends BaseActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-        if (super.isNetworkAvailable()) {
-            if (mMainPresenter.isFirstRun()) {
-                mMainPresenter.setFirstRun(false);
-            } else {
-                mMainPresenter.getNews();
-                mMainPresenter.getWeather();
-            }
-        }
     }
 
     @Override
@@ -325,6 +292,8 @@ public class WeatherActivity extends BaseActivity
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mMyHandler.post(mDrawerToggle::syncState);
+        if (mNewsAdapter == null && !mNewses.isEmpty()) { setupNewsScrollView(); }
+        if (mHourAdapter == null && !mWeatherData.getHourlyWeatherList().isEmpty()) { setupHourlyRecyclerView(); }
 
         mWeatherActivityBinder.weatherToolbar.shareIcon.setOnClickListener(view -> {
             final AnimatorSet animatorSet = new AnimatorSet().setDuration(225);
@@ -343,28 +312,9 @@ public class WeatherActivity extends BaseActivity
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(WEATHER_INFO_KEY, (ArrayList<? extends Parcelable>) mWeatherInfoList);
-        outState.putParcelableArrayList(NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) mNewses);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(WEATHER_INFO_KEY)) {
-
-            mWeatherInfoList.clear();
-            mWeatherInfoList.addAll(savedInstanceState.getParcelableArrayList(WEATHER_INFO_KEY));
-            mWeatherInfoList.clear();
-            mWeatherInfoList.addAll(savedInstanceState.getParcelableArrayList(NEWS_DATA_KEY));
-        }
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-        mMainPresenter.userSelectedCityFromDrawer(false);
+        mMainPresenter.unSubscribeToUpdate();
     }
 
     @Override
@@ -374,6 +324,24 @@ public class WeatherActivity extends BaseActivity
         intentFilter.addAction(UPDATE_REQUEST);
         registerReceiver(mLocationBroadcast,
                 intentFilter);
+
+        if (super.isNetworkAvailable() && !mMainPresenter.isFirstRun()) {
+            mMainPresenter.getNews();
+            mMainPresenter.getWeather();
+        }
+
+        if (mMainPresenter.isFirstRun()) { mMainPresenter.setFirstRun(false); }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (mNewsAdapter != null) {
+            mMainPresenter.getRxSubscriptions()
+                    .add(moveNewsRecyclerView(RECYCLER_NEWS_SPEED_SCROLL, 0, mNewsAdapter.getItemCount())
+                            .observeOn(mMainPresenter.getSchedulersProvider().getUIScheduler())
+                            .subscribeWith(new NewsRecyclerViewObserver()));
+        }
     }
 
     @Override
@@ -381,7 +349,7 @@ public class WeatherActivity extends BaseActivity
         super.onStop();
         if (mLocationBroadcast != null) { unregisterReceiver(mLocationBroadcast); }
         mMainPresenter.userSelectedCityFromDrawer(false);
-        mMainPresenter.clearState();
+        mMainPresenter.clearState(new File(getCacheDir(), "dbweather_cache_dir"));
     }
 
     @Override
@@ -409,39 +377,47 @@ public class WeatherActivity extends BaseActivity
         mMainPresenter.getNews();
     }
 
+    private void setWeatherData(final WeatherData weatherData) {
+        mWeatherData.setWeatherInfoList(weatherData.getWeatherInfoList());
+        mWeatherData.setHourlyWeatherList(weatherData.getHourlyWeatherList());
+        mWeatherData.setAlertList(weatherData.getAlertList());
+    }
+
     private void shareWeatherInfo() {
         if (mMainPresenter.getWritePermissionStatus()) {
-            try {
-                shareScreenShot();
-            } catch (final IOException e) {
-                showScreenshotAttempError();
-            }
-        } else {
-            super.askWriteToExtPermIfNeeded();
+            try { shareScreenShot(); }
+            catch (final IOException e) { showScreenshotAttempError(); }
+
+        } else { super.askWriteToExtPermIfNeeded(); }
+    }
+
+    private class NewsRecyclerViewObserver extends DisposableObserver<Integer> {
+        @Override
+        public void onNext(final Integer position) {
+            mWeatherActivityBinder.newsRecyclerView
+                    .smoothScrollToPosition(position);
+        }
+
+        @Override
+        public void onError(final Throwable throwable) {}
+
+        @Override
+        public void onComplete() {
+            mMainPresenter.getRxSubscriptions()
+                    .add(moveNewsRecyclerView(RECYCLER_NEWS_SPEED_SCROLL, mNewsAdapter.getItemCount(), 0)
+                            .observeOn(mMainPresenter.getSchedulersProvider().getUIScheduler())
+                            .subscribeWith(new NewsRecyclerViewObserver()));
         }
     }
 
     private void receiveBroadcast(@NonNull final String action) {
-        if (action.equalsIgnoreCase(LOCATION_UPDATE)) {
-            if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.getWeather(); }
-
-        } else if (action.equalsIgnoreCase(UPDATE_REQUEST)) {
-            if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.getWeather(); }
-
-            else {
-                final Pair<String, double[]> selectedUserCity = mMainPresenter.getSelectedUserCity(mWeatherInfoList.get(0).locationName.get());
-                final double[] coordinates = selectedUserCity.second;
-
-                if (super.isNetworkAvailable()) {
-                    mMainPresenter.getWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]);
-                } else {
-                    mMainPresenter.loadWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]);
-                }
-            }
+        if (action.equalsIgnoreCase(LOCATION_UPDATE) && !mMainPresenter.didUserSelectedCityFromDrawer()) {
+            mMainPresenter.getWeather();
         }
     }
 
     private void setupHourlyRecyclerView() {
+        mHourAdapter = new HourAdapter(mWeatherData.getHourlyWeatherList());
         mWeatherActivityBinder.hourlyRecyclerView.setAdapter(mHourAdapter);
         mWeatherActivityBinder.hourlyRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
@@ -452,7 +428,6 @@ public class WeatherActivity extends BaseActivity
                 .getRealMetrics(metrics);
 
         final float height = metrics.heightPixels;
-
         mMainPresenter.saveRecyclerBottomLimit(height);
     }
 
@@ -532,31 +507,11 @@ public class WeatherActivity extends BaseActivity
         };
         mWeatherActivityBinder.newsRecyclerView.setLayoutManager(layoutManager);
         mWeatherActivityBinder.newsRecyclerView.setHasFixedSize(true);
-
-        final int speedScroll = 4000;
-        mMainPresenter.getRxSubscriptions()
-                .add(moveNewsRecyclerView(speedScroll, 0, mNewsAdapter.getItemCount())
-                .map(Long::intValue)
-                .observeOn(mMainPresenter.getSchedulersProvider().getUIScheduler())
-                .subscribeWith(new DisposableObserver<Integer>() {
-                    @Override
-                    public void onNext(final Integer position) {
-                        mWeatherActivityBinder.newsRecyclerView
-                                .smoothScrollToPosition(position);
-                    }
-
-                    @Override
-                    public void onError(final Throwable throwable) {}
-
-                    @Override
-                    public void onComplete() {
-                        moveNewsRecyclerView(speedScroll, mNewsAdapter.getItemCount(), 0);
-                    }
-                }));
     }
 
-    public Observable<Long> moveNewsRecyclerView(final int speedScroll, final int startAt, final int endAt) {
-        return Observable.intervalRange(startAt, endAt, 1, speedScroll, TimeUnit.MILLISECONDS, mMainPresenter.getSchedulersProvider().getComputationThread());
+    public Observable<Integer> moveNewsRecyclerView(final int speedScroll, final int startAt, final int endAt) {
+        return Observable.intervalRange(startAt, endAt, 1, speedScroll, TimeUnit.MILLISECONDS, mMainPresenter.getSchedulersProvider().getComputationThread())
+                .map(Long::intValue);
     }
 
     private boolean respondToMenuItemClick(final MenuItem item) {

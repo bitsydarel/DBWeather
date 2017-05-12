@@ -1,6 +1,5 @@
 package com.darelbitsy.dbweather.ui.newsdetails;
 
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 /**
@@ -8,7 +7,9 @@ import android.support.annotation.NonNull;
  */
 
 public interface INewsDialogView {
-    void showImage(@NonNull final Bitmap image);
+    void showImage(@NonNull final String url);
 
-    void showDefaultImage();
+    void openArticleInBrowser(@NonNull final String articleUrl);
+
+    void closeView();
 }
