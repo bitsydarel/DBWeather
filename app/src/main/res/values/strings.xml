@@ -52,6 +52,7 @@
     <string name="precipChanceValue">%1$d%%</string>
     <string name="precipeChanceTypeLabel">%1$s</string>
     <string name="open_in_browser_text">Open in Browser</string>
+    <string name="open_in_browser">Details</string>
     <string name="news_close_text">Close the Window</string>
 
     <string name="resume_layout_summary">Summary</string>
@@ -126,4 +127,7 @@
     <string name="news_error_message">Error while loading the news</string>
     <string name="successfully_added_city">Successfully added city to your list</string>
     <string name="unsuccessfully_added_city">Could not add city to your list, please try again</string>
+    <string name="retry">Retry</string>
+    <string name="news_time_line">Open News TimeLines</string>
+    <string name="timeline_label">Time Line</string>
 </resources>

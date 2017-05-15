@@ -16,20 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <VideoView
-            android:id="@+id/backgroundVideo"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            tools:visibility="invisible"
-            android:visibility="@{Presenter.weatherInfo.isVideoPlaying ? View.VISIBLE : View.GONE }"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:showVideoBackground="@{Presenter.weatherInfo}"
-            tools:layout_editor_absoluteX="0dp"/>
-
         <android.support.constraint.Guideline
             android:id="@+id/leftVerticalGDL"
             android:layout_width="0dp"

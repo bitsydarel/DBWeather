@@ -38,6 +38,12 @@
                 android:enabled="true">
 
                 <group android:checkableBehavior="single">
+
+                    <item android:enabled="true"
+                        android:icon="@drawable/news_icon"
+                        android:id="@+id/news_timeline_menu"
+                        android:title="@string/news_time_line"/>
+
                     <item android:enabled="true"
                           android:icon="@drawable/news_source_config_icon"
                           android:id="@+id/select_news_source_config_id"

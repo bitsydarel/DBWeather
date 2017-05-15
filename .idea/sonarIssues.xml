@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="/Dummy.txt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="/a.dummy">
           <value>
             <set />
@@ -39,6 +44,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/models/api/adapters/GeoNamesAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/models/datatypes/geonames/GeoName.java">
           <value>
             <set />
           </value>
@@ -103,7 +113,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/addlocation/AddLocationPresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/addlocation/IAddLocationView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/addlocation/adapter/LocationListAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/animation/BasePageTransformer.java">
           <value>
             <set />
           </value>
@@ -114,6 +139,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/config/adapter/NewsConfigurationAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/customviews/CustomConstraintLayout.java">
           <value>
             <set />
           </value>
@@ -158,6 +188,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/main/fragment/WeatherFragmentPresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/newsdetails/NewsDialogActivity.java">
           <value>
             <set />
@@ -169,6 +204,71 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/notifications/NotificationActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/ArticleDiffCalback.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/ArticleDiffCallback.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/INewsTimeLineView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/NewsTimeLine.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/NewsTimeLineActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/NewsTimeLineAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/NewsTimeLinePresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/TimelineCallback.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/adapter/NewsTimeLineAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/webclient/CustomWebClient.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/webclients/CustomChromeClient.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/webclients/CustomWebClient.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/timeline/webclients/CustomeChromClient.java">
           <value>
             <set />
           </value>
@@ -198,12 +298,47 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/utils/holder/ConstantHolder.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/utils/services/LocationTracker.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/utils/services/NewsDatabaseService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/utils/services/WeatherDatabaseService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/utils/utility/AppUtil.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/utils/utility/weather/WeatherUtil.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/like_button.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/news_icon.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_news_time_line.xml">
           <value>
             <set />
           </value>
@@ -233,7 +368,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/news_timeline_item.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/time_line_toolbar.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/menu/drawer.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values/strings.xml">
           <value>
             <set />
           </value>

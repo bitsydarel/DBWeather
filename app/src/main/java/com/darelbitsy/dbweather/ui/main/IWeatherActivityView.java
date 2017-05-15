@@ -36,4 +36,6 @@ public interface IWeatherActivityView {
     Context getAppContext();
 
     void showScreenshotAttempError();
+
+    void showNetworkNotAvailableMessage();
 }

@@ -1,15 +1,16 @@
 package com.darelbitsy.dbweather.utils.services;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
-import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.TAG;
 
 /**
  * Created by Darel Bitsy on 25/02/17.
@@ -17,39 +18,39 @@ import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.IS_FROM_CITY_
  * to save weather data in the database
  */
 
-public class WeatherDatabaseService extends Service {
-    @Nullable
-    @Override
-    public IBinder onBind(final Intent intent) {
-        return null;
+public class WeatherDatabaseService extends IntentService {
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     */
+    public WeatherDatabaseService() {
+        super(WeatherDatabaseService.class.getSimpleName());
     }
 
     @Override
-    public int onStartCommand(final Intent intent, final int flags, final int startId) {
+    protected void onHandleIntent(@Nullable final Intent intent) {
+        Log.i(TAG, "In WeatherDatabase Service");
+
         final DatabaseOperation database = DatabaseOperation.getInstance(this);
+        if (intent != null) {
+            final Weather weather = intent.getParcelableExtra(ConstantHolder.WEATHER_DATA_KEY);
+            if (weather != null) {
+                if (!intent.getBooleanExtra(IS_FROM_CITY_KEY, false)) {
+                    saveWeatherForCurrentLocation(database, weather);
 
-        final Weather weather = intent.getParcelableExtra(ConstantHolder.WEATHER_DATA_KEY);
-
-        if (weather != null) {
-
-            if (!intent.getBooleanExtra(IS_FROM_CITY_KEY, false)) {
-                saveWeatherForCurrentLocation(database, weather);
-
-            } else {
-                saveWeatherFromCitiesLocation(database, weather);
+                } else { saveWeatherFromCitiesLocation(database, weather); }
             }
         }
-
-        stopSelf();
-        return START_NOT_STICKY;
+        Log.i(TAG, "Saved Weather Info");
     }
 
     private void saveWeatherFromCitiesLocation(final DatabaseOperation database,
                                                final Weather weather) {
 
+        Log.i(TAG, "start saving Weather for " + weather.getCityName());
         database.saveCurrentWeatherForCity(weather.getCityName(), weather.getCurrently());
         database.saveDailyWeatherForCity(weather.getCityName(), weather.getDaily().getData());
         database.saveHourlyWeatherForCity(weather.getCityName(), weather.getHourly().getData());
+        Log.i(TAG, "saved Weather for " + weather.getCityName());
     }
 
     private void saveWeatherForCurrentLocation(final DatabaseOperation database, final Weather weather) {

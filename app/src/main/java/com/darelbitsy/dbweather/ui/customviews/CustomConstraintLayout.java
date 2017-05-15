@@ -6,7 +6,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -56,8 +55,6 @@ public class CustomConstraintLayout extends ConstraintLayout {
                 v.setRight(oldRight);
             }
         });
-
-        Log.i("drag", "Was in constructor");
     }
 
     public boolean isMoving() {
@@ -68,16 +65,14 @@ public class CustomConstraintLayout extends ConstraintLayout {
 
     @Override
     public boolean onInterceptTouchEvent(final MotionEvent ev) {
-        Log.i("drag", "Was in interceptTouch");
         return mDragHelper.shouldInterceptTouchEvent(ev)
                 || super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(final MotionEvent ev) {
-        Log.i("drag", "Was in ontouchevent");
         mDragHelper.processTouchEvent(ev);
-        return super.onTouchEvent(ev) || true;
+        return true;
     }
 
 
@@ -112,8 +107,6 @@ public class CustomConstraintLayout extends ConstraintLayout {
     private class DragHelperCallback extends ViewDragHelper.Callback {
         @Override
         public boolean tryCaptureView(final View child, final int pointerId) {
-            Log.i("drag", "Was in try capture view");
-
             return child.getId() == R.id.hourlyRecyclerView;
         }
 
@@ -143,7 +136,6 @@ public class CustomConstraintLayout extends ConstraintLayout {
         public int clampViewPositionVertical(final View child,
                                              final int top,
                                              final int dy) {
-            Log.i("drag", "Was in clamp position");
             final int defaultBottom = Math.round(getMeasuredHeight() * 0.7f);
             return Math.min(Math.max(top, getPaddingTop()),
                     (int) mPreferences.getFloat(RECYCLER_BOTTOM_LIMIT, defaultBottom));

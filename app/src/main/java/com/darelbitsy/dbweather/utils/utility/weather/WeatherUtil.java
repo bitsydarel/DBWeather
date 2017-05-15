@@ -247,17 +247,6 @@ public class WeatherUtil {
                     weatherInfo.icon.set(WeatherUtil.getIconId(currently.getIcon()));
                     weatherInfo.summary.set(currently.getSummary());
 
-                    if ("rain".equalsIgnoreCase(currently.getIcon())) {
-                        weatherInfo.videoBackgroundFile.set(R.raw.rain_background);
-
-                    } else if ("snow".equalsIgnoreCase(currently.getIcon())) {
-                        weatherInfo.videoBackgroundFile.set(R.raw.snow_background);
-                    }
-
-                    if ("sleet".equalsIgnoreCase(currently.getIcon())) {
-                        weatherInfo.setSleet(true);
-                    }
-
                     weatherInfo.time.set(String.format(Locale.getDefault(),
                             context.getString(R.string.time_label),
                             WeatherUtil.getFormattedTime(currently.getTime(), weather.getTimezone())));

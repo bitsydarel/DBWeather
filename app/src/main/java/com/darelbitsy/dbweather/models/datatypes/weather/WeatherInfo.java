@@ -13,8 +13,6 @@ import android.os.Parcelable;
 
 public class WeatherInfo implements Parcelable {
     public final ObservableBoolean isCurrentWeather = new ObservableBoolean(false);
-    public final ObservableBoolean isVideoPlaying = new ObservableBoolean(false);
-    public final ObservableInt videoBackgroundFile = new ObservableInt();
 
     public final ObservableField<String> locationName = new ObservableField<>();
     public final ObservableInt icon = new ObservableInt();
@@ -36,16 +34,12 @@ public class WeatherInfo implements Parcelable {
     public final ObservableField<String> sunrise = new ObservableField<>();
     public final ObservableField<String> sunset = new ObservableField<>();
 
-    private boolean sleet;
-
     public WeatherInfo() {
         //Empty Because i use it to initiate my instance
     }
 
     private WeatherInfo(final Parcel in) {
         isCurrentWeather.set(in.readInt() != 0);
-        isVideoPlaying.set(in.readInt() != 0);
-        videoBackgroundFile.set(in.readInt());
 
         locationName.set(in.readString());
         icon.set(in.readInt());
@@ -65,8 +59,6 @@ public class WeatherInfo implements Parcelable {
 
         sunrise.set(in.readString());
         sunset.set(in.readString());
-
-        sleet = in.readInt() != 0;
     }
 
     public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
@@ -81,14 +73,6 @@ public class WeatherInfo implements Parcelable {
         }
     };
 
-    public boolean isSleet() {
-        return sleet;
-    }
-
-    public void setSleet(final boolean sleet) {
-        this.sleet = sleet;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -98,8 +82,6 @@ public class WeatherInfo implements Parcelable {
     public void writeToParcel(final Parcel dest, final int flags) {
 
         dest.writeInt(isCurrentWeather.get() ? 1 : 0);
-        dest.writeInt(isVideoPlaying.get() ? 1 : 0);
-        dest.writeInt(videoBackgroundFile.get());
 
         dest.writeString(locationName.get());
         dest.writeInt(icon.get());
@@ -119,7 +101,5 @@ public class WeatherInfo implements Parcelable {
 
         dest.writeString(sunrise.get());
         dest.writeString(sunset.get());
-
-        dest.writeInt(sleet ? 1 : 0);
     }
 }

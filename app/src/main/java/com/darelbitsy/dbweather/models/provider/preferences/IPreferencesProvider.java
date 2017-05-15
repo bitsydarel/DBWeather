@@ -3,6 +3,10 @@ package com.darelbitsy.dbweather.models.provider.preferences;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
+import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
+
+import io.reactivex.Completable;
+
 /**
  * Created by Darel Bitsy on 27/04/17.
  * Preference Provider
@@ -47,4 +51,6 @@ public interface IPreferencesProvider {
     void setWritePermissionStatus(final boolean isPermissionAccorded);
 
     boolean getWritePermissionStatus();
+
+    Completable addLocationToDatabase(final GeoName location);
 }

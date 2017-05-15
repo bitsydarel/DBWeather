@@ -27,8 +27,7 @@ import javax.inject.Singleton;
 public class GlideImageProvider implements IImageProvider {
 
     @Inject
-    public GlideImageProvider() {
-    }
+    public GlideImageProvider() {}
 
     @Override
     public void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @NonNull final String url) {
@@ -46,6 +45,7 @@ public class GlideImageProvider implements IImageProvider {
                 .load(url)
                 .apply(RequestOptions.errorOf(errorImage))
                 .apply(RequestOptions.centerCropTransform().centerCrop())
+                .apply(RequestOptions.skipMemoryCacheOf(false))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable final GlideException e, final Object o, final Target<Drawable> target, final boolean b) {

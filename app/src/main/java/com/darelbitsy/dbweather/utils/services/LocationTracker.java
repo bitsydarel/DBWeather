@@ -74,7 +74,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    public void onConnected(@Nullable final Bundle bundle) {
         Log.i(ConstantHolder.TAG, "Inside the onConnected for google api client");
         getLocation();
     }
@@ -96,30 +96,38 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
+    public void onStatusChanged(final String provider, final int status, final Bundle extras) {
         //Not Using it for now
     }
 
     @Override
-    public void onProviderEnabled(String provider) {
+    public void onProviderEnabled(final String provider) {
         //Not using it for now
+        if (mLocationManager != null) {
+            mLocationManager.requestLocationUpdates(provider,
+                    300000,
+                    0,
+                    this);
+        }
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
-        Intent openGpsSetting = new Intent(Settings.ACTION_LOCALE_SETTINGS);
+    public void onProviderDisabled(final String provider) {
+        final Intent openGpsSetting = new Intent(Settings.ACTION_LOCALE_SETTINGS);
         openGpsSetting.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(openGpsSetting);
     }
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(final Intent intent) {
         return null;
     }
 
     @Override
-    public void onTaskRemoved(Intent rootIntent) {
+    public void onTaskRemoved(final Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+
         if(mGoogleApiClient.isConnected()) {
 
             Log.i(ConstantHolder.TAG, "Inside the onDisconnect for google api client");
@@ -127,12 +135,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
             mGoogleApiClient.disconnect();
 
         }
-
-        if (mLocationManager != null) {
-            mLocationManager.removeUpdates(this);
-        }
-
-        super.onTaskRemoved(rootIntent);
+        if (mLocationManager != null) { mLocationManager.removeUpdates(this); }
     }
 
     /**
@@ -140,7 +143,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
      * if not available request location update
      */
     private void getLocation() {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, createLocationRequest(),  this);
 

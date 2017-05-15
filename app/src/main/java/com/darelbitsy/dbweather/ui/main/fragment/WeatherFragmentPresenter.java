@@ -52,8 +52,6 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
 
     private void updateWeather(@NonNull final WeatherInfo weatherInfo) {
         mWeatherInfo.isCurrentWeather.set(weatherInfo.isCurrentWeather.get());
-        mWeatherInfo.isVideoPlaying.set(weatherInfo.isVideoPlaying.get());
-        mWeatherInfo.videoBackgroundFile.set(weatherInfo.videoBackgroundFile.get());
 
         mWeatherInfo.locationName.set(weatherInfo.locationName.get());
         mWeatherInfo.icon.set(weatherInfo.icon.get());
@@ -73,15 +71,13 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
 
         mWeatherInfo.sunrise.set(weatherInfo.sunrise.get());
         mWeatherInfo.sunset.set(weatherInfo.sunset.get());
-
-        mWeatherInfo.setSleet(weatherInfo.isSleet());
     }
 
-    public void showFallingSnowOrRain(@NonNull final ConstraintLayout currentWeatherLayout,
-                                      @NonNull final Context applicationContext,
-                                      @NonNull final RelativeLayout.LayoutParams layoutParams) {
+    void showFallingSnowOrRain(@NonNull final ConstraintLayout currentWeatherLayout,
+                               @NonNull final Context applicationContext,
+                               @NonNull final RelativeLayout.LayoutParams layoutParams) {
 
-        if(R.raw.snow_background == mWeatherInfo.videoBackgroundFile.get()) {
+        if(R.drawable.snow == mWeatherInfo.icon.get()) {
 
             if(currentWeatherLayout.findViewById(SnowFallView.VIEW_ID) == null) {
                 currentWeatherLayout.addView(new SnowFallView(applicationContext), layoutParams);
@@ -91,7 +87,7 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
                currentWeatherLayout.removeView(currentWeatherLayout.findViewById(RainFallView.VIEW_ID));
             }
 
-        } else if(R.raw.rain_background == mWeatherInfo.videoBackgroundFile.get()) {
+        } else if(R.drawable.rain == mWeatherInfo.icon.get()) {
 
             if(currentWeatherLayout.findViewById(RainFallView.VIEW_ID) == null) {
                currentWeatherLayout.addView(new RainFallView(applicationContext),
@@ -102,7 +98,7 @@ public class WeatherFragmentPresenter implements IWeatherFragmentPresenter<Weath
                 currentWeatherLayout.removeView(currentWeatherLayout.findViewById(SnowFallView.VIEW_ID));
             }
 
-        } else if (mWeatherInfo.isSleet()) {
+        } else if (R.drawable.sleet == mWeatherInfo.icon.get()) {
 
             if (currentWeatherLayout.findViewById(RainFallView.VIEW_ID) == null) {
                 currentWeatherLayout.addView(new RainFallView(applicationContext),

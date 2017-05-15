@@ -4,19 +4,20 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.LIST_OF_TYPEFACES;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.USER_LANGUAGE;
@@ -30,6 +31,17 @@ public class CustomBinderAdapter {
 
     private CustomBinderAdapter() {
         // to prevent this to be instantiate
+    }
+
+    @BindingAdapter("setImage")
+    public static void setImage(@Nonnull final ImageView imageView, final String url) {
+        if (!url.isEmpty()) {
+            Glide.with(imageView)
+                    .load(url)
+                    .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
+                    .apply(RequestOptions.skipMemoryCacheOf(true))
+                    .into(imageView);
+        }
     }
 
     @BindingAdapter("setFont")
@@ -56,25 +68,6 @@ public class CustomBinderAdapter {
     @BindingAdapter({"android:src"})
     public static void setImageViewResource(@NonNull final ImageView imageView, final int resource) {
         imageView.setImageResource(resource);
-    }
-
-    @BindingAdapter("showVideoBackground")
-    public static void showVideoBackground(@NonNull final VideoView videoView, @NonNull final WeatherInfo weatherInfo) {
-        if (weatherInfo.isCurrentWeather.get() && weatherInfo.videoBackgroundFile.get() != 0) {
-            videoView.stopPlayback();
-
-            videoView.setVideoURI(Uri.parse("android.resource://" +
-                    videoView.getContext().getPackageName() +
-                    "/" +
-                    weatherInfo.videoBackgroundFile.get()));
-
-            videoView.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
-            weatherInfo.isVideoPlaying.set(true);
-            videoView.start();
-
-        } else {
-            weatherInfo.isVideoPlaying.set(false);
-        }
     }
 
     private static Typeface getAppGlobalTypeFace(final Context context) {

@@ -34,6 +34,7 @@ public class ConstantHolder {
     public static final String LOCATION_PERMISSION_DECLINED = "LOCATION_PERMISSION_DECLINED";
     public static final String WRITE_PERMISSION_GRANTED = "WRITE_PERMISSION_GRANTED";
     public static final String WRITE_PERMISSION_DECLINED = "WRITE_PERMISSION_DECLINED";
+    public static final String ID = "ID";
 
     private ConstantHolder() {
         //To disable default constructor

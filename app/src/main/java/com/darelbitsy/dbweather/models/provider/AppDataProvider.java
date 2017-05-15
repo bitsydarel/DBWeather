@@ -1,10 +1,12 @@
 package com.darelbitsy.dbweather.models.provider;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.DBWeatherApplication;
+import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.datatypes.weather.Weather;
 import com.darelbitsy.dbweather.models.provider.news.DatabaseNewsProvider;
@@ -12,12 +14,14 @@ import com.darelbitsy.dbweather.models.provider.news.NetworkNewsProvider;
 import com.darelbitsy.dbweather.models.provider.preferences.IPreferencesProvider;
 import com.darelbitsy.dbweather.models.provider.weather.DatabaseWeatherProvider;
 import com.darelbitsy.dbweather.models.provider.weather.NetworkWeatherProvider;
+import com.darelbitsy.dbweather.utils.helper.DatabaseOperation;
 
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.CITY_NAME_KEY;
@@ -49,11 +53,14 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     NetworkNewsProvider mNetworkNewsProvider;
     @Inject
     SharedPreferences mSharedPreferences;
+    private DatabaseOperation mDatabaseOperation;
 
     @Inject
-    public AppDataProvider() {
+    public AppDataProvider(final Context context) {
         DBWeatherApplication.getComponent()
                 .inject(this);
+
+        mDatabaseOperation = DatabaseOperation.getInstance(context);
     }
 
     @Override
@@ -218,5 +225,10 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider {
     @Override
     public boolean getWritePermissionStatus() {
         return mSharedPreferences.getBoolean(IS_WRITE_PERMISSION_GRANTED, false);
+    }
+
+    @Override
+    public Completable addLocationToDatabase(final GeoName location) {
+        return mDatabaseOperation.addLocationToDatabase(location);
     }
 }

@@ -16,7 +16,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      * @param position Position of page relative to the current front-and-center position of the pager. 0 is front and
      *                 center. 1 is one full page position to the right, and -1 is one page position to the left.
      */
-    protected abstract void onTransform(View page, float position);
+    protected abstract void onTransform(final View page, final float position);
 
     /**
      * Apply a property transformation to the given page. For most use cases, this method should not be overridden.
@@ -27,7 +27,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      *                 center. 1 is one full page position to the right, and -1 is one page position to the left.
      */
     @Override
-    public void transformPage(View page, float position) {
+    public void transformPage(final View page, final float position) {
         onPreTransform(page, position);
         onTransform(page, position);
         onPostTransform(page, position);
@@ -64,7 +64,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      * @param position Position of page relative to the current front-and-center position of the pager. 0 is front and
      *                 center. 1 is one full page position to the right, and -1 is one page position to the left.
      */
-    protected void onPreTransform(View page, float position) {
+    protected void onPreTransform(final View page, final float position) {
         final float width = page.getWidth();
 
         page.setRotationX(0);
@@ -93,8 +93,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      * @param position Position of page relative to the current front-and-center position of the pager. 0 is front and
      *                 center. 1 is one full page position to the right, and -1 is one page position to the left.
      */
-    protected void onPostTransform(View page, float position) {
-    }
+    protected void onPostTransform(final View page, final float position) {}
 
     /**
      * Same as {@link Math#min(double, double)} without double casting, zero closest to infinity handling, or NaN support.
@@ -103,8 +102,5 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      * @param min
      * @return
      */
-    protected static final float min(float val, float min) {
-        return val < min ? min : val;
-    }
-
+    protected static final float min(final float val, final float min) { return val < min ? min : val; }
 }

@@ -33,8 +33,9 @@ public class RxWeatherActivityPresenter {
     private final IUserCitiesRepository mUserCitiesRepository;
     private IWeatherActivityView mMainView;
     private final AppDataProvider mDataProvider;
+    private int lastWeatherApiCallTimeInMinutes;
+    private int lastNewsApiCallTimeInMinutes;
     private final CompositeDisposable rxSubscriptions = new CompositeDisposable();
-    private int previousApiCallTimeInMinutes;
 
     RxWeatherActivityPresenter(
             final IUserCitiesRepository userCitiesRepository,
@@ -56,7 +57,7 @@ public class RxWeatherActivityPresenter {
         loadUserCitiesMenu();
     }
 
-    private void loadWeather() {
+    void loadWeather() {
         rxSubscriptions.add(mDataProvider.getWeatherFromDatabase()
                 .subscribeOn(mSchedulersProvider.getWeatherScheduler())
                 .observeOn(mSchedulersProvider.getComputationThread())
@@ -72,8 +73,8 @@ public class RxWeatherActivityPresenter {
     }
 
     public void getWeather() {
-        if (previousApiCallTimeInMinutes == 0 ||
-                (LocalDateTime.now().getMinute() - previousApiCallTimeInMinutes ) > 10) {
+        if (lastWeatherApiCallTimeInMinutes == 0 ||
+                (LocalDateTime.now().getMinute() - lastWeatherApiCallTimeInMinutes) > 10) {
 
             rxSubscriptions.add(mDataProvider.getWeatherFromApi()
                     .subscribeOn(mSchedulersProvider.getWeatherScheduler())
@@ -82,7 +83,7 @@ public class RxWeatherActivityPresenter {
                     .observeOn(mSchedulersProvider.getUIScheduler())
                     .subscribeWith(new WeatherObserver()));
 
-            previousApiCallTimeInMinutes = LocalDateTime.now().getMinute();
+            lastWeatherApiCallTimeInMinutes = LocalDateTime.now().getMinute();
 
         } else { loadWeather(); }
     }
@@ -145,10 +146,16 @@ public class RxWeatherActivityPresenter {
     }
 
     public void getNews() {
-        rxSubscriptions.add(mDataProvider.getNewsFromApi()
-                .subscribeOn(mSchedulersProvider.getNewsScheduler())
-                .observeOn(mSchedulersProvider.getUIScheduler())
-                .subscribeWith(new NewsObserver()));
+        if (lastNewsApiCallTimeInMinutes == 0 ||
+                (LocalDateTime.now().getMinute() - lastNewsApiCallTimeInMinutes) > 10) {
+
+            rxSubscriptions.add(mDataProvider.getNewsFromApi()
+                    .subscribeOn(mSchedulersProvider.getNewsScheduler())
+                    .observeOn(mSchedulersProvider.getUIScheduler())
+                    .subscribeWith(new NewsObserver()));
+
+            lastNewsApiCallTimeInMinutes = LocalDateTime.now().getMinute();
+        } else { loadNews(); }
     }
 
     boolean isFirstRun() {
@@ -215,6 +222,14 @@ public class RxWeatherActivityPresenter {
         rxSubscriptions.clear();
     }
 
+    void retryWeatherRequest() {
+        // TODO: Implement weather retry method
+    }
+
+    void retryNewsRequest() {
+        // TODO: Implement news retry method
+    }
+
     private class NewsObserver extends DisposableSingleObserver<List<Article>> {
         @Override
         public void onSuccess(@NonNull final List<Article> articles) {
@@ -251,4 +266,9 @@ public class RxWeatherActivityPresenter {
     ISchedulersProvider getSchedulersProvider() {
         return mSchedulersProvider;
     }
+
+    void setMainView(final IWeatherActivityView view) {
+        if (mMainView == null) { mMainView = view; }
+    }
+
 }

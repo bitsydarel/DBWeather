@@ -12,12 +12,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -47,6 +50,7 @@ import com.darelbitsy.dbweather.ui.config.NewsConfigurationActivity;
 import com.darelbitsy.dbweather.ui.main.adapters.CustomFragmentAdapter;
 import com.darelbitsy.dbweather.ui.main.adapters.HourAdapter;
 import com.darelbitsy.dbweather.ui.main.adapters.NewsAdapter;
+import com.darelbitsy.dbweather.ui.timeline.NewsTimeLineActivity;
 import com.darelbitsy.dbweather.utils.helper.ColorManager;
 import com.darelbitsy.dbweather.utils.services.LocationTracker;
 import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
@@ -152,12 +156,20 @@ public class WeatherActivity extends BaseActivity
 
     @Override
     public void showNetworkWeatherErrorMessage() {
-
+        final Snackbar snackbar = Snackbar
+                .make(mWeatherActivityBinder.getRoot(), getString(R.string.weather_error_message), Snackbar.LENGTH_LONG)
+                .setAction(R.string.retry, v -> mMainPresenter.retryWeatherRequest())
+                .setActionTextColor(Color.RED);
+        snackbar.show();
     }
 
     @Override
     public void showNetworkNewsErrorMessage() {
-
+        final Snackbar snackbar = Snackbar
+                .make(mWeatherActivityBinder.getRoot(), getString(R.string.news_error_message), Snackbar.LENGTH_LONG)
+                .setAction(R.string.retry, v -> mMainPresenter.retryNewsRequest())
+                .setActionTextColor(Color.RED);
+        snackbar.show();
     }
 
     @Override
@@ -194,15 +206,21 @@ public class WeatherActivity extends BaseActivity
 
     @Override
     public void requestUpdate() {
-        if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.getWeather(); }
+        if (!mMainPresenter.didUserSelectedCityFromDrawer()) {
+            if (isNetworkAvailable()) { mMainPresenter.getWeather(); }
+            else { showNetworkNotAvailableMessage(); }
+        }
         else {
             final Pair<String, double[]> selectedUserCity = mMainPresenter.getSelectedUserCity();
             final double[] coordinates = selectedUserCity.second;
 
-            if (super.isNetworkAvailable()) {
+            if (isNetworkAvailable()) {
                 mMainPresenter.getWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]);
             }
-            else { mMainPresenter.loadWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]); }
+            else {
+                showNetworkNotAvailableMessage();
+                mMainPresenter.loadWeatherForCity(selectedUserCity.first, coordinates[0], coordinates[1]);
+            }
         }
     }
 
@@ -217,12 +235,21 @@ public class WeatherActivity extends BaseActivity
     }
 
     @Override
+    public void showNetworkNotAvailableMessage() {
+        final Snackbar snackbar = Snackbar
+                .make(mWeatherActivityBinder.getRoot(), getString(R.string.network_unavailable_message), Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED);
+        snackbar.show();
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWeatherActivityBinder = DataBindingUtil.setContentView(this, R.layout.activity_weather);
         mMainPresenter = new RxWeatherActivityPresenter(new DatabaseUserCitiesRepository(this),
                         this,
                         mAppDataProvider);
+
         final Intent intent = getIntent();
 
         if (intent != null && intent.hasExtra(WEATHER_INFO_KEY)) {
@@ -234,9 +261,12 @@ public class WeatherActivity extends BaseActivity
 
             mFragmentAdapter = new CustomFragmentAdapter(getSupportFragmentManager(),
                     mWeatherData.getWeatherInfoList());
+            mWeatherActivityBinder.dbweatherMainLayout
+                    .setBackgroundResource(mColorPicker
+                            .getBackgroundColor(mWeatherData.getWeatherInfoList().get(0).icon.get()));
             mWeatherActivityBinder.viewPager.setAdapter(mFragmentAdapter);
 
-        } else { mMainPresenter.configureView(); }
+        } else if (!mMainPresenter.didUserSelectedCityFromDrawer()) { mMainPresenter.configureView(); }
 
         setSupportActionBar(mWeatherActivityBinder.weatherToolbar.toolbarId);
 
@@ -292,6 +322,7 @@ public class WeatherActivity extends BaseActivity
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mMyHandler.post(mDrawerToggle::syncState);
+
         if (mNewsAdapter == null && !mNewses.isEmpty()) { setupNewsScrollView(); }
         if (mHourAdapter == null && !mWeatherData.getHourlyWeatherList().isEmpty()) { setupHourlyRecyclerView(); }
 
@@ -320,12 +351,15 @@ public class WeatherActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        mMainPresenter.setMainView(this);
+
         final IntentFilter intentFilter = new IntentFilter(LOCATION_UPDATE);
         intentFilter.addAction(UPDATE_REQUEST);
         registerReceiver(mLocationBroadcast,
                 intentFilter);
 
-        if (super.isNetworkAvailable() && !mMainPresenter.isFirstRun()) {
+
+        if (isNetworkAvailable() && !mMainPresenter.isFirstRun() && !mMainPresenter.didUserSelectedCityFromDrawer()) {
             mMainPresenter.getNews();
             mMainPresenter.getWeather();
         }
@@ -374,7 +408,7 @@ public class WeatherActivity extends BaseActivity
         }
 
         super.askAccountInfoPermIfNeeded();
-        mMainPresenter.getNews();
+        if (isNetworkAvailable()) { mMainPresenter.getNews(); }
     }
 
     private void setWeatherData(final WeatherData weatherData) {
@@ -412,7 +446,8 @@ public class WeatherActivity extends BaseActivity
 
     private void receiveBroadcast(@NonNull final String action) {
         if (action.equalsIgnoreCase(LOCATION_UPDATE) && !mMainPresenter.didUserSelectedCityFromDrawer()) {
-            mMainPresenter.getWeather();
+            if (isNetworkAvailable()) { mMainPresenter.getWeather(); }
+            else { showNetworkNotAvailableMessage(); }
         }
     }
 
@@ -526,8 +561,18 @@ public class WeatherActivity extends BaseActivity
             mAnalyticProvider.logEvent("NEWS_CONFIG_OPENED", new Bundle());
             finish();
 
-        } else if (id == R.id.current_location) {
-            mMainPresenter.getWeather();
+        } else if (id == R.id.news_timeline_menu) {
+            final Intent intent = new Intent(getApplicationContext(), NewsTimeLineActivity.class);
+            intent.putParcelableArrayListExtra(NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) mNewses);
+            startActivity(intent);
+            finish();
+        }
+        else if (id == R.id.current_location) {
+            if (isNetworkAvailable()) { mMainPresenter.getWeather(); }
+            else {
+                showNetworkNotAvailableMessage();
+                mMainPresenter.loadWeather();
+            }
             mMainPresenter.userSelectedCityFromDrawer(false);
             mWeatherActivityBinder.weatherDrawerLayout.closeDrawers();
 
@@ -556,9 +601,9 @@ public class WeatherActivity extends BaseActivity
 
                         locationSubMenu.removeItem(id);
                         mMainPresenter.removeCityFromUserCities(location);
-                        mMainPresenter.getWeather();
+                        mMainPresenter.loadWeather();
+                        if (isNetworkAvailable()) { mMainPresenter.getWeather(); }
                         mMainPresenter.userSelectedCityFromDrawer(false);
-
                     })
                     .setPositiveButton(R.string.display, displayListener)
                     .create()
