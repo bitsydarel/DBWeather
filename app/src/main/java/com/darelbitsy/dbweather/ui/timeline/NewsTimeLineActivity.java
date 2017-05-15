@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -107,6 +108,8 @@ public class NewsTimeLineActivity extends BaseActivity implements INewsTimeLineV
 
     @Override
     public void showError(final Throwable throwable) {
+        Snackbar.make(binding.getRoot(), R.string.news_error_message, Snackbar.LENGTH_LONG)
+                .show();
     }
 
     @SuppressLint("SetJavaScriptEnabled")
