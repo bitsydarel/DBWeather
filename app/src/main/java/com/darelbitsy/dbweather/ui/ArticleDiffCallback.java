@@ -1,18 +1,16 @@
-package com.darelbitsy.dbweather.ui.timeline;
+package com.darelbitsy.dbweather.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.DatabaseConstant;
-import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.ID;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.INDEX;
 import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
 
 /**
@@ -24,7 +22,7 @@ public class ArticleDiffCallback extends DiffUtil.Callback {
     private final List<Article> oldListOfArticle;
     private final List<Article> newListOfArticle;
 
-    ArticleDiffCallback(@Nonnull final List<Article> oldList, @Nonnull final List<Article> newList) {
+    public ArticleDiffCallback(@Nonnull final List<Article> oldList, @Nonnull final List<Article> newList) {
         this.oldListOfArticle = oldList;
         this.newListOfArticle = newList;
     }
@@ -55,7 +53,7 @@ public class ArticleDiffCallback extends DiffUtil.Callback {
     public Object getChangePayload(final int oldItemPosition, final int newItemPosition) {
         final Bundle bundle = new Bundle();
 
-        bundle.putInt(ID, oldItemPosition);
+        bundle.putInt(INDEX, oldItemPosition);
         bundle.putParcelable(NEWS_DATA_KEY, newListOfArticle.get(newItemPosition));
 
         return bundle;

@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="Article"
+            type="com.darelbitsy.dbweather.models.datatypes.news.Article"/>
+    </data>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/newsLayout"
-    android:background="@drawable/news_background">
+    android:background="@android:drawable/dialog_holo_light_frame">
 
     <android.support.constraint.Guideline
         android:id="@+id/leftVerticalGDL"
@@ -19,7 +25,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/newsFrom"
-        android:text="@string/news_from"
+        tools:text="@string/news_from"
+        android:text="@{Article.author}"
         android:gravity="center"
         android:textAllCaps="true"
         android:textStyle="bold"
@@ -36,6 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:text="Here is the news from today, DB WEATHER just came out i hope y'all enjoyed this release , leave a feedback, we will love to her from you and thanks for contributing to my project, thanks for the love -> Darel Bitsy"
+        android:text="@{Article.title}"
         android:textColor="@android:color/black"
         android:gravity="start"
         android:layout_marginStart="8dp"
@@ -44,3 +52,4 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </android.support.constraint.ConstraintLayout>
+</layout>

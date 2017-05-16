@@ -51,6 +51,13 @@ public class CustomBinderAdapter {
         }
     }
 
+    @BindingAdapter("setToolbarFont")
+    public static void setToolbarFont(@NonNull final TextView textView, final boolean shouldSet) {
+        if (shouldSet) {
+            textView.setTypeface(Typeface.createFromAsset(textView.getContext().getAssets(), "fonts/toolbar_font.ttf"));
+        }
+    }
+
     @BindingAdapter("tintMyBackground")
     public static void setBackgroundTint(@NonNull final ImageButton button, final boolean shouldTint) {
         if (shouldTint && Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {

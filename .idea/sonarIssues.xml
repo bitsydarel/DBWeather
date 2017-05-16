@@ -38,7 +38,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/GlideConfiguration.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/dagger/modules/DBWeatherApplicationModule.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/dagger/modules/NetworkModule.java">
           <value>
             <set />
           </value>
@@ -88,6 +98,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/models/provider/image/IImageProvider.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/models/provider/news/NetworkNewsProvider.java">
           <value>
             <set />
@@ -104,6 +119,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/models/provider/weather/NetworkWeatherProvider.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/ArticleDiffCallback.java">
           <value>
             <set />
           </value>
@@ -174,6 +194,21 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/main/WeatherActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/main/adapters/HourAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/main/adapters/HourDiffCallback.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/darelbitsy/dbweather/ui/main/adapters/NewsAdapter.java">
           <value>
             <set />
           </value>
@@ -358,6 +393,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/hourly_list_item.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/news_activity.xml">
           <value>
             <set />
@@ -368,12 +408,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/news_list_item.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/news_timeline_item.xml">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/time_line_toolbar.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/weather_toolbar.xml">
           <value>
             <set />
           </value>
@@ -419,6 +469,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/config/findbugs/findbugs-filter.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/config/lint.gradle">
           <value>
             <set />
           </value>

@@ -86,7 +86,7 @@ public class WeatherUtil {
         return (int) cloudCover * 100;
     }
 
-    public static String getHour(final long timeInMilliseconds, final String timeZone) {
+    public static String getHour(final long timeInMilliseconds, @Nullable final String timeZone) {
         final DateTimeFormatter format =
                 DateTimeFormatter.ofPattern("h a");
 
@@ -153,7 +153,7 @@ public class WeatherUtil {
                 .format(format);
     }
 
-    private static int compareDay(final long firstDay, final long secondDay, final String timeZone) {
+    private static int compareDay(final long firstDay, final long secondDay, @Nullable final String timeZone) {
         return dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(firstDay, timeZone))
                 .compareTo(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
     }
@@ -162,7 +162,7 @@ public class WeatherUtil {
         return compareDay(firstDay, secondDay, null);
     }
 
-    private static boolean dayEquality(final long firstDay, final long secondDay, final String timeZone) {
+    private static boolean dayEquality(final long firstDay, final long secondDay, @Nullable final String timeZone) {
         return dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(firstDay, timeZone))
                 .equals(dayOfTheWeek.get(WeatherUtil.getDayOfTheWeek(secondDay, timeZone)));
     }

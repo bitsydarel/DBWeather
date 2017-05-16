@@ -48,6 +48,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/add_location_toolbar_label"
                 android:textColor="@android:color/white"
+                app:setToolbarFont="@{true}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/leftVerticalGuideline"
                 app:layout_constraintRight_toLeftOf="@id/RightVerticalGuideline"

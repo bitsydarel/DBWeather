@@ -231,13 +231,13 @@ public class WeatherActivity extends BaseActivity
 
     @Override
     public void showScreenshotAttempError() {
-
+        Snackbar.make(mWeatherActivityBinder.getRoot(), R.string.screenshot_attemp_error, Snackbar.LENGTH_LONG);
     }
 
     @Override
     public void showNetworkNotAvailableMessage() {
         final Snackbar snackbar = Snackbar
-                .make(mWeatherActivityBinder.getRoot(), getString(R.string.network_unavailable_message), Snackbar.LENGTH_LONG)
+                .make(mWeatherActivityBinder.getRoot(), R.string.network_unavailable_message, Snackbar.LENGTH_LONG)
                 .setActionTextColor(Color.RED);
         snackbar.show();
     }
@@ -452,7 +452,8 @@ public class WeatherActivity extends BaseActivity
     }
 
     private void setupHourlyRecyclerView() {
-        mHourAdapter = new HourAdapter(mWeatherData.getHourlyWeatherList());
+        mHourAdapter = new HourAdapter(mWeatherData.getHourlyWeatherList(), mMainPresenter.getRxSubscriptions());
+        mWeatherActivityBinder.hourlyRecyclerView.setHasFixedSize();
         mWeatherActivityBinder.hourlyRecyclerView.setAdapter(mHourAdapter);
         mWeatherActivityBinder.hourlyRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
@@ -513,7 +514,7 @@ public class WeatherActivity extends BaseActivity
 
     // Setup the news scroll view and fetch it with data if available
     private void setupNewsScrollView() {
-        mNewsAdapter = new NewsAdapter(mNewses, mAnalyticProvider);
+        mNewsAdapter = new NewsAdapter(mNewses, mAnalyticProvider, mMainPresenter.getRxSubscriptions());
         mWeatherActivityBinder.newsRecyclerView.setAdapter(mNewsAdapter);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),

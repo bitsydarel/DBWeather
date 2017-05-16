@@ -35,7 +35,7 @@ public class NetworkModule {
     @Singleton
     @Provides
     InternalCacheDiskCacheFactory providesGlideCache(final Context context) {
-        return new InternalCacheDiskCacheFactory(context, "dbweather_cache_dir", CACHE_SIZE);
+        return new InternalCacheDiskCacheFactory(context, "dbweather_glide_cache", CACHE_SIZE);
     }
 
     @Provides

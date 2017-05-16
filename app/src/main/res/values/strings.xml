@@ -122,7 +122,7 @@
     <string name="successfully_saved_configuration">Successfully Saved Configuration</string>
     <string name="unsuccessfully_saved_configuration">Issue while saving Configuration</string>
     <string name="successfully_saved">Successfully Saved</string>
-    <string name="unsuccessfully_saved">Unsuccesfully Saved</string>
+    <string name="unsuccessfully_saved">Unsuccessfully Saved</string>
     <string name="weather_error_message">Error while getting the weather data</string>
     <string name="news_error_message">Error while loading the news</string>
     <string name="successfully_added_city">Successfully added city to your list</string>
@@ -130,4 +130,8 @@
     <string name="retry">Retry</string>
     <string name="news_time_line">Open News TimeLines</string>
     <string name="timeline_label">Time Line</string>
+    <string name="degree_image_content_description">Degree Image</string>
+    <string name="weather_icon_content_description">Weather Icon</string>
+    <string name="hourly_image_icon">hourly Image Icon</string>
+    <string name="screenshot_attemp_error">Error While Sharing the Data, Please try again</string>
 </resources>

@@ -30,16 +30,6 @@ public class GlideImageProvider implements IImageProvider {
     public GlideImageProvider() {}
 
     @Override
-    public void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @NonNull final String url) {
-        loadImageToView(activity, imageView, 0, null, url);
-    }
-
-    @Override
-    public void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @NonNull final ProgressBar progressBar, @NonNull final String url) {
-        loadImageToView(activity, imageView, 0, null, url);
-    }
-
-    @Override
     public void loadImageToView(@NonNull final Activity activity, @NonNull final ImageView imageView, @DrawableRes final int errorImage, final ProgressBar progressBar, @NonNull final String url) {
         Glide.with(activity)
                 .load(url)

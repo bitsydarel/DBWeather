@@ -1,52 +1,66 @@
 package com.darelbitsy.dbweather.ui.main.adapters;
 
-import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
-import android.support.constraint.ConstraintLayout;
+import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.darelbitsy.dbweather.R;
-import com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil;
+import com.darelbitsy.dbweather.databinding.HourlyListItemBinding;
 import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
+import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
+
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.HOURLY_DATA_KEY;
+import static com.darelbitsy.dbweather.utils.holder.ConstantHolder.INDEX;
 
 /**
  * Created by Darel Bitsy on 12/01/17.
+ * Hourly Weather Data RecyclerView Adapter
  */
 
 public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder> {
     private List<HourlyData> mHours;
-    private Context mContext;
+    private CompositeDisposable compositeDisposable;
+    private final RxSchedulersProvider rxSchedulersProvider = RxSchedulersProvider.newInstance();
 
-    public HourAdapter(final List<HourlyData> hours) {
+    public HourAdapter(final List<HourlyData> hours, final CompositeDisposable compositeDisposable) {
         mHours = new ArrayList<>(hours);
+        this.compositeDisposable = compositeDisposable;
     }
 
     @Override
     public HourViewHolder onCreateViewHolder(final ViewGroup parent,
                                              final int viewType) {
 
-        return new HourViewHolder(LayoutInflater
-                .from(parent.getContext())
-                .inflate(R.layout.hourly_list_item, parent, false));
+        return new HourViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                R.layout.hourly_list_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(final HourViewHolder holder,
-                                 final int position) {
-        holder.bindHour(mHours.get(position));
+    public void onBindViewHolder(final HourViewHolder holder, final int position) { holder.bindHour(mHours.get(position)); }
+
+    @Override
+    public void onBindViewHolder(final HourViewHolder holder, final int position, final List<Object> payloads) {
+        for (final Object object : payloads) {
+            final Bundle bundle = (Bundle) object;
+            mHours.add(bundle.getInt(INDEX), bundle.getParcelable(HOURLY_DATA_KEY));
+        }
+        super.onBindViewHolder(holder, position, payloads);
     }
 
     @Override
@@ -55,106 +69,44 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
     }
 
     public void updateData(final List<HourlyData> data) {
-        mHours.clear();
-        mHours.addAll(data);
-        notifyDataSetChanged();
+        compositeDisposable.add(Single.fromCallable(() -> DiffUtil.calculateDiff(new HourDiffCallback(mHours, data)))
+                .subscribeOn(rxSchedulersProvider.getComputationThread())
+                .observeOn(rxSchedulersProvider.getUIScheduler())
+                .subscribeWith(new DisposableSingleObserver<DiffUtil.DiffResult>() {
+                    @Override
+                    public void onSuccess(final DiffUtil.DiffResult diffResult) {
+                        diffResult.dispatchUpdatesTo(HourAdapter.this);
+                    }
+                    @Override
+                    public void onError(final Throwable throwable) {}
+                }));
     }
 
     class HourViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final ConstraintLayout mainLayout;
-        final LinearLayout hourlyBorderLine;
-        final ImageView hourlyIconImage;
+        private final HourlyListItemBinding itemBinding;
 
-        final TextView hourlyTime;
-        final TextView hourlySummary;
-        final TextView hourlyTemperature;
-        final TextView hourlyPrecipLabel;
-        final TextView hourlyPrecipLabelValue;
-        final TextView hourlyHumidity;
-        final TextView hourlyWindSpeed;
-
-        final ProgressBar hourlyPrecipProgressBar;
-        final ProgressBar hourlyHumidityProgressBar;
-        final ProgressBar hourlyWindSpeedProgressBar;
-
-        HourViewHolder(final View itemView) {
-            super(itemView);
-
-            itemView.setOnClickListener(this);
-            if (mContext == null) { mContext = itemView.getContext(); }
-
-            hourlyIconImage = (ImageView) itemView.findViewById(R.id.hourlyImage);
-
-            hourlyTime = (TextView) itemView.findViewById(R.id.hourlyTime);
-            hourlySummary = (TextView) itemView.findViewById(R.id.hourlySummary);
-            hourlyTemperature = (TextView) itemView.findViewById(R.id.hourlyTemperatureValue);
-            hourlyPrecipLabel = (TextView) itemView.findViewById(R.id.hourlyPrecipLabel);
-            hourlyPrecipLabelValue = (TextView) itemView.findViewById(R.id.hourlyPrecipLabelValue);
-            hourlyHumidity = (TextView) itemView.findViewById(R.id.hourlyHumidityValue);
-            hourlyWindSpeed = (TextView) itemView.findViewById(R.id.hourlyWindSpeedValue);
-
-            hourlyPrecipProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyPrecipProgressBar);
-            hourlyHumidityProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyHumidityProgressBar);
-            hourlyWindSpeedProgressBar = (ProgressBar) itemView.findViewById(R.id.hourlyWindSpeedProgressBar);
+        HourViewHolder(final HourlyListItemBinding hourlyListItemBinding) {
+            super(hourlyListItemBinding.getRoot());
+            itemBinding = hourlyListItemBinding;
+            itemBinding.hourlyLayout.setOnClickListener(this);
 
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-                hourlyPrecipProgressBar.getProgressDrawable()
-                        .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
+                itemBinding.hourlyPrecipProgressBar.getProgressDrawable()
+                        .setColorFilter(itemBinding.hourlyPrecipProgressBar.getResources().getColor(R.color.colorPrimaryDark),
                         PorterDuff.Mode.MULTIPLY);
 
-                hourlyHumidityProgressBar.getProgressDrawable()
-                        .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
+                itemBinding.hourlyHumidityProgressBar.getProgressDrawable()
+                        .setColorFilter(itemBinding.hourlyHumidityProgressBar.getResources().getColor(R.color.colorPrimaryDark),
                         android.graphics.PorterDuff.Mode.MULTIPLY);
 
-                hourlyWindSpeedProgressBar.getProgressDrawable()
-                        .setColorFilter(mContext.getResources().getColor(R.color.colorPrimaryDark),
+                itemBinding.hourlyWindSpeedProgressBar.getProgressDrawable()
+                        .setColorFilter(itemBinding.hourlyWindSpeedProgressBar.getResources().getColor(R.color.colorPrimaryDark),
                         android.graphics.PorterDuff.Mode.MULTIPLY);
             }
-
-            mainLayout = (ConstraintLayout) itemView.findViewById(R.id.hourlyInfoDetails);
-            mainLayout.setVisibility(View.GONE);
-            hourlyBorderLine = (LinearLayout) itemView.findViewById(R.id.hourlyBorderLine);
+            itemBinding.hourlyInfoDetails.setVisibility(View.GONE);
         }
 
-        void bindHour(final HourlyData hour) {
-            hourlyIconImage.setImageResource(WeatherUtil.getIconId(hour.getIcon()));
-
-            hourlyTime.setText(String.format(Locale.getDefault(),
-                    mContext.getString(R.string.hourly_time),
-                    WeatherUtil.getHour(hour.getTime(), null)));
-
-            hourlySummary.setText(hour.getSummary());
-
-            hourlyTemperature.setText(String.format(Locale.getDefault(),
-                    mContext.getString(R.string.hourly_apparentTemperature_value),
-                    WeatherUtil.getTemperatureInInt(hour.getTemperature())));
-
-            if (hour.getPrecipType() != null) {
-                hourlyPrecipLabel.setText(String.format(Locale.getDefault(),
-                        mContext.getString(R.string.hourly_precipeChanceTypeLabel),
-                        hour.getPrecipType()));
-            } else {
-                hourlyPrecipLabel.setText(String.format(Locale.getDefault(),
-                        mContext.getString(R.string.hourly_precipeChanceTypeLabel),
-                        "Rain/Snow"));
-            }
-
-            hourlyPrecipLabelValue.setText(String.format(Locale.getDefault(),
-                    mContext.getString(R.string.hourly_precipitation_value),
-                    WeatherUtil.getPrecipPercentage(hour.getPrecipProbability())));
-
-            hourlyHumidity.setText(String.format(Locale.getDefault(),
-                    mContext.getString(R.string.hourly_humidity_value),
-                    WeatherUtil.getHumidityPercentage(hour.getHumidity())));
-
-            hourlyWindSpeed.setText(String.format(Locale.getDefault(),
-                    mContext.getString(R.string.hourly_windspeed_value),
-                    WeatherUtil.getWindSpeedMeterPerHour(hour.getWindSpeed())));
-
-            hourlyPrecipProgressBar.setProgress(WeatherUtil.getPrecipPercentage(hour.getPrecipProbability()));
-            hourlyHumidityProgressBar.setProgress(WeatherUtil.getHumidityPercentage(hour.getHumidity()));
-            hourlyWindSpeedProgressBar.setProgress(WeatherUtil.getWindSpeedMeterPerHour(hour.getWindSpeed()));
-        }
+        void bindHour(final HourlyData hour) { itemBinding.setHourlyData(hour); }
 
         /**
          * Called when a view has been clicked.
@@ -163,16 +115,15 @@ public class HourAdapter extends RecyclerView.Adapter<HourAdapter.HourViewHolder
          */
         @Override
         public void onClick(final View v) {
-
-            if (mainLayout.getVisibility() == View.GONE) {
-                mainLayout.setVisibility(View.VISIBLE);
-                hourlyBorderLine.setVisibility(View.GONE);
+            if (itemBinding.hourlyInfoDetails.getVisibility() == View.GONE) {
+                itemBinding.hourlyInfoDetails.setVisibility(View.VISIBLE);
+                itemBinding.hourlyBorderLine.setVisibility(View.GONE);
                 v.setBackgroundColor(Color.WHITE);
 
             } else {
-                mainLayout.setVisibility(View.GONE);
+                itemBinding.hourlyInfoDetails.setVisibility(View.GONE);
                 v.setBackgroundColor(Color.parseColor("#DCDCDC"));
-                hourlyBorderLine.setVisibility(View.VISIBLE);
+                itemBinding.hourlyBorderLine.setVisibility(View.VISIBLE);
             }
         }
     }

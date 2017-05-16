@@ -13,12 +13,13 @@ import io.reactivex.observers.DisposableSingleObserver;
 
 /**
  * Created by Bitsy Darel on 14.05.17.
+ * News TimeLine Presenter
  */
 
 class NewsTimeLinePresenter {
 
     private final AppDataProvider dataProvider;
-    private final CompositeDisposable rxSubscribtion;
+    private final CompositeDisposable rxSubscription;
     private INewsTimeLineView view;
     private final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.newInstance();
 
@@ -26,11 +27,11 @@ class NewsTimeLinePresenter {
                           @Nonnull final CompositeDisposable compositeDisposable) {
         this.view = view;
         this.dataProvider = dataProvider;
-        rxSubscribtion = compositeDisposable;
+        rxSubscription = compositeDisposable;
     }
 
     void loadNews() {
-        rxSubscribtion.add(dataProvider.getNewsFromDatabase()
+        rxSubscription.add(dataProvider.getNewsFromDatabase()
                 .subscribeOn(schedulersProvider.getNewsScheduler())
                 .observeOn(schedulersProvider.getUIScheduler())
                 .subscribeWith(new DisposableSingleObserver<List<Article>>() {
@@ -43,7 +44,7 @@ class NewsTimeLinePresenter {
     }
 
     void getNews() {
-        rxSubscribtion.add(dataProvider.getNewsFromDatabase()
+        rxSubscription.add(dataProvider.getNewsFromDatabase()
                 .subscribeOn(schedulersProvider.getNewsScheduler())
                 .observeOn(schedulersProvider.getUIScheduler())
                 .subscribeWith(new DisposableSingleObserver<List<Article>>() {

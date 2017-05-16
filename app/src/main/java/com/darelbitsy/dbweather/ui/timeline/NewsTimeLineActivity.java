@@ -39,17 +39,17 @@ public class NewsTimeLineActivity extends BaseActivity implements INewsTimeLineV
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         binding = DataBindingUtil.setContentView(this, R.layout.activity_news_time_line);
-         setSupportActionBar(binding.toolbar.TimelineToolbar);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_news_time_line);
+        setSupportActionBar(binding.toolbar.TimelineToolbar);
+
         presenter = new NewsTimeLinePresenter(this, mAppDataProvider, subscriptions);
         setupWebView();
         setupTimeLine();
 
         final Intent intent = getIntent();
 
-        if (intent != null && intent.hasExtra(NEWS_DATA_KEY)) {
-            showNewsFeed(intent.getParcelableArrayListExtra(NEWS_DATA_KEY));
-        } else {
+        if (intent != null && intent.hasExtra(NEWS_DATA_KEY)) { showNewsFeed(intent.getParcelableArrayListExtra(NEWS_DATA_KEY)); }
+        else {
             binding.srlRefreshTimeline.setRefreshing(true);
             presenter.loadNews();
         }
@@ -81,7 +81,10 @@ public class NewsTimeLineActivity extends BaseActivity implements INewsTimeLineV
                 binding.toolbar.toolbarTitle.setText(getString(R.string.timeline_label));
                 manageVisibility(false);
 
-            } else { startActivity(new Intent(getApplicationContext(), WeatherActivity.class)); }
+            } else {
+                startActivity(new Intent(getApplicationContext(), WeatherActivity.class));
+                finish();
+            }
         }
     }
 

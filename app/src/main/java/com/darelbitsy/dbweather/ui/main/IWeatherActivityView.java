@@ -1,14 +1,10 @@
 package com.darelbitsy.dbweather.ui.main;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.util.Pair;
 
 import com.darelbitsy.dbweather.models.datatypes.geonames.GeoName;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
-import com.darelbitsy.dbweather.models.datatypes.weather.HourlyData;
 import com.darelbitsy.dbweather.models.datatypes.weather.WeatherData;
-import com.darelbitsy.dbweather.models.datatypes.weather.WeatherInfo;
 
 import java.util.List;
 

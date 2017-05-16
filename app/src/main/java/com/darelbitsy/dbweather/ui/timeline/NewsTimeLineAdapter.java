@@ -12,6 +12,7 @@ import com.darelbitsy.dbweather.R;
 import com.darelbitsy.dbweather.databinding.NewsTimelineItemBinding;
 import com.darelbitsy.dbweather.models.datatypes.news.Article;
 import com.darelbitsy.dbweather.models.provider.schedulers.RxSchedulersProvider;
+import com.darelbitsy.dbweather.ui.ArticleDiffCallback;
 import com.darelbitsy.dbweather.utils.holder.ConstantHolder;
 
 import java.util.ArrayList;
@@ -40,11 +41,7 @@ public class NewsTimeLineAdapter extends RecyclerView.Adapter<NewsTimeLineAdapte
 
         this.presenter = presenter;
 
-        if (this.articles.isEmpty()) { this.articles.addAll(articles); }
-        else {
-            this.articles.clear();
-            this.articles.addAll(articles);
-        }
+        this.articles.addAll(articles);
 
         this.compositeDisposable = compositeDisposable;
     }
@@ -62,7 +59,7 @@ public class NewsTimeLineAdapter extends RecyclerView.Adapter<NewsTimeLineAdapte
     public void onBindViewHolder(final TimeLineViewHolder holder, final int position, final List<Object> payloads) {
         for (final Object object : payloads) {
             final Bundle bundle = (Bundle) object;
-            this.articles.add(bundle.getInt("ID"), bundle.getParcelable(ConstantHolder.NEWS_DATA_KEY));
+            this.articles.add(bundle.getInt("INDEX"), bundle.getParcelable(ConstantHolder.NEWS_DATA_KEY));
         }
         super.onBindViewHolder(holder, position, payloads);
     }
@@ -73,6 +70,7 @@ public class NewsTimeLineAdapter extends RecyclerView.Adapter<NewsTimeLineAdapte
     }
 
     void updateDate(@Nonnull final List<Article> articles) {
+
         compositeDisposable.add(Single.fromCallable(() -> DiffUtil.calculateDiff(new ArticleDiffCallback(this.articles, articles)))
                 .subscribeOn(schedulersProvider.getComputationThread())
                 .observeOn(schedulersProvider.getUIScheduler())
