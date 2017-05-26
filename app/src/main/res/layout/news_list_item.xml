@@ -6,7 +6,7 @@
     <data>
         <variable
             name="Article"
-            type="com.darelbitsy.dbweather.models.datatypes.news.Article"/>
+            type="com.dbeginc.dbweather.models.datatypes.news.Article"/>
     </data>
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
@@ -39,7 +39,7 @@
 
 
     <TextView
-        android:id="@+id/newsDescription"
+        android:id="@+id/newsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:text="Here is the news from today, DB WEATHER just came out i hope y'all enjoyed this release , leave a feedback, we will love to her from you and thanks for contributing to my project, thanks for the love -> Darel Bitsy"

@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".utils.helper.NotificationHelper">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <include android:id="@+id/notificationToolbar"
-             layout="@layout/notification_toolbar"/>
+    <data/>
 
-    <TextView
-        android:id="@+id/notification_description_label"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/notificationToolbar"
-        android:padding="8dp"
-        android:gravity="center_horizontal|center_vertical"
-        tools:text="Today in the morning it' will rain.\nWe recommend to take a parra-pluie,\n\n Loppersum est une commune des Pays-Bas, située dans la province de Groningue. Elle compte 11 000 habitants et sa superficie est de 112 km²."
-        android:textColor="@android:color/black"/>
+        tools:context=".utils.helper.NotificationHelper">
 
-    <TextView
-        android:id="@+id/notificationSummaryWeather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_below="@id/notification_description_label"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_centerHorizontal="true"
-        tools:text="Partly-Cloudly"
-        android:textColor="@android:color/black"/>
+        <include
+            android:id="@+id/notificationToolbar"
+            layout="@layout/notification_toolbar" />
 
-    <ImageView
-        android:id="@+id/notificationIconWeather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/notificationToolbar"
-        android:padding="8dp"
-        app:srcCompat="@drawable/clear_day"/>
-</RelativeLayout>
+        <TextView
+            android:id="@+id/notification_description_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notificationToolbar"
+            android:gravity="center_horizontal|center_vertical"
+            android:padding="8dp"
+            android:textColor="@android:color/black"
+            tools:text="Today in the morning it' will rain.\nWe recommend to take a parra-pluie,\n\n Loppersum est une commune des Pays-Bas, située dans la province de Groningue. Elle compte 11 000 habitants et sa superficie est de 112 km²." />
+
+        <TextView
+            android:id="@+id/notificationSummaryWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notification_description_label"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal|center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:textColor="@android:color/black"
+            tools:text="Partly-Cloudly" />
+
+        <ImageView
+            android:id="@+id/notificationIconWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/notificationToolbar"
+            android:padding="8dp"
+            tools:src="@drawable/clear_day"/>
+    </RelativeLayout>
+</layout>

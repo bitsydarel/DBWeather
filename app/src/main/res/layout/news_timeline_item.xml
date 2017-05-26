@@ -6,7 +6,7 @@
     <data>
         <variable
             name="Article"
-            type="com.darelbitsy.dbweather.models.datatypes.news.Article"/>
+            type="com.dbeginc.dbweather.models.datatypes.news.Article"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

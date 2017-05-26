@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.darelbitsy.dbweather">
+    package="com.dbeginc.dbweather">
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -64,10 +64,6 @@
         </activity>
 
         <service
-            android:name=".utils.services.SyncDatabaseService"
-            android:enabled="true"
-            android:process=":remote" />
-        <service
             android:name=".utils.services.KillCheckerService"
             android:enabled="true"
             android:process=":remote"
@@ -87,21 +83,34 @@
             android:enabled="true"
             android:process=":remote"
             android:stopWithTask="false" />
+        <service
+            android:name=".utils.services.NewsSyncJobScheduler"
+            android:label="News Feed Updater"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".utils.services.WeatherSyncJobScheduler"
+            android:label="Weather Data Updater"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".utils.services.NewsSyncService"
+            android:enabled="true"
+            android:process=":remote"
+            android:stopWithTask="false"/>
+        <service
+            android:name=".utils.services.WeatherSyncService"
+            android:enabled="true"
+            android:process=":remote"
+            android:stopWithTask="false"/>
 
         <receiver
             android:name=".utils.broadcastreceivers.AlarmWeatherReceiver"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:process=":remote">
             <intent-filter android:priority="999">
                 <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".utils.broadcastreceivers.SyncDataReceiver"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":remote" />
         <receiver
             android:name=".utils.broadcastreceivers.AlarmConfigOnBoot"
             android:enabled="true"
@@ -112,22 +121,7 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="android.intent.action.REBOOT" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".utils.broadcastreceivers.ServiceRestart"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_RESTARTED" />
-
-                <data
-                    android:scheme="package"
-                    android:sspPrefix="com.darelbitsy.dbweather"
-                    tools:targetApi="kitkat" />
             </intent-filter>
         </receiver>
 
@@ -152,12 +146,15 @@
 
         <provider
             android:name=".models.provider.geoname.LocationSuggestionProvider"
-            android:authorities="com.darelbitsy.dbweather.models.provider.geoname.LocationSuggestionProvider"
+            android:authorities="com.dbeginc.dbweather.models.provider.geoname.LocationSuggestionProvider"
             android:enabled="true"
             android:exported="false" />
 
         <activity android:name=".ui.introduction.IntroductionActivity" />
-        <activity android:name=".ui.timeline.NewsTimeLineActivity"></activity>
+        <activity android:name=".ui.timeline.NewsTimeLineActivity" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e1f70cc235a003a2a3e76e5932bc702c80c4c750" />
     </application>
 
 </manifest>

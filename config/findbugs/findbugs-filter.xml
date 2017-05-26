@@ -15,7 +15,7 @@
         </Not>
     </Match>
     <Match>
-        <Class name="com.darelbitsy.dbweather.GlideRequest"/>
+        <Class name="com.dbeginc.dbweather.GlideRequest"/>
         <Bug code="CN"/>
     </Match>
 

@@ -42,9 +42,11 @@
 
 #Defautl android
 -keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
 -keep public class * extends android.app.Activity
 -keep public class * extends android.support.multidex.MultiDexApplication
--keep public class * extends com.darelbitsy.dbweather.ui.BaseActivity
+-keep public class * extends com.dbeginc.dbweather.ui.BaseActivity
 -keep public class * extends android.preference.Preference
 -keep class io.reactivex.disposables.CompositeDisposable
 -keep class org.simpleframework.xml.Serializer
@@ -73,43 +75,49 @@
 }
 
 #Keep Rest Classes
--keep class com.darelbitsy.dbweather.models.api.** { *; }
--dontwarn com.darelbitsy.dbweather.models.api.**
+-keep class com.dbeginc.dbweather.models.api.** { *; }
+-dontwarn com.dbeginc.dbweather.models.api.**
 
 #Keep Database Classes
 -keep class * extends android.database.sqlite.SQLiteOpenHelper { *; }
 -dontwarn android.database.sqlite.SQLiteOpenHelper
 
 #Keep Application Pojos Classes
--keep class com.darelbitsy.dbweather.models.datatypes.** { *; }
--dontwarn com.darelbitsy.dbweather.models.datatypes.**
+-keep class com.dbeginc.dbweather.models.datatypes.** { *; }
+-dontwarn com.dbeginc.dbweather.models.datatypes.**
 
 #Keep Model data providers Classes
--keep class com.darelbitsy.dbweather.models.provider.** { *; }
--dontwarn com.darelbitsy.dbweather.models.provider.**
+-keep class com.dbeginc.dbweather.models.provider.** { *; }
+-dontwarn com.dbeginc.dbweather.models.provider.**
 
 #Keep Ui Classes
--keep class com.darelbitsy.dbweather.ui.** { *; }
--dontwarn com.darelbitsy.dbweather.ui.**
+-keep class com.dbeginc.dbweather.ui.** { *; }
+-dontwarn com.dbeginc.dbweather.ui.**
 
 # Retrofit 2.X
 ## https://square.github.io/retrofit/ ##
 
--dontwarn retrofit2.**
--keep class retrofit2.** { *; }
--keepattributes Signature
--keepattributes Exceptions
+#-dontwarn retrofit2.**
+#-keep class retrofit2.** { *; }
+#-keepattributes Signature
+#-keepattributes Exceptions
+#
+#-keepclasseswithmembers class * {
+#    @retrofit2.http.* <methods>;
+#}
 
--keepclasseswithmembers class * {
-    @retrofit2.http.* <methods>;
-}
+-dontwarn okio.**
+-dontwarn javax.annotation.**
 
 # OkHttp
--keepattributes Signature
--keepattributes *Annotation*
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
+#-keepattributes Signature
+#-keepattributes *Annotation*
+#-keep class okhttp3.** { *; }
+#-keep interface okhttp3.** { *; }
+#-dontwarn okhttp3.**
+
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
 
 # Gson
 
@@ -119,7 +127,6 @@
 -dontwarn java.lang.invoke.**
 
 #Okio https://github.com/square/okio
--dontwarn okio.**
 
 -dontwarn com.google.api.client.googleapis**
 

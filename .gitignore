@@ -11,3 +11,5 @@
 .idea/instapk.xml
 instapk.log*
 /.gtm/
+Supprimerait fabric.properties
+Supprimerait google-services.json

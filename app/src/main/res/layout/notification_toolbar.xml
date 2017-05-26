@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                   xmlns:tools="http://schemas.android.com/tools"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+<android.support.v7.widget.Toolbar
                                    style="@style/ToolBarStyle"
                                    android:layout_width="match_parent"
                                    android:layout_height="wrap_content"
@@ -75,3 +77,4 @@
     </LinearLayout>
 
 </android.support.v7.widget.Toolbar>
+</layout>

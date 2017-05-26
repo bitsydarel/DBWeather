@@ -1,11 +1,28 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.22.1'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'findbugs'
 
 android {
+    signingConfigs {
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "com.darelbitsy.dbweather"
+        applicationId "com.dbeginc.dbweather"
         minSdkVersion 17
         targetSdkVersion 25
         multiDexEnabled = true
@@ -14,7 +31,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     lintOptions {
         //lint rules
         apply from: "${rootDir}/config/lint.gradle", to: it
@@ -22,12 +38,10 @@ android {
         lintConfig file("${rootDir}/config/lint/lint-config.xml")
         htmlOutput file("${buildDir}/reports/lint/lint.html")
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     buildTypes {
         debug {
             testCoverageEnabled = true
@@ -41,28 +55,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     //Show all the result of unitTest
     testOptions.unitTests.all {
         testLogging {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
-
     configurations.all() {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:+'
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEX.LIST'
     }
-
     dataBinding {
         enabled = true
     }
-
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -73,27 +82,28 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     //GOOGLE
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.android.gms:play-services-location:10.2.4'
     compile 'com.google.apis:google-api-services-translate:v2-rev48-1.22.0'
     compile 'com.google.http-client:google-http-client-gson:1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.android.support:multidex:1.0.1'
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
     compile "com.android.support:support-v13:$supportLibraryVersion"
     compile "com.android.support:support-core-utils:$supportLibraryVersion"
     compile "com.android.support:support-v4:$supportLibraryVersion"
-    compile 'com.android.support:multidex:1.0.1'
-    compile "com.google.firebase:firebase-core:10.2.4"
+    compile "com.android.support:customtabs:$supportLibraryVersion"
+    compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-core:$googleLibraryVersion"
 
     //Dagger
     compile "com.google.dagger:dagger:$daggerLibraryVersion"
     compile "com.google.dagger:dagger-android:$daggerLibraryVersion"
     compile "com.google.dagger:dagger-android-support:$daggerLibraryVersion"
+
     // if you use the support libraries
     compile "com.google.dagger:dagger-android:$daggerLibraryVersion"
 
@@ -102,34 +112,45 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.2-SNAPSHOT'
 
     //SQUARE
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.okhttp3:okhttp:3.8.0-SNAPSHOT'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0-SNAPSHOT'
+    compile 'com.squareup.retrofit2:retrofit:2.4.0-SNAPSHOT'
+    compile 'com.squareup.retrofit2:converter-gson:2.4.0-SNAPSHOT'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
-    compile('com.squareup.retrofit2:converter-simplexml:2.3.0-SNAPSHOT') {
+    compile('com.squareup.retrofit2:converter-simplexml:2.4.0-SNAPSHOT') {
         exclude module: 'stax-api'
     }
-
     //OTHER
     compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'com.facebook.network.connectionclass:connectionclass:1.0.1'
+    compile 'com.github.markzhai:blockcanary-android:1.5.0'
+
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'com.airbnb.android:lottie:2.0.0-beta4'
-    compile 'com.github.markzhai:blockcanary-android:1.5.0'
+
     compile 'com.github.bumptech.glide:glide:4.0.0-SNAPSHOT'
     compile 'com.github.bumptech.glide:okhttp3-integration:4.0.0-SNAPSHOT'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerLibraryVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerLibraryVersion"
-
-    annotationProcessor 'com.github.bumptech.glide:annotations:1.0.0-SNAPSHOT'
+    annotationProcessor 'com.github.bumptech.glide:annotations:4.0.0-SNAPSHOT'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-SNAPSHOT'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
+    }
+}
+
+configurations {
+    compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
+    compile.exclude group: "xpp3", module: "xpp3"
 }
 
 apply plugin: 'com.google.gms.google-services'

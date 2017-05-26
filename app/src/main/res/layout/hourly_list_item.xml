@@ -4,12 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.darelbitsy.dbweather.utils.utility.weather.WeatherUtil"/>
+        <import type="com.dbeginc.dbweather.utils.utility.weather.WeatherUtil"/>
         <import type="java.util.TimeZone"/>
-
         <variable
             name="HourlyData"
-            type="com.darelbitsy.dbweather.models.datatypes.weather.HourlyData"/>
+            type="com.dbeginc.dbweather.models.datatypes.weather.HourlyData"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

@@ -134,4 +134,6 @@
     <string name="weather_icon_content_description">Weather Icon</string>
     <string name="hourly_image_icon">hourly Image Icon</string>
     <string name="screenshot_attemp_error">Error While Sharing the Data, Please try again</string>
+    <string name="notification_alert_city">From %s</string>
+    <string name="rain_desc">The temperature outside is %1$d°\n\n It\'s raining so don\'t get sick. DBWeather Team Love you :)</string>
 </resources>

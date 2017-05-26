@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:background="@color/colorPrimaryDark"
-        tools:context="com.darelbitsy.dbweather.ui.introduction.IntroductionActivity">
+        tools:context="com.dbeginc.dbweather.ui.introduction.IntroductionActivity">
 
         <android.support.constraint.Guideline
             android:id="@+id/gdl_viewpager_bottom_limit"
@@ -18,7 +18,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.9"/>
 
-        <com.darelbitsy.dbweather.ui.introduction.viewpager.IntroViewPager
+        <com.dbeginc.dbweather.ui.introduction.viewpager.IntroViewPager
             android:id="@+id/vpg_intro_id"
             android:layout_width="0dp"
             android:layout_height="0dp"
