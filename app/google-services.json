@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "141164633720-ivk34eac7j1ftg4ujk0cboja7eleijr5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dbeginc.dbweather",
+            "certificate_hash": "08bde4460529505b949493cb074795c1cb24fda9"
+          }
+        },
+        {
           "client_id": "141164633720-2dul354uc2tokg2h6gesh2344s72m4kb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

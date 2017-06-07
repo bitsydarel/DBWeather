@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto">
+
+    <data />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/weather_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.dbeginc.dbweather.ui.main.weather.WeatherTabFragment">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srl_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/nsv_container"
+                android:fillViewport="true"
+                android:isScrollContainer="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:background="#70B2FF">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.SearchView
+                        android:id="@+id/searchLocationView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@android:drawable/dialog_holo_light_frame"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"/>
+
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/ad_v_main"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        ads:adSize="SMART_BANNER"
+                        ads:adUnitId="ca-app-pub-3786486250382359/1286479026"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/searchLocationView" />
+
+                    <com.dbeginc.dbweather.ui.customviews.WeatherViewPager
+                        android:id="@+id/viewPager"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/ad_v_main"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/hourlyRecyclerView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="horizontal"
+                        android:background="@android:color/transparent"
+                        android:elevation="4dp"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/viewPager"/>
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gl_left_button_right_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gl_right_button_left_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gl_buttons_top_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/civ_left_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:tint="#2196F3"
+            android:elevation="8dp"
+            app:backgroundTint="@android:color/white"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/gl_left_button_right_limit"
+            app:layout_constraintTop_toBottomOf="@id/gl_buttons_top_limit"
+            app:srcCompat="@drawable/back_button_icon" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/civ_right_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:tint="#2196F3"
+            android:elevation="8dp"
+            app:backgroundTint="@android:color/white"
+            app:layout_constraintLeft_toRightOf="@id/gl_right_button_left_limit"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gl_buttons_top_limit"
+            app:srcCompat="@drawable/next_button_icon" />
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/floatingLocationsMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            fab:menu_colorNormal="@android:color/white"
+            fab:menu_colorRipple="@color/colorPrimaryDark"
+            fab:menu_colorPressed="@color/colorPrimary"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/current_location_menu_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_label="@string/current_location_title"
+                app:fab_colorNormal="@android:color/white"
+                app:fab_colorRipple="@color/colorAccent"
+                app:fab_colorPressed="@color/colorPrimaryDark"/>
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

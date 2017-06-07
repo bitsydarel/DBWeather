@@ -49,9 +49,7 @@ public class LocationSuggestionProvider extends ContentProvider {
                         @Nullable final String[] selectionArgs,
                         @Nullable final String sortOrder) {
 
-        if (mGeoNameLocationInfoProvider == null) {
-            injectInstance();
-        }
+        if (mGeoNameLocationInfoProvider == null) { injectInstance(); }
 
         final String userQuery = uri.getLastPathSegment();
 
@@ -62,26 +60,26 @@ public class LocationSuggestionProvider extends ContentProvider {
         }, mListOfLocation.size());
 
         if (userQuery != null && !userQuery.isEmpty()) {
-            mCompositeDisposable.add(mGeoNameLocationInfoProvider
-                    .getLocation(userQuery)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableSingleObserver<List<GeoName>>() {
-                        @Override
-                        public void onSuccess(@NonNull final List<GeoName> geoNames) {
-                            mListOfLocation.clear();
-                            mListOfLocation.addAll(geoNames);
-                        }
+            mCompositeDisposable.add(
+                    mGeoNameLocationInfoProvider
+                            .getLocation(userQuery)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(new DisposableSingleObserver<List<GeoName>>() {
+                                @Override
+                                public void onSuccess(@NonNull final List<GeoName> geoNames) {
+                                    mListOfLocation.clear();
+                                    mListOfLocation.addAll(geoNames);
+                                }
 
-                        @Override
-                        public void onError(@NonNull final Throwable throwable) { Crashlytics.logException(throwable); }
-                    }));
+                                @Override
+                                public void onError(@NonNull final Throwable throwable) { Crashlytics.logException(throwable); }
+                            }));
 
-            final int mListOfLocation_size = mListOfLocation.size();
+            final int listOfLocationSize = mListOfLocation.size();
 
-            for (int index = 0; index < mListOfLocation_size; index ++) {
+            for (int index = 0; index < listOfLocationSize; index ++) {
                 final GeoName location = mListOfLocation.get(index);
-
                 matrixCursor.addRow(new Object[] {index, location.getName(), location.getCountryName()});
             }
         }
@@ -90,8 +88,7 @@ public class LocationSuggestionProvider extends ContentProvider {
     }
 
     private void injectInstance() {
-        DBWeatherApplication.getComponent()
-                .inject(this);
+        DBWeatherApplication.getComponent().inject(this);
     }
 
     @Nullable
@@ -104,9 +101,7 @@ public class LocationSuggestionProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull final Uri uri, @Nullable final ContentValues values) {
 
-        if (mGeoNameLocationInfoProvider == null) {
-            injectInstance();
-        }
+        if (mGeoNameLocationInfoProvider == null) { injectInstance(); }
         return null;
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Darel Bitsy on 22/02/17.
  */
 
-class AddressComponent {
+public class AddressComponent {
 
     @SerializedName("long_name")
     @Expose

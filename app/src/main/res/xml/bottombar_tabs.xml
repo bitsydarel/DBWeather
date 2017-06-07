@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_weather"
+        icon="@drawable/weather_tab_icon"
+        title="@string/weather_tab_title"
+        titleSize="8dp"
+        barColorWhenSelected="@color/colorPrimary"/>
+    <tab
+        id="@+id/tab_news"
+        icon="@drawable/news_tab_icon"
+        title="@string/news_tab_title"
+        titleSize="8dp"
+        barColorWhenSelected="@color/newsTabColor"/>
+    <tab
+        id="@+id/tab_config"
+        icon="@drawable/settings_tab_icon"
+        title="@string/config_tab_title"
+        titleSize="8dp"
+        barColorWhenSelected="@color/configTabColor"/>
+</tabs>

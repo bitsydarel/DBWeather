@@ -53,6 +53,7 @@ class IntroPresenter {
         locationPermissionAttempt = 1;
         accountPermissionAttempt = 1;
         pagingStatus = true;
+        dataProvider.setCurrentWeatherFromGps(true);
     }
 
     private boolean getLocationStatus() {
@@ -157,8 +158,8 @@ class IntroPresenter {
 
         @Override
         public void onSuccess(@NonNull final WeatherData weather) {
-            view.getViewData().putExtra(WEATHER_INFO_KEY, weather);
             doneGettingWeatherData = true;
+            view.getViewData().putExtra(WEATHER_INFO_KEY, weather);
         }
         @Override
         public void onError(final Throwable throwable) {

@@ -47,7 +47,7 @@
     <string name="published_at">%1$s</string>
     <string name="sunsetLabel">Sunset</string>
     <string name="sunriseLabel">Sunrise</string>
-    <string name="apparentTemperatureValue">Feeling : %1$d °</string>
+    <string name="apparentTemperatureValue">%1$d°</string>
     <string name="timeLabelValue">At %1$s, it will be</string>
     <string name="precipChanceValue">%1$d%%</string>
     <string name="precipeChanceTypeLabel">%1$s</string>
@@ -83,7 +83,7 @@
     <string name="hourly_temperature_value">%1$d°</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="notification_config_title">Activate weather notification</string>
+    <string name="notification_config_title">Weather notification</string>
     <string name="news_translation_config_title">Translate news feeds</string>
     <string name="add_location_config_title">Locations</string>
     <string name="add_location_menu_title">Add Location</string>
@@ -136,4 +136,12 @@
     <string name="screenshot_attemp_error">Error While Sharing the Data, Please try again</string>
     <string name="notification_alert_city">From %s</string>
     <string name="rain_desc">The temperature outside is %1$d°\n\n It\'s raining so don\'t get sick. DBWeather Team Love you :)</string>
+    <string name="weather_tab_title">Weather</string>
+    <string name="news_tab_title">News</string>
+    <string name="tab_news_feed_title">Feed</string>
+    <string name="tab_live_news_title">Live</string>
+    <string name="config_tab_title">Settings</string>
+    <string name="display_add">Display and Add</string>
+    <string name="manage_cities">Manage your cities</string>
+    <string name="help_config">Help</string>
 </resources>

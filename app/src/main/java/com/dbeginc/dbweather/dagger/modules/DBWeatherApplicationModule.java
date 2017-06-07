@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
+import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.firebase.FirebaseAnalyticProvider;
 import com.dbeginc.dbweather.models.provider.firebase.IAnalyticProvider;
 import com.google.android.gms.common.ConnectionResult;
@@ -18,6 +20,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.subjects.PublishSubject;
 
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PREFS_NAME;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
@@ -51,6 +54,18 @@ public class DBWeatherApplicationModule {
     SharedPreferences providesSharedPreferences(final Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
+
+    @Provides
+    @Singleton
+    PublishSubject<String> providesLocationUpdateEvent() { return PublishSubject.create(); }
+
+    @Provides
+    @Singleton
+    PublishSubject<WeatherData> provideWeatherUpdateEvent() { return PublishSubject.create(); }
+
+    @Provides
+    @Singleton
+    PublishSubject<List<Article>> provideNewsUpdateEvent() { return PublishSubject.create(); }
 
     @Provides
     IAnalyticProvider providesFirebaseAnalytics(final Context context) {

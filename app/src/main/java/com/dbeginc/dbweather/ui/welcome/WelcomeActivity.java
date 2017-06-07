@@ -1,9 +1,7 @@
 package com.dbeginc.dbweather.ui.welcome;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -13,15 +11,13 @@ import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.R;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
+import com.dbeginc.dbweather.ui.BaseActivity;
 import com.dbeginc.dbweather.ui.introduction.IntroductionActivity;
-import com.dbeginc.dbweather.ui.main.WeatherActivity;
+import com.dbeginc.dbweather.ui.main.DBWeatherActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
@@ -30,11 +26,9 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY
  * Welcome screen and initializer
  */
 
-public class WelcomeActivity extends Activity implements IWelcomeActivityView {
+public class WelcomeActivity extends BaseActivity implements IWelcomeActivityView {
     private Intent mIntent;
     private WelcomeActivityPresenter mPresenter;
-    @Inject
-    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -45,17 +39,14 @@ public class WelcomeActivity extends Activity implements IWelcomeActivityView {
 
         mPresenter = new WelcomeActivityPresenter(getApplicationContext(), this);
 
-        if (sharedPreferences
-                .getBoolean(FIRST_RUN, true)) {
+        if (mAppDataProvider.isFirstRun()) {
 
-            sharedPreferences.edit()
-                    .putBoolean(FIRST_RUN, true)
-                    .apply();
+            mAppDataProvider.setFirstRun(true);
             mPresenter.populateNewsDatabase();
 
         } else {
             mIntent = new Intent(getApplicationContext(),
-                    WeatherActivity.class);
+                    DBWeatherActivity.class);
             mPresenter.loadWeather();
         }
     }
@@ -63,7 +54,7 @@ public class WelcomeActivity extends Activity implements IWelcomeActivityView {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if (sharedPreferences.getBoolean(FIRST_RUN, true)) {
+        if (mAppDataProvider.isFirstRun()) {
             startActivity(new Intent(this, IntroductionActivity.class));
             finish();
         }

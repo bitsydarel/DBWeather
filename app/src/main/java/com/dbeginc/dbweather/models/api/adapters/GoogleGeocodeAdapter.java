@@ -1,8 +1,9 @@
 package com.dbeginc.dbweather.models.api.adapters;
 
+import com.dbeginc.dbweather.models.api.services.GoogleGeocodeService;
+import com.dbeginc.dbweather.models.datatypes.googlegeocoderapi.Result;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 import com.dbeginc.dbweather.utils.utility.AppUtil;
-import com.dbeginc.dbweather.models.api.services.GoogleGeocodeService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,8 +32,13 @@ public class GoogleGeocodeAdapter {
             "tl", "tr", "uk", "zh-CN", "zh-TW"
         );
     private GoogleGeocodeService mGeocodeService;
+    private static final GoogleGeocodeAdapter singletonInstance = new GoogleGeocodeAdapter();
 
-    public GoogleGeocodeAdapter() {
+    public static synchronized GoogleGeocodeAdapter getInstance() {
+        return singletonInstance;
+    }
+
+    private GoogleGeocodeAdapter() {
         final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(GOOGLE_GEOCODE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -46,21 +52,25 @@ public class GoogleGeocodeAdapter {
                                           final double longitude) throws IOException {
 
         final String coordinates = String.format(Locale.ENGLISH, "%f,%f", latitude, longitude);
+        final Result result;
 
         if (supportedLanguage.contains(ConstantHolder.USER_LANGUAGE)) {
-            return mGeocodeService
+            result = mGeocodeService
                     .getLocationNameWithLanguage(coordinates, ConstantHolder.USER_LANGUAGE)
                     .execute()
                     .body()
-                    .getResults().get(0)
-                    .getFormattedAddress();
+                    .getResults()
+                    .get(0);
+
         } else {
-            return mGeocodeService
+            result = mGeocodeService
                     .getLocationName(coordinates)
                     .execute()
                     .body()
-                    .getResults().get(0)
-                    .getFormattedAddress();
+                    .getResults()
+                    .get(0);
         }
+        return String.format(Locale.getDefault(), "%s, %s",
+                result.getAddressComponents().get(2).getLongName(), result.getAddressComponents().get(5).getLongName());
     }
 }

@@ -13,7 +13,7 @@ public class ColorManager {
     private final SparseIntArray mColors = new SparseIntArray();
     private static ColorManager singletonColorManager;
 
-    public static synchronized ColorManager newInstance() {
+    public static synchronized ColorManager getInstance() {
         if (singletonColorManager == null) {
             singletonColorManager = new ColorManager();
         }

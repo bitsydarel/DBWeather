@@ -1,9 +1,11 @@
 package com.dbeginc.dbweather.models.provider;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -21,4 +23,8 @@ interface IDatabaseProvider {
     Completable saveNewsSourceConfiguration(@Nonnull final String sourceName, final int newsItemValue, final int isOn);
 
     Single<Map<String, Pair<Integer, Integer>>> getNewsSources();
+
+    Single<Boolean> isLocationInDatabase(@NonNull final String cityName);
+
+    Single<List<GeoName>> getUserCitiesFromDatabase();
 }

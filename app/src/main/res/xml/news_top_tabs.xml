@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_news_feed"
+        icon="@drawable/ic_news_feed"
+        title="@string/tab_news_feed_title"
+        titleSize="8dp"/>
+    <tab
+        id="@+id/tab_live_news"
+        icon="@drawable/ic_live_news"
+        title="@string/tab_live_news_title"
+        titleSize="8dp"/>
+</tabs>

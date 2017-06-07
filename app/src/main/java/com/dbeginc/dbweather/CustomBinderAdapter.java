@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,9 +35,17 @@ public class CustomBinderAdapter {
     }
 
     @BindingAdapter("setImage")
+    public static void setImageViewResource(@NonNull final ImageView imageView, final int resource) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            imageView.setImageDrawable(VectorDrawableCompat.create(imageView.getResources(), resource, imageView.getContext().getTheme()));
+
+        } else { imageView.setImageResource(resource); }
+    }
+
+    @BindingAdapter("setImageUrl")
     public static void setImage(@Nonnull final ImageView imageView, final String url) {
         if (!url.isEmpty()) {
-            Glide.with(imageView)
+            Glide.with(imageView.getContext())
                     .load(url)
                     .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
                     .apply(RequestOptions.skipMemoryCacheOf(true))
@@ -70,11 +79,6 @@ public class CustomBinderAdapter {
         if (shouldTint && Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {
             button.setBackgroundColor(Color.TRANSPARENT);
         }
-    }
-
-    @BindingAdapter({"android:src"})
-    public static void setImageViewResource(@NonNull final ImageView imageView, final int resource) {
-        imageView.setImageResource(resource);
     }
 
     private static Typeface getAppGlobalTypeFace(final Context context) {

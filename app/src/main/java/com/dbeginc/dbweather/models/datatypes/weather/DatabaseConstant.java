@@ -13,21 +13,22 @@ public class DatabaseConstant {
     public static final String CREATE_TABLE_QUERY = "create table if not exists ";
 
     public static final String COLUMN_ID = "id";
+
     public static final String COLUMN_PRIMARY_KEY = " primary key";
     public static final String COLUMN_UNIQUE = " unique";
     public static final String COLUMN_INTEGER_TYPE = " integer";
     public static final String COLUMN_TEXT_TYPE = " text";
     public static final String COLUMN_REAL_TYPE = " real";
     public static final String COMMA = ",";
-
     public static final String SELECT_EVERYTHING_FROM = "SELECT * FROM ";
+
     public static final String SELECT = "SELECT ";
     public static final String FROM = " FROM ";
     public static final String ORDER_BY = " ORDER BY ";
     public static final String NOT_NULL = " not null";
     public static final String FOREIGN_KEY = "FOREIGN KEY(%s) REFERENCES %s(%s)";
-
     private static final String ID = "id";
+
     private static final String TIME = "time";
     private static final String SUMMARY = "summary";
     private static final String ICON = "icon";
@@ -36,14 +37,15 @@ public class DatabaseConstant {
     private static final String PRECIPTYPE = "precipice_type";
     private static final String CLOUD_COVER = "cloud_cover";
     private static final String WIND_SPEED = "wind_speed";
-
     public static final String CITIES_TABLE = "cities";
+
     public static final String THE_CITY_NAME = "name";
     public static final String THE_CITY_COUNTRY = "country";
     public static final String THE_CITY_LATITUDE = "latitude";
     public static final String THE_CITY_LONGITUDE = "longitude";
-
     public static final String APPLICATION_TABLE = "application_table";
+    public static final String TEMPERATURE_UNIT = "temperature_unit";
+
     public static final String LAST_WEATHER_SERVER_SYNC = "last_weather_server_sync";
     public static final String LAST_NEWS_SERVER_SYNC = "last_news_server_sync";
 

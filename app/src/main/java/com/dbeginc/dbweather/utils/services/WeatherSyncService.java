@@ -46,26 +46,22 @@ public class WeatherSyncService extends IntentService {
                     coordinates[1]));
 
             databaseOperation.saveWeatherData(weather);
-            databaseOperation.saveCoordinates(weather.getLatitude(),
-                    weather.getLongitude());
+            databaseOperation.saveCoordinates(weather.getLatitude(), weather.getLongitude());
 
             if (weather.getCurrently() != null) {
                 databaseOperation.saveCurrentWeather(weather.getCurrently());
             }
 
             if (weather.getDaily() != null) {
-                databaseOperation.saveDailyWeather(weather.getDaily()
-                        .getData());
+                databaseOperation.saveDailyWeather(weather.getDaily().getData());
             }
 
             if (weather.getHourly() != null) {
-                databaseOperation.saveHourlyWeather(weather.getHourly()
-                        .getData());
+                databaseOperation.saveHourlyWeather(weather.getHourly().getData());
             }
 
             if (weather.getMinutely() != null) {
-                databaseOperation.saveMinutelyWeather(weather.getMinutely()
-                        .getData());
+                databaseOperation.saveMinutelyWeather(weather.getMinutely().getData());
             }
 
             if (weather.getAlerts() != null) { databaseOperation.saveAlerts(weather.getAlerts()); }

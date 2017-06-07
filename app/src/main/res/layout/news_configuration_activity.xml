@@ -7,15 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/news_config_toolbar"
-            layout="@layout/news_configuration_toolbar"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/news_config_recyclerView"
             android:layout_width="0dp"
@@ -27,7 +18,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/news_config_toolbar"
             tools:listitem="@layout/news_list_configuration_item" />
 
     </android.support.constraint.ConstraintLayout>

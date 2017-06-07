@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -15,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.dbeginc.dbweather.models.datatypes.weather.Flags;
 import com.dbeginc.dbweather.models.datatypes.weather.Hourly;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
@@ -31,6 +33,7 @@ import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_COORDINATE_INSERTED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
@@ -50,10 +53,10 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
 
     private LocationManager mLocationManager;
     private GoogleApiClient mGoogleApiClient;
-    private final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.getInstance();
     private Disposable disposable;
     private SharedPreferences sharedPreferences;
     private DatabaseOperation database;
+    private final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.getInstance();
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
@@ -86,6 +89,23 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
                         300000,
                         0,
                         this);
+            }
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (lastKnownLocation == null) {
+                lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (lastKnownLocation != null) { sendLocationToActivity(lastKnownLocation); }
+            }
+            else { sendLocationToActivity(lastKnownLocation); }
+
+            //If no location available
+            if (lastKnownLocation == null && sharedPreferences.getBoolean(FIRST_RUN, true)) {
+                final Location tempLocation = new Location(LocationManager.NETWORK_PROVIDER);
+                tempLocation.setLatitude(34.0549);
+                tempLocation.setLongitude(-118.2445);
+                sendLocationToActivity(tempLocation);
             }
         }
 
@@ -179,10 +199,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, createLocationRequest(),  this);
 
-        } else {
-            Log.i(ConstantHolder.TAG, "Inside the getLocation method, i find location");
-            sendLocationToActivity(location);
-        }
+        } else { sendLocationToActivity(location); }
     }
 
 
@@ -203,7 +220,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
      * by an broadcast request
      * @param location represent the user location
      */
-    private void sendLocationToActivity(final Location location) {
+    private void sendLocationToActivity(@NonNull final Location location) {
         final Intent coordinateIntent = new Intent(LOCATION_UPDATE);
 
         if (!sharedPreferences.getBoolean(IS_COORDINATE_INSERTED, false)) {
@@ -214,6 +231,8 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
             weather.setLongitude(-118.2445);
             weather.setHourly(new Hourly());
             weather.getHourly().setSummary("UNKNOWN");
+            weather.setFlags(new Flags());
+            weather.getFlags().setUnits("C");
 
             Completable.create(completableEmitter -> {
                 database.saveWeatherData(weather);
@@ -250,5 +269,4 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
                     });
         }
     }
-
 }

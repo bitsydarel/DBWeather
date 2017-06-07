@@ -18,7 +18,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.9"/>
 
-        <com.dbeginc.dbweather.ui.introduction.viewpager.IntroViewPager
+        <com.dbeginc.dbweather.ui.customviews.NotSwipingViewPager
             android:id="@+id/vpg_intro_id"
             android:layout_width="0dp"
             android:layout_height="0dp"

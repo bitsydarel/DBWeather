@@ -64,6 +64,11 @@
         <item name="android:tint">@android:color/white</item>
     </style>
 
+    <style name="navigationButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:backgroundTint">@android:color/white</item>
+        <item name="android:tint">@android:color/black</item>
+    </style>
+
     <!-- ******************* Intro Button ******************* -->
     <style name="IntroButton" parent="Widget.AppCompat.Button.Borderless.Colored">
         <item name="android:backgroundTint">@android:color/transparent</item>

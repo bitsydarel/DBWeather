@@ -1,10 +1,8 @@
 package com.dbeginc.dbweather.ui.config;
 
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.Pair;
@@ -18,9 +16,7 @@ import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.ui.config.adapter.NewsConfigurationAdapter;
-import com.dbeginc.dbweather.ui.main.WeatherActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +24,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import io.reactivex.subjects.PublishSubject;
-
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
 /**
  * Created by Darel Bitsy on 11/02/17.
@@ -42,7 +35,6 @@ public class NewsConfigurationActivity extends AppCompatActivity implements INew
     @Inject
     AppDataProvider dataProvider;
     private NewsConfigurationPresenter presenter;
-    private Intent mHomeIntent;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -53,18 +45,16 @@ public class NewsConfigurationActivity extends AppCompatActivity implements INew
         presenter = new NewsConfigurationPresenter(this, dataProvider);
         presenter.loadNewsSourcesConfigs();
         presenter.prepareBackHome();
-        setSupportActionBar(mNewsBinding.newsConfigToolbar.rootNewsConfigToolbar);
-
-        mHomeIntent = new Intent(getApplicationContext(), WeatherActivity.class);
+//        setSupportActionBar(mNewsBinding.newsConfigToolbar.rootNewsConfigToolbar);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mNewsBinding.newsConfigToolbar.backToMainActivity.setOnClickListener(v -> {
-            startActivity(mHomeIntent);
-            finish();
-        });
+//        mNewsBinding.newsConfigToolbar.backToMainActivity.setOnClickListener(v -> {
+//            startActivity(mHomeIntent);
+//            finish();
+//        });
     }
 
     @Override
@@ -103,12 +93,12 @@ public class NewsConfigurationActivity extends AppCompatActivity implements INew
 
     @Override
     public void addNewsToHomeIntent(@Nonnull final List<Article> articles) {
-        mHomeIntent.putParcelableArrayListExtra(NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) articles);
+//        mHomeIntent.putParcelableArrayListExtra(NEWS_DATA_KEY, (ArrayList<? extends Parcelable>) articles);
     }
 
     @Override
     public void addWeatherToHomeIntent(@Nonnull final WeatherData weatherData) {
-        mHomeIntent.putExtra(WEATHER_INFO_KEY, weatherData);
+//        mHomeIntent.putExtra(WEATHER_INFO_KEY, weatherData);
     }
 
     @Override

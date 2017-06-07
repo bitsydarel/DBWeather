@@ -3,6 +3,7 @@ package com.dbeginc.dbweather.dagger.modules;
 import android.content.Context;
 
 import com.dbeginc.dbweather.models.provider.news.DatabaseNewsProvider;
+import com.dbeginc.dbweather.models.provider.repository.DatabaseUserCitiesRepository;
 import com.dbeginc.dbweather.models.provider.weather.DatabaseWeatherProvider;
 
 import javax.inject.Singleton;
@@ -29,5 +30,11 @@ public class DatabaseModule {
     @Singleton
     DatabaseNewsProvider providesDatabaseNewProvider(final Context context) {
         return new DatabaseNewsProvider(context);
+    }
+
+    @Provides
+    @Singleton
+    DatabaseUserCitiesRepository providesUserCitiesRepository(final Context context) {
+        return new DatabaseUserCitiesRepository(context);
     }
 }

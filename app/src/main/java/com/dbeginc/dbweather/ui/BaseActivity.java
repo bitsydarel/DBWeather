@@ -23,15 +23,21 @@ import android.view.View;
 
 import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.R;
+import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.models.provider.firebase.IAnalyticProvider;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 import com.dbeginc.dbweather.utils.utility.AppUtil;
+import com.google.android.gms.ads.MobileAds;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.inject.Inject;
+
+import io.reactivex.subjects.PublishSubject;
 
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.CUSTOM_TAB_PACKAGE_NOT_FOUND;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_PERMISSION_DECLINED;
@@ -55,11 +61,20 @@ public class BaseActivity extends AppCompatActivity {
     @Inject
     public IAnalyticProvider mAnalyticProvider;
 
+    @Inject
+    public PublishSubject<String> locationUpdateEvent;
+
+    @Inject
+    public PublishSubject<WeatherData> weatherDataUpdateEvent;
+
+    @Inject
+    public PublishSubject<List<Article>> newsUpdateEvent;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DBWeatherApplication.getComponent()
-                .inject(this);
+        DBWeatherApplication.getComponent().inject(this);
+        MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826");
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             askLocationPermIfNeeded();
@@ -171,11 +186,9 @@ public class BaseActivity extends AppCompatActivity {
             } catch (final IOException e) {
                 Log.i(ConstantHolder.TAG, "Error while Creating screenshot File: " + e.getMessage());
 
-            } finally {
-                if (outputStream != null) {
+            } finally { if (outputStream != null) {
                     outputStream.close();
-                }
-            }
+                } }
         }
         return null;
     }

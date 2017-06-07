@@ -20,7 +20,7 @@ import com.dbeginc.dbweather.databinding.ActivityIntroductionBinding;
 import com.dbeginc.dbweather.ui.BaseActivity;
 import com.dbeginc.dbweather.ui.animation.ForegroundToBackgroundTransformer;
 import com.dbeginc.dbweather.ui.introduction.viewpager.IntroPagerAdapter;
-import com.dbeginc.dbweather.ui.main.WeatherActivity;
+import com.dbeginc.dbweather.ui.main.DBWeatherActivity;
 import com.dbeginc.dbweather.utils.services.LocationTracker;
 
 import static com.dbeginc.dbweather.ui.introduction.IntroPresenter.ACCOUNT_PAGE;
@@ -63,8 +63,7 @@ public class IntroductionActivity extends BaseActivity implements IntroductionVi
         mLayoutBinding.getRoot()
                 .setBackgroundColor(colorManager.getBackgroundColor(0));
 
-        mActivityData = new Intent(getApplicationContext(),
-                WeatherActivity.class);
+        mActivityData = new Intent(getApplicationContext(), DBWeatherActivity.class);
 
         mLocationBroadcast = new BroadcastReceiver() {
             @Override

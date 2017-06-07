@@ -4,18 +4,15 @@ import com.dbeginc.dbweather.GlideConfiguration;
 import com.dbeginc.dbweather.dagger.modules.DBWeatherApplicationModule;
 import com.dbeginc.dbweather.dagger.modules.DatabaseModule;
 import com.dbeginc.dbweather.dagger.modules.NetworkModule;
-import com.dbeginc.dbweather.ui.addlocation.AddLocationActivity;
-import com.dbeginc.dbweather.ui.config.NewsConfigurationActivity;
-import com.dbeginc.dbweather.ui.newsdetails.NewsDialogPresenter;
-import com.dbeginc.dbweather.ui.welcome.WelcomeActivity;
-import com.dbeginc.dbweather.ui.welcome.WelcomeActivityPresenter;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.models.provider.geoname.ILocationInfoProvider;
 import com.dbeginc.dbweather.models.provider.geoname.LocationSuggestionProvider;
 import com.dbeginc.dbweather.models.provider.translators.ITranslateProvider;
 import com.dbeginc.dbweather.ui.BaseActivity;
-import com.dbeginc.dbweather.ui.newsdetails.NewsDialogActivity;
-import com.dbeginc.dbweather.utils.broadcastreceivers.AlarmWeatherReceiver;
+import com.dbeginc.dbweather.ui.BaseFragment;
+import com.dbeginc.dbweather.ui.config.NewsConfigurationActivity;
+import com.dbeginc.dbweather.ui.welcome.WelcomeActivity;
+import com.dbeginc.dbweather.ui.welcome.WelcomeActivityPresenter;
 import com.dbeginc.dbweather.utils.services.NewsSyncJobScheduler;
 import com.dbeginc.dbweather.utils.services.NewsSyncService;
 import com.dbeginc.dbweather.utils.services.WeatherSyncJobScheduler;
@@ -42,15 +39,9 @@ public interface DBWeatherApplicationComponent {
 
     void inject(final WelcomeActivityPresenter welcomeActivityPresenter);
 
-    void inject(final NewsDialogActivity newsDialogActivity);
-
-    void inject(final NewsDialogPresenter newsDialogPresenter);
-
     void inject(final AppDataProvider appDataProvider);
 
     void inject(final BaseActivity baseActivity);
-
-    void inject(final AddLocationActivity addLocationActivity);
 
     void inject(final WelcomeActivity welcomeActivity);
 
@@ -65,4 +56,6 @@ public interface DBWeatherApplicationComponent {
     void inject(final WeatherSyncJobScheduler weatherSyncJobScheduler);
 
     void inject(final NewsConfigurationActivity newsConfigurationActivity);
+
+    void inject(final BaseFragment baseFragment);
 }

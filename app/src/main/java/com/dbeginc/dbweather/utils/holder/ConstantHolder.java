@@ -46,6 +46,7 @@ public class ConstantHolder {
     public static final String IS_COORDINATE_INSERTED = "IS_COORDINATE_INSERTED";
     public static final String CUSTOM_TAB_PACKAGE_NAME = "CUSTOM_TAB_PACKAGE_NAME";
     public static final String CUSTOM_TAB_PACKAGE_NOT_FOUND = "CUSTOM_TAB_PACKAGE_NOT_FOUND";
+    public static final String SHOULD_WEATHER_BE_SAVED = "SHOULD_WEATHER_BE_SAVED";
 
     private ConstantHolder() {
         //To disable default constructor

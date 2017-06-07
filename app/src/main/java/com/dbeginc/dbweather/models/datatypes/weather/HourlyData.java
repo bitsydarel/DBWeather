@@ -60,6 +60,7 @@ public class HourlyData implements Parcelable {
     @Expose
     private double ozone;
 
+    private String temperatureUnit;
 
     /**
      * Empty constructor to initiate the class
@@ -84,6 +85,7 @@ public class HourlyData implements Parcelable {
         cloudCover = in.readDouble();
         pressure = in.readDouble();
         ozone = in.readDouble();
+        temperatureUnit = in.readString();
     }
 
     public static final Creator<HourlyData> CREATOR = new Creator<HourlyData>() {
@@ -250,5 +252,14 @@ public class HourlyData implements Parcelable {
         dest.writeDouble(cloudCover);
         dest.writeDouble(pressure);
         dest.writeDouble(ozone);
+        dest.writeString(temperatureUnit);
+    }
+
+    public String getTemperatureUnit() {
+        return temperatureUnit;
+    }
+
+    public void setTemperatureUnit(final String temperatureUnit) {
+        this.temperatureUnit = temperatureUnit;
     }
 }

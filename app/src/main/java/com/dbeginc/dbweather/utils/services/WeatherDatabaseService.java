@@ -9,6 +9,7 @@ import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_FROM_CITY_KEY;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.SHOULD_WEATHER_BE_SAVED;
 
 /**
  * Created by Darel Bitsy on 25/02/17.
@@ -17,6 +18,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_FROM_CITY_KEY
  */
 
 public class WeatherDatabaseService extends IntentService {
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      */
@@ -30,10 +32,12 @@ public class WeatherDatabaseService extends IntentService {
         if (intent != null) {
             final Weather weather = intent.getParcelableExtra(ConstantHolder.WEATHER_DATA_KEY);
             if (weather != null) {
-                if (!intent.getBooleanExtra(IS_FROM_CITY_KEY, false)) {
-                    saveWeatherForCurrentLocation(database, weather);
+                if (intent.getBooleanExtra(SHOULD_WEATHER_BE_SAVED, false)) {
+                    saveWeatherFromCitiesLocation(database, weather);
 
-                } else { saveWeatherFromCitiesLocation(database, weather); }
+                } else if (intent.getBooleanExtra(IS_FROM_CITY_KEY, true)) {
+                    saveWeatherForCurrentLocation(database, weather);
+                }
             }
         }
     }
@@ -51,27 +55,17 @@ public class WeatherDatabaseService extends IntentService {
         database.saveCoordinates(weather.getLatitude(),
                 weather.getLongitude());
 
-        if (weather.getCurrently() != null) {
-            database.saveCurrentWeather(weather.getCurrently());
-        }
+        if (weather.getCurrently() != null) { database.saveCurrentWeather(weather.getCurrently()); }
 
-        if (weather.getDaily() != null) {
-            database.saveDailyWeather(weather.getDaily()
-                    .getData());
-        }
+        if (weather.getDaily() != null) { database.saveDailyWeather(weather.getDaily().getData()); }
 
-        if (weather.getHourly() != null) {
-            database.saveHourlyWeather(weather.getHourly()
-                    .getData());
-        }
+        if (weather.getHourly() != null) { database.saveHourlyWeather(weather.getHourly().getData()); }
 
         if (weather.getMinutely() != null) {
             database.saveMinutelyWeather(weather.getMinutely()
                     .getData());
         }
 
-        if (weather.getAlerts() != null) {
-            database.saveAlerts(weather.getAlerts());
-        }
+        if (weather.getAlerts() != null) { database.saveAlerts(weather.getAlerts()); }
     }
 }

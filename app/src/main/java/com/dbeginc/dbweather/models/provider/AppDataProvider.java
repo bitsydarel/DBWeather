@@ -12,6 +12,7 @@ import com.dbeginc.dbweather.models.datatypes.weather.Weather;
 import com.dbeginc.dbweather.models.provider.news.DatabaseNewsProvider;
 import com.dbeginc.dbweather.models.provider.news.NetworkNewsProvider;
 import com.dbeginc.dbweather.models.provider.preferences.IPreferencesProvider;
+import com.dbeginc.dbweather.models.provider.repository.DatabaseUserCitiesRepository;
 import com.dbeginc.dbweather.models.provider.weather.DatabaseWeatherProvider;
 import com.dbeginc.dbweather.models.provider.weather.NetworkWeatherProvider;
 import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
@@ -26,7 +27,6 @@ import javax.inject.Singleton;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.CITY_NAME_KEY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.CUSTOM_TAB_PACKAGE_NAME;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
@@ -35,8 +35,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_GPS_PERMISSIO
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_WRITE_PERMISSION_GRANTED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_TRANSLATION_KEY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NOTIFICATION_KEY;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.SELECTED_CITY_LATITUDE;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.SELECTED_CITY_LONGITUDE;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.SHOULD_WEATHER_BE_SAVED;
 
 /**
  * Created by Darel Bitsy on 27/04/17.
@@ -55,6 +54,8 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     NetworkNewsProvider mNetworkNewsProvider;
     @Inject
     SharedPreferences mSharedPreferences;
+    @Inject
+    DatabaseUserCitiesRepository mUserCitiesRepository;
     private DatabaseOperation mDatabaseOperation;
 
     @Inject
@@ -105,43 +106,14 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     }
 
     @Override
-    public boolean didUserSelectedCityFromDrawer() {
+    public boolean isCurrentWeatherFromGps() {
         return mSharedPreferences.getBoolean(IS_FROM_CITY_KEY, false);
     }
 
     @Override
-    public void userSelectedCityFromDrawer(final boolean isFromCity) {
+    public void setCurrentWeatherFromGps(final boolean isFromUserCities) {
         mSharedPreferences.edit()
-                .putBoolean(IS_FROM_CITY_KEY, isFromCity)
-                .apply();
-    }
-
-    @Override
-    public Pair<String, double[]> getSelectedUserCity(@NonNull final String messageIfNotFound) {
-        final double[] coordinates = new double[2];
-
-        coordinates[0] = Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LATITUDE, 0));
-
-        coordinates[1] = Double.longBitsToDouble(mSharedPreferences.getLong(SELECTED_CITY_LONGITUDE, 0));
-
-        return new Pair<>(mSharedPreferences.getString(CITY_NAME_KEY, messageIfNotFound), coordinates);
-    }
-
-    @Override
-    public void setSelectedUserCity(@NonNull final String locationToSelected,
-                                    final double latitude,
-                                    final double longitude) {
-
-        mSharedPreferences.edit()
-                .putString(CITY_NAME_KEY, locationToSelected)
-                .apply();
-
-        mSharedPreferences.edit()
-                .putLong(SELECTED_CITY_LATITUDE, Double.doubleToRawLongBits(latitude))
-                .apply();
-
-        mSharedPreferences.edit()
-                .putLong(SELECTED_CITY_LONGITUDE, Double.doubleToRawLongBits(longitude))
+                .putBoolean(IS_FROM_CITY_KEY, isFromUserCities)
                 .apply();
     }
 
@@ -220,7 +192,18 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     }
 
     @Override
-    public Completable addLocationToDatabase(final GeoName location) {
+    public boolean shouldWeatherBeSaved() {
+        return mSharedPreferences.getBoolean(SHOULD_WEATHER_BE_SAVED, false);
+    }
+
+    @Override
+    public void doWeSaveWeather(boolean value) {
+        mSharedPreferences.edit().putBoolean(SHOULD_WEATHER_BE_SAVED, value)
+                .apply();
+    }
+
+    @Override
+    public Completable addLocationToDatabase(@NonNull final GeoName location) {
         return mDatabaseOperation.addLocationToDatabase(location);
     }
 
@@ -232,5 +215,15 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     @Override
     public Single<Map<String, Pair<Integer, Integer>>> getNewsSources() {
         return mDatabaseOperation.getNewsSources();
+    }
+
+    @Override
+    public Single<Boolean> isLocationInDatabase(@NonNull String cityName) {
+        return mDatabaseOperation.isLocationInDatabase(cityName);
+    }
+
+    @Override
+    public Single<List<GeoName>> getUserCitiesFromDatabase() {
+        return mUserCitiesRepository.getUserCities();
     }
 }

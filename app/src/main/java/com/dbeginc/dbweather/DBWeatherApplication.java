@@ -6,10 +6,8 @@ import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.dagger.components.DBWeatherApplicationComponent;
 import com.dbeginc.dbweather.dagger.components.DaggerDBWeatherApplicationComponent;
 import com.dbeginc.dbweather.dagger.modules.DBWeatherApplicationModule;
-import com.facebook.network.connectionclass.ConnectionClassManager;
-import com.facebook.network.connectionclass.ConnectionQuality;
-import com.facebook.network.connectionclass.DeviceBandwidthSampler;
 import com.github.moduth.blockcanary.BlockCanary;
+import com.google.android.gms.ads.MobileAds;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -22,10 +20,9 @@ import io.fabric.sdk.android.Fabric;
  * Class representing the Application class
  */
 
-public class DBWeatherApplication extends MultiDexApplication  implements ConnectionClassManager.ConnectionClassStateChangeListener {
+public class DBWeatherApplication extends MultiDexApplication  {
 
     private static DBWeatherApplicationComponent mComponent;
-    private ConnectionQuality mConnectionQuality = ConnectionQuality.UNKNOWN;
 
     @Override
     public void onCreate() {
@@ -39,25 +36,15 @@ public class DBWeatherApplication extends MultiDexApplication  implements Connec
         LeakCanary.install(this);
         BlockCanary.install(this, new AppBlockCanaryContext()).start();
         AndroidThreeTen.init(this);
+        MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826");
 
         mComponent = DaggerDBWeatherApplicationComponent.builder()
                 .dBWeatherApplicationModule(new DBWeatherApplicationModule(this))
                 .build();
-
-        ConnectionClassManager.getInstance().register(this);
-        DeviceBandwidthSampler.getInstance().startSampling();
     }
 
     public static DBWeatherApplicationComponent getComponent() {
         return mComponent;
     }
 
-    @Override
-    public void onBandwidthStateChange(@Nonnull final ConnectionQuality bandwidthState) {
-        mConnectionQuality = bandwidthState;
-    }
-
-    public ConnectionQuality getConnectionQuality() {
-        return mConnectionQuality;
-    }
 }

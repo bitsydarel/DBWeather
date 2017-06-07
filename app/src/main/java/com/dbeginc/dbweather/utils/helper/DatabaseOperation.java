@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ import com.dbeginc.dbweather.models.datatypes.weather.Alert;
 import com.dbeginc.dbweather.models.datatypes.weather.Currently;
 import com.dbeginc.dbweather.models.datatypes.weather.Daily;
 import com.dbeginc.dbweather.models.datatypes.weather.DailyData;
+import com.dbeginc.dbweather.models.datatypes.weather.Flags;
 import com.dbeginc.dbweather.models.datatypes.weather.Hourly;
 import com.dbeginc.dbweather.models.datatypes.weather.HourlyData;
 import com.dbeginc.dbweather.models.datatypes.weather.MinutelyData;
@@ -117,6 +119,7 @@ import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.NE
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ORDER_BY;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.SELECT;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.SELECT_EVERYTHING_FROM;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.TEMPERATURE_UNIT;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_COUNTRY;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LATITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LONGITUDE;
@@ -156,7 +159,7 @@ public class DatabaseOperation {
      * to be used when needed
      * @param weather instance to get all information needed
      */
-    public void saveWeatherData(final Weather weather) {
+    public synchronized void saveWeatherData(final Weather weather) {
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
 
         final ContentValues contentValues =  new ContentValues();
@@ -172,6 +175,7 @@ public class DatabaseOperation {
         }
         contentValues.put(LAST_KNOW_LATITUDE, weather.getLatitude());
         contentValues.put(LAST_KNOW_LONGITUDE, weather.getLongitude());
+        contentValues.put(TEMPERATURE_UNIT, weather.getFlags().getUnits());
 
         final int result = database.update(WEATHER_TABLE, contentValues, null, null);
 
@@ -179,14 +183,13 @@ public class DatabaseOperation {
             database.insert(WEATHER_TABLE, null, contentValues);
         }
         contentValues.clear();
-        database.close();
     }
 
     /**
      * This method save weather alerts
      * @param alerts list of alerts to be saved in the database
      */
-    public void saveAlerts(final List<Alert> alerts) {
+    public synchronized void saveAlerts(final List<Alert> alerts) {
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
         final ContentValues contentValues = new ContentValues();
         final AtomicInteger id = new AtomicInteger(1);
@@ -208,7 +211,6 @@ public class DatabaseOperation {
             contentValues.clear();
             id.getAndIncrement();
         }
-        database.close();
     }
 
     /**
@@ -217,7 +219,7 @@ public class DatabaseOperation {
      * network
      * @param current it's the current weather info
      */
-    public void saveCurrentWeather(final Currently current) {
+    public synchronized void saveCurrentWeather(final Currently current) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
 
@@ -242,14 +244,13 @@ public class DatabaseOperation {
             sqLiteDatabase.insert(CURRENT_TABLE_NAME, null, databaseInsert);
         }
         databaseInsert.clear();
-        sqLiteDatabase.close();
     }
 
     /**
      * This method save the week weather info
      * @param dailyData list of daily weather
      */
-    public void saveDailyWeather(final List<DailyData> dailyData) {
+    public synchronized void saveDailyWeather(final List<DailyData> dailyData) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
@@ -286,14 +287,13 @@ public class DatabaseOperation {
             index.getAndIncrement();
             databaseInsert.clear();
         }
-        sqLiteDatabase.close();
     }
 
     /**
      * This method save hourly weather data
      * @param data weather in hourly format
      */
-    public void saveHourlyWeather(final List<HourlyData> data) {
+    public synchronized void saveHourlyWeather(final List<HourlyData> data) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
@@ -326,10 +326,9 @@ public class DatabaseOperation {
             databaseInsert.clear();
             index.getAndIncrement();
         }
-        sqLiteDatabase.close();
     }
 
-    public void saveMinutelyWeather(final List<MinutelyData> minutelyWeatherData) {
+    public synchronized void saveMinutelyWeather(final List<MinutelyData> minutelyWeatherData) {
         final ContentValues contentValues = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger id = new AtomicInteger(1);
@@ -349,7 +348,6 @@ public class DatabaseOperation {
             contentValues.clear();
             id.getAndIncrement();
         }
-        sqLiteDatabase.close();
     }
 
     /**
@@ -357,7 +355,7 @@ public class DatabaseOperation {
      * to be displayed ofline
      * @param newses array of newses
      */
-    public void saveNewses(final List<Article> newses) {
+    public synchronized void saveNewses(final List<Article> newses) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase sqLiteDatabase = applicationDatabase.getWritableDatabase();
         final AtomicInteger index = new AtomicInteger(1);
@@ -382,7 +380,6 @@ public class DatabaseOperation {
             databaseInsert.clear();
             index.getAndIncrement();
         }
-        sqLiteDatabase.close();
     }
 
     /**
@@ -405,6 +402,9 @@ public class DatabaseOperation {
             weather.getHourly().setSummary(databaseCursor.getString(databaseCursor.getColumnIndex(FULL_DAY_SUMMARY)));
             weather.setDaily(new Daily());
             weather.getDaily().setSummary(databaseCursor.getString(databaseCursor.getColumnIndex(WEEK_SUMMARY)));
+            final Flags flags = new Flags();
+            flags.setUnits(databaseCursor.getString(databaseCursor.getColumnIndex(TEMPERATURE_UNIT)));
+            weather.setFlags(flags);
         }
         databaseCursor.close();
         return weather;
@@ -463,13 +463,13 @@ public class DatabaseOperation {
         return current;
     }
 
-    public Completable saveCoordinatesAsync(final double latitude, final double longitude) {
+    public synchronized Completable saveCoordinatesAsync(final double latitude, final double longitude) {
         return Completable.create(completableEmitter -> {
             if (saveCoordinates(latitude, longitude)) { completableEmitter.onComplete(); }
         });
     }
 
-    public boolean saveCoordinates(final double latitude, final double longitude) {
+    public synchronized boolean saveCoordinates(final double latitude, final double longitude) {
         final ContentValues contentValues = new ContentValues();
         final SQLiteDatabase database = applicationDatabase.getWritableDatabase();
 
@@ -477,7 +477,6 @@ public class DatabaseOperation {
         contentValues.put(LAST_KNOW_LONGITUDE, longitude);
 
         database.update(WEATHER_TABLE, contentValues, null, null);
-        database.close();
 
         return true;
     }
@@ -654,15 +653,14 @@ public class DatabaseOperation {
         return hour;
     }
 
-    public void removeLocationFromDatabase(final GeoName location) {
+    public synchronized void removeLocationFromDatabase(final GeoName location) {
         final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
         writableDatabase.delete(CITIES_TABLE,
                 THE_CITY_NAME + "=?",
                 new String[]{location.getName()});
-        writableDatabase.close();
     }
 
-    public Completable addLocationToDatabase(final GeoName location) {
+    public synchronized Completable addLocationToDatabase(final GeoName location) {
 
         return Completable.fromAction(() -> {
             final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
@@ -675,7 +673,6 @@ public class DatabaseOperation {
 
             writableDatabase.insert(CITIES_TABLE, null, dataToInsert);
             dataToInsert.clear();
-            writableDatabase.close();
         });
     }
 
@@ -800,10 +797,9 @@ public class DatabaseOperation {
             writableDatabase.insert(NEWS_SOURCES_TABLE, null, dataToInsert);
             dataToInsert.clear();
         }
-        writableDatabase.close();
     }
 
-    public Completable saveNewsSourceConfiguration(final String nameOfTheSource,
+    public synchronized Completable saveNewsSourceConfiguration(final String nameOfTheSource,
                                                    final int count,
                                                    final int isOn) {
 
@@ -815,8 +811,6 @@ public class DatabaseOperation {
             dataToInsert.put(NEWS_SOURCE_STATUS, isOn);
             writableDatabase.update(NEWS_SOURCES_TABLE, dataToInsert,
                     String.format(Locale.getDefault(), "%s=\"%s\"", NEWS_SOURCE_NAME, nameOfTheSource), null);
-
-            writableDatabase.close();
         });
     }
 
@@ -856,7 +850,7 @@ public class DatabaseOperation {
         return listOfNewses;
     }
 
-    public void saveCurrentWeatherForCity(final String cityName, final Currently currently) {
+    public synchronized void saveCurrentWeatherForCity(final String cityName, final Currently currently) {
         final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
         final Cursor query = userCitiesDatabase.getReadableDatabase().rawQuery(String.format("SELECT %s FROM %s WHERE %s=\"%s\"",
                 CITY_NAME, CURRENT_TABLE_NAME, CITY_NAME, cityName), null);
@@ -892,10 +886,9 @@ public class DatabaseOperation {
             writableDatabase.insert(CURRENT_TABLE_NAME, null, databaseInsert);
             databaseInsert.clear();
         }
-        writableDatabase.close();
     }
 
-    public void saveDailyWeatherForCity(final String cityName, final List<DailyData> dailyDataList) {
+    public synchronized void saveDailyWeatherForCity(final String cityName, final List<DailyData> dailyDataList) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
 
@@ -966,11 +959,10 @@ public class DatabaseOperation {
                 databaseInsert.clear();
             }
         }
-        writableDatabase.close();
     }
 
 
-    public void saveHourlyWeatherForCity(final String cityName, final List<HourlyData> data) {
+    public synchronized void saveHourlyWeatherForCity(final String cityName, final List<HourlyData> data) {
         final ContentValues databaseInsert = new ContentValues();
         final SQLiteDatabase writableDatabase = userCitiesDatabase.getWritableDatabase();
 
@@ -1032,7 +1024,6 @@ public class DatabaseOperation {
                 databaseInsert.clear();
             }
         }
-        writableDatabase.close();
     }
 
     public Currently getCurrentlyWeatherForCity(final String cityName) {
@@ -1127,5 +1118,24 @@ public class DatabaseOperation {
         }
 
         return hourlyData;
+    }
+
+    public Single<Boolean> isLocationInDatabase(@NonNull final String cityName) {
+        return Single.fromCallable(() -> {
+            final Cursor cursor = userCitiesDatabase.getReadableDatabase().rawQuery(String.format("%s %s WHERE %s=\"%s\"",
+                    SELECT_EVERYTHING_FROM, CURRENT_TABLE_NAME, CITY_NAME, cityName), null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                if (cursor.isAfterLast() || cursor.getCount() == 0) {
+                    cursor.close();
+                    return false;
+                }
+                else {
+                    cursor.close();
+                    return true;
+                }
+
+            } else { return false; }
+        });
     }
 }

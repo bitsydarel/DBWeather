@@ -2,6 +2,7 @@ package com.dbeginc.dbweather.models.datatypes.news;
 
 /**
  * Created by Darel Bitsy on 18/02/17.
+ * News Feed Object
  */
 
 import android.os.Parcel;
@@ -178,5 +179,25 @@ public class Article implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Article article = (Article) o;
+
+        if ((author != null && article.author != null) && author.equalsIgnoreCase(article.getAuthor())) {
+            return getArticleUrl().equalsIgnoreCase(article.getArticleUrl());
+        } else { return false; }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = author != null ? author.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        return result;
     }
 }

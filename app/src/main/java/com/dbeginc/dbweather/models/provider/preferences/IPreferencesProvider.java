@@ -16,15 +16,9 @@ public interface IPreferencesProvider {
 
     void setFirstRun(final boolean isFirstRun);
 
-    boolean didUserSelectedCityFromDrawer();
+    boolean isCurrentWeatherFromGps();
 
-    void userSelectedCityFromDrawer(final boolean isFromCity);
-
-    Pair<String, double[]> getSelectedUserCity(@NonNull final String locationToFind);
-
-    void setSelectedUserCity(@NonNull final String locationToSelected,
-                             final double latitude,
-                             final double longitude);
+    void setCurrentWeatherFromGps(final boolean isFromCity);
 
     boolean getWeatherNotificationStatus();
 
@@ -49,4 +43,8 @@ public interface IPreferencesProvider {
     void setCustomTabPackage(@Nonnull final String packageName);
 
     String getCustomTabPackage();
+
+    boolean shouldWeatherBeSaved();
+
+    void doWeSaveWeather(final boolean value);
 }

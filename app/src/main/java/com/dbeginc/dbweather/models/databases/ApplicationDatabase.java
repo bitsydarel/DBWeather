@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_EXPIRES;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_ID;
@@ -93,9 +92,11 @@ import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.NE
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_TABLE_NAME;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_TITLE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.NEWS_URL;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.TEMPERATURE_UNIT;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.TIMEZONE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.WEATHER_TABLE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.WEEK_SUMMARY;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.INTEGER_PRIMARY_KEY;
 
 /**
  * Created by Darel Bitsy on 26/01/17.
@@ -169,7 +170,8 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
                 FULL_DAY_SUMMARY + COLUMN_TEXT_TYPE + COMMA +
                 FULL_HOUR_SUMMARY + COLUMN_TEXT_TYPE + COMMA +
                 LAST_KNOW_LATITUDE  + COLUMN_REAL_TYPE + COMMA +
-                LAST_KNOW_LONGITUDE + COLUMN_REAL_TYPE +
+                LAST_KNOW_LONGITUDE + COLUMN_REAL_TYPE + COMMA +
+                TEMPERATURE_UNIT + COLUMN_TEXT_TYPE +
                 ");"
         );
     }

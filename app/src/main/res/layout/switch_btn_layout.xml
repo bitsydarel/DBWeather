@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.SwitchCompat
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    style="@style/Theme.Switch"
-    android:layout_gravity="center_vertical"
-    android:id="@+id/switch_config_id"/>

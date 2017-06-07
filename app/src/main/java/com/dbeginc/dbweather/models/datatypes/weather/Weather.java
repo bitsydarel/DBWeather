@@ -39,6 +39,10 @@ public class Weather implements Parcelable {
     @Expose
     private List<Alert> alerts = null;
 
+    @SerializedName("flags")
+    @Expose
+    private Flags flags;
+
     private String cityName;
 
     public Weather() {}
@@ -51,6 +55,7 @@ public class Weather implements Parcelable {
         hourly = in.readParcelable(Hourly.class.getClassLoader());
         daily = in.readParcelable(Daily.class.getClassLoader());
         alerts = in.createTypedArrayList(Alert.CREATOR);
+        flags = in.readParcelable(Flags.class.getClassLoader());
         cityName = in.readString();
     }
 
@@ -130,6 +135,15 @@ public class Weather implements Parcelable {
         this.alerts = alerts;
     }
 
+    public Flags getFlags() {
+        return flags;
+    }
+
+    public void setFlags(Flags flags) {
+        this.flags = flags;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -144,6 +158,7 @@ public class Weather implements Parcelable {
         dest.writeParcelable(hourly, flags);
         dest.writeParcelable(daily, flags);
         dest.writeTypedList(alerts);
+        dest.writeParcelable(this.flags, flags);
         dest.writeString(cityName);
     }
 

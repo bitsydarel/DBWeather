@@ -11,6 +11,7 @@ import com.dbeginc.dbweather.R;
 import com.dbeginc.dbweather.models.api.adapters.GoogleGeocodeAdapter;
 import com.dbeginc.dbweather.models.datatypes.weather.Currently;
 import com.dbeginc.dbweather.models.datatypes.weather.DailyData;
+import com.dbeginc.dbweather.models.datatypes.weather.HourlyData;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherInfo;
@@ -116,22 +117,14 @@ public class WeatherUtil {
             final Geocoder gcd = new Geocoder(context, Locale.getDefault());
             final List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
             if (!addresses.isEmpty()) {
-                if (addresses.get(0).getMaxAddressLineIndex() > 2) {
-                    cityInfoBuilder = String.format(Locale.getDefault(), "%s, %s, %s, %s",
-                            addresses.get(0).getAddressLine(0),
-                            addresses.get(0).getAddressLine(1),
-                            addresses.get(0).getAddressLine(2),
-                            addresses.get(0).getAddressLine(3));
 
-                } else {
-                    cityInfoBuilder = String.format(Locale.getDefault(), "%s, %s, %s",
-                            addresses.get(0).getAddressLine(0),
-                            addresses.get(0).getLocality(),
-                            addresses.get(0).getCountryName());
+                cityInfoBuilder = String.format(Locale.getDefault(), "%s, %s",
+                        addresses.get(0).getLocality(),
+                        addresses.get(0).getCountryName());
 
-                }
 
             } else { throw new IOException(); }
+
             if (cityInfoBuilder.contains("null")) { throw new IOException(); }
 
         } catch (final IOException e) {
@@ -141,7 +134,7 @@ public class WeatherUtil {
     }
 
     private static String getLocationWithGoogleMapApi(final double latitude, final double longitude) throws IOException {
-        return new GoogleGeocodeAdapter().getLocationByCoordinate(latitude, longitude);
+        return GoogleGeocodeAdapter.getInstance().getLocationByCoordinate(latitude, longitude);
     }
 
     private static String getDayOfTheWeek(final long timeInMilliseconds, final String timeZone) {
@@ -227,6 +220,10 @@ public class WeatherUtil {
         boolean isTomorrowSet = false;
 
         Integer currentDayIndex = null;
+        final String temperatureUnit;
+
+        if (weather.getFlags().getUnits().equals("us")) {temperatureUnit = "F"; }
+        else { temperatureUnit = "C"; }
 
         while (count < 7) {
             for (final DailyData day : weather.getDaily().getData()) {
@@ -282,6 +279,8 @@ public class WeatherUtil {
                     weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), weather.getTimezone()));
                     weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), weather.getTimezone()));
 
+                    weatherInfo.temperatureUnit.set(temperatureUnit);
+
                     weatherInfoList.add(count, weatherInfo);
 
                     currentDayIndex = count++;
@@ -291,7 +290,7 @@ public class WeatherUtil {
                         && count == (currentDayIndex + 1)) {
 
                     weatherInfoList.add(1, convertToWeatherInfo(weather.getCityName(),
-                            day, weatherInfo, weather.getTimezone(), context));
+                            day, weatherInfo, weather.getTimezone(), temperatureUnit, context));
 
                     count++;
                     isTomorrowSet = true;
@@ -299,12 +298,17 @@ public class WeatherUtil {
                 } else if (isTodaySet && isTomorrowSet) {
 
                     weatherInfoList.add(count,
-                            convertToWeatherInfo(weather.getCityName(), day, weatherInfo, weather.getTimezone(), context));
+                            convertToWeatherInfo(weather.getCityName(), day, weatherInfo, weather.getTimezone(), temperatureUnit, context));
 
                     count++;
                 }
             }
         }
+
+        for (final HourlyData hourlyData : weatherData.getHourlyWeatherList()) {
+            hourlyData.setTemperatureUnit(temperatureUnit);
+        }
+
         Log.i(ConstantHolder.TAG, "City Name: " + weather.getCityName());
         weatherData.setWeatherInfoList(weatherInfoList);
         return weatherData;
@@ -314,6 +318,7 @@ public class WeatherUtil {
                                              @NonNull final DailyData day,
                                              @NonNull final WeatherInfo weatherInfo,
                                              @Nullable final String timeZone,
+                                             @NonNull final String temperatureUnit,
                                              @NonNull final Context context) {
 
         weatherInfo.isCurrentWeather.set(false);
@@ -356,6 +361,7 @@ public class WeatherUtil {
 
         weatherInfo.sunrise.set(WeatherUtil.getFormattedTime(day.getSunriseTime(), timeZone));
         weatherInfo.sunset.set(WeatherUtil.getFormattedTime(day.getSunsetTime(), timeZone));
+        weatherInfo.temperatureUnit.set(temperatureUnit);
 
         return weatherInfo;
     }

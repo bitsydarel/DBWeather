@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2196F3</color>
-    <color name="colorPrimaryDark">#1976D2</color>
-    <color name="colorAccent">#536DFE</color>
+    <color name="colorPrimary">#536DFE</color>
+    <color name="colorPrimaryDark">#1A237E</color>
+    <color name="colorPrimaryLight">#6EC6FF</color>
+    <color name="colorAccent">#F06292</color>
     <color name="transparentWhite">#80ffffff</color>
     <color name="switchColorOn">#7FFF00</color>
     <color name="switchColorNormal">#bdbdbd</color>
     <color name="switchColorThumbNormal">#A9A9A9</color>
+    <color name="tabWidgetColor">#4285F4</color>
+    <color name="inactiveTabColor">#BDBDBD</color>
+    <color name="activeTabColor">#FFFFFF</color>
+    <color name="configTabColor">#7C4DFF</color>
+    <color name="configStatusBarColor">#6200EA</color>
+    <color name="newsTabColor">#E91E63</color>
+    <color name="newsStatusBarColor">#880E4F</color>
 </resources>
