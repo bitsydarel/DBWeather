@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
+import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 
 import java.util.List;
 import java.util.Map;
@@ -27,4 +28,16 @@ interface IDatabaseProvider {
     Single<Boolean> isLocationInDatabase(@NonNull final String cityName);
 
     Single<List<GeoName>> getUserCitiesFromDatabase();
+
+    Single<Boolean> isLiveInDatabase(@NonNull final String liveSourceName);
+
+    Completable refreshLiveData(@NonNull final LiveNews liveNews, final boolean isInTheDB);
+
+    void initiateLiveSourcesTable();
+
+    Single<List<LiveNews>> getLiveSources();
+
+    Completable removeLiveSource(@NonNull final LiveNews liveNews);
+
+    void removeLocationFromDatabase(final GeoName location);
 }

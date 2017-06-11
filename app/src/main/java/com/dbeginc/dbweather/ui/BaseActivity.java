@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.dbeginc.dbweather.models.provider.firebase.IAnalyticProvider;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 import com.dbeginc.dbweather.utils.utility.AppUtil;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.database.DataSnapshot;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,6 +54,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION
 
 /**
  * Created by Darel Bitsy on 27/04/17.
+ * Base DBWeather Activity
  */
 
 public class BaseActivity extends AppCompatActivity {
@@ -69,6 +72,9 @@ public class BaseActivity extends AppCompatActivity {
 
     @Inject
     public PublishSubject<List<Article>> newsUpdateEvent;
+
+    @Inject
+    public PublishSubject<Pair<DataSnapshot, String>> liveDatabaseUpdateEvent;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {

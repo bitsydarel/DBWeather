@@ -32,7 +32,7 @@ import static com.dbeginc.dbweather.ui.main.news.adapter.ArticleDiffCallback.OLD
  * News TimeLine RecyclerView Adapter
  */
 
-public class NewsTimeLineAdapter extends RecyclerView.Adapter<NewsTimeLineAdapter.TimeLineViewHolder> {
+public class NewFeedAdapter extends RecyclerView.Adapter<NewFeedAdapter.TimeLineViewHolder> {
 
     private final PublishSubject<String> eventDispatcher;
     private final CompositeDisposable compositeDisposable;
@@ -40,8 +40,8 @@ public class NewsTimeLineAdapter extends RecyclerView.Adapter<NewsTimeLineAdapte
     private final List<Article> articles;
     private final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.getInstance();
 
-    public NewsTimeLineAdapter(@Nonnull final List<Article> articles, @Nonnull final PublishSubject<String> eventDispatcher,
-                        @Nonnull final CompositeDisposable compositeDisposable) {
+    public NewFeedAdapter(@Nonnull final List<Article> articles, @Nonnull final PublishSubject<String> eventDispatcher,
+                          @Nonnull final CompositeDisposable compositeDisposable) {
 
         this.articles = new ArrayList<>(articles);
         this.eventDispatcher = eventDispatcher;
@@ -94,9 +94,9 @@ public class NewsTimeLineAdapter extends RecyclerView.Adapter<NewsTimeLineAdapte
                         .subscribeWith(new DisposableSingleObserver<DiffUtil.DiffResult>() {
                             @Override
                             public void onSuccess(final DiffUtil.DiffResult diffResult) {
-                                NewsTimeLineAdapter.this.articles.clear();
-                                NewsTimeLineAdapter.this.articles.addAll(articles);
-                                diffResult.dispatchUpdatesTo(NewsTimeLineAdapter.this);
+                                NewFeedAdapter.this.articles.clear();
+                                NewFeedAdapter.this.articles.addAll(articles);
+                                diffResult.dispatchUpdatesTo(NewFeedAdapter.this);
                             }
                             @Override
                             public void onError(final Throwable throwable) { Crashlytics.logException(throwable); }

@@ -45,30 +45,15 @@
             app:layout_constraintRight_toRightOf="parent" />
 
 
-        <WebView
-            android:id="@+id/wbv_browser"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/news_view_ads"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            tools:visibility="gone"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rcv_timeline"
+        <FrameLayout
+            android:id="@+id/newsContainer"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
             app:layout_constraintTop_toBottomOf="@id/news_view_ads"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            tools:listitem="@layout/news_list_item"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/srl_refresh_timeline"

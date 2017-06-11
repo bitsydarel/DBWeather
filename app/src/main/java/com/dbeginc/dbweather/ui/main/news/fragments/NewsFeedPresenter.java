@@ -1,10 +1,11 @@
-package com.dbeginc.dbweather.ui.main.news;
+package com.dbeginc.dbweather.ui.main.news.fragments;
 
 import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
+import com.dbeginc.dbweather.ui.main.news.INewsView;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.PublishSubject;
@@ -13,15 +14,15 @@ import io.reactivex.subjects.PublishSubject;
  * Created by darel on 29.05.17.
  */
 
-public class NewsPresenter {
+public class NewsFeedPresenter {
 
     private final AppDataProvider dataProvider;
     private final PublishSubject<String> detailsEvent = PublishSubject.create();
     private final RxSchedulersProvider schedulersProvider = RxSchedulersProvider.getInstance();
     private final CompositeDisposable rxSubscription;
-    private final INewsView view;
+    private final INewsFeed view;
 
-    NewsPresenter(@NonNull final INewsView view, @NonNull final AppDataProvider dataProvider, @NonNull final CompositeDisposable rxSubscription) {
+    NewsFeedPresenter(@NonNull final INewsFeed view, @NonNull final AppDataProvider dataProvider, @NonNull final CompositeDisposable rxSubscription) {
         this.view = view;
         this.dataProvider = dataProvider;
         this.rxSubscription = rxSubscription;

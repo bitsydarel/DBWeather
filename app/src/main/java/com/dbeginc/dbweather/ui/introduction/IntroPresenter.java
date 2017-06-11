@@ -6,14 +6,18 @@ import android.support.v4.util.Pair;
 
 import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.dbeginc.dbweather.utils.utility.weather.WeatherUtil;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
@@ -185,4 +189,6 @@ class IntroPresenter {
             Crashlytics.logException(throwable);
         }
     }
+
+    void initiateLiveSourcesTable() { dataProvider.initiateLiveSourcesTable(); }
 }

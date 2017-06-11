@@ -8,6 +8,8 @@ import com.dbeginc.dbweather.dagger.components.DaggerDBWeatherApplicationCompone
 import com.dbeginc.dbweather.dagger.modules.DBWeatherApplicationModule;
 import com.github.moduth.blockcanary.BlockCanary;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -23,6 +25,7 @@ import io.fabric.sdk.android.Fabric;
 public class DBWeatherApplication extends MultiDexApplication  {
 
     private static DBWeatherApplicationComponent mComponent;
+    private boolean isFirebaseAvailable;
 
     @Override
     public void onCreate() {
@@ -41,10 +44,17 @@ public class DBWeatherApplication extends MultiDexApplication  {
         mComponent = DaggerDBWeatherApplicationComponent.builder()
                 .dBWeatherApplicationModule(new DBWeatherApplicationModule(this))
                 .build();
+
+        final int googlePlayServicesAvailable = GoogleApiAvailability
+                .getInstance()
+                .isGooglePlayServicesAvailable(this);
+
+        isFirebaseAvailable = googlePlayServicesAvailable == ConnectionResult.SUCCESS;
     }
 
     public static DBWeatherApplicationComponent getComponent() {
         return mComponent;
     }
 
+    public boolean isFirebaseAvailable() { return isFirebaseAvailable; }
 }

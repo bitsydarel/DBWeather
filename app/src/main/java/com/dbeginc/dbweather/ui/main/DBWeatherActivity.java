@@ -13,21 +13,28 @@ import android.support.v7.app.AppCompatDelegate;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.R;
 import com.dbeginc.dbweather.databinding.ActivityDbweatherBinding;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.ui.BaseActivity;
 import com.dbeginc.dbweather.ui.main.config.ConfigFragment;
-import com.dbeginc.dbweather.ui.main.news.NewsFragment;
+import com.dbeginc.dbweather.ui.main.news.NewsTabFragment;
 import com.dbeginc.dbweather.ui.main.weather.WeatherTabFragment;
+import com.dbeginc.dbweather.utils.services.KillCheckerService;
 import com.dbeginc.dbweather.utils.services.LocationTracker;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.CACHE_NAME;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_DATA_KEY;
@@ -37,8 +44,8 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY
 public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView, OnTabSelectListener {
     private BroadcastReceiver locationBroadcastReceiver;
     private DBWeatherPresenter presenter;
-    private Fragment weatherFragment;
-    private Fragment newsFragment;
+    private WeatherTabFragment weatherFragment;
+    private NewsTabFragment newsTabFragment;
     private final Fragment configFragment = new ConfigFragment();
     private WeatherData weatherData;
     private ArrayList<Article> listOfNews;
@@ -65,8 +72,9 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
 
             if (intent.hasExtra(NEWS_DATA_KEY)) {
                 listOfNews = intent.getParcelableArrayListExtra(NEWS_DATA_KEY);
-                newsFragment = NewsFragment.newInstance(listOfNews);
+                newsTabFragment = NewsTabFragment.newInstance(listOfNews);
             }
+            startService(new Intent(getApplicationContext(), KillCheckerService.class));
         }
 
         layoutBinding.bottomBar.setOnTabSelectListener(this);
@@ -86,8 +94,37 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
     @Override
     protected void onResume() {
         super.onResume();
-        if (presenter.isFirstRun()) { presenter.setFirstRun(false); }
-        
+        if (presenter.isFirstRun()) {
+            presenter.setFirstRun(false);
+            if (isNetworkAvailable()) { presenter.getNews(); }
+        }
+
+        if (((DBWeatherApplication) getApplication()).isFirebaseAvailable()) {
+            FirebaseDatabase.getInstance().getReference(LIVE_SOURCE).addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, String s) {
+                    presenter.addNewLiveSource(dataSnapshot);
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    presenter.addNewLiveSource(dataSnapshot);
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    presenter.removeLiveSource(dataSnapshot);
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    presenter.addNewLiveSource(dataSnapshot);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+        }
+
         final IntentFilter intentFilter = new IntentFilter(LOCATION_UPDATE);
         intentFilter.addAction(UPDATE_REQUEST);
         registerReceiver(locationBroadcastReceiver, intentFilter);
@@ -118,7 +155,7 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
 
         } else if (id == R.id.tab_news) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.tabContent, newsFragment)
+                    .replace(R.id.tabContent, newsTabFragment)
                     .commit();
             color = getResources().getColor(R.color.newsStatusBarColor);
 
@@ -146,6 +183,6 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
     public void updateNews(@NonNull final List<Article> news) {
         listOfNews.clear();
         listOfNews.addAll(news);
-        newsFragment.getArguments().putParcelableArrayList(NEWS_DATA_KEY, listOfNews);
+        newsTabFragment.getArguments().putParcelableArrayList(NEWS_DATA_KEY, listOfNews);
     }
 }

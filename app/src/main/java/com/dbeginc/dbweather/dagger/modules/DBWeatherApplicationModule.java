@@ -2,16 +2,20 @@ package com.dbeginc.dbweather.dagger.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.support.v4.util.Pair;
 import android.util.Log;
 
 import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.firebase.FirebaseAnalyticProvider;
 import com.dbeginc.dbweather.models.provider.firebase.IAnalyticProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +55,10 @@ public class DBWeatherApplicationModule {
 
     @Provides
     @Singleton
+    Resources providesAppResource(final Context context) { return context.getResources(); }
+
+    @Provides
+    @Singleton
     SharedPreferences providesSharedPreferences(final Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
@@ -66,6 +74,14 @@ public class DBWeatherApplicationModule {
     @Provides
     @Singleton
     PublishSubject<List<Article>> provideNewsUpdateEvent() { return PublishSubject.create(); }
+
+    @Singleton
+    @Provides
+    PublishSubject<LiveNews> providesLiveSelectedEvent() { return PublishSubject.create(); }
+
+    @Singleton
+    @Provides
+    PublishSubject<Pair<DataSnapshot, String>> providesLiveSourceDatabase() { return PublishSubject.create(); }
 
     @Provides
     IAnalyticProvider providesFirebaseAnalytics(final Context context) {

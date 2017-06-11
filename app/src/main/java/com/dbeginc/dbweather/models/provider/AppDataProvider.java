@@ -8,6 +8,7 @@ import android.support.v4.util.Pair;
 import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
 import com.dbeginc.dbweather.models.provider.news.DatabaseNewsProvider;
 import com.dbeginc.dbweather.models.provider.news.NetworkNewsProvider;
@@ -225,5 +226,35 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     @Override
     public Single<List<GeoName>> getUserCitiesFromDatabase() {
         return mUserCitiesRepository.getUserCities();
+    }
+
+    @Override
+    public Single<Boolean> isLiveInDatabase(@NonNull String liveSourceName) {
+        return mDatabaseOperation.isLiveInDatabase(liveSourceName);
+    }
+
+    @Override
+    public Completable refreshLiveData(@NonNull LiveNews liveNews, boolean isInTheDB) {
+        return mDatabaseOperation.refreshLiveData(liveNews, isInTheDB);
+    }
+
+    @Override
+    public void initiateLiveSourcesTable() {
+        mDatabaseOperation.initiateLiveSourcesTable();
+    }
+
+    @Override
+    public Single<List<LiveNews>> getLiveSources() {
+        return mDatabaseOperation.getLiveSources();
+    }
+
+    @Override
+    public Completable removeLiveSource(@NonNull LiveNews liveNews) {
+        return mDatabaseOperation.removeLiveSource(liveNews);
+    }
+
+    @Override
+    public void removeLocationFromDatabase(@NonNull final GeoName location) {
+        mDatabaseOperation.removeLocationFromDatabase(location);
     }
 }

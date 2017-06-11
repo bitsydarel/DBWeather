@@ -1,5 +1,6 @@
 package com.dbeginc.dbweather.models.api.adapters;
 
+import com.dbeginc.dbweather.BuildConfig;
 import com.dbeginc.dbweather.models.api.services.NewsService;
 import com.dbeginc.dbweather.models.datatypes.news.NewsResponse;
 
@@ -22,10 +23,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Singleton
 public class NewsRestAdapter {
-    private static final String NEWSAPI_URL= "https://newsapi.org/";
-    private static final String NEWS_APIKEY = "e6e9d4a3f7f24a7a8d16f496df95126f";
+    private static final String NEWS_API_URL = "https://newsapi.org/";
     private final NewsService mNewsApi;
-    private final Set<String> LASTEST_NEWS_ONLY = new HashSet<>(Arrays.asList(
+    private final Set<String> LAST_NEWS_ONLY = new HashSet<>(Arrays.asList(
             "der-tagesspiegel",
             "die-zeit",
             "the-next-web",
@@ -36,7 +36,7 @@ public class NewsRestAdapter {
     @Inject
     public NewsRestAdapter(final OkHttpClient newsOkHttpClient) {
         final Retrofit restAdapter = new Retrofit.Builder()
-                .baseUrl(NEWSAPI_URL)
+                .baseUrl(NEWS_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(newsOkHttpClient)
                 .build();
@@ -45,10 +45,10 @@ public class NewsRestAdapter {
     }
 
     public Call<NewsResponse> getNews(final String source) {
-        if (LASTEST_NEWS_ONLY.contains(source)) {
+        if (LAST_NEWS_ONLY.contains(source)) {
 
-            return mNewsApi.getNewsFromApiSync(source, "latest", NEWS_APIKEY);
+            return mNewsApi.getNewsFromApiSync(source, "latest", BuildConfig.NEWS_API_KEY);
         }
-        return mNewsApi.getNewsFromApiSync(source, "top", NEWS_APIKEY);
+        return mNewsApi.getNewsFromApiSync(source, "top", BuildConfig.NEWS_API_KEY);
     }
 }

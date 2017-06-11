@@ -33,13 +33,15 @@ public class ArticleDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(final int oldItemPosition, final int newItemPosition) {
-        return oldListOfArticle.get(oldItemPosition).getAuthor()
-                .equalsIgnoreCase(newListOfArticle.get(newItemPosition).getAuthor());
+        return oldListOfArticle.get(oldItemPosition).getAuthor().equalsIgnoreCase(newListOfArticle.get(newItemPosition).getAuthor())
+                && oldListOfArticle.get(oldItemPosition).getTitle().equalsIgnoreCase(newListOfArticle.get(newItemPosition).getTitle());
     }
 
     @Override
     public boolean areContentsTheSame(final int oldItemPosition, final int newItemPosition) {
-        return oldListOfArticle.get(oldItemPosition).equals(newListOfArticle.get(newItemPosition));
+        return oldListOfArticle.get(oldItemPosition).getDescription().equalsIgnoreCase(newListOfArticle.get(newItemPosition).getDescription())
+                && oldListOfArticle.get(oldItemPosition).getArticleUrl().equalsIgnoreCase(newListOfArticle.get(newItemPosition).getArticleUrl())
+                && oldListOfArticle.get(oldItemPosition).getPublishedAt().equalsIgnoreCase(newListOfArticle.get(newItemPosition).getPublishedAt());
     }
 
     @Nullable

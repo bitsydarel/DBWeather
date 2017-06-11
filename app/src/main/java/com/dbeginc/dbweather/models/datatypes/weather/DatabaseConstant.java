@@ -8,6 +8,12 @@ package com.dbeginc.dbweather.models.datatypes.weather;
 
 public class DatabaseConstant {
 
+    public static final String LIVE_SOURCE = "live_source";
+    public static final String LIVE_SOURCE_TABLE = "live_source_table";
+    public static final String LIVE_SOURCE_ID = "live_source_id";
+    public static final String LIVE_SOURCE_NAME = "live_source_name";
+    public static final String LIVE_SOURCE_URL = "live_source_url";
+
     private DatabaseConstant(){}
 
     public static final String CREATE_TABLE_QUERY = "create table if not exists ";
@@ -41,6 +47,7 @@ public class DatabaseConstant {
 
     public static final String THE_CITY_NAME = "name";
     public static final String THE_CITY_COUNTRY = "country";
+    public static final String THE_CITY_COUNTRY_CODE = "country_code";
     public static final String THE_CITY_LATITUDE = "latitude";
     public static final String THE_CITY_LONGITUDE = "longitude";
     public static final String APPLICATION_TABLE = "application_table";

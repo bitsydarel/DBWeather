@@ -74,6 +74,10 @@ import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LA
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LAST_KNOW_LONGITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LAST_NEWS_SERVER_SYNC;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LAST_WEATHER_SERVER_SYNC;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_ID;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_NAME;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_TABLE;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_URL;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_ID;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_PRECIPCHANCE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_PRECIPTYPE;
@@ -152,6 +156,7 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
         createMinutelyTable(db);
         createNewsTable(db);
         createNewsSourceTable(db);
+        createLiveSourceTable(db);
     }
 
     private void createApplicationTable(final SQLiteDatabase database) {
@@ -279,6 +284,15 @@ public class ApplicationDatabase extends SQLiteOpenHelper {
                 NEWS_SOURCE_NAME + COLUMN_TEXT_TYPE + COMMA +
                 NEWS_SOURCE_STATUS + COLUMN_INTEGER_TYPE + COMMA +
                 NEWS_SOURCE_COUNT + COLUMN_INTEGER_TYPE +
+                ");"
+        );
+    }
+
+    private void createLiveSourceTable(final SQLiteDatabase database) {
+        database.execSQL(CREATE_TABLE_QUERY + LIVE_SOURCE_TABLE + " (" +
+                LIVE_SOURCE_ID + INTEGER_PRIMARY_KEY +
+                LIVE_SOURCE_NAME + COLUMN_TEXT_TYPE + COMMA +
+                LIVE_SOURCE_URL + COLUMN_TEXT_TYPE +
                 ");"
         );
     }

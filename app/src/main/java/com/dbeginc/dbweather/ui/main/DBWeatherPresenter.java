@@ -1,20 +1,24 @@
 package com.dbeginc.dbweather.ui.main;
 
 import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
-import com.dbeginc.dbweather.utils.holder.ConstantHolder;
+import com.google.firebase.database.DataSnapshot;
 
 import java.io.File;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.PublishSubject;
+
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
 
 /**
  * Created by darel on 29.05.17.
@@ -63,7 +67,7 @@ class DBWeatherPresenter {
     private void cleanCache(@NonNull final File dir) {
         if (dir.isDirectory()) {
             for (final File file : dir.listFiles()) {
-                Log.i(ConstantHolder.TAG, "Is File Cache Cleared on exit: "
+                Log.i(TAG, "Is File Cache Cleared on exit: "
                         + file.delete());
             }
         }
@@ -71,5 +75,41 @@ class DBWeatherPresenter {
 
     boolean getGpsPermissionStatus() {
         return dataProvider.getGpsPermissionStatus();
+    }
+
+    void getNews() {
+        subscriptions.add(
+                dataProvider.getNewsFromApi()
+                        .subscribeOn(schedulersProvider.getNewsScheduler())
+                        .observeOn(schedulersProvider.getUIScheduler())
+                        .subscribe(rootView::updateNews, Crashlytics::logException)
+        );
+    }
+
+    void addNewLiveSource(@NonNull final DataSnapshot dataSnapshot) {
+        final Pair<String, String> liveSource = new Pair<>(dataSnapshot.getKey(), dataSnapshot.getValue(String.class));
+
+        subscriptions.add(
+                dataProvider.isLiveInDatabase(liveSource.first)
+                        .flatMapCompletable(isIn -> {
+                            final LiveNews liveNews = new LiveNews();
+                            liveNews.liveSource.set(liveSource.first);
+                            liveNews.liveUrl.set(liveSource.second);
+                            return dataProvider.refreshLiveData(liveNews, isIn);
+                        }).subscribe(() -> Crashlytics.log(liveSource.first + " Updated successfully"), Crashlytics::logException)
+        );
+    }
+
+    void removeLiveSource(final DataSnapshot dataSnapshot) {
+        final LiveNews liveNews = new LiveNews();
+        liveNews.liveSource.set(dataSnapshot.getKey());
+        liveNews.liveUrl.set(dataSnapshot.getValue(String.class));
+        subscriptions.add(
+                dataProvider.removeLiveSource(liveNews)
+                        .subscribeOn(schedulersProvider.getDatabaseWorkScheduler())
+                        .observeOn(schedulersProvider.getDatabaseWorkScheduler())
+                        .subscribe(() -> Log.i(TAG, liveNews.liveSource.get() + " Remove from Database"),
+                                Crashlytics::logException)
+        );
     }
 }

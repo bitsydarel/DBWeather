@@ -144,4 +144,7 @@
     <string name="display_add">Display and Add</string>
     <string name="manage_cities">Manage your cities</string>
     <string name="help_config">Help</string>
+    <string name="youtubeVideoImageUrl">https://img.youtube.com/vi/%s/hqdefault.jpg</string>
+    <string name="locationName">%1$s, %2$s</string>
+    <string name="imageFlag">http://www.geonames.org/flags/x/%s.gif</string>
 </resources>

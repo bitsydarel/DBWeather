@@ -11,6 +11,7 @@ import com.dbeginc.dbweather.models.provider.translators.ITranslateProvider;
 import com.dbeginc.dbweather.ui.BaseActivity;
 import com.dbeginc.dbweather.ui.BaseFragment;
 import com.dbeginc.dbweather.ui.config.NewsConfigurationActivity;
+import com.dbeginc.dbweather.ui.main.news.fragments.BaseLivePresenter;
 import com.dbeginc.dbweather.ui.welcome.WelcomeActivity;
 import com.dbeginc.dbweather.ui.welcome.WelcomeActivityPresenter;
 import com.dbeginc.dbweather.utils.services.NewsSyncJobScheduler;
@@ -58,4 +59,6 @@ public interface DBWeatherApplicationComponent {
     void inject(final NewsConfigurationActivity newsConfigurationActivity);
 
     void inject(final BaseFragment baseFragment);
+
+    void inject(final BaseLivePresenter baseLivePresenter);
 }

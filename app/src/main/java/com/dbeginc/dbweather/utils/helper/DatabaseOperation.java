@@ -13,6 +13,7 @@ import com.dbeginc.dbweather.models.databases.ApplicationDatabase;
 import com.dbeginc.dbweather.models.databases.UserCitiesDatabase;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.datatypes.weather.Alert;
 import com.dbeginc.dbweather.models.datatypes.weather.Currently;
 import com.dbeginc.dbweather.models.datatypes.weather.Daily;
@@ -27,6 +28,7 @@ import com.dbeginc.dbweather.utils.utility.weather.WeatherUtil;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import io.reactivex.functions.Action;
 
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_EXPIRES;
@@ -99,6 +102,9 @@ import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.HO
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_WIND_SPEED;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LAST_KNOW_LATITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LAST_KNOW_LONGITUDE;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_NAME;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_TABLE;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.LIVE_SOURCE_URL;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_ID;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_PRECIPCHANCE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.MINUTELY_PRECIPTYPE;
@@ -121,6 +127,7 @@ import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.SE
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.SELECT_EVERYTHING_FROM;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.TEMPERATURE_UNIT;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_COUNTRY;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_COUNTRY_CODE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LATITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LONGITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_NAME;
@@ -668,6 +675,7 @@ public class DatabaseOperation {
 
             dataToInsert.put(THE_CITY_NAME, location.getName());
             dataToInsert.put(THE_CITY_COUNTRY, location.getCountryName());
+            dataToInsert.put(THE_CITY_COUNTRY_CODE, location.getCountryCode());
             dataToInsert.put(THE_CITY_LATITUDE, location.getLatitude());
             dataToInsert.put(THE_CITY_LONGITUDE, location.getLongitude());
 
@@ -687,6 +695,7 @@ public class DatabaseOperation {
                 final GeoName location = new GeoName();
                 location.setName(cursor.getString(cursor.getColumnIndex(THE_CITY_NAME)));
                 location.setCountryName(cursor.getString(cursor.getColumnIndex(THE_CITY_COUNTRY)));
+                location.setCountryCode(cursor.getString(cursor.getColumnIndex(THE_CITY_COUNTRY_CODE)));
                 location.setLatitude(cursor.getDouble(cursor.getColumnIndex(THE_CITY_LATITUDE)));
                 location.setLongitude(cursor.getDouble(cursor.getColumnIndex(THE_CITY_LONGITUDE)));
                 geoNameList.add(location);
@@ -694,6 +703,88 @@ public class DatabaseOperation {
             cursor.close();
         }
         return geoNameList;
+    }
+
+    public void initiateLiveSourcesTable() {
+        final SQLiteDatabase writableDatabase = applicationDatabase.getWritableDatabase();
+        final ContentValues dataToInsert = new ContentValues();
+        final Map<String, String> liveSource = new HashMap<>();
+        liveSource.put("Sky-News", "y60wDzZt8yg");
+        liveSource.put("France 24", "hL0sEdVJs3U");
+        liveSource.put("EuroNews", "q5H4bPSXthM");
+        liveSource.put("Africa 24", "gO77vBB3R7g");
+        liveSource.put("Africa News", "jKn73Yg3dHU");
+
+        for (final Map.Entry<String, String> entry : liveSource.entrySet()) {
+            dataToInsert.put(LIVE_SOURCE_NAME, entry.getKey());
+            dataToInsert.put(LIVE_SOURCE_URL, entry.getValue());
+            writableDatabase.insert(LIVE_SOURCE_TABLE, null, dataToInsert);
+            dataToInsert.clear();
+        }
+    }
+
+    public Single<Boolean> isLiveInDatabase(@NonNull final String liveSourceName) {
+        return Single.fromCallable(() -> {
+            final Cursor cursor = applicationDatabase.getReadableDatabase().rawQuery(String.format("%s %s WHERE %s=\"%s\"",
+                    SELECT_EVERYTHING_FROM, LIVE_SOURCE_TABLE, LIVE_SOURCE_NAME, liveSourceName), null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                if (cursor.isAfterLast() || cursor.getCount() == 0) {
+                    cursor.close();
+                    return false;
+                }
+                else {
+                    cursor.close();
+                    return true;
+                }
+
+            } else { return false; }
+        });
+    }
+
+    public Completable refreshLiveData(@NonNull final LiveNews liveNews, final boolean isInTheDB) {
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                final ContentValues dataToInsert = new ContentValues();
+                dataToInsert.put(LIVE_SOURCE_NAME, liveNews.liveSource.get());
+                dataToInsert.put(LIVE_SOURCE_URL, liveNews.liveUrl.get());
+                if (isInTheDB) {
+                    applicationDatabase.getWritableDatabase()
+                            .update(LIVE_SOURCE_TABLE, dataToInsert,
+                                    LIVE_SOURCE_NAME + " = ?", new String[] {liveNews.liveSource.get()});
+                } else {
+                    applicationDatabase.getWritableDatabase().insert(LIVE_SOURCE_TABLE, null, dataToInsert);
+                }
+            }
+        });
+    }
+
+    public Single<List<LiveNews>> getLiveSources() {
+        return Single.fromCallable(() -> {
+            final List<LiveNews> liveNewsList = new ArrayList<>();
+
+            final Cursor cursor = applicationDatabase.getReadableDatabase().rawQuery(SELECT_EVERYTHING_FROM + LIVE_SOURCE_TABLE, null);
+            if (cursor != null) {
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    final LiveNews liveNews = new LiveNews();
+                    liveNews.liveSource.set(cursor.getString(cursor.getColumnIndex(LIVE_SOURCE_NAME)));
+                    liveNews.liveUrl.set(cursor.getString(cursor.getColumnIndex(LIVE_SOURCE_URL)));
+                    liveNewsList.add(liveNews);
+                }
+                cursor.close();
+            }
+            return liveNewsList;
+        });
+    }
+
+    public Completable removeLiveSource(@NonNull final LiveNews liveNews) {
+        return Completable.create(e -> {
+            try {
+                applicationDatabase.getWritableDatabase().delete(LIVE_SOURCE_TABLE, LIVE_SOURCE_NAME + " = ?", new String[] {liveNews.liveSource.get()});
+                e.onComplete();
+            } catch (final Exception exception) { e.onError(exception); }
+        });
     }
 
     public void initiateNewsSourcesTable() {

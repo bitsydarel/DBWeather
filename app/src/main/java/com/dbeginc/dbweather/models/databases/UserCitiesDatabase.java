@@ -67,6 +67,7 @@ import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.HO
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.HOUR_WIND_SPEED;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.NOT_NULL;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_COUNTRY;
+import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_COUNTRY_CODE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LATITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_LONGITUDE;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.THE_CITY_NAME;
@@ -109,6 +110,7 @@ public class UserCitiesDatabase extends SQLiteOpenHelper {
                 COLUMN_ID + INTEGER_PRIMARY_KEY +
                 THE_CITY_NAME + COLUMN_TEXT_TYPE + COLUMN_UNIQUE + NOT_NULL + COMMA +
                 THE_CITY_COUNTRY + COLUMN_TEXT_TYPE + COMMA +
+                THE_CITY_COUNTRY_CODE + COLUMN_TEXT_TYPE + COMMA +
                 THE_CITY_LATITUDE + COLUMN_REAL_TYPE + COLUMN_UNIQUE + COMMA +
                 THE_CITY_LONGITUDE + COLUMN_REAL_TYPE + COLUMN_UNIQUE +
                 ");"

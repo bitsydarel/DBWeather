@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -67,9 +68,11 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     private GeoName selectedLocation;
     private Drawable floatingButtonIcon;
     private String gpsLocationName;
+    private ComponentName componentName;
     private int floatingButtonCount = 1;
     private final Handler handler = new Handler();
     private final ColorManager colorManager = ColorManager.getInstance();
+    private static final String COMPONENT_NAME_KEY = "COMPONENT_NAME_KEY";
     private final ViewGroup.LayoutParams floatingButtonLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -87,23 +90,31 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
         presenter = new WeatherPresenter(this, mAppDataProvider);
 
         final Bundle arguments = getArguments();
-        if (arguments != null) {
+        if (savedInstanceState != null) {
+            final WeatherData data = savedInstanceState.getParcelable(WEATHER_INFO_KEY);
+            weatherData = data != null ? data : weatherData;
+            componentName = savedInstanceState.getParcelable(COMPONENT_NAME_KEY);
+
+        } else if (arguments != null) {
             final WeatherData data = arguments.getParcelable(WEATHER_INFO_KEY);
             weatherData = data != null ? data : weatherData;
             if (presenter.isCurrentWeatherFromGps() || gpsLocationName == null) {
                 gpsLocationName = weatherData.getWeatherInfoList().get(0).locationName.get();
             }
-
-        } else if (savedInstanceState != null) {
-            final WeatherData data = savedInstanceState.getParcelable(WEATHER_INFO_KEY);
-            weatherData = data != null ? data : weatherData;
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        componentName = getActivity().getComponentName();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(WEATHER_INFO_KEY, weatherData);
+        outState.putParcelable(COMPONENT_NAME_KEY, componentName);
     }
 
     @Nullable
@@ -132,8 +143,8 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
         layoutBinding.viewPager.setPageTransformer(false, new ForegroundToBackgroundTransformer());
         layoutBinding.civLeftButton.setOnClickListener(v -> goToPreviousPage());
         layoutBinding.civRightButton.setOnClickListener(v -> goToNextPage());
-        layoutBinding.civLeftButton.setRippleColor(getResources().getColor(R.color.colorAccent));
-        layoutBinding.civRightButton.setRippleColor(getResources().getColor(R.color.colorAccent));
+        layoutBinding.civLeftButton.setRippleColor(resources.getColor(R.color.colorAccent));
+        layoutBinding.civRightButton.setRippleColor(resources.getColor(R.color.colorAccent));
         layoutBinding.srlContainer.setOnRefreshListener(() -> handler.post(() -> {
             if (presenter.isCurrentWeatherFromGps()) { presenter.getWeather(); }
             else {
@@ -164,7 +175,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     @Override
     public void setupLocationLookupFeature(@NonNull final Context context) {
         final SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
-        layoutBinding.searchLocationView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        layoutBinding.searchLocationView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
         layoutBinding.searchLocationView.setIconifiedByDefault(false);
         layoutBinding.searchLocationView.setSubmitButtonEnabled(false);
         layoutBinding.searchLocationView.setOnSuggestionListener(this);
@@ -217,7 +228,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     }
 
     @Override
-    public Context getAppContext() { return getActivity().getApplicationContext(); }
+    public Context getAppContext() { return super.getAppContext(); }
 
     @Override
     public PublishSubject<String> getLocationUpdateEvent() { return locationUpdateEvent; }
@@ -254,9 +265,9 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     @Override
     public void loadUserCities(@NonNull final List<GeoName> userCities) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            floatingButtonIcon = VectorDrawableCompat.create(getResources(), R.drawable.city_location_icon, getActivity().getTheme());
+            floatingButtonIcon = VectorDrawableCompat.create(resources, R.drawable.city_location_icon, getActivity() != null ? getActivity().getTheme() : null);
         } else {
-            floatingButtonIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.city_location_icon, getActivity().getTheme());
+            floatingButtonIcon = ResourcesCompat.getDrawable(resources, R.drawable.city_location_icon, getActivity() != null ? getActivity().getTheme() : null);
         }
 
         final int locationSize = userCities.size() > 6 ? 6 : userCities.size();
@@ -267,7 +278,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     }
 
     private void addFloatingButtonToMenu(GeoName location) {
-        final FloatingActionButton button = new FloatingActionButton(getContext());
+        final FloatingActionButton button = new FloatingActionButton(getAppContext());
         button.setLabelText(String.format(Locale.getDefault(), "%s, %s", location.getName(), location.getCountryName()));
         button.setImageDrawable(floatingButtonIcon);
         button.setColorNormal(Color.WHITE);
@@ -362,13 +373,13 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
 
     private void setupFloatingMenu() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            layoutBinding.currentLocationMenuItem.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.current_location_icon, getActivity().getTheme()));
-            layoutBinding.floatingLocationsMenu.getMenuIconView().setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.add_location_icon, getActivity().getTheme()));
+            layoutBinding.currentLocationMenuItem.setImageDrawable(VectorDrawableCompat.create(resources, R.drawable.current_location_icon, getActivity() != null ? getActivity().getTheme() : null));
+            layoutBinding.floatingLocationsMenu.getMenuIconView().setImageDrawable(VectorDrawableCompat.create(resources, R.drawable.add_location_icon, getActivity() != null ? getActivity().getTheme() : null));
         } else {
-            layoutBinding.currentLocationMenuItem.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                    R.drawable.current_location_icon, getActivity().getTheme()));
+            layoutBinding.currentLocationMenuItem.setImageDrawable(ResourcesCompat.getDrawable(resources,
+                    R.drawable.current_location_icon, getActivity() != null ? getActivity().getTheme() : null));
             layoutBinding.floatingLocationsMenu.getMenuIconView()
-                    .setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.add_location_icon, getActivity().getTheme()));
+                    .setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.add_location_icon, getActivity() != null ? getActivity().getTheme() : null));
         }
 
         layoutBinding.currentLocationMenuItem.setOnClickListener(v -> handler.post(() -> {

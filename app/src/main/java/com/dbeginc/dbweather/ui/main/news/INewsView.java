@@ -15,11 +15,12 @@ import javax.annotation.Nonnull;
  */
 
 public interface INewsView {
-    void showNews(@NonNull final List<Article> articles);
-
-    void showDetails(@Nonnull final String url);
 
     void showError(final Throwable throwable);
+
+    void handleRequestUpdate(@NonNull final String status);
+
+    void refreshRequest();
 
     Context getContext();
 }

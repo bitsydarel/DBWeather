@@ -73,6 +73,7 @@ public class IntroductionActivity extends BaseActivity implements IntroductionVi
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { startService(new Intent(getApplicationContext(), LocationTracker.class)); }
 
         presenter.getNews();
+        presenter.initiateLiveSourcesTable();
     }
 
     private void receiveBroadcast(@NonNull final String action) {

@@ -23,8 +23,6 @@ public class ConstantHolder {
     public static final String WEATHER_INFO_KEY = "weather_info_key";
     public static final String LOCATION_UPDATE = "dbweather_location_update";
 
-    public static final String RECEIVED_NEWS_FEED = "RECEIVED_NEWS_FEED";
-    public static final String RECEIVED_WEATHER = "RECEIVED_WEATHER";
     public static final String PERMISSION_ID = "PERMISSION_ID";
     public static final String NEWS_PERMISSION_GRANTED = "NEWS_PERMISSION_GRANTED";
     public static final String NEWS_PERMISSION_DECLINED = "NEWS_PERMISSION_DECLINED";
@@ -33,10 +31,8 @@ public class ConstantHolder {
     public static final String WRITE_PERMISSION_GRANTED = "WRITE_PERMISSION_GRANTED";
     public static final String WRITE_PERMISSION_DECLINED = "WRITE_PERMISSION_DECLINED";
     public static final String INDEX = "INDEX";
-    public static final String HOURLY_DATA_KEY = "hourly_data_key";
     public static final int WEATHER_ALERT_ID = 7125205;
     public static final String IS_CHECKED = "IS_CHECKED";
-    public static final String NEWS_FEED = "NEWS_FEED";
     public static final String CACHE_NAME = "dbweather_cache_dir";
     public static final String GlIDE_CACHE_NAME = "dbweather_glide_cache";
     public static final int NEWS_SYNC_JOB_ID = 5232017;
@@ -47,6 +43,10 @@ public class ConstantHolder {
     public static final String CUSTOM_TAB_PACKAGE_NAME = "CUSTOM_TAB_PACKAGE_NAME";
     public static final String CUSTOM_TAB_PACKAGE_NOT_FOUND = "CUSTOM_TAB_PACKAGE_NOT_FOUND";
     public static final String SHOULD_WEATHER_BE_SAVED = "SHOULD_WEATHER_BE_SAVED";
+    public static final String YOUTUBE_URL = "YOUTUBE_URL";
+    public static final String LIVE_UPDATE = "LIVE_UPDATE";
+    public static final String LIVE_REMOVED = "LIVE_REMOVED";
+    public static final String LOCATION_KEY = "location_key";
 
     private ConstantHolder() {
         //To disable default constructor
