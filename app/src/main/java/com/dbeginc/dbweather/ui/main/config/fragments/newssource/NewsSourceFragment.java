@@ -17,7 +17,6 @@ import com.dbeginc.dbweather.models.datatypes.news.Source;
 import com.dbeginc.dbweather.models.datatypes.news.Sources;
 import com.dbeginc.dbweather.ui.BaseFragment;
 import com.dbeginc.dbweather.ui.main.config.adapters.NewsSourceAdapter;
-import com.dbeginc.dbweather.ui.main.config.fragments.newssource.NewsSourcePresenter;
 
 import io.reactivex.subjects.PublishSubject;
 
@@ -52,8 +51,10 @@ public class NewsSourceFragment extends BaseFragment implements NewsSourceView {
         super.onViewCreated(view, savedInstanceState);
         presenter.subscribeToTouchEvent();
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar.configToolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         binding.toolbar.configToolbar.setNavigationOnClickListener(v -> configurationBackEvent.onNext(false));
     }
 

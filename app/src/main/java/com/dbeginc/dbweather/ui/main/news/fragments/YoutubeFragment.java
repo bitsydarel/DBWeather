@@ -33,7 +33,7 @@ public class YoutubeFragment extends YouTubePlayerSupportFragment implements You
     }
 
     @Override
-    public void onCreate(Bundle bundle) {
+    public void onCreate(final Bundle bundle) {
         super.onCreate(bundle);
         livePresenter = new YoutubeLivePresenter(this);
         final Bundle arguments = getArguments();
@@ -48,17 +48,17 @@ public class YoutubeFragment extends YouTubePlayerSupportFragment implements You
     }
 
     @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
+    public void onInitializationSuccess(final YouTubePlayer.Provider provider, final YouTubePlayer youTubePlayer, final boolean wasRestored) {
         if (!wasRestored) {
             this.youTubePlayer = youTubePlayer;
-            youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
-            youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
-            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-            youTubePlayer.cueVideo(defaultUrl);
-            youTubePlayer.setShowFullscreenButton(true);
-            youTubePlayer.setOnFullscreenListener(isFullScreen -> {
+            this.youTubePlayer.cueVideo(defaultUrl);
+            this.youTubePlayer.setShowFullscreenButton(true);
+            this.youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            this.youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+            this.youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+            this.youTubePlayer.setOnFullscreenListener(isFullScreen -> {
                 if (isFullScreen) {
-                    youTubePlayer.setFullscreen(false);
+                    this.youTubePlayer.setFullscreen(false);
                     startActivity(
                             YouTubeStandalonePlayer.createVideoIntent(getActivity(), BuildConfig.YOUTUBE_API_KEY, defaultUrl, 0, true, false)
                     );
@@ -68,7 +68,7 @@ public class YoutubeFragment extends YouTubePlayerSupportFragment implements You
     }
 
     @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult errorReason) {
+    public void onInitializationFailure(final YouTubePlayer.Provider provider, final YouTubeInitializationResult errorReason) {
         if (errorReason.isUserRecoverableError()) {
             errorReason.getErrorDialog(getActivity(), RECOVERY_DIALOG_REQUEST).show();
         } else {
@@ -78,7 +78,7 @@ public class YoutubeFragment extends YouTubePlayerSupportFragment implements You
     }
 
     @Override
-    public void onSaveInstanceState(Bundle bundle) {
+    public void onSaveInstanceState(final Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putString(YOUTUBE_URL, defaultUrl);
     }

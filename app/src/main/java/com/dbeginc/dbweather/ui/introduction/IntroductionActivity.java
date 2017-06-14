@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.Window;
 
 import com.dbeginc.dbweather.R;
 import com.dbeginc.dbweather.databinding.ActivityIntroductionBinding;
@@ -74,6 +75,55 @@ public class IntroductionActivity extends BaseActivity implements IntroductionVi
 
         presenter.getNews();
         presenter.initiateLiveSourcesTable();
+    }
+
+    /**
+     * Called when the current {@link Window} of the activity gains or loses
+     * focus.  This is the best indicator of whether this activity is visible
+     * to the user.  The default implementation clears the key tracking
+     * state, so should always be called.
+     * <p>
+     * <p>Note that this provides information about global focus state, which
+     * is managed independently of activity lifecycles.  As such, while focus
+     * changes will generally have some relation to lifecycle changes (an
+     * activity that is stopped will not generally get window focus), you
+     * should not rely on any particular order between the callbacks here and
+     * those in the other lifecycle methods such as {@link #onResume}.
+     * <p>
+     * <p>As a general rule, however, a resumed activity will have window
+     * focus...  unless it has displayed other dialogs or popups that take
+     * input focus, in which case the activity itself will not have focus
+     * when the other windows have it.  Likewise, the system may display
+     * system-level windows (such as the status bar notification panel or
+     * a system alert) which will temporarily take window input focus without
+     * pausing the foreground activity.
+     *
+     * @param hasFocus Whether the window of this activity has focus.
+     * @see #hasWindowFocus()
+     * @see #onResume
+     * @see View#onWindowFocusChanged(boolean)
+     */
+    @Override
+    public void onWindowFocusChanged(final boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            } else {
+                getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            }
+        }
     }
 
     private void receiveBroadcast(@NonNull final String action) {
