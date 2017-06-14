@@ -37,7 +37,6 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:colorBackground">@color/colorPrimaryDark</item>
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:minHeight">@dimen/action_bar_default_height_material</item>
     </style>
 
     <style name="Theme.Switch" parent="Theme.AppCompat.Light">

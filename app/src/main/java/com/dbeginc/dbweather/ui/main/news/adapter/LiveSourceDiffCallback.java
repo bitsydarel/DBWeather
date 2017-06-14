@@ -9,6 +9,8 @@ import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 
 import java.util.List;
 
+import static com.dbeginc.dbweather.ui.main.news.adapter.ArticleDiffCallback.OLD_INDEX;
+
 /**
  * Created by darel on 10.06.17.
  * Live Source
@@ -16,11 +18,10 @@ import java.util.List;
 
 public class LiveSourceDiffCallback extends DiffUtil.Callback {
 
-    static final String OLD_INDEX = "OLD_INDEX";
     private final List<LiveNews> oldListOfLiveSource;
     private final List<LiveNews> newListOfLiveSource;
 
-    public LiveSourceDiffCallback(@NonNull final List<LiveNews> oldListOfLiveSource, final List<LiveNews> newListOfLiveSource) {
+    LiveSourceDiffCallback(@NonNull final List<LiveNews> oldListOfLiveSource, final List<LiveNews> newListOfLiveSource) {
         this.oldListOfLiveSource = oldListOfLiveSource;
         this.newListOfLiveSource = newListOfLiveSource;
     }

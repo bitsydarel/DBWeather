@@ -10,10 +10,10 @@ import com.github.moduth.blockcanary.BlockCanary;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.FirebaseDatabase;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
-
-import javax.annotation.Nonnull;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -26,6 +26,7 @@ public class DBWeatherApplication extends MultiDexApplication  {
 
     private static DBWeatherApplicationComponent mComponent;
     private boolean isFirebaseAvailable;
+    private FirebaseApp firebaseApp;
 
     @Override
     public void onCreate() {
@@ -39,6 +40,7 @@ public class DBWeatherApplication extends MultiDexApplication  {
         LeakCanary.install(this);
         BlockCanary.install(this, new AppBlockCanaryContext()).start();
         AndroidThreeTen.init(this);
+        firebaseApp = FirebaseApp.initializeApp(this);
         MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826");
 
         mComponent = DaggerDBWeatherApplicationComponent.builder()
@@ -57,4 +59,6 @@ public class DBWeatherApplication extends MultiDexApplication  {
     }
 
     public boolean isFirebaseAvailable() { return isFirebaseAvailable; }
+
+    public FirebaseApp getFirebaseApp() { return firebaseApp; }
 }

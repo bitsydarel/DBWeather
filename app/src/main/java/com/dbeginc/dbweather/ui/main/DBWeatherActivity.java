@@ -1,5 +1,6 @@
 package com.dbeginc.dbweather.ui.main;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -92,15 +93,24 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+            voiceQuery.onNext(query);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (presenter.isFirstRun()) {
             presenter.setFirstRun(false);
-            if (isNetworkAvailable()) { presenter.getNews(); }
         }
 
+        if (isNetworkAvailable()) { presenter.getNews(); }
+
         if (((DBWeatherApplication) getApplication()).isFirebaseAvailable()) {
-            FirebaseDatabase.getInstance().getReference(LIVE_SOURCE).addChildEventListener(new ChildEventListener() {
+            FirebaseDatabase.getInstance(((DBWeatherApplication) getApplication()).getFirebaseApp()).getReference(LIVE_SOURCE).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, String s) {
                     presenter.addNewLiveSource(dataSnapshot);

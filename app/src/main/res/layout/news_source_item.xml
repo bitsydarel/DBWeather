@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="Source"
+            type="com.dbeginc.dbweather.models.datatypes.news.Source"/>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/news_config_view"
+        android:layout_width="match_parent"
+        android:layout_height="216dp"
+        android:layout_marginBottom="16dp"
+        tools:layout_height="216dp"
+        android:background="@android:drawable/dialog_holo_light_frame">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/logo_bottom_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2"/>
+
+        <ImageView
+            android:id="@+id/sourceLogo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            tools:background="@color/newsTabColor"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/logo_bottom_limit"/>
+
+        <TextView
+            android:id="@+id/sourceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@{Source.name}"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            tools:text="Four four two"
+            app:layout_constraintTop_toBottomOf="@id/sourceLogo"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/sourceCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@{Source.category}"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="normal"
+            tools:text="Sport"
+            app:layout_constraintTop_toBottomOf="@id/sourceName"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/sourceDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_marginTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:text="@{Source.description}"
+            tools:text="The latest UK and international business, finance, economic and political news, comment and analysis from the Financial Times on FT.com.
+The latest UK and international business, finance, economic and political news, comment and analysis from the Financial Times on FT"
+            app:layout_constraintTop_toBottomOf="@id/sourceCategory"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/sourceLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@{Source.language}"
+            android:textColor="@android:color/holo_blue_light"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            tools:text="UA"
+            app:layout_constraintTop_toBottomOf="@id/sourceLogo"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/sourceSubscribed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:tint="@{Source.isSubscribed ? @android:color/holo_red_light : @android:color/darker_gray}"
+            tools:text="Follow"
+            app:srcCompat="@drawable/follow_icon"
+            app:layout_constraintTop_toBottomOf="@id/sourceDescription"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/newsAmountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/news_amount"
+            android:labelFor="@+id/newsAmount"
+            app:layout_constraintTop_toBottomOf="@id/sourceDescription"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <EditText
+            android:id="@+id/newsAmount"
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            android:inputType="number"
+            android:background="@android:color/white"
+            tools:text="4"
+            app:layout_constraintTop_toTopOf="@id/newsAmountLabel"
+            app:layout_constraintLeft_toRightOf="@id/newsAmountLabel"
+            app:layout_constraintBottom_toBottomOf="@id/newsAmountLabel"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

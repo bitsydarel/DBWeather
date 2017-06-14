@@ -2,6 +2,7 @@ package com.dbeginc.dbweather.ui.main;
 
 import android.support.annotation.NonNull;
 
+import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 

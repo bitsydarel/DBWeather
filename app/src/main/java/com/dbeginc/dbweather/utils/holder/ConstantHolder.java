@@ -44,9 +44,9 @@ public class ConstantHolder {
     public static final String CUSTOM_TAB_PACKAGE_NOT_FOUND = "CUSTOM_TAB_PACKAGE_NOT_FOUND";
     public static final String SHOULD_WEATHER_BE_SAVED = "SHOULD_WEATHER_BE_SAVED";
     public static final String YOUTUBE_URL = "YOUTUBE_URL";
-    public static final String LIVE_UPDATE = "LIVE_UPDATE";
-    public static final String LIVE_REMOVED = "LIVE_REMOVED";
     public static final String LOCATION_KEY = "location_key";
+    public static final String CONTENT_URL = "content://com.dbeginc.dbweather.models.provider.geoname.LocationSuggestionProvider/%s/%s?limit=50";
+    public static final String VOICE_QUERY = "voice_query";
 
     private ConstantHolder() {
         //To disable default constructor

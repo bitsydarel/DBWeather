@@ -96,7 +96,9 @@ class DBWeatherPresenter {
                             liveNews.liveSource.set(liveSource.first);
                             liveNews.liveUrl.set(liveSource.second);
                             return dataProvider.refreshLiveData(liveNews, isIn);
-                        }).subscribe(() -> Crashlytics.log(liveSource.first + " Updated successfully"), Crashlytics::logException)
+                        }).subscribeOn(schedulersProvider.getDatabaseWorkScheduler())
+                        .observeOn(schedulersProvider.getUIScheduler())
+                        .subscribe(() -> Crashlytics.log(liveSource.first + " Updated successfully"), Crashlytics::logException)
         );
     }
 

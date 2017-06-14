@@ -32,11 +32,20 @@ class WeatherPresenter {
     WeatherPresenter(@NonNull final IWeatherView weatherView, @NonNull final AppDataProvider dataProvider) {
         this.mainView = weatherView;
         this.dataProvider = dataProvider;
+    }
+
+    void subscribeToEvents() {
         subscriptions.add(
                 mainView.getLocationUpdateEvent()
                         .subscribeOn(schedulersProvider.getWeatherScheduler())
                         .observeOn(schedulersProvider.getUIScheduler())
                         .subscribe(mainView::onLocationUpdate, Crashlytics::logException)
+        );
+        subscriptions.add(
+                mainView.getVoiceSearchEvent()
+                        .subscribeOn(schedulersProvider.getWeatherScheduler())
+                        .observeOn(schedulersProvider.getUIScheduler())
+                        .subscribe(mainView::onVoiceQueryReceived, Crashlytics::logException)
         );
     }
 

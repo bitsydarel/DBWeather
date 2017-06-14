@@ -12,6 +12,7 @@ import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.api.adapters.NewsRestAdapter;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.news.NewsResponse;
+import com.dbeginc.dbweather.models.datatypes.news.Sources;
 import com.dbeginc.dbweather.models.provider.translators.GoogleTranslateProvider;
 import com.dbeginc.dbweather.models.provider.translators.MyMemoryTranslateProvider;
 import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
@@ -64,6 +65,11 @@ public class NetworkNewsProvider implements INewsProvider {
     @Inject
     public NetworkNewsProvider() {
         mDatabaseOperation = DatabaseOperation.getInstance(mApplicationContext);
+    }
+
+    @Override
+    public Single<Sources> getSourcesList() {
+        return mNewsRestAdapter.getNewsSources();
     }
 
     @Override

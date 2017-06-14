@@ -57,7 +57,7 @@ public class LocationSuggestionProvider extends ContentProvider {
                 BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2
-        }, mListOfLocation.size());
+        }, 3);
 
         if (userQuery != null && !userQuery.isEmpty()) {
             mCompositeDisposable.add(

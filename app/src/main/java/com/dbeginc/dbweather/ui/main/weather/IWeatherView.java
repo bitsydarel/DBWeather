@@ -29,19 +29,26 @@ interface IWeatherView {
 
     PublishSubject<String> getLocationUpdateEvent();
 
+    PublishSubject<String> getVoiceSearchEvent();
+
     /**
      * This method handle location update notification
      * @param action name of the broadcast request action
      */
     void onLocationUpdate(@NonNull final String action);
 
+
+    /**
+     * This method handle voice query event
+     * @param query user voice query
+     */
+    void onVoiceQueryReceived(@NonNull final String query);
+
     boolean isNetworkAvailable();
 
     void showNetworkNotAvailableMessage();
 
     void showWeatherError();
-
-    void requestWeatherUpdate();
 
     void loadUserCities(@NonNull final List<GeoName> userCities);
 

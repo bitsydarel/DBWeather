@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data/>
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/news_source_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/config_toolbar"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <ProgressBar
+            android:id="@+id/loadingProgress"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:indeterminateOnly="true"
+            tools:background="@android:color/black"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_anchorGravity="top|center"
+            app:layout_anchor="@+id/news_sources_recyclerView" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/news_sources_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                tools:visibility="visible"
+                tools:listItem="@layout/news_source_items"
+                tools:background="@color/newsTabColor"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

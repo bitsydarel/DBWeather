@@ -28,6 +28,7 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.dbeginc.dbweather.R;
@@ -132,6 +133,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
         setupViewPager(weatherData);
         setupHourlyRecyclerView(weatherData.getHourlyWeatherList());
 
+
         final int backgroundColor = colorManager.getBackgroundColor(weatherData.getWeatherInfoList().get(0).icon.get());
         layoutBinding.nsvContainer.setBackgroundResource(backgroundColor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -156,6 +158,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
 
         setupFloatingMenu();
         handler.post(presenter::loadUserCities);
+        presenter.subscribeToEvents();
     }
 
     @Override
@@ -167,8 +170,8 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroyView() {
+        super.onDestroyView();
         presenter.clearState();
     }
 
@@ -234,11 +237,25 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     public PublishSubject<String> getLocationUpdateEvent() { return locationUpdateEvent; }
 
     @Override
+    public PublishSubject<String> getVoiceSearchEvent() { return voiceQuery; }
+
+    @Override
     public void onLocationUpdate(@NonNull String action) {
         if (action.equalsIgnoreCase(LOCATION_UPDATE) && !presenter.isCurrentWeatherFromGps()) {
             if (isNetworkAvailable()) { presenter.getWeather(); }
             else { showNetworkNotAvailableMessage(); }
         }
+    }
+
+    /**
+     * This method handle voice query event
+     *
+     * @param query user voice query
+     */
+    @Override
+    public void onVoiceQueryReceived(@NonNull final String query) {
+        layoutBinding.searchLocationView.setQuery(query, false);
+        layoutBinding.searchLocationView.requestFocusFromTouch();
     }
 
     @Override
@@ -258,9 +275,6 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
                 .setActionTextColor(Color.RED)
                 .show();
     }
-
-    @Override
-    public void requestWeatherUpdate() { presenter.retryWeatherRequest(); }
 
     @Override
     public void loadUserCities(@NonNull final List<GeoName> userCities) {

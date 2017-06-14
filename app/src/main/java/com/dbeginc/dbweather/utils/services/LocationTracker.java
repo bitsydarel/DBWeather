@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.datatypes.weather.Flags;
@@ -21,7 +20,6 @@ import com.dbeginc.dbweather.models.datatypes.weather.Hourly;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
-import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;

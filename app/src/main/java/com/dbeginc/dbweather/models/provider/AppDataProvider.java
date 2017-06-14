@@ -9,7 +9,9 @@ import com.dbeginc.dbweather.DBWeatherApplication;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
+import com.dbeginc.dbweather.models.datatypes.news.Sources;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
+import com.dbeginc.dbweather.models.provider.geoname.GeoNameLocationInfoProvider;
 import com.dbeginc.dbweather.models.provider.news.DatabaseNewsProvider;
 import com.dbeginc.dbweather.models.provider.news.NetworkNewsProvider;
 import com.dbeginc.dbweather.models.provider.preferences.IPreferencesProvider;
@@ -57,6 +59,9 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     SharedPreferences mSharedPreferences;
     @Inject
     DatabaseUserCitiesRepository mUserCitiesRepository;
+    @Inject
+    GeoNameLocationInfoProvider mGeoNameLocationInfoProvider;
+
     private DatabaseOperation mDatabaseOperation;
 
     @Inject
@@ -256,5 +261,20 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     @Override
     public void removeLocationFromDatabase(@NonNull final GeoName location) {
         mDatabaseOperation.removeLocationFromDatabase(location);
+    }
+
+    @Override
+    public Single<Boolean> isNewsSourceInDatabase(@NonNull final String newsSource) {
+        return mDatabaseOperation.isNewsSourceInDatabase(newsSource);
+    }
+
+    @Override
+    public Completable addNewsSourceToDatabase(@NonNull String sourceName) {
+        return mDatabaseOperation.addNewsSourceToDatabase(sourceName);
+    }
+
+    @Override
+    public Single<Sources> getNewsFeedSources() {
+        return mNetworkNewsProvider.getSourcesList();
     }
 }

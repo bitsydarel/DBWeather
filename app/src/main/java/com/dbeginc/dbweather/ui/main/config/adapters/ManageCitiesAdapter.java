@@ -58,6 +58,7 @@ public class ManageCitiesAdapter extends RecyclerView.Adapter<ManageCitiesAdapte
 
         void bindLocation(@NonNull final GeoName location) {
             binding.setLocation(location);
+            binding.executePendingBindings();
         }
     }
 }

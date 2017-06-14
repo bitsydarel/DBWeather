@@ -2,6 +2,7 @@ package com.dbeginc.dbweather.ui.main.config;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
@@ -16,8 +17,9 @@ import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.ui.BaseFragment;
 import com.dbeginc.dbweather.ui.main.config.adapters.ConfigurationItemAdapter;
 import com.dbeginc.dbweather.ui.main.config.fragments.HelpFragment;
-import com.dbeginc.dbweather.ui.main.config.fragments.ManageCitiesFragment;
-import com.dbeginc.dbweather.ui.main.config.fragments.NewsSourceFragment;
+import com.dbeginc.dbweather.ui.main.config.fragments.managecities.ManageCitiesFragment;
+import com.dbeginc.dbweather.ui.main.config.fragments.newssource.NewsSourceFragment;
+import com.google.android.gms.ads.AdRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,11 +45,13 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
     private ConfigurationItemAdapter adapter;
     private final List<GeoName> locationList = new ArrayList<>();
     private final PublishSubject<Pair<Integer, Boolean>> configClickEvent = PublishSubject.create();
+    private final Handler handler = new Handler();
+    private ConfigPresenter presenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ConfigPresenter presenter = new ConfigPresenter(this, mAppDataProvider, configClickEvent);
+        presenter = new ConfigPresenter(this, mAppDataProvider);
         presenter.loadUserCities();
         adapter = setupConfigurationItem();
     }
@@ -99,9 +103,30 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        presenter.subscribeToClickEvent();
+        handler.post(this::setupAds);
+        handler.post(this::setupListOfConfig);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        presenter.clearState();
+    }
+
+    private void setupListOfConfig() {
         binding.configurationItems.setAdapter(adapter);
         binding.configurationItems.setLayoutManager(new LinearLayoutManager(getAppContext(), LinearLayoutManager.VERTICAL, false));
         binding.configurationItems.setHasFixedSize(true);
+    }
+
+    private void setupAds() {
+        final AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
+                .addTestDevice("C20BB1C5369BFDFD4992ED89CD62F271")
+                .build();
+        binding.adVConfig.loadAd(adRequest);
     }
 
     @Override
@@ -121,9 +146,7 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, manageCitiesFragment)
                         .commit();
-                binding.settingLabel.setVisibility(View.GONE);
-                binding.configurationItems.setVisibility(View.GONE);
-                binding.fragmentContainer.setVisibility(View.VISIBLE);
+                onClickEvent(true);
                 break;
 
             case WEATHER_NOTIFICATION:
@@ -134,7 +157,7 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, new NewsSourceFragment())
                         .commit();
-                binding.fragmentContainer.setVisibility(View.VISIBLE);
+                onClickEvent(true);
                 break;
 
             case TRANSLATE_NEWS:
@@ -145,11 +168,26 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, new HelpFragment())
                         .commit();
-                binding.fragmentContainer.setVisibility(View.VISIBLE);
+                onClickEvent(true);
                 break;
 
             default:
                 break;
         }
+    }
+
+    @Override
+    public PublishSubject<Pair<Integer, Boolean>> getConfigurationItemClickEvent() {
+        return configClickEvent;
+    }
+
+    @Override
+    public PublishSubject<Boolean> getConfigurationBackEvent() {
+        return configurationBackEvent;
+    }
+
+    @Override
+    public void onClickEvent(boolean isChildVisible) {
+        binding.setIsChildVisible(isChildVisible);
     }
 }

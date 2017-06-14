@@ -2,7 +2,9 @@ package com.dbeginc.dbweather.models.provider;
 
 import android.support.annotation.NonNull;
 
+import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
+import com.dbeginc.dbweather.models.datatypes.news.Sources;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
 
 import java.util.List;
@@ -27,4 +29,6 @@ public interface IDataProvider {
     Single<Weather> getWeatherForCityFromApi(@NonNull final String cityName, final double latitude, final double longitude);
 
     Single<Weather> getWeatherForCityFromDatabase(@NonNull final String cityName, final double latitude, final double longitude);
+
+    Single<Sources> getNewsFeedSources();
 }

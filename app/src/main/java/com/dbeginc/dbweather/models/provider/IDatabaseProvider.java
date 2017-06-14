@@ -40,4 +40,8 @@ interface IDatabaseProvider {
     Completable removeLiveSource(@NonNull final LiveNews liveNews);
 
     void removeLocationFromDatabase(final GeoName location);
+
+    Single<Boolean> isNewsSourceInDatabase(@NonNull final String newsSource);
+
+    Completable addNewsSourceToDatabase(@NonNull final String sourceName);
 }

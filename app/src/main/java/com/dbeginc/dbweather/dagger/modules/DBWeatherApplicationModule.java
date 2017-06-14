@@ -13,6 +13,7 @@ import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.models.provider.firebase.FirebaseAnalyticProvider;
 import com.dbeginc.dbweather.models.provider.firebase.IAnalyticProvider;
+import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.database.DataSnapshot;
@@ -20,14 +21,17 @@ import com.google.firebase.database.DataSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.PublishSubject;
 
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PREFS_NAME;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.VOICE_QUERY;
 
 /**
  * Created by Darel Bitsy on 24/04/17.
@@ -65,7 +69,13 @@ public class DBWeatherApplicationModule {
 
     @Provides
     @Singleton
+    @Named(LOCATION_UPDATE)
     PublishSubject<String> providesLocationUpdateEvent() { return PublishSubject.create(); }
+
+    @Provides
+    @Singleton
+    @Named(VOICE_QUERY)
+    PublishSubject<String> providesVoiceQuery() { return PublishSubject.create(); }
 
     @Provides
     @Singleton

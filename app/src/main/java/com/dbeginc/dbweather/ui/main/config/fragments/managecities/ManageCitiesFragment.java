@@ -1,4 +1,4 @@
-package com.dbeginc.dbweather.ui.main.config.fragments;
+package com.dbeginc.dbweather.ui.main.config.fragments.managecities;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -69,6 +70,11 @@ public class ManageCitiesFragment extends BaseFragment implements ILocationManag
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar.configToolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(view.getContext().getString(R.string.manage_cities));
+        binding.toolbar.configToolbar.setNavigationOnClickListener(v -> configurationBackEvent.onNext(false));
         presenter.subscribeToRemoveLocationEvent();
         handler.post(this::setupLayout);
     }

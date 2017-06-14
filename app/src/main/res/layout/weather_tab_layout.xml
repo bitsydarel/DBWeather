@@ -37,8 +37,7 @@
                     <android.support.v7.widget.SearchView
                         android:id="@+id/searchLocationView"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="64dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:background="@android:drawable/dialog_holo_light_frame"
@@ -48,7 +47,7 @@
 
                     <com.google.android.gms.ads.AdView
                         android:id="@+id/ad_v_main"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         ads:adSize="SMART_BANNER"
@@ -111,6 +110,8 @@
             android:layout_marginStart="32dp"
             android:tint="#2196F3"
             android:elevation="8dp"
+            app:useCompatPadding="true"
+            app:fabSize="auto"
             app:backgroundTint="@android:color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@id/gl_left_button_right_limit"
@@ -124,6 +125,8 @@
             android:layout_marginEnd="32dp"
             android:tint="#2196F3"
             android:elevation="8dp"
+            app:useCompatPadding="true"
+            app:fabSize="auto"
             app:backgroundTint="@android:color/white"
             app:layout_constraintLeft_toRightOf="@id/gl_right_button_left_limit"
             app:layout_constraintRight_toRightOf="parent"

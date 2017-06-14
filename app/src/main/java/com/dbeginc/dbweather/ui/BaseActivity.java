@@ -38,17 +38,20 @@ import java.io.OutputStream;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.subjects.PublishSubject;
 
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.CUSTOM_TAB_PACKAGE_NOT_FOUND;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_PERMISSION_DECLINED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_PERMISSION_GRANTED;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PERMISSION_DECLINED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PERMISSION_GRANTED;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.VOICE_QUERY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION_DECLINED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION_GRANTED;
 
@@ -65,7 +68,11 @@ public class BaseActivity extends AppCompatActivity {
     public IAnalyticProvider mAnalyticProvider;
 
     @Inject
+    @Named(LOCATION_UPDATE)
     public PublishSubject<String> locationUpdateEvent;
+    @Inject
+    @Named(VOICE_QUERY)
+    public PublishSubject<String> voiceQuery;
 
     @Inject
     public PublishSubject<WeatherData> weatherDataUpdateEvent;

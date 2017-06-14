@@ -3,6 +3,7 @@ package com.dbeginc.dbweather.models.api.adapters;
 import com.dbeginc.dbweather.BuildConfig;
 import com.dbeginc.dbweather.models.api.services.NewsService;
 import com.dbeginc.dbweather.models.datatypes.news.NewsResponse;
+import com.dbeginc.dbweather.models.datatypes.news.Sources;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,9 +12,11 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Single;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -38,6 +41,7 @@ public class NewsRestAdapter {
         final Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(NEWS_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(newsOkHttpClient)
                 .build();
 
@@ -50,5 +54,9 @@ public class NewsRestAdapter {
             return mNewsApi.getNewsFromApiSync(source, "latest", BuildConfig.NEWS_API_KEY);
         }
         return mNewsApi.getNewsFromApiSync(source, "top", BuildConfig.NEWS_API_KEY);
+    }
+
+    public Single<Sources> getNewsSources() {
+        return mNewsApi.getNewsSources();
     }
 }

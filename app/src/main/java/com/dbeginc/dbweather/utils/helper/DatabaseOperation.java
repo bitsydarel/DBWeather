@@ -743,19 +743,16 @@ public class DatabaseOperation {
     }
 
     public Completable refreshLiveData(@NonNull final LiveNews liveNews, final boolean isInTheDB) {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                final ContentValues dataToInsert = new ContentValues();
-                dataToInsert.put(LIVE_SOURCE_NAME, liveNews.liveSource.get());
-                dataToInsert.put(LIVE_SOURCE_URL, liveNews.liveUrl.get());
-                if (isInTheDB) {
-                    applicationDatabase.getWritableDatabase()
-                            .update(LIVE_SOURCE_TABLE, dataToInsert,
-                                    LIVE_SOURCE_NAME + " = ?", new String[] {liveNews.liveSource.get()});
-                } else {
-                    applicationDatabase.getWritableDatabase().insert(LIVE_SOURCE_TABLE, null, dataToInsert);
-                }
+        return Completable.fromAction(() -> {
+            final ContentValues dataToInsert = new ContentValues();
+            dataToInsert.put(LIVE_SOURCE_NAME, liveNews.liveSource.get());
+            dataToInsert.put(LIVE_SOURCE_URL, liveNews.liveUrl.get());
+            if (isInTheDB) {
+                applicationDatabase.getWritableDatabase()
+                        .update(LIVE_SOURCE_TABLE, dataToInsert,
+                                LIVE_SOURCE_NAME + " = ?", new String[] {liveNews.liveSource.get()});
+            } else {
+                applicationDatabase.getWritableDatabase().insert(LIVE_SOURCE_TABLE, null, dataToInsert);
             }
         });
     }
@@ -1227,6 +1224,36 @@ public class DatabaseOperation {
                 }
 
             } else { return false; }
+        });
+    }
+
+    public Single<Boolean> isNewsSourceInDatabase(@NonNull final String newsSource) {
+        return Single.fromCallable(() -> {
+            final Cursor cursor = applicationDatabase.getReadableDatabase().rawQuery(String.format("%s %s WHERE %s=\"%s\"",
+                    SELECT_EVERYTHING_FROM, NEWS_SOURCES_TABLE, NEWS_SOURCE_NAME, newsSource), null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                if (cursor.isAfterLast() || cursor.getCount() == 0) {
+                    cursor.close();
+                    return false;
+                } else {
+                    cursor.close();
+                    return true;
+                }
+
+            } else { return false; }
+        });
+    }
+
+    public Completable addNewsSourceToDatabase(@NonNull final String sourceName) {
+        return Completable.fromAction(() -> {
+            final SQLiteDatabase writableDatabase = applicationDatabase.getWritableDatabase();
+            final ContentValues dataToInsert = new ContentValues();
+            dataToInsert.put(NEWS_SOURCE_NAME, sourceName);
+            dataToInsert.put(NEWS_SOURCE_COUNT, 2);
+            dataToInsert.put(NEWS_SOURCE_COUNT, 1);
+            writableDatabase.insert(NEWS_SOURCES_TABLE, null, dataToInsert);
+            dataToInsert.clear();
         });
     }
 }

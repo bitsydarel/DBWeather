@@ -57,6 +57,7 @@ public class ConfigurationItemAdapter extends RecyclerView.Adapter<Configuration
         void bindConfigurationItem(@NonNull final ConfigurationItem configurationItem) {
             binding.setConfiguration(configurationItem);
             binding.configurationSwitch.setChecked(configurationItem.isChecked.get());
+            binding.executePendingBindings();
         }
     }
 }

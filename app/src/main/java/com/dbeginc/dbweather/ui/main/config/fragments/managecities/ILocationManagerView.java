@@ -1,4 +1,4 @@
-package com.dbeginc.dbweather.ui.main.config.fragments;
+package com.dbeginc.dbweather.ui.main.config.fragments.managecities;
 
 import android.support.annotation.NonNull;
 
