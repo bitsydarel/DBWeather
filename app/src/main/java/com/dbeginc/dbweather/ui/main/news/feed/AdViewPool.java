@@ -63,6 +63,10 @@ public class AdViewPool {
         return view;
     }
 
+    public boolean isAdViewPoolEmpty() {
+        return adViewList.isEmpty();
+    }
+
     private AdRequest createAdRequest() {
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)

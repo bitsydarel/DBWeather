@@ -60,10 +60,10 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         //Configuring the google api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         mGoogleApiClient.connect();
         mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
@@ -90,21 +90,22 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
             }
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (lastKnownLocation == null) {
-                lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (lastKnownLocation != null) { sendLocationToActivity(lastKnownLocation); }
+        Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (lastKnownLocation == null) {
+            lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation != null) {
+                sendLocationToActivity(lastKnownLocation);
             }
-            else { sendLocationToActivity(lastKnownLocation); }
+        } else {
+            sendLocationToActivity(lastKnownLocation);
+        }
 
-            //If no location available
-            if (lastKnownLocation == null && sharedPreferences.getBoolean(FIRST_RUN, true)) {
-                final Location tempLocation = new Location(LocationManager.NETWORK_PROVIDER);
-                tempLocation.setLatitude(34.0549);
-                tempLocation.setLongitude(-118.2445);
-                sendLocationToActivity(tempLocation);
-            }
+        //If no location available
+        if (lastKnownLocation == null && sharedPreferences.getBoolean(FIRST_RUN, true)) {
+            final Location tempLocation = new Location(LocationManager.NETWORK_PROVIDER);
+            tempLocation.setLatitude(34.0549);
+            tempLocation.setLongitude(-118.2445);
+            sendLocationToActivity(tempLocation);
         }
 
         return START_NOT_STICKY;
@@ -113,38 +114,50 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        if(mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-        if (mLocationManager != null) { mLocationManager.removeUpdates(this); }
-        if (disposable != null) { disposable.dispose(); }
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 
     //Should not be call but was called in API 4.3
     @Override
     public void onTaskRemoved(final Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        if(mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-        if (mLocationManager != null) { mLocationManager.removeUpdates(this); }
-        if (disposable != null) { disposable.dispose(); }
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-        if (mLocationManager != null) { mLocationManager.removeUpdates(this); }
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
     }
 
     @Override
-    public void onConnected(@Nullable final Bundle bundle) { getLocation(); }
+    public void onConnected(@Nullable final Bundle bundle) {
+        getLocation();
+    }
 
     @Override
     public void onConnectionSuspended(final int i) {
@@ -157,7 +170,9 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     }
 
     @Override
-    public void onLocationChanged(final Location location) { sendLocationToActivity(location); }
+    public void onLocationChanged(final Location location) {
+        sendLocationToActivity(location);
+    }
 
     @Override
     public void onStatusChanged(final String provider, final int status, final Bundle extras) {
@@ -195,15 +210,18 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     private void getLocation() {
         final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, createLocationRequest(),  this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, createLocationRequest(), this);
 
-        } else { sendLocationToActivity(location); }
+        } else {
+            sendLocationToActivity(location);
+        }
     }
 
 
     /**
      * Method that create an LocationRequest
      * with specific parameter
+     *
      * @return LocationRequest
      */
     private LocationRequest createLocationRequest() {
@@ -216,6 +234,7 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
     /**
      * Send location details to activity
      * by an broadcast request
+     *
      * @param location represent the user location
      */
     private void sendLocationToActivity(@NonNull final Location location) {
@@ -245,8 +264,11 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
                                     sendBroadcast(coordinateIntent);
                                     sharedPreferences.edit().putBoolean(IS_COORDINATE_INSERTED, true).apply();
                                 }
+
                                 @Override
-                                public void onError(final Throwable throwable) { Crashlytics.logException(throwable); }
+                                public void onError(final Throwable throwable) {
+                                    Crashlytics.logException(throwable);
+                                }
                             }))
                     .subscribeOn(schedulersProvider.getDatabaseWorkScheduler())
                     .observeOn(schedulersProvider.getUIScheduler())
@@ -261,9 +283,14 @@ public class LocationTracker extends Service implements GoogleApiClient.Connecti
                     .unsubscribeOn(schedulersProvider.getDatabaseWorkScheduler())
                     .subscribeWith(new DisposableCompletableObserver() {
                         @Override
-                        public void onComplete() { sendBroadcast(coordinateIntent); }
+                        public void onComplete() {
+                            sendBroadcast(coordinateIntent);
+                        }
+
                         @Override
-                        public void onError(final Throwable throwable) { Crashlytics.logException(throwable); }
+                        public void onError(final Throwable throwable) {
+                            Crashlytics.logException(throwable);
+                        }
                     });
         }
     }

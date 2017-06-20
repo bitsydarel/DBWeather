@@ -63,6 +63,9 @@ public class NewFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case AD_VIEW_TYPE:
                 if (adViewPool == null) {
                     adViewPool = new AdViewPool(inflater, R.layout.news_ad_item, parent);
+                    if (adViewPool.isAdViewPoolEmpty()) {
+                        adViewPool.addBackToPool(inflater.inflate(R.layout.news_ad_item, parent, false));
+                    }
                 }
                 return new AdViewViewHolder(adViewPool.getAdView());
             case NEWS_FEED_ITEM_TYPE:
