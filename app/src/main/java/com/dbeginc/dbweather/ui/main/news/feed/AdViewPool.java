@@ -21,8 +21,8 @@ import java.util.List;
 public class AdViewPool {
     @LayoutRes
     private final int adViewLayout;
-    private final ViewGroup parent;
     private final LayoutInflater inflater;
+    private ViewGroup parent;
     private final List<View> adViewList = new ArrayList<>();
 
     public AdViewPool(@NonNull final LayoutInflater inflater, @LayoutRes final int layout, @Nullable final ViewGroup parent) {
@@ -45,7 +45,7 @@ public class AdViewPool {
     }
 
     private void loadAd(@NonNull final View view) {
-        final NativeExpressAdView nativeAd = (NativeExpressAdView) ((ViewGroup) view).getChildAt(0);
+        final NativeExpressAdView nativeAd = (NativeExpressAdView) view;
         nativeAd.loadAd(createAdRequest());
     }
 
@@ -63,7 +63,7 @@ public class AdViewPool {
         return view;
     }
 
-    public AdRequest createAdRequest() {
+    private AdRequest createAdRequest() {
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")

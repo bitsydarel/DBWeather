@@ -44,7 +44,6 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
 
 public class NewsFeed extends BaseFragment implements INewsFeed {
 
-    private static final int ITEM_PER_AD = 3;
     private NewsFeedPresenter mPresenter;
     private CustomTabsIntent mCustomTabsIntent;
     private NewsFeedTabLayoutBinding mBinding;
@@ -91,7 +90,6 @@ public class NewsFeed extends BaseFragment implements INewsFeed {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.news_feed_tab_layout, container, false);
-        mAdapter.setAdViewPool(new AdViewPool(inflater, R.layout.news_ad_item, null));
         return mBinding.getRoot();
     }
 

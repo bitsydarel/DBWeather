@@ -36,7 +36,7 @@ public class ArticleDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(final int oldItemPosition, final int newItemPosition) {
-        if ((oldItemPosition == 0 || newItemPosition == 0) && (oldItemPosition % 3 != 0 && newItemPosition % 3 != 0)) {
+        if (oldItemPosition == 0 || oldItemPosition % 3 != 0 ) {
             final Article oldArticle = (Article) oldListOfArticle.get(oldItemPosition);
             final Article newArticle = (Article) newListOfArticle.get(newItemPosition);
 
@@ -48,7 +48,7 @@ public class ArticleDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(final int oldItemPosition, final int newItemPosition) {
-        if ((oldItemPosition == 0 || newItemPosition == 0) && (oldItemPosition % 3 != 0 && newItemPosition % 3 != 0)) {
+        if (oldItemPosition == 0  || oldItemPosition % 3 != 0) {
             final Article oldArticle = (Article) oldListOfArticle.get(oldItemPosition);
             final Article newArticle = (Article) newListOfArticle.get(newItemPosition);
 

@@ -15,7 +15,6 @@ import com.dbeginc.dbweather.databinding.NewsListItemBinding;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.dbeginc.dbweather.ui.main.news.feed.AdViewPool;
-import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +55,15 @@ public class NewFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.compositeDisposable = compositeDisposable;
     }
 
-    public void setAdViewPool(@NonNull final AdViewPool adViewPool) {
-        this.adViewPool = adViewPool;
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         switch (viewType) {
             case AD_VIEW_TYPE:
+                if (adViewPool == null) {
+                    adViewPool = new AdViewPool(inflater, R.layout.news_ad_item, parent);
+                }
                 return new AdViewViewHolder(adViewPool.getAdView());
             case NEWS_FEED_ITEM_TYPE:
             default:
@@ -80,14 +78,6 @@ public class NewFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final TimeLineViewHolder viewHolder = (TimeLineViewHolder) holder;
             viewHolder.bindNews((Article) articles.get(position));
         }
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
-        if (holder.getItemViewType() == AD_VIEW_TYPE) {
-            adViewPool.addBackToPool(holder.itemView);
-        }
-        super.onViewDetachedFromWindow(holder);
     }
 
     @Override
