@@ -12,9 +12,9 @@
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+   public *;
+}
 ######################################DBWeather Proguard configuration##############################
 
 -keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
@@ -51,6 +51,8 @@
 
 #Warning to skipp
 -dontwarn sun.misc.**
+-dontwarn com.bea.xml.**
+-dontwarn org.simpleframework.xml.**
 
 #keep R static member for resources
 -keepclassmembers class **.R$* {
@@ -61,6 +63,9 @@
 -keep class * implements android.os.Parcelable {
    public static final android.os.Parcelable$Creator *;
 }
+
+#bottomBar
+-dontwarn com.roughike.bottombar.**
 
 #Keep searchView
 -keep class android.support.v7.widget.SearchView

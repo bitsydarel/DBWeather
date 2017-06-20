@@ -16,8 +16,8 @@ import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.news.LiveNews;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.dbeginc.dbweather.ui.BaseFragment;
-import com.dbeginc.dbweather.ui.main.news.fragments.NewsFeed;
-import com.dbeginc.dbweather.ui.main.news.fragments.NewsLiveFragment;
+import com.dbeginc.dbweather.ui.main.news.feed.NewsFeed;
+import com.dbeginc.dbweather.ui.main.news.live.NewsLiveFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.roughike.bottombar.OnTabSelectListener;
 

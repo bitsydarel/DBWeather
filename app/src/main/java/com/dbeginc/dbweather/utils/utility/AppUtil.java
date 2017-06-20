@@ -28,9 +28,9 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PREFS_NAME;
 public class AppUtil {
 
     public static final OkHttpClient translateOkHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(25, TimeUnit.SECONDS)
-            .writeTimeout(25, TimeUnit.SECONDS)
-            .readTimeout(45, TimeUnit.SECONDS)
+            .connectTimeout(35, TimeUnit.SECONDS)
+            .writeTimeout(35, TimeUnit.SECONDS)
+            .readTimeout(55, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build();
 

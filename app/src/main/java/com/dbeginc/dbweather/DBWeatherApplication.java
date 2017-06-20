@@ -6,14 +6,11 @@ import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.dagger.components.DBWeatherApplicationComponent;
 import com.dbeginc.dbweather.dagger.components.DaggerDBWeatherApplicationComponent;
 import com.dbeginc.dbweather.dagger.modules.DBWeatherApplicationModule;
-import com.github.moduth.blockcanary.BlockCanary;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.FirebaseDatabase;
 import com.jakewharton.threetenabp.AndroidThreeTen;
-import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -32,13 +29,6 @@ public class DBWeatherApplication extends MultiDexApplication  {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
-        BlockCanary.install(this, new AppBlockCanaryContext()).start();
         AndroidThreeTen.init(this);
         firebaseApp = FirebaseApp.initializeApp(this);
         MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826");

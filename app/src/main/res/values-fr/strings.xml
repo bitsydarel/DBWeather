@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title">Oops! Pardon</string>
+    <string name="error_message">Il y avait une erreur. Veuillez réessayer.</string>
+    <string name="today_label">Aujourd\'hui</string>
+    <string name="tomorrow_label">Demain</string>
+    <string name="network_unavailable_message">Le réseau n\'est pas disponible!</string>
+    <string name="no_hourly_weather">Il n\'y a pas de données à afficher\nActivez votre connexion Internet\nOu rafraîchir</string>
+    <string name="default_weather_summary">Obtenir le temps actuel</string>
+    <string name="action_about_us">À propos de nous</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="rain_title">Prendre un parapluie!</string>
+    <string name="clear_night_title">Nuit claire avec un beau ciel!</string>
+    <string name="clear_day_title">Une merveilleuse journée en vue!</string>
+    <string name="snow_title">Il neige!</string>
+    <string name="sleet_title">ATTENTION SOL GLISSANT!</string>
+    <string name="wind_title">Attention aux vents!</string>
+    <string name="fog_title">Faites attention au brouillard!</string>
+    <string name="cloudy_title">Temps nuageux</string>
+    <string name="partly_cloudy_day_title">Nuageux aujourd\'hui</string>
+    <string name="partly_cloudy_night_title">Partiellement nuageux ce soir</string>
+
+    <string name="unknown_location">Lieu inconnu</string>
+    <string name="time_label">À %1$s, c\'était</string>
+    <string name="timeLabelValue">À %1$s, ce sera</string>
+    <string name="open_in_browser_text">Ouvrir dans le navigateur</string>
+    <string name="open_in_browser">Détails</string>
+    <string name="news_close_text">Ferme la fenêtre</string>
+
+    <string name="notification_config_title">Notifications météorologiques</string>
+    <string name="news_translation_config_title">Traduire les flux de nouvelles</string>
+    <string name="add_location_config_title">Emplacements</string>
+    <string name="add_location_menu_title">Ajouter un emplacement</string>
+    <string name="select_news_source_config_title">Sélectionnez les sources d\'informations</string>
+    <string name="add_location_search_hint">Entrez le nom de l\'emplacement</string>
+    <string name="alert_add_location_text">Voulez-vous ajouter %1$s à votre liste d\'emplacement</string>
+    <string name="display">Afficher</string>
+
+    <string name="news_permission_page_desc">Tous les flux d\'informations dans le monde entier et la télé en direct\nTout dans une seule application</string>
+    <string name="waiting_page_desc">Téléchargement des données\nL\'application sera automatiquement lancée\nLa connexion peut être lente</string>
+    <string name="unsuccessfully_saved_changes">Problème lors de la sauvegarde de la configuration</string>
+    <string name="successfully_saved_changes">Changements enregistrés avec succès</string>
+    <string name="unsuccessfully_saved">Erreur lors de l\'enregistrement des modifications!</string>
+    <string name="weather_error_message">Erreur lors de l\'obtention des données météorologiques</string>
+    <string name="news_error_message">Erreur lors du chargement des nouvelles</string>
+    <string name="successfully_added_city">Ajout de la ville avec succès à votre liste</string>
+    <string name="unsuccessfully_added_city">Impossible d\'ajouter la ville à votre liste, essayez à nouveau</string>
+    <string name="retry">Recommencez</string>
+    <string name="screenshot_attemp_error">Erreur lors du partage des d\'ecran, essayez à nouveau</string>
+    <string name="notification_alert_city">De %s</string>
+    <string name="rain_desc">La température à l\'extérieur est de %1$d° \n\nil pleut alors, ne tombez pas malade. L'équipe DBWeather vous aime :)</string>
+    <string name="weather_tab_title">Météo</string>
+    <string name="news_tab_title">Nouvelles</string>
+    <string name="tab_news_feed_title">Flux</string>
+    <string name="tab_live_news_title">En direct</string>
+    <string name="config_tab_title">Paramètres</string>
+    <string name="display_add">Afficher et ajouter</string>
+    <string name="manage_cities">Gérer vos villes</string>
+    <string name="help_config">Aide</string>
+    <string name="follow">Suivre</string>
+    <string name="unfollow">Ne pas suivre</string>
+    <string name="news_amount">Nombre d\'actualités : </string>
+    <string name="deniedLocationButtonLabel">Non, merci</string>
+    <string name="searchLocationLabel">Pour quel emplacement souhaiteriez-vous connaître les prévisions?</string>
+    <string name="no_locations_found">Aucun emplacement trouvé\nVeuillez ajouter un emplacement dans l'onglet météo</string>
+    <string name="subscribe_to_news">Abonnez-vous aux sources</string>
+    <string name="connection_issue">Problème lors du téléchargement des données, réessayer…</string>
+    <string name="location_permission_page_desc">Activez les services de localisation pour obtenir les prévisions les plus précises</string>
+    <string name="current_location_title">Localisation actuelle</string>
+
+</resources>

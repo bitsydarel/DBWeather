@@ -12,7 +12,7 @@ import com.dbeginc.dbweather.R;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.weather.WeatherData;
 import com.dbeginc.dbweather.ui.BaseActivity;
-import com.dbeginc.dbweather.ui.introduction.IntroductionActivity;
+import com.dbeginc.dbweather.ui.intro.IntroductionActivity;
 import com.dbeginc.dbweather.ui.main.DBWeatherActivity;
 
 import java.util.ArrayList;

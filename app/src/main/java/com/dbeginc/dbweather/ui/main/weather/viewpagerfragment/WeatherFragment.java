@@ -25,7 +25,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY
 public class WeatherFragment extends Fragment implements IWeatherFragmentView<WeatherInfo> {
 
     private WeatherFragmentPresenter mPresenter;
-    private FragmentWeatherBinding mFragmentWeatherBinding;
+    private FragmentWeatherBinding binding;
     private RelativeLayout.LayoutParams mParams;
 
     public static WeatherFragment newInstance(@NonNull final WeatherInfo weatherInfo) {
@@ -68,33 +68,33 @@ public class WeatherFragment extends Fragment implements IWeatherFragmentView<We
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState) {
 
-        mFragmentWeatherBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_weather, container, false);
-        mFragmentWeatherBinding.setWeatherInfo(mPresenter.getWeatherInfo());
-        mFragmentWeatherBinding.currentWeatherLayout.setBackgroundResource(ColorManager.getInstance()
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_weather, container, false);
+        binding.setWeatherInfo(mPresenter.getWeatherInfo());
+        binding.currentWeatherLayout.setBackgroundResource(ColorManager.getInstance()
                 .getBackgroundColor(mPresenter.getWeatherInfo().icon.get()));
-        return mFragmentWeatherBinding.getRoot();
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (mPresenter.getWeatherInfo().isCurrentWeather.get()) {
-            mPresenter.showFallingSnowOrRain(mFragmentWeatherBinding.currentWeatherLayout,
+            mPresenter.showFallingSnowOrRain(binding.currentWeatherLayout,
                     getActivity().getApplicationContext(), mParams);
         }
+        binding.windSpeedValue.setAllCaps(false);
     }
 
     @Override
     public void showData(@NonNull final WeatherInfo weatherInfo) {
         mPresenter.showData(weatherInfo);
-        mFragmentWeatherBinding.currentWeatherLayout.setBackgroundResource(ColorManager.getInstance()
+        binding.currentWeatherLayout.setBackgroundResource(ColorManager.getInstance()
                 .getBackgroundColor(mPresenter.getWeatherInfo()
                         .icon.get()));
 
         if (mPresenter.getWeatherInfo().isCurrentWeather.get()) {
-            mPresenter.showFallingSnowOrRain(mFragmentWeatherBinding.currentWeatherLayout,
-                    mFragmentWeatherBinding.currentWeatherLayout.getContext(),
+            mPresenter.showFallingSnowOrRain(binding.currentWeatherLayout,
+                    binding.currentWeatherLayout.getContext(),
                     mParams);
         }
     }

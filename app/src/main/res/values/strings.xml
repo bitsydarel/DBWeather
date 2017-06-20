@@ -6,17 +6,10 @@
     <string name="tomorrow_label">Tomorrow</string>
     <string name="network_unavailable_message">Network is unavailable!</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoKnOw3xJFDUYkn72qKC8--DtJstej_tE</string>
-    <string name="no_hourly_weather">There is no data to display\nPlease active your internet connection\nOr Refresh</string>
-    <string name="title_activity_hourly_forecast">Hourly Weather</string>
+    <string name="no_hourly_weather">There is no data to display\nPlease activate your internet connection\nOr refresh</string>
     <string name="default_weather_summary">Getting current weather</string>
     <string name="action_about_us">About Us</string>
-    <string name="the_about_us_page">A menu to the about us page</string>
-    <string name="precipeChanceLabel">Rain/Snow</string>
-    <string name="humidity_label">HUMIDITY</string>
     <string name="title_activity_main_menu">DB Weather</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
     <string name="rain_title">Take an umbrella!</string>
     <string name="clear_night_title">Clear night with a beautiful sky!</string>
     <string name="clear_day_title">Wonderful day in sight!</string>
@@ -38,15 +31,11 @@
     <string name="partly_cloudy_night_desc">The temperature outside is %1$d°\n\nAll shadows of clouds the sun cannot hide like the moon cannot stop oceanic tide but a hidden star can still be smiling at night\'s black spell on darkness, beguiling</string>
     <string name="unknown_location">Unknown Location</string>
     <string name="time_label">At %1$s, it was</string>
-    <string name="windSpeedLabel">WindSpeed</string>
     <string name="news_from">%1$s</string>
-    <string name="windSpeedValue">%1$d m/s</string>
+    <string name="windSpeedValue">%1$d mps</string>
     <string name="humidity_value">%1$d%%</string>
-    <string name="cloudCover_label">cloudCover</string>
     <string name="cloudCoverValue">%1$d%%</string>
     <string name="published_at">%1$s</string>
-    <string name="sunsetLabel">Sunset</string>
-    <string name="sunriseLabel">Sunrise</string>
     <string name="apparentTemperatureValue">%1$d°</string>
     <string name="timeLabelValue">At %1$s, it will be</string>
     <string name="precipChanceValue">%1$d%%</string>
@@ -55,81 +44,32 @@
     <string name="open_in_browser">Details</string>
     <string name="news_close_text">Close the Window</string>
 
-    <string name="resume_layout_summary">Summary</string>
-    <string name="resume_day_summary">Day Summary</string>
-    <string name="resume_week_summary">Week Summary</string>
-
-    <string name="hourly_precipeChanceTypeLabel">%1$s:</string>
-    <string name="hourly_precipitation_value"> %1$d%%</string>
-    <string name="hourly_humidity">Humidity:</string>
-    <string name="hourly_humidity_value">%1$d%%</string>
-    <string name="hourly_windspeed">WindSpeed:</string>
-    <string name="hourly_windspeed_value">%1$d m/s</string>
-    <string name="hourly_apparentTemperature">Feeling:</string>
-    <string name="hourly_apparentTemperature_value"> %1$d°</string>
-    <string name="hourly_cloudcover">cloudCover:</string>
-    <string name="hourly_cloudcover_value">%1$d%%</string>
-    <string name="hourly_dewpoint">DewPoint:</string>
-    <string name="hourly_dewpoint_value"> %1$d%%</string>
     <string name="hourly_time"> %1$s</string>
-    <string name="hourly_time_at">At:</string>
-    <string name="hourly_pressure">Pressure:</string>
-    <string name="hourly_pressure_value">%1$f%%</string>
-    <string name="hourly_ozone">Ozone:</string>
-    <string name="hourly_ozone_value">%1$f%%</string>
-    <string name="hourly_visibility">Visibility:</string>
-    <string name="hourly_visibility_value">%1$d%%</string>
-    <string name="hourly_temperature">Temperature:</string>
     <string name="hourly_temperature_value">%1$d°</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="notification_config_title">Weather notification</string>
     <string name="news_translation_config_title">Translate news feeds</string>
-    <string name="add_location_config_title">Locations</string>
-    <string name="add_location_menu_title">Add Location</string>
     <string name="select_news_source_config_title">Select news sources</string>
-    <string name="add_location_search_hint">Enter City Name</string>
-    <string name="alert_add_location_text">Do you want to add  %1$s to your list of Location</string>
-    <string name="add_location_toolbar_label">Add Location</string>
-    <string name="news_config_title">News</string>
-    <string name="current_location_title">Current Location</string>
-    <string name="news_configuration_toolbar_label">News Configurations</string>
-    <string name="bbc_news_description">BBC News (also referred to as the BBC News Channel) is the BBC\'s 24-hour rolling news television network in the United Kingdom. The channel launched as BBC News 24 on 9 November 1997 at 17:30 as part of the BBC\'s foray into digital domestic television channels, becoming the first competitor to Sky News, which had been running since 1989.[1] For a time, looped news, sport and weather bulletins were available to view via BBC Red Button.</string>
-    <string name="weather_config_title">Weather</string>
+    <string name="add_location_search_hint">Enter location name</string>
+    <string name="alert_add_location_text">Do you want to add  %1$s to your list of Location ?</string>
     <string name="send_to">Share To</string>
-    <string name="removeOrDisplay">Do you want to display %1$s weather info or remove it from your list of cities ?</string>
-    <string name="remove">Remove</string>
     <string name="display">Display</string>
-    <string name="precipitation_default_value">Rain/Snow</string>
 
     <!-- *************************Introduction layout ****************************-->
-    <string name="back_btn">Back</string>
-    <string name="next_btn">Next</string>
-    <string name="request_permission">Please grant the permission first!</string>
-    <string name="ask_again">Ask Again</string>
 
-    <string name="welcome_page_title">Welcome To DBWeather</string>
-    <string name="welcome_page_desc">DBWeather it\'s an weather app with news feed and more features.</string>
-    <string name="welcome_page_banner">Made with love by Darel Bitsy</string>
-
-    <string name="location_permission_page_title">Weather by Location</string>
-    <string name="location_permission_page_desc">We provide the best weather info, in all the location on Earth and in more than 20 languages.</string>
-    <string name="news_permission_page_title">News feed &amp; News translation</string>
-    <string name="news_permission_page_desc">All your news feeds in one app.\nWe offer more than 50 news source for Sport, Politics, Finance, Music and more.\nWe use Google and MyMemory Translators to provide the best translation for all languages.</string>
+    <string name="news_permission_page_desc">All news feeds from around the world and live TV news in one application</string>
+    <string name="location_permission_page_desc">Please activate the location services to get the most accurate forecasts</string>
     <string name="news_powered_by">Powered By newsapi.org</string>
-    <string name="last_page_title">We are loading the data…</string>
-    <string name="last_page_desc">Your Weather data has Already been downloaded.\n Now we are translating your news feed in your phone language.\n The weather screen will automatically launch when everything will be translated.\n\nTips: When You click on a news feed you have a windows with more details :) </string>
+    <string name="waiting_page_desc">Downloading the data\nThe app will automatically be launched\nThe connection may be slow</string>
     <string name="successfully_saved_configuration">Successfully Saved Configuration</string>
-    <string name="unsuccessfully_saved_configuration">Issue while saving Configuration</string>
-    <string name="successfully_saved">Successfully saved changes</string>
-    <string name="unsuccessfully_saved">Error while saving Changes!</string>
+    <string name="unsuccessfully_saved_changes">Issue while saving Configuration</string>
+    <string name="successfully_saved_changes">Successfully saved changes</string>
     <string name="weather_error_message">Error while getting the weather data</string>
     <string name="news_error_message">Error while loading the news</string>
     <string name="successfully_added_city">Successfully added city to your list</string>
-    <string name="unsuccessfully_added_city">Could not add city to your list, please try again</string>
+    <string name="unsuccessfully_added_city">Could not add the city to your list, please try again</string>
     <string name="retry">Retry</string>
-    <string name="news_time_line">Open News TimeLines</string>
-    <string name="timeline_label">Time Line</string>
     <string name="degree_image_content_description">Degree Image</string>
     <string name="weather_icon_content_description">Weather Icon</string>
     <string name="hourly_image_icon">hourly Image Icon</string>
@@ -150,4 +90,13 @@
     <string name="follow">Follow</string>
     <string name="unfollow">UnFollow</string>
     <string name="news_amount">Amount Of News : </string>
+    <string name="grantLocationButtonLabel">It sound good</string>
+    <string name="deniedLocationButtonLabel">No, thanks</string>
+    <string name="weather_powered_by">Powered by Dark Sky</string>
+    <string name="made_by">Made by Darel Bitsy</string>
+    <string name="searchLocationLabel">For which location would you like to know the forecast ?</string>
+    <string name="no_locations_found">No location found\nPlease add location in the weather tab</string>
+    <string name="subscribe_to_news">Subscribe to sources</string>
+    <string name="connection_issue">Issue while downloading the data, retrying…</string>
+    <string name="current_location_title">Current Location</string>
 </resources>

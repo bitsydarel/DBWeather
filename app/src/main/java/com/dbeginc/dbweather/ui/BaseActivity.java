@@ -51,6 +51,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_R
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PERMISSION_DECLINED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PERMISSION_GRANTED;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PERMISSION_EVENT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.VOICE_QUERY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION_DECLINED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION_GRANTED;
@@ -75,6 +76,10 @@ public class BaseActivity extends AppCompatActivity {
     public PublishSubject<String> voiceQuery;
 
     @Inject
+    @Named(PERMISSION_EVENT)
+    public PublishSubject<Boolean> permissionEvent;
+
+    @Inject
     public PublishSubject<WeatherData> weatherDataUpdateEvent;
 
     @Inject
@@ -88,13 +93,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         DBWeatherApplication.getComponent().inject(this);
         MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826");
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            askLocationPermIfNeeded();
-            askAccountInfoPermIfNeeded();
-            askWriteToExtPermIfNeeded();
-        }
-
 
         if (mAppDataProvider.getCustomTabPackage().isEmpty()) {
             final String chromeTabSupported = AppUtil.isChromeTabSupported(getApplicationContext());

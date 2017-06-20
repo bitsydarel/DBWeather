@@ -15,4 +15,12 @@
     <color name="configStatusBarColor">#6200EA</color>
     <color name="newsTabColor">#E91E63</color>
     <color name="newsStatusBarColor">#880E4F</color>
+    <color name="locationIntroPageColor">#03A9F4</color>
+    <color name="grantLocationButtonColor">#FF1744</color>
+    <color name="grantAccountButtonColor">#28C76D</color>
+    <color name="clear_day_background">#1B87C9</color>
+    <color name="snow_background">#4dd0e1</color>
+    <color name="wind_background">#455a64</color>
+    <color name="rain_background">#607d8b</color>
+    <color name="fog_background">#c5cae9</color>
 </resources>

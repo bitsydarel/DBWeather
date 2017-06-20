@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Parcelable;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.api.adapters.NewsRestAdapter;
@@ -22,6 +23,7 @@ import com.dbeginc.dbweather.utils.services.NewsDatabaseService;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +37,9 @@ import io.reactivex.Single;
 
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_ACCOUNT_PERMISSION_GRANTED;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MYMEMORY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PREFS_NAME;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.QUERY_LENGTH_LIMIT;
 
 /**
  * Created by Darel Bitsy on 22/04/17.
@@ -82,7 +85,6 @@ public class NetworkNewsProvider implements INewsProvider {
 
                 if (mSharedPreferences.getBoolean(FIRST_RUN, true)) {
                     final Map<String, Integer> newListOfSource = new HashMap<>();
-                    Log.i(TAG, "Location is poor");
                     for (final String source : listOfSource.keySet()) {
                         if (newListOfSource.size() == 3) { break; }
                         newListOfSource.put(source, 1);
@@ -105,7 +107,8 @@ public class NetworkNewsProvider implements INewsProvider {
 
                 if (!emitter.isDisposed()) { emitter.onSuccess(newses); }
 
-            } catch (final Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); }  }
+            } catch (InterruptedIOException iie) { if (!emitter.isDisposed()) { emitter.onError(iie); } }
+            catch (final Exception e) { if (!emitter.isDisposed()) { emitter.onError(e); }  }
         });
     }
 
@@ -114,11 +117,7 @@ public class NetworkNewsProvider implements INewsProvider {
                                            final Map<String, Integer> listOfSource) {
 
         final ArrayList<Article> newses = new ArrayList<>();
-        Account[] accounts = null;
-
-        if (mSharedPreferences.getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false)) {
-            accounts = AccountManager.get(context).getAccountsByType("com.google");
-        }
+        Account[] accounts = isAccountAvailable(context);
 
         for (final NewsResponse response : newsResponses) {
             for (int i = 0; i < listOfSource.get(response.getSource()); i++) {
@@ -130,10 +129,10 @@ public class NetworkNewsProvider implements INewsProvider {
 
                 try {
                     if (!"en".equals(ConstantHolder.USER_LANGUAGE) &&
-                            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                            mSharedPreferences
                                     .getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
 
-                        if (accounts != null && !accounts[0].name.isEmpty()) {
+                        if (accounts.length > 0 && !accounts[0].name.isEmpty()) {
                             final String account = accounts[0].name;
 
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
@@ -144,6 +143,7 @@ public class NetworkNewsProvider implements INewsProvider {
                                         .translateText(newsDescription, account)));
 
                             } else { news.setDescription(""); }
+
 
                         } else {
                             news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
@@ -157,21 +157,15 @@ public class NetworkNewsProvider implements INewsProvider {
 
                         }
 
-                        if (news.getTitle().toUpperCase(Locale.getDefault()).contains("MYMEMORY")
-                                || news.getTitle().equalsIgnoreCase(newsTitle)
-                                || news.getTitle().toUpperCase(Locale.getDefault())
-                                        .contains("QUERY LENGTH LIMIT")) {
+                        if (isValid(news.getTitle(), newsTitle)) {
+                            news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider.translateText(newsTitle)));
 
-                            news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(newsTitle)));
-                        }
-                        if (!news.getDescription().isEmpty() &&
-                                (news.getDescription().equalsIgnoreCase(newsDescription) || news.getDescription().contains("MYMEMORY") ||
-                                        news.getDescription().toUpperCase(Locale.getDefault()).contains("QUERY LENGTH LIMIT"))) {
+                        } else { news.setTitle(""); }
 
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(news.getDescription())));
-                        }
+                        if (isValidAndNotEmpty(news.getDescription(), newsDescription)) {
+                            news.setDescription(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider.translateText(news.getDescription())));
+
+                        } else { news.setDescription(""); }
 
                     } else {
                         news.setTitle(StringEscapeUtils.unescapeHtml4(newsTitle));
@@ -193,5 +187,22 @@ public class NetworkNewsProvider implements INewsProvider {
             }
         }
         return newses;
+    }
+
+    private Account[] isAccountAvailable(@NonNull final Context context) {
+        if (mSharedPreferences.getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false)) {
+            return AccountManager.get(context).getAccountsByType("com.google");
+        }
+        return new Account[0];
+    }
+
+    private boolean isValid(@Nullable final String data, @Nullable final String defaultData) {
+        return data != null && defaultData != null &&
+                !(data.toUpperCase(Locale.getDefault()).contains(MYMEMORY) || data.equalsIgnoreCase(defaultData)
+                        || data.toUpperCase(Locale.getDefault()).contains(QUERY_LENGTH_LIMIT));
+    }
+
+    private boolean isValidAndNotEmpty(@Nullable final String data, @Nullable final String defaultData) {
+        return isValid(data, defaultData) && !data.isEmpty();
     }
 }

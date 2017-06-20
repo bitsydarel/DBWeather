@@ -10,6 +10,8 @@ import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
 import com.dbeginc.dbweather.utils.services.WeatherDatabaseService;
 import com.dbeginc.dbweather.utils.utility.weather.WeatherUtil;
 
+import java.io.InterruptedIOException;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -38,25 +40,29 @@ public class NetworkWeatherProvider implements IWeatherProvider {
 
     @Override
     public Single<Weather> getWeather() {
-        return Single.fromCallable(() -> {
-            final Double[] coordinates = WeatherUtil.getCoordinates(database);
-            final Weather weather = mWeatherRestAdapter.getWeather(coordinates[0],
-                    coordinates[1]);
+        return Single.create(singleEmitter -> {
+            try {
+                final Double[] coordinates = WeatherUtil.getCoordinates(database);
+                final Weather weather = mWeatherRestAdapter.getWeather(coordinates[0],
+                        coordinates[1]);
 
-            weather.setCityName(WeatherUtil.getLocationName(mApplicationContext,
-                    coordinates[0],
-                    coordinates[1]));
+                weather.setCityName(WeatherUtil.getLocationName(mApplicationContext,
+                        coordinates[0],
+                        coordinates[1]));
 
-            final Intent intent = new Intent(mApplicationContext, WeatherDatabaseService.class);
+                final Intent intent = new Intent(mApplicationContext, WeatherDatabaseService.class);
 
-            intent.putExtra(WEATHER_DATA_KEY,
-                    weather);
+                intent.putExtra(WEATHER_DATA_KEY,
+                        weather);
 
-            intent.putExtra(SHOULD_WEATHER_BE_SAVED, false);
+                intent.putExtra(SHOULD_WEATHER_BE_SAVED, false);
 
-            mApplicationContext.startService(intent);
+                mApplicationContext.startService(intent);
 
-            return weather;
+                if (!singleEmitter.isDisposed()) { singleEmitter.onSuccess(weather); }
+            } catch (InterruptedIOException iie) {
+                if (!singleEmitter.isDisposed()) { singleEmitter.onError(iie);}
+            } catch (Exception e) { if (!singleEmitter.isDisposed()) { singleEmitter.onError(e); } }
         });
     }
 

@@ -31,4 +31,6 @@ public interface IDataProvider {
     Single<Weather> getWeatherForCityFromDatabase(@NonNull final String cityName, final double latitude, final double longitude);
 
     Single<Sources> getNewsFeedSources();
+
+    Single<List<GeoName>> getLocationsForQuery(@NonNull final String query);
 }

@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -53,6 +54,15 @@ public class CustomBinderAdapter {
         }
     }
 
+    @BindingAdapter("setGifImage")
+    public static void setGifImage(@NonNull final ImageView imageView, final int gifImage) {
+        if (gifImage > 0) {
+            Glide.with(imageView.getContext())
+                    .load(gifImage)
+                    .into(imageView);
+        }
+    }
+
     @BindingAdapter("setFont")
     public static void setFont(@NonNull final TextView textView, final boolean shouldSet) {
         if (shouldSet) {
@@ -78,6 +88,15 @@ public class CustomBinderAdapter {
     public static void setBackgroundTint(@NonNull final ImageButton button, final boolean shouldTint) {
         if (shouldTint && Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {
             button.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    @BindingAdapter("setTint")
+    public static void tintFollowButton(@NonNull final ImageView imageView, final boolean isFollowing) {
+        if (isFollowing) {
+            imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), android.R.color.holo_red_light));
+        } else {
+            imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), android.R.color.darker_gray));
         }
     }
 

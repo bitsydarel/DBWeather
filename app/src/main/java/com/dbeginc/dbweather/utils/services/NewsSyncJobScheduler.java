@@ -81,11 +81,11 @@ public class NewsSyncJobScheduler extends JobService {
                 completableEmitter.onComplete();
 
             } catch (final Exception exception) {
-                completableEmitter.onError(exception);
+                if (!completableEmitter.isDisposed()) { completableEmitter.onError(exception); }
             }
 
         }).subscribeOn(schedulersProvider.getNewsScheduler())
-                .observeOn(schedulersProvider.getUIScheduler())
+                .observeOn(schedulersProvider.getNewsScheduler())
                 .unsubscribeOn(schedulersProvider.getNewsScheduler())
                 .subscribeWith(new DisposableCompletableObserver() {
                     @Override
@@ -120,8 +120,11 @@ public class NewsSyncJobScheduler extends JobService {
                 final Article news = new Article();
                 news.setAuthor(response.getSource());
                 news.setPublishedAt(response.getArticles().get(i).getPublishedAt());
-                final String newsTitle = response.getArticles().get(i).getTitle();
-                final String newsDescription = response.getArticles().get(i).getDescription();
+                String newsTitle = response.getArticles().get(i).getTitle();
+                String newsDescription = response.getArticles().get(i).getDescription();
+
+                newsTitle = newsTitle == null ? "" : newsTitle;
+                newsDescription = newsDescription == null ? "" : newsDescription;
 
                 try {
                     if (!"en".equals(ConstantHolder.USER_LANGUAGE) &&
@@ -130,7 +133,7 @@ public class NewsSyncJobScheduler extends JobService {
                         news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
                                 .translateText(newsTitle)));
 
-                        if (newsDescription != null && !newsDescription.isEmpty()) {
+                        if (!newsDescription.isEmpty()) {
                             news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
                                     .translateText(newsDescription)));
 

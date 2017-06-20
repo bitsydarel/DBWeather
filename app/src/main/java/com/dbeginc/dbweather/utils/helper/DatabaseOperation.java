@@ -37,7 +37,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import io.reactivex.functions.Action;
 
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_DESCRIPTION;
 import static com.dbeginc.dbweather.models.datatypes.weather.DatabaseConstant.ALERT_EXPIRES;
@@ -158,7 +157,6 @@ public class DatabaseOperation {
     private DatabaseOperation(final Context context) {
         applicationDatabase = new ApplicationDatabase(context);
         userCitiesDatabase = new UserCitiesDatabase(context);
-
     }
 
     /**
@@ -616,7 +614,7 @@ public class DatabaseOperation {
                 try {
                     news.setArticleUrl(databaseCursor.getString(databaseCursor.getColumnIndex(NEWS_URL)));
 
-                } catch (final MalformedURLException e) { Crashlytics.logException(e); }
+                } catch (final MalformedURLException e) { Log.i(TAG, e.getMessage()); }
 
                 newses.add(news);
             }

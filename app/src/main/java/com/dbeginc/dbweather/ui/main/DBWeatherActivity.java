@@ -9,6 +9,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Window;
@@ -43,13 +44,14 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.UPDATE_REQUEST;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WEATHER_INFO_KEY;
 
 public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView, OnTabSelectListener {
+
     private BroadcastReceiver locationBroadcastReceiver;
     private DBWeatherPresenter presenter;
     private WeatherTabFragment weatherFragment;
     private NewsTabFragment newsTabFragment;
-    private final Fragment configFragment = new ConfigFragment();
     private WeatherData weatherData;
     private ArrayList<Article> listOfNews;
+    private final Fragment configFragment = new ConfigFragment();
 
     static {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -57,10 +59,12 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
         }
     }
 
+    private ActivityDbweatherBinding  binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ActivityDbweatherBinding layoutBinding = DataBindingUtil.setContentView(this, R.layout.activity_dbweather);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_dbweather);
 
         presenter = new DBWeatherPresenter(this, weatherDataUpdateEvent, newsUpdateEvent, mAppDataProvider);
         final Intent intent = getIntent();
@@ -78,9 +82,9 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
             startService(new Intent(getApplicationContext(), KillCheckerService.class));
         }
 
-        layoutBinding.bottomBar.setOnTabSelectListener(this);
-        layoutBinding.bottomBar.selectTabWithId(R.id.tab_weather);
-        layoutBinding.bottomBar.setDefaultTab(R.id.tab_weather);
+        binding.bottomBar.setOnTabSelectListener(this);
+        binding.bottomBar.selectTabWithId(R.id.tab_weather);
+        binding.bottomBar.setDefaultTab(R.id.tab_weather);
 
         locationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -108,11 +112,12 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
         }
 
         if (isNetworkAvailable()) { presenter.getNews(); }
+        else { showNetworkNotAvailable(); }
 
         if (((DBWeatherApplication) getApplication()).isFirebaseAvailable()) {
             FirebaseDatabase.getInstance(((DBWeatherApplication) getApplication()).getFirebaseApp()).getReference(LIVE_SOURCE).addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, String s) {
+                public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, final String s) {
                     presenter.addNewLiveSource(dataSnapshot);
                 }
 
@@ -155,22 +160,28 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
     }
 
     @Override
-    public void onTabSelected(int id) {
+    public void onTabSelected(final int id) {
         int color = getResources().getColor(R.color.colorPrimaryDark);
 
         if (id == R.id.tab_weather) {
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left,
+                            R.anim.slide_out_left)
                     .replace(R.id.tabContent, weatherFragment)
                     .commit();
 
         } else if (id == R.id.tab_news) {
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left,
+                            R.anim.slide_out_left)
                     .replace(R.id.tabContent, newsTabFragment)
                     .commit();
             color = getResources().getColor(R.color.newsStatusBarColor);
 
         } else if (id == R.id.tab_config) {
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left,
+                            R.anim.slide_out_left)
                     .replace(R.id.tabContent, configFragment)
                     .commit();
             color = getResources().getColor(R.color.configStatusBarColor);
@@ -194,5 +205,11 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
         listOfNews.clear();
         listOfNews.addAll(news);
         newsTabFragment.getArguments().putParcelableArrayList(NEWS_DATA_KEY, listOfNews);
+    }
+
+    @Override
+    public void showNetworkNotAvailable() {
+        Snackbar.make(binding.clTabsContainer, getString(R.string.network_unavailable_message), Snackbar.LENGTH_LONG)
+                .show();
     }
 }

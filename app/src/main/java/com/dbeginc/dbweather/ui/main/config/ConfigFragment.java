@@ -15,10 +15,10 @@ import com.dbeginc.dbweather.R;
 import com.dbeginc.dbweather.databinding.ConfigTabLayoutBinding;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;
 import com.dbeginc.dbweather.ui.BaseFragment;
-import com.dbeginc.dbweather.ui.main.config.adapters.ConfigurationItemAdapter;
-import com.dbeginc.dbweather.ui.main.config.fragments.HelpFragment;
-import com.dbeginc.dbweather.ui.main.config.fragments.managecities.ManageCitiesFragment;
-import com.dbeginc.dbweather.ui.main.config.fragments.newssource.NewsSourceFragment;
+import com.dbeginc.dbweather.ui.main.config.adapter.ConfigurationItemAdapter;
+import com.dbeginc.dbweather.ui.main.config.help.HelpFragment;
+import com.dbeginc.dbweather.ui.main.config.managecities.ManageCitiesFragment;
+import com.dbeginc.dbweather.ui.main.config.newssource.NewsSourceFragment;
 import com.google.android.gms.ads.AdRequest;
 
 import java.util.ArrayList;

@@ -42,9 +42,9 @@ public class NetworkModule {
     @Provides
     OkHttpClient providesOkHttpClient(final Cache cache) {
         return new OkHttpClient.Builder()
-                .connectTimeout(25, TimeUnit.SECONDS)
-                .writeTimeout(25, TimeUnit.SECONDS)
-                .readTimeout(45, TimeUnit.SECONDS)
+                .connectTimeout(35, TimeUnit.SECONDS)
+                .writeTimeout(35, TimeUnit.SECONDS)
+                .readTimeout(55, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .cache(cache)
                 .build();

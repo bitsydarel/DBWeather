@@ -30,8 +30,7 @@
 
         <activity
             android:name=".ui.welcome.WelcomeActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,6 +44,34 @@
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.main.DBWeatherActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity android:name=".ui.intro.IntroductionActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable2" />
         </activity>
 
         <service
@@ -110,38 +137,15 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".ui.config.NewsConfigurationActivity"
-            android:noHistory="true">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
         <provider
             android:name=".models.provider.geoname.LocationSuggestionProvider"
             android:authorities="com.dbeginc.dbweather.models.provider.geoname.LocationSuggestionProvider"
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".ui.introduction.IntroductionActivity" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1f70cc235a003a2a3e76e5932bc702c80c4c750" />
-
-        <activity android:name=".ui.main.DBWeatherActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
     </application>
 
 </manifest>

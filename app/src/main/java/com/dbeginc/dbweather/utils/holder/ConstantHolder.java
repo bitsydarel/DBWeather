@@ -47,6 +47,10 @@ public class ConstantHolder {
     public static final String LOCATION_KEY = "location_key";
     public static final String CONTENT_URL = "content://com.dbeginc.dbweather.models.provider.geoname.LocationSuggestionProvider/%s/%s?limit=50";
     public static final String VOICE_QUERY = "voice_query";
+    public static final String PERMISSION_EVENT = "permission_event";
+    public static final String OLD_INDEX = "OLD_INDEX";
+    public static final String MYMEMORY = "MYMEMORY";
+    public static final String QUERY_LENGTH_LIMIT = "QUERY LENGTH LIMIT";
 
     private ConstantHolder() {
         //To disable default constructor

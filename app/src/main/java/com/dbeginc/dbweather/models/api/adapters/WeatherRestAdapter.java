@@ -2,6 +2,7 @@ package com.dbeginc.dbweather.models.api.adapters;
 
 import android.support.annotation.NonNull;
 
+import com.dbeginc.dbweather.BuildConfig;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 import com.dbeginc.dbweather.models.api.services.WeatherService;
 import com.dbeginc.dbweather.models.datatypes.weather.Weather;
@@ -27,8 +28,6 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.supportedLang;
 @Singleton
 public class WeatherRestAdapter {
     private static final String WEATHER_URL = "https://api.darksky.net/";
-    private static final String WEATHER_APIKEY = "07aadf598548d8bb35d6621d5e3b3c7b";
-
     private final WeatherService mWeatherService;
 
     @Inject
@@ -50,7 +49,7 @@ public class WeatherRestAdapter {
         final String coordinates = String.format(Locale.ENGLISH, "%f,%f", latitude, longitude);
 
         if (supportedLang.contains(ConstantHolder.USER_LANGUAGE)) {
-            weatherData = mWeatherService.getWeatherWithLanguage(WEATHER_APIKEY,
+            weatherData = mWeatherService.getWeatherWithLanguage(BuildConfig.WEATHER_API_KEY,
                     coordinates,
                     ConstantHolder.USER_LANGUAGE,
                     "auto")
@@ -58,7 +57,7 @@ public class WeatherRestAdapter {
                     .body();
 
         } else {
-            weatherData = mWeatherService.getWeather(WEATHER_APIKEY,
+            weatherData = mWeatherService.getWeather(BuildConfig.WEATHER_API_KEY,
                     coordinates,
                     "auto")
                     .execute()

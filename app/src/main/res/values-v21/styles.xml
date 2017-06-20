@@ -20,20 +20,22 @@
         <item name="android:toolbarStyle">@android:style/Widget.Material.Toolbar</item>
     </style>
 
-    <style name="ToolBarStyle" parent="">
-        <item name="android:theme">@android:style/ThemeOverlay.Material.Dark.ActionBar</item>
-        <item name="android:popupTheme">@android:style/ThemeOverlay.Material.Light</item>
-        <item name="android:colorBackground">@color/colorPrimaryDark</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:toolbarStyle">@android:style/Widget.Material.Toolbar</item>
-        <item name="android:elevation">4dp</item>
-        <item name="android:minHeight">56dp</item>
-        <item name="android:contentInsetRight">0dp</item>
-        <item name="android:contentInsetEnd">0dp</item>
+    <style name="NewsActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:drawable/dialog_holo_light_frame</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="Theme.ProgressBarTheme" parent="@android:style/Widget.Material.Light.ProgressBar.Small">
+    <style name="Theme.ProgressBarTheme" parent="@android:style/Widget.Material.Light.ProgressBar.Horizontal">
         <item name="android:autoStart">true</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:minHeight">16dp</item>
+        <item name="android:scaleY">3.0</item>
     </style>
 
     <style name="Theme.Switch" parent="android:Theme.Material.Light">
@@ -45,41 +47,21 @@
         <item name="android:textOff">Off</item>
     </style>
 
-    <style name="Theme.HourlyProgressBar" parent="android:Widget.ProgressBar.Horizontal">
-        <item name="android:max">100</item>
-        <item name="android:scaleY">1.2</item>
-        <item name="android:minHeight">10dp</item>
-        <item name="android:progressTint">@color/colorPrimaryDark</item>
-        <item name="android:progressBackgroundTint">#301976D2</item>
-    </style>
-
     <style name="Theme.LocationProgress" parent="android:Widget.ProgressBar.Horizontal">
         <item name="android:minHeight">8dp</item>
         <item name="android:indeterminateOnly">true</item>
     </style>
 
-    <!-- ******************* Toolbar Button ******************* -->
-    <style name="toolbarButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:backgroundTint">@android:color/transparent</item>
-        <item name="android:tint">@android:color/white</item>
+    <style name="ToolBarStyle" parent="">
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:minHeight">@dimen/action_bar_default_height_material</item>
     </style>
 
-    <style name="navigationButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:backgroundTint">@android:color/white</item>
-        <item name="android:tint">@android:color/black</item>
-    </style>
-
-    <!-- ******************* Intro Button ******************* -->
-    <style name="IntroButton" parent="Widget.AppCompat.Button.Borderless.Colored">
-        <item name="android:backgroundTint">@android:color/transparent</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:tint">@android:color/white</item>
-        <item name="android:background">@android:drawable/dialog_holo_light_frame</item>
-    </style>
-
-    <!-- ******************** Intro Image ******************* -->
-    <style name="IntroImage" >
-        <item name="android:backgroundTint">@android:color/transparent</item>
-        <item name="android:background">@android:drawable/dialog_holo_light_frame</item>
+    <style name="Theme.TextView" parent="android:TextAppearance.Material.Widget.TextView">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:selectable">false</item>
     </style>
 </resources>

@@ -98,9 +98,9 @@ The latest UK and international business, finance, economic and political news, 
             android:paddingEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
-            android:tint="@{Source.isSubscribed ? @android:color/holo_red_light : @android:color/darker_gray}"
             tools:text="Follow"
             app:srcCompat="@drawable/follow_icon"
+            app:setTint="@{Source.isSubscribed}"
             app:layout_constraintTop_toBottomOf="@id/sourceDescription"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

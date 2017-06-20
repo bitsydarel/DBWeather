@@ -19,13 +19,23 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
         <ProgressBar
             android:id="@+id/loadingProgress"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="wrap_content"
             android:indeterminateOnly="true"
             tools:background="@android:color/black"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/Theme.ProgressBarTheme"
             app:layout_anchorGravity="top|center"
             app:layout_anchor="@+id/news_sources_recyclerView" />
 

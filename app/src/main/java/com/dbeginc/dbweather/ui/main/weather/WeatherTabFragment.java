@@ -28,7 +28,6 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.dbeginc.dbweather.R;
@@ -241,7 +240,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
 
     @Override
     public void onLocationUpdate(@NonNull String action) {
-        if (action.equalsIgnoreCase(LOCATION_UPDATE) && !presenter.isCurrentWeatherFromGps()) {
+        if (action.equalsIgnoreCase(LOCATION_UPDATE) && presenter.isCurrentWeatherFromGps()) {
             if (isNetworkAvailable()) { presenter.getWeather(); }
             else { showNetworkNotAvailableMessage(); }
         }
@@ -291,7 +290,7 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
         }
     }
 
-    private void addFloatingButtonToMenu(GeoName location) {
+    private void addFloatingButtonToMenu(@NonNull final GeoName location) {
         final FloatingActionButton button = new FloatingActionButton(getAppContext());
         button.setLabelText(String.format(Locale.getDefault(), "%s, %s", location.getName(), location.getCountryName()));
         button.setImageDrawable(floatingButtonIcon);
@@ -325,8 +324,8 @@ public class WeatherTabFragment extends BaseFragment implements IWeatherView, Se
     public boolean onSuggestionSelect(int i) { return true; }
 
     @Override
-    public boolean onSuggestionClick(int i) {
-        selectedLocation = mListOfLocation.get(i);
+    public boolean onSuggestionClick(final int position) {
+        selectedLocation = mListOfLocation.get(position);
 
         final DialogInterface.OnClickListener cancelLocationClick = (dialog, which) -> dialog.cancel();
         final DialogInterface.OnClickListener displayClick = (dialog, which) -> handler.post(() -> {

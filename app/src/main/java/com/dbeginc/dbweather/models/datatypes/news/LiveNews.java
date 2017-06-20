@@ -58,4 +58,21 @@ public class LiveNews implements Parcelable {
         dest.writeString(liveSource.get());
         dest.writeString(liveUrl.get());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final LiveNews liveNews = (LiveNews) o;
+
+        return liveSource.get().equalsIgnoreCase(liveNews.liveSource.get());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = liveSource.hashCode();
+        result = 31 * result + liveUrl.hashCode();
+        return result;
+    }
 }

@@ -47,7 +47,6 @@ public class WeatherUtil {
 
     public static Double[] getCoordinates(@NonNull final DatabaseOperation database) {
         return database.getCoordinates();
-
     }
 
     public static int getDewPointInCelsius(final double dewPoint) {
@@ -252,7 +251,7 @@ public class WeatherUtil {
                     weatherInfo.apparentTemperature.set(WeatherUtil.getTemperatureInInt(currently.getApparentTemperature()));
 
                     weatherInfo.windSpeed.set(String.format(Locale.ENGLISH,
-                            context.getString(R.string.humidity_value),
+                            context.getString(R.string.windSpeedValue),
                             WeatherUtil.getWindSpeedMeterPerHour(currently.getWindSpeed())));
 
                     weatherInfo.humidity.set(String.format(Locale.ENGLISH,
@@ -263,14 +262,6 @@ public class WeatherUtil {
                             context.getString(R.string.cloudCoverValue),
                             WeatherUtil.getCloudCoverPercentage(currently.getCloudCover())));
 
-                    if (currently.getPrecipType() == null) {
-                        weatherInfo.precipitationType.set(context.getString(R.string.precipitation_default_value));
-
-                    } else {
-                        weatherInfo.precipitationType.set(String.format(Locale.getDefault(),
-                                context.getString(R.string.precipeChanceTypeLabel),
-                                currently.getPrecipType()));
-                    }
 
                     weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
                             context.getString(R.string.precipChanceValue),
@@ -333,7 +324,7 @@ public class WeatherUtil {
         weatherInfo.apparentTemperature.set(WeatherUtil.getTemperatureInInt(day.getApparentTemperatureMax()));
 
         weatherInfo.windSpeed.set(String.format(Locale.ENGLISH,
-                context.getString(R.string.humidity_value),
+                context.getString(R.string.windSpeedValue),
                 WeatherUtil.getWindSpeedMeterPerHour(day.getWindSpeed())));
 
         weatherInfo.humidity.set(String.format(Locale.ENGLISH,
@@ -343,17 +334,6 @@ public class WeatherUtil {
         weatherInfo.cloudCover.set(String.format(Locale.ENGLISH,
                 context.getString(R.string.cloudCoverValue),
                 WeatherUtil.getCloudCoverPercentage(day.getCloudCover())));
-
-        if (day.getPrecipType() == null) {
-            weatherInfo.precipitationType
-                    .set(context.getString(R.string.precipitation_default_value));
-
-        } else {
-            weatherInfo.precipitationType
-                    .set(String.format(Locale.getDefault(),
-                            context.getString(R.string.precipeChanceTypeLabel),
-                            day.getPrecipType()));
-        }
 
         weatherInfo.precipitationProbability.set(String.format(Locale.getDefault(),
                 context.getString(R.string.precipChanceValue),

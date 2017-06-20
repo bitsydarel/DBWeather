@@ -277,4 +277,9 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     public Single<Sources> getNewsFeedSources() {
         return mNetworkNewsProvider.getSourcesList();
     }
+
+    @Override
+    public Single<List<GeoName>> getLocationsForQuery(@NonNull String query) {
+        return mGeoNameLocationInfoProvider.getLocation(query);
+    }
 }

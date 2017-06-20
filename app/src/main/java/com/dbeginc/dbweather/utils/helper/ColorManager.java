@@ -26,16 +26,16 @@ public class ColorManager {
     }
 
     private void initialize() {
-        mColors.put(R.drawable.clear_day, R.drawable.clear_day_background);
+        mColors.put(R.drawable.clear_day, R.color.clear_day_background);
         mColors.put(R.drawable.clear_night, R.drawable.clear_night_background);
         mColors.put(R.drawable.partly_cloudy, R.drawable.partly_cloudy_background);
         mColors.put(R.drawable.cloudy_night, R.drawable.cloudy_night_background);
         mColors.put(R.drawable.cloudy, R.drawable.cloudy_background);
-        mColors.put(R.drawable.fog, R.drawable.fog_background);
-        mColors.put(R.drawable.sleet, R.drawable.clear_day_background);
-        mColors.put(R.drawable.snow, R.drawable.snow_background);
-        mColors.put(R.drawable.wind, R.drawable.wind_background);
-        mColors.put(R.drawable.rain, R.drawable.rain_background);
+        mColors.put(R.drawable.fog, R.color.fog_background);
+        mColors.put(R.drawable.sleet, R.color.clear_day_background);
+        mColors.put(R.drawable.snow, R.color.snow_background);
+        mColors.put(R.drawable.wind, R.color.wind_background);
+        mColors.put(R.drawable.rain, R.color.rain_background);
     }
 
     public int getBackgroundColor(final int icon) {

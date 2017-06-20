@@ -23,6 +23,7 @@ import javax.inject.Named;
 import io.reactivex.subjects.PublishSubject;
 
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PERMISSION_EVENT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.VOICE_QUERY;
 
 /**
@@ -43,24 +44,37 @@ public class BaseFragment extends Fragment {
 
     @Inject
     public AppDataProvider mAppDataProvider;
+
     @Inject
     @Named(LOCATION_UPDATE)
     public PublishSubject<String> locationUpdateEvent;
+
     @Inject
     @Named(VOICE_QUERY)
     public PublishSubject<String> voiceQuery;
+
+    @Inject
+    @Named(PERMISSION_EVENT)
+    public PublishSubject<Boolean> permissionEvent;
+
     @Inject
     public List<GeoName> mListOfLocation;
+
     @Inject
     public PublishSubject<WeatherData> weatherDataUpdateEvent;
+
     @Inject
     public PublishSubject<List<Article>> newsUpdateEvent;
+
     @Inject
     public PublishSubject<LiveNews> youtubeEvents;
+
     @Inject
     public PublishSubject<Pair<DataSnapshot, String>> liveDatabaseUpdateEvent;
+
     @Inject
     public Resources resources;
+
     @Inject
     public Context appContext;
 

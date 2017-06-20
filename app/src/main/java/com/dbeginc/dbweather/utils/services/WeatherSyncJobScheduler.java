@@ -14,6 +14,8 @@ import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
 import com.dbeginc.dbweather.utils.utility.weather.WeatherUtil;
 
+import java.io.InterruptedIOException;
+
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
@@ -86,11 +88,11 @@ public class WeatherSyncJobScheduler extends JobService {
                 completableEmitter.onComplete();
 
             } catch (final Exception error) {
-                completableEmitter.onError(error);
+                if (!completableEmitter.isDisposed()) { completableEmitter.onError(error); }
             }
 
         }).subscribeOn(schedulersProvider.getWeatherScheduler())
-                .observeOn(schedulersProvider.getUIScheduler())
+                .observeOn(schedulersProvider.getWeatherScheduler())
                 .unsubscribeOn(schedulersProvider.getWeatherScheduler())
                 .subscribeWith(new DisposableCompletableObserver() {
                     @Override
