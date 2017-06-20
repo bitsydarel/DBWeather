@@ -93,8 +93,8 @@
             android:text='@{String.valueOf(WeatherInfo.temperature) + "°"}'
             android:textColor="@android:color/white"
             android:textSize="48sp"
-            android:textStyle="bold"
             android:layout_marginTop="24dp"
+            style="@style/Base.TextAppearance.AppCompat.Button"
             tools:text="15°"
             app:layout_constraintTop_toBottomOf="@id/iconImageView"
             app:layout_constraintLeft_toRightOf="@id/leftIconWeatherLimit"
@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:textSize="48sp"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
+            style="@style/Base.TextAppearance.AppCompat.Button"
             android:text="@{WeatherInfo.temperatureUnit}"
             tools:text="C"
             app:layout_constraintTop_toTopOf="@id/temperatureLabel"
@@ -204,7 +204,7 @@
             android:layout_height="24dp"
             android:tint="@android:color/white"
             android:layout_marginTop="16dp"
-            app:srcCompat="@drawable/cloud_cover_icon"
+            app:srcCompat="@drawable/ic_cloud"
             app:layout_constraintTop_toBottomOf="@id/weatherDetailsTopLimit"
             app:layout_constraintLeft_toRightOf="@id/windSpeedIcon"
             app:layout_constraintRight_toLeftOf="@+id/precipIcon"/>
@@ -252,7 +252,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="24dp"
-            app:srcCompat="@drawable/sunrise_icon"
+            app:srcCompat="@drawable/ic_sunrise"
             app:layout_constraintTop_toBottomOf="@id/humidityValue"
             app:layout_constraintLeft_toRightOf="@id/humidityValue"
             app:layout_constraintRight_toLeftOf="@id/windSpeedValue"/>
@@ -278,7 +278,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="24dp"
-            app:srcCompat="@drawable/temperature_icon"
+            app:srcCompat="@drawable/ic_temperature"
             app:layout_constraintTop_toBottomOf="@id/windSpeedValue"
             app:layout_constraintLeft_toRightOf="@id/windSpeedValue"
             app:layout_constraintRight_toLeftOf="@id/cloudCoverValue"/>
@@ -319,7 +319,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="24dp"
-            app:srcCompat="@drawable/sunset_icon"
+            app:srcCompat="@drawable/ic_sunset"
             app:layout_constraintTop_toBottomOf="@id/cloudCoverValue"
             app:layout_constraintLeft_toRightOf="@id/cloudCoverValue"
             app:layout_constraintRight_toLeftOf="@id/precipValue"/>

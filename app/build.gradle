@@ -56,6 +56,8 @@ android {
             it.buildConfigField('String', 'YOUTUBE_API_KEY', YoutubeApiKey)
             it.buildConfigField('String', 'NEWS_API_KEY', NewsApiKey)
             it.buildConfigField('String', 'WEATHER_API_KEY', WeatherApiKey)
+            it.resValue "string", 'ad_unit_id', AdUnitId
+
         }
     }
     //Show all the result of unitTest
@@ -106,7 +108,6 @@ dependencies {
     compile "com.android.support:support-core-utils:$supportLibraryVersion"
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:customtabs:$supportLibraryVersion"
-
     compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
     compile "com.google.firebase:firebase-core:$googleLibraryVersion"
     compile "com.google.firebase:firebase-ads:$googleLibraryVersion"
