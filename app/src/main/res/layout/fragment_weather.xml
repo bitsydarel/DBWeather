@@ -179,7 +179,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="@drawable/wind_speed_icon"
+            app:srcCompat="@drawable/ic_wind"
             app:layout_constraintTop_toBottomOf="@id/weatherDetailsTopLimit"
             app:layout_constraintLeft_toRightOf="@id/humidityIcon"
             app:layout_constraintRight_toLeftOf="@+id/cloudCoverIcon"/>
@@ -228,7 +228,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="@drawable/precip_icon"
+            app:srcCompat="@drawable/ic_rain"
             app:layout_constraintTop_toBottomOf="@id/weatherDetailsTopLimit"
             app:layout_constraintLeft_toRightOf="@id/cloudCoverIcon"
             app:layout_constraintRight_toRightOf="@id/weatherDetailsRightLimit"/>
