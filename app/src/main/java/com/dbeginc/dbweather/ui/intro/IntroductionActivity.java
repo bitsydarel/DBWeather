@@ -176,7 +176,6 @@ public class IntroductionActivity extends BaseActivity implements IIntroView {
     }
 
     private void handlePositiveAccountButton() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || mAppDataProvider.getAccountPermissionStatus()) {
             if (hasAllData()) { closeView(); }
             else {
                 getSupportFragmentManager().beginTransaction()
@@ -185,10 +184,8 @@ public class IntroductionActivity extends BaseActivity implements IIntroView {
                         .replace(R.id.introFragmentContainer, new WaitingPage())
                         .commit();
                 pageIndex++;
-                askAccountInfoPermIfNeeded();
             }
 
-        } else { askAccountInfoPermIfNeeded(); }
     }
 
     private boolean hasAllData() {
@@ -259,9 +256,9 @@ public class IntroductionActivity extends BaseActivity implements IIntroView {
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && pageIndex == LOCATION_PERMISSION_PAGE) {
 
-            if (pageIndex == LOCATION_PERMISSION_PAGE) {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.push_up_in,
                                 R.anim.push_up_out)
@@ -269,19 +266,6 @@ public class IntroductionActivity extends BaseActivity implements IIntroView {
                         .commitAllowingStateLoss();
                 pageIndex++;
                 startService(new Intent(getApplicationContext(), LocationTracker.class));
-
-            } else if (pageIndex == ACCOUNT_PERMISSION_PAGE) {
-                if (homeIntent.hasExtra(WEATHER_INFO_KEY) && homeIntent.hasExtra(NEWS_DATA_KEY)) {
-                    closeView();
-                } else {
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.push_up_in,
-                                    R.anim.push_up_out)
-                            .replace(R.id.introFragmentContainer, new WaitingPage())
-                            .commitAllowingStateLoss();
-                    pageIndex++;
-                }
-            }
         }
     }
 

@@ -70,8 +70,6 @@ public class AdViewPool {
     private AdRequest createAdRequest() {
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
-                .addTestDevice("C20BB1C5369BFDFD4992ED89CD62F271")
                 .build();
     }
 }

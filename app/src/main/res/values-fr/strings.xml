@@ -8,7 +8,6 @@
     <string name="no_hourly_weather">Il n\'y a pas de données à afficher\nActivez votre connexion Internet\nOu rafraîchir</string>
     <string name="default_weather_summary">Obtenir le temps actuel</string>
     <string name="action_about_us">À propos de nous</string>
-    <string name="action_settings">Paramètres</string>
     <string name="rain_title">Prendre un parapluie!</string>
     <string name="clear_night_title">Nuit claire avec un beau ciel!</string>
     <string name="clear_day_title">Une merveilleuse journée en vue!</string>
@@ -29,10 +28,8 @@
 
     <string name="notification_config_title">Notifications météorologiques</string>
     <string name="news_translation_config_title">Traduire les flux de nouvelles</string>
-    <string name="add_location_config_title">Emplacements</string>
-    <string name="add_location_menu_title">Ajouter un emplacement</string>
     <string name="select_news_source_config_title">Sélectionnez les sources d\'informations</string>
-    <string name="add_location_search_hint">Entrez le nom de l\'emplacement</string>
+    <string name="add_location_search_hint">Entrez la ville</string>
     <string name="alert_add_location_text">Voulez-vous ajouter %1$s à votre liste d\'emplacement</string>
     <string name="display">Afficher</string>
 
@@ -67,5 +64,11 @@
     <string name="connection_issue">Problème lors du téléchargement des données, réessayer…</string>
     <string name="location_permission_page_desc">Activez les services de localisation pour obtenir les prévisions les plus précises</string>
     <string name="current_location_title">Localisation actuelle</string>
+    <string name="send_to">Partager Avec</string>
+    <string name="grantLocationButtonLabel">Ça sonne bien</string>
+    <string name="report_bug">Reporter un Bug</string>
+    <string name="rate_on_play_store">Evaluer sur PlayStore</string>
+    <string name="SEND_EMAIL_FROM">" Envoyer un courriel à l'aide"</string>
+    <string name="NO_EMAIL_CLIENTS">Aucun client de messagerie installé</string>
 
 </resources>

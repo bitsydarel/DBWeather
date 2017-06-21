@@ -46,11 +46,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.CUSTOM_TAB_PACKA
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_PERMISSION_DECLINED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_PERMISSION_GRANTED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_GET_ACCOUNT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PERMISSION_DECLINED;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PERMISSION_GRANTED;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PERMISSION_EVENT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.VOICE_QUERY;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION_DECLINED;
@@ -63,6 +59,7 @@ import static com.dbeginc.dbweather.utils.holder.ConstantHolder.WRITE_PERMISSION
 
 public class BaseActivity extends AppCompatActivity {
 
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
     @Inject
     public AppDataProvider mAppDataProvider;
     @Inject
@@ -142,19 +139,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void askAccountInfoPermIfNeeded() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.GET_ACCOUNTS},
-                    MY_PERMISSIONS_REQUEST_GET_ACCOUNT);
-        } else {
-            mAppDataProvider.setAccountPermissionStatus(true);
-        }
-    }
-
     protected void shareScreenShot() throws IOException {
         final Intent shareIntent = new Intent(Intent.ACTION_SEND);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -220,17 +204,6 @@ public class BaseActivity extends AppCompatActivity {
 
             } else {
                 EVENT = LOCATION_PERMISSION_DECLINED;
-            }
-
-        } else if (requestCode == MY_PERMISSIONS_REQUEST_GET_ACCOUNT) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                mAppDataProvider.setAccountPermissionStatus(true);
-                EVENT = NEWS_PERMISSION_GRANTED;
-
-            } else {
-                EVENT = NEWS_PERMISSION_DECLINED;
             }
 
         } else if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {

@@ -62,6 +62,15 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
     private ActivityDbweatherBinding  binding;
 
     @Override
+    public void onBackPressed() {
+        if (configFragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
+            configFragment.getChildFragmentManager().popBackStack();
+
+        } else { super.onBackPressed(); }
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dbweather);
@@ -165,23 +174,17 @@ public class DBWeatherActivity extends BaseActivity implements DBWeatherRootView
 
         if (id == R.id.tab_weather) {
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left,
-                            R.anim.slide_out_left)
                     .replace(R.id.tabContent, weatherFragment)
                     .commit();
 
         } else if (id == R.id.tab_news) {
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left,
-                            R.anim.slide_out_left)
                     .replace(R.id.tabContent, newsTabFragment)
                     .commit();
             color = getResources().getColor(R.color.newsStatusBarColor);
 
         } else if (id == R.id.tab_config) {
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left,
-                            R.anim.slide_out_left)
                     .replace(R.id.tabContent, configFragment)
                     .commit();
             color = getResources().getColor(R.color.configStatusBarColor);

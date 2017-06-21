@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ import io.reactivex.subjects.PublishSubject;
  * Configuration Activity
  */
 
-public class ConfigFragment extends BaseFragment implements IConfigurationView {
+public class ConfigFragment extends BaseFragment implements IConfigurationView , FragmentManager.OnBackStackChangedListener {
 
     private static final int MANAGE_LOCATIONS = 242;
     private static final int WEATHER_NOTIFICATION = 223;
@@ -43,10 +44,10 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
     private ConfigTabLayoutBinding binding;
     private ManageCitiesFragment manageCitiesFragment;
     private ConfigurationItemAdapter adapter;
+    private ConfigPresenter presenter;
     private final List<GeoName> locationList = new ArrayList<>();
     private final PublishSubject<Pair<Integer, Boolean>> configClickEvent = PublishSubject.create();
     private final Handler handler = new Handler();
-    private ConfigPresenter presenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,6 +107,8 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
         presenter.subscribeToClickEvent();
         handler.post(this::setupAds);
         handler.post(this::setupListOfConfig);
+
+        handler.post(() -> getChildFragmentManager().addOnBackStackChangedListener(this));
     }
 
     @Override
@@ -123,8 +126,6 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
     private void setupAds() {
         final AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
-                .addTestDevice("C20BB1C5369BFDFD4992ED89CD62F271")
                 .build();
         binding.adVConfig.loadAd(adRequest);
     }
@@ -144,6 +145,8 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
         switch (clickEvent.first) {
             case MANAGE_LOCATIONS:
                 getChildFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, 0)
+                        .addToBackStack(this.toString())
                         .replace(R.id.fragmentContainer, manageCitiesFragment)
                         .commit();
                 onClickEvent(true);
@@ -155,6 +158,8 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
 
             case NEWS_SOURCE:
                 getChildFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, 0)
+                        .addToBackStack(this.toString())
                         .replace(R.id.fragmentContainer, new NewsSourceFragment())
                         .commit();
                 onClickEvent(true);
@@ -166,6 +171,8 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
 
             case HELP:
                 getChildFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, 0)
+                        .addToBackStack(this.toString())
                         .replace(R.id.fragmentContainer, new HelpFragment())
                         .commit();
                 onClickEvent(true);
@@ -189,5 +196,15 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView {
     @Override
     public void onClickEvent(boolean isChildVisible) {
         binding.setIsChildVisible(isChildVisible);
+        if (!isChildVisible && getChildFragmentManager().getBackStackEntryCount() > 0) {
+            getChildFragmentManager().popBackStack();
+        }
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        if (binding.getIsChildVisible() && getChildFragmentManager().getBackStackEntryCount() == 0) {
+            onClickEvent(false);
+        }
     }
 }

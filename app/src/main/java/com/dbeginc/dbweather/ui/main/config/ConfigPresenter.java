@@ -10,6 +10,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by darel on 11.06.17.
+ * Configuration View Presenter
  */
 
 class ConfigPresenter {

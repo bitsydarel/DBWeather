@@ -1,11 +1,13 @@
 package com.dbeginc.dbweather.ui.main.config.newssource;
 
 import android.databinding.DataBindingUtil;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -60,6 +62,10 @@ public class NewsSourceFragment extends BaseFragment implements NewsSourceView {
         }
         binding.toolbar.configToolbar.setNavigationOnClickListener(v -> configurationBackEvent.onNext(false));
         binding.swipeRefresh.setOnRefreshListener(() -> presenter.getSources());
+        binding.loadingProgress
+                .getIndeterminateDrawable()
+                .setColorFilter(ResourcesCompat.getColor(view.getResources(), R.color.newsTabColor, appContext.getTheme()),
+                        PorterDuff.Mode.SRC_IN);
         presenter.subscribeToTouchEvent();
     }
 

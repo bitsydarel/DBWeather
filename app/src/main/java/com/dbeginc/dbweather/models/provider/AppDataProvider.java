@@ -148,18 +148,6 @@ public class AppDataProvider implements IDataProvider, IPreferencesProvider, IDa
     }
 
     @Override
-    public void setAccountPermissionStatus(final boolean isPermissionAccorded) {
-        mSharedPreferences.edit()
-                .putBoolean(IS_ACCOUNT_PERMISSION_GRANTED, isPermissionAccorded)
-                .apply();
-    }
-
-    @Override
-    public boolean getAccountPermissionStatus() {
-        return mSharedPreferences.getBoolean(IS_ACCOUNT_PERMISSION_GRANTED, false);
-    }
-
-    @Override
     public void setGpsPermissionStatus(final boolean isPermissionAccorded) {
         mSharedPreferences
                 .edit()

@@ -4,6 +4,7 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -32,6 +33,8 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.observers.DisposableCompletableObserver;
 
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MYMEMORY;
+import static com.dbeginc.dbweather.utils.holder.ConstantHolder.QUERY_LENGTH_LIMIT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
 
 /**
@@ -81,7 +84,9 @@ public class NewsSyncJobScheduler extends JobService {
                 completableEmitter.onComplete();
 
             } catch (final Exception exception) {
-                if (!completableEmitter.isDisposed()) { completableEmitter.onError(exception); }
+                if (!completableEmitter.isDisposed()) {
+                    completableEmitter.onError(exception);
+                }
             }
 
         }).subscribeOn(schedulersProvider.getNewsScheduler())
@@ -106,12 +111,14 @@ public class NewsSyncJobScheduler extends JobService {
 
     @Override
     public boolean onStopJob(final JobParameters params) {
-        if (disposableCompletableObserver != null) { disposableCompletableObserver.dispose(); }
+        if (disposableCompletableObserver != null) {
+            disposableCompletableObserver.dispose();
+        }
         return true;
     }
 
-    private ArrayList<Article> parseNewses(final List<NewsResponse> newsResponses,
-                                           final Map<String, Integer> listOfSource) {
+
+    private ArrayList<Article> parseNewses(final List<NewsResponse> newsResponses, final Map<String, Integer> listOfSource) {
 
         final ArrayList<Article> newses = new ArrayList<>();
 
@@ -120,58 +127,64 @@ public class NewsSyncJobScheduler extends JobService {
                 final Article news = new Article();
                 news.setAuthor(response.getSource());
                 news.setPublishedAt(response.getArticles().get(i).getPublishedAt());
-                String newsTitle = response.getArticles().get(i).getTitle();
-                String newsDescription = response.getArticles().get(i).getDescription();
-
-                newsTitle = newsTitle == null ? "" : newsTitle;
-                newsDescription = newsDescription == null ? "" : newsDescription;
+                final String newsTitle = response.getArticles().get(i).getTitle();
+                final String newsDescription = response.getArticles().get(i).getDescription();
 
                 try {
                     if (!"en".equals(ConstantHolder.USER_LANGUAGE) &&
-                            mSharedPreferences.getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
+                            mSharedPreferences
+                                    .getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
 
                         news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
                                 .translateText(newsTitle)));
 
-                        if (!newsDescription.isEmpty()) {
+                        if (newsDescription != null && !newsDescription.isEmpty()) {
                             news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
                                     .translateText(newsDescription)));
-
                         } else {
                             news.setDescription("");
                         }
 
-                        if (news.getTitle().equalsIgnoreCase(newsTitle)
-                                || news.getTitle().toUpperCase(Locale.getDefault()).contains("MYMEMORY WARNING")
-                                || news.getTitle().toUpperCase(Locale.getDefault()).contains("QUERY LENGTH LIMIT")) {
+                        if (news.getTitle() != null) {
+                            if (isInvalid(news.getTitle(), newsTitle)) {
+                                news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider.translateText(newsTitle)));
+                            }
 
-                            news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(newsTitle)));
-                        }
+                        } else { news.setTitle(""); }
 
-                        if (!news.getDescription().isEmpty() &&
-                                (news.getDescription().equalsIgnoreCase(newsDescription) || news.getDescription().contains("MYMEMORY WARNING") ||
-                                        news.getDescription().toUpperCase(Locale.getDefault()).contains("QUERY LENGTH LIMIT"))) {
+                        if (news.getDescription() != null && newsDescription != null) {
 
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(news.getDescription())));
-                        }
+                            if (isInvalid(news.getDescription(), newsDescription)) {
+                                news.setDescription(StringEscapeUtils
+                                        .unescapeHtml4(mGoogleTranslateProvider.translateText(newsDescription)));
+                            }
+
+                        } else { news.setDescription(""); }
 
                     } else {
                         news.setTitle(StringEscapeUtils.unescapeHtml4(newsTitle));
                         news.setDescription(StringEscapeUtils.unescapeHtml4(newsDescription));
                     }
 
-                    news.setArticleUrl(response.getArticles().get(i).getUrl());
+                    news.setArticleUrl(response
+                            .getArticles().get(i).getUrl());
 
-                    news.setUrlToImage(response.getArticles().get(i).getUrlToImage());
+                    news.setUrlToImage(response
+                            .getArticles().get(i).getUrlToImage());
 
                 } catch (GeneralSecurityException | IOException e) {
+                    Crashlytics.logException(e);
                     news.setTitle(newsTitle);
+                    news.setDescription(newsDescription);
                 }
                 newses.add(news);
             }
         }
         return newses;
+    }
+
+    private boolean isInvalid(@NonNull final String data, @NonNull final String defaultData) {
+        return data.toUpperCase(Locale.getDefault()).contains(MYMEMORY) || data.equalsIgnoreCase(defaultData)
+                || data.toUpperCase(Locale.getDefault()).contains(QUERY_LENGTH_LIMIT);
     }
 }

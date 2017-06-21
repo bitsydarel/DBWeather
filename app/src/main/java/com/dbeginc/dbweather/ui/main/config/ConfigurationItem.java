@@ -20,7 +20,7 @@ public class ConfigurationItem implements Parcelable {
     public final ObservableField<String> label = new ObservableField<>();
 
 
-    ConfigurationItem() {
+    public ConfigurationItem() {
     }
 
     private ConfigurationItem(Parcel in) {

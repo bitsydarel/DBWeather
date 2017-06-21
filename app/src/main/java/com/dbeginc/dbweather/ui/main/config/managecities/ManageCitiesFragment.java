@@ -71,7 +71,7 @@ public class ManageCitiesFragment extends BaseFragment implements ILocationManag
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar.configToolbar);
         binding.toolbar.configToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));

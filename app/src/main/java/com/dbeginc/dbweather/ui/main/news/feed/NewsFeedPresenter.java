@@ -5,13 +5,13 @@ import android.support.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.provider.AppDataProvider;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
-import com.dbeginc.dbweather.ui.main.news.feed.INewsFeed;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by darel on 29.05.17.
+ * News Feed Presenter
  */
 
 public class NewsFeedPresenter {
@@ -36,6 +36,7 @@ public class NewsFeedPresenter {
                 dataProvider.getNewsFromApi()
                         .subscribeOn(schedulersProvider.getNewsScheduler())
                         .observeOn(schedulersProvider.getUIScheduler())
+                        .unsubscribeOn(schedulersProvider.getNewsScheduler())
                         .subscribe(view::showNews,this::handleError)
         );
     }

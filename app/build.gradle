@@ -56,6 +56,7 @@ android {
             it.buildConfigField('String', 'YOUTUBE_API_KEY', YoutubeApiKey)
             it.buildConfigField('String', 'NEWS_API_KEY', NewsApiKey)
             it.buildConfigField('String', 'WEATHER_API_KEY', WeatherApiKey)
+            it.buildConfigField('String', 'EMAIL_ACCOUNT', EmailAccount)
         }
     }
     //Show all the result of unitTest

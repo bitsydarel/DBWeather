@@ -1,8 +1,5 @@
 package com.dbeginc.dbweather.models.provider.preferences;
 
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
-
 import javax.annotation.Nonnull;
 
 /**
@@ -27,10 +24,6 @@ public interface IPreferencesProvider {
     boolean getNewsTranslationStatus();
 
     void setNewsTranslationStatus(final boolean isOn);
-
-    void setAccountPermissionStatus(final boolean isPermissionAccorded);
-
-    boolean getAccountPermissionStatus();
 
     void setGpsPermissionStatus(final boolean isPermissionAccorded);
 
