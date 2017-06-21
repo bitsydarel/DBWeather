@@ -160,9 +160,8 @@ public class NewFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Single.create((SingleOnSubscribe<List<Article>>) e -> {
                     try {
                         final List<Article> newList = convertToAdList(articles);
-                        if (!e.isDisposed()) {
-                            e.onSuccess(newList);
-                        }
+                        if (!e.isDisposed()) { e.onSuccess(newList); }
+
                     } catch (Exception ex) { if (!e.isDisposed()) { e.onError(ex); } }
 
                 }).map(articles1 -> DiffUtil.calculateDiff(new ArticleDiffCallback(NewFeedAdapter.this.articles, articles1)))
