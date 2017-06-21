@@ -29,16 +29,15 @@
 
         <TextView
             android:id="@+id/settingLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
             android:text="@string/config_tab_title"
-            android:textSize="24sp"
             android:textColor="@color/configTabColor"
-            android:layout_marginTop="16dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:layout_marginBottom="16dp"
             android:visibility="@{isChildVisible ? View.GONE: View.VISIBLE}"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -60,7 +59,6 @@
             android:id="@+id/ad_v_config"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:visibility="@{isChildVisible ? View.GONE: View.VISIBLE}"
             ads:adSize="SMART_BANNER"
             ads:adUnitId="ca-app-pub-3786486250382359/3271779424"

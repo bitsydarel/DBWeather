@@ -9,7 +9,7 @@
     <color name="switchColorNormal">#bdbdbd</color>
     <color name="switchColorThumbNormal">#A9A9A9</color>
     <color name="tabWidgetColor">#4285F4</color>
-    <color name="inactiveTabColor">#BDBDBD</color>
+    <color name="inactiveTabColor">#89ffffff</color>
     <color name="activeTabColor">#FFFFFF</color>
     <color name="configTabColor">#7C4DFF</color>
     <color name="configStatusBarColor">#6200EA</color>
@@ -23,4 +23,5 @@
     <color name="wind_background">#455a64</color>
     <color name="rain_background">#607d8b</color>
     <color name="fog_background">#c5cae9</color>
+    <color name="white">#FFFFFFFF</color>
 </resources>

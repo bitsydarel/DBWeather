@@ -107,7 +107,6 @@ dependencies {
     compile "com.android.support:support-core-utils:$supportLibraryVersion"
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:customtabs:$supportLibraryVersion"
-
     compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
     compile "com.google.firebase:firebase-core:$googleLibraryVersion"
     compile "com.google.firebase:firebase-ads:$googleLibraryVersion"
