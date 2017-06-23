@@ -29,7 +29,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toTopOf="@id/newsTabsBottomLimit"
             app:bb_tabXmlResource="@xml/news_top_tabs"
-            app:bb_inActiveTabColor="@color/inactiveTabColor"
+            app:bb_inActiveTabColor="@color/topInactiveTabColor"
             app:bb_activeTabColor="@color/newsTabColor"
             app:bb_showShadow="true"/>
 

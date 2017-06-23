@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.dbeginc.dbweather.models.databases.ApplicationDatabase;
 import com.dbeginc.dbweather.models.databases.UserCitiesDatabase;
 import com.dbeginc.dbweather.models.datatypes.geonames.GeoName;

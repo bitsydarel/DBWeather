@@ -73,8 +73,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
             android:visibility="@{Configuration.hasSwitch ? View.VISIBLE : View.GONE}"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ConfigurationLabel"
             app:layout_constraintLeft_toRightOf="@id/switchLeftLimit"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/ConfigurationLineBottom"/>

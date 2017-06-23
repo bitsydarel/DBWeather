@@ -35,8 +35,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:bb_tabXmlResource="@xml/bottombar_tabs"
-            app:bb_inActiveTabColor="@color/inactiveTabColor"
-            app:bb_activeTabColor="@color/activeTabColor"
+            app:bb_inActiveTabColor="@color/bottomInactiveTabColor"
+            app:bb_activeTabColor="@color/bottomActiveTabColor"
             app:bb_showShadow="true"/>
         
     </android.support.constraint.ConstraintLayout>

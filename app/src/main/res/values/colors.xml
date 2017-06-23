@@ -9,8 +9,9 @@
     <color name="switchColorNormal">#bdbdbd</color>
     <color name="switchColorThumbNormal">#A9A9A9</color>
     <color name="tabWidgetColor">#4285F4</color>
-    <color name="inactiveTabColor">#89ffffff</color>
-    <color name="activeTabColor">#FFFFFF</color>
+    <color name="topInactiveTabColor">#50000000</color>
+    <color name="bottomInactiveTabColor">#89ffffff</color>
+    <color name="bottomActiveTabColor">#FFFFFF</color>
     <color name="configTabColor">#7C4DFF</color>
     <color name="configStatusBarColor">#6200EA</color>
     <color name="newsTabColor">#E91E63</color>

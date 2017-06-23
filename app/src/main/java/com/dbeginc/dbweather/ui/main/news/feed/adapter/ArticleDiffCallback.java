@@ -40,8 +40,12 @@ public class ArticleDiffCallback extends DiffUtil.Callback {
             final Article oldArticle = (Article) oldListOfArticle.get(oldItemPosition);
             final Article newArticle = (Article) newListOfArticle.get(newItemPosition);
 
-            return oldArticle.getArticleUrl()
-                    .equalsIgnoreCase(newArticle.getArticleUrl());
+            if (oldArticle.getArticleUrl() != null) {
+                return oldArticle.getArticleUrl()
+                        .equalsIgnoreCase(newArticle.getArticleUrl());
+            } else {
+                return oldArticle.getTitle().equalsIgnoreCase(newArticle.getTitle());
+            }
 
         } else { return true; }
     }

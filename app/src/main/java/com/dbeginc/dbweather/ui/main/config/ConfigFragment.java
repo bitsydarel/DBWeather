@@ -1,5 +1,6 @@
 package com.dbeginc.dbweather.ui.main.config;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
@@ -107,7 +108,11 @@ public class ConfigFragment extends BaseFragment implements IConfigurationView ,
         presenter.subscribeToClickEvent();
         handler.post(this::setupAds);
         handler.post(this::setupListOfConfig);
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         handler.post(() -> getChildFragmentManager().addOnBackStackChangedListener(this));
     }
 

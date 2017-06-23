@@ -4,7 +4,6 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -15,7 +14,6 @@ import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.news.NewsResponse;
 import com.dbeginc.dbweather.models.provider.schedulers.RxSchedulersProvider;
 import com.dbeginc.dbweather.models.provider.translators.GoogleTranslateProvider;
-import com.dbeginc.dbweather.models.provider.translators.MyMemoryTranslateProvider;
 import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 
@@ -25,7 +23,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -33,8 +30,6 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.observers.DisposableCompletableObserver;
 
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.MYMEMORY;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.QUERY_LENGTH_LIMIT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG;
 
 /**
@@ -49,9 +44,6 @@ public class NewsSyncJobScheduler extends JobService {
 
     @Inject
     GoogleTranslateProvider mGoogleTranslateProvider;
-
-    @Inject
-    MyMemoryTranslateProvider mMyMemoryTranslateProvider;
 
     @Inject
     SharedPreferences mSharedPreferences;
@@ -135,31 +127,12 @@ public class NewsSyncJobScheduler extends JobService {
                             mSharedPreferences
                                     .getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
 
-                        news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
-                                .translateText(newsTitle)));
+                        news.setTitle(StringEscapeUtils
+                                .unescapeHtml4(mGoogleTranslateProvider.translateText(newsTitle)));
 
-                        if (newsDescription != null && !newsDescription.isEmpty()) {
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
-                                    .translateText(newsDescription)));
-                        } else {
-                            news.setDescription("");
-                        }
+                        news.setDescription(StringEscapeUtils
+                                .unescapeHtml4(mGoogleTranslateProvider.translateText(newsDescription)));
 
-                        if (news.getTitle() != null) {
-                            if (isInvalid(news.getTitle(), newsTitle)) {
-                                news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider.translateText(newsTitle)));
-                            }
-
-                        } else { news.setTitle(""); }
-
-                        if (news.getDescription() != null && newsDescription != null) {
-
-                            if (isInvalid(news.getDescription(), newsDescription)) {
-                                news.setDescription(StringEscapeUtils
-                                        .unescapeHtml4(mGoogleTranslateProvider.translateText(newsDescription)));
-                            }
-
-                        } else { news.setDescription(""); }
 
                     } else {
                         news.setTitle(StringEscapeUtils.unescapeHtml4(newsTitle));
@@ -181,10 +154,5 @@ public class NewsSyncJobScheduler extends JobService {
             }
         }
         return newses;
-    }
-
-    private boolean isInvalid(@NonNull final String data, @NonNull final String defaultData) {
-        return data.toUpperCase(Locale.getDefault()).contains(MYMEMORY) || data.equalsIgnoreCase(defaultData)
-                || data.toUpperCase(Locale.getDefault()).contains(QUERY_LENGTH_LIMIT);
     }
 }

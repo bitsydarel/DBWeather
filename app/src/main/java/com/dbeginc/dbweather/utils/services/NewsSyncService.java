@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
@@ -15,7 +14,6 @@ import com.dbeginc.dbweather.models.api.adapters.NewsRestAdapter;
 import com.dbeginc.dbweather.models.datatypes.news.Article;
 import com.dbeginc.dbweather.models.datatypes.news.NewsResponse;
 import com.dbeginc.dbweather.models.provider.translators.GoogleTranslateProvider;
-import com.dbeginc.dbweather.models.provider.translators.MyMemoryTranslateProvider;
 import com.dbeginc.dbweather.utils.helper.DatabaseOperation;
 import com.dbeginc.dbweather.utils.holder.ConstantHolder;
 
@@ -25,7 +23,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -43,9 +40,6 @@ public class NewsSyncService extends IntentService {
 
     @Inject
     GoogleTranslateProvider mGoogleTranslateProvider;
-
-    @Inject
-    MyMemoryTranslateProvider mMyMemoryTranslateProvider;
 
     @Inject
     SharedPreferences mSharedPreferences;
@@ -92,7 +86,6 @@ public class NewsSyncService extends IntentService {
 
     private ArrayList<Article> parseNewses(final List<NewsResponse> newsResponses,
                                            final Map<String, Integer> listOfSource) {
-
         final ArrayList<Article> newses = new ArrayList<>();
 
         for (final NewsResponse response : newsResponses) {
@@ -105,46 +98,28 @@ public class NewsSyncService extends IntentService {
 
                 try {
                     if (!"en".equals(ConstantHolder.USER_LANGUAGE) &&
-                            mSharedPreferences.getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
+                            mSharedPreferences
+                                    .getBoolean(ConstantHolder.NEWS_TRANSLATION_KEY, true)) {
 
-                        news.setTitle(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
-                                .translateText(newsTitle)));
-
-                        if (newsDescription != null && !newsDescription.isEmpty()) {
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mMyMemoryTranslateProvider
-                                    .translateText(newsDescription)));
-
-                        } else {
-                            news.setDescription("");
-                        }
-
-                        if (news.getTitle().equalsIgnoreCase(newsTitle)
-                                || news.getTitle().toUpperCase(Locale.getDefault()).contains("MYMEMORY WARNING")
-                                || news.getTitle().toUpperCase(Locale.getDefault()).contains("QUERY LENGTH LIMIT")) {
-
-                            news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(newsTitle)));
-                        }
-
-                        if (!news.getDescription().isEmpty() &&
-                                (news.getDescription().equalsIgnoreCase(newsDescription) || news.getDescription().contains("MYMEMORY WARNING") ||
-                                        news.getDescription().toUpperCase(Locale.getDefault()).contains("QUERY LENGTH LIMIT"))) {
-
-                            news.setDescription(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider
-                                    .translateText(news.getDescription())));
-                        }
+                        news.setTitle(StringEscapeUtils.unescapeHtml4(mGoogleTranslateProvider.translateText(newsTitle)));
+                        news.setDescription(StringEscapeUtils
+                                .unescapeHtml4(mGoogleTranslateProvider.translateText(newsDescription)));
 
                     } else {
                         news.setTitle(StringEscapeUtils.unescapeHtml4(newsTitle));
                         news.setDescription(StringEscapeUtils.unescapeHtml4(newsDescription));
                     }
 
-                    news.setArticleUrl(response.getArticles().get(i).getUrl());
+                    news.setArticleUrl(response
+                            .getArticles().get(i).getUrl());
 
-                    news.setUrlToImage(response.getArticles().get(i).getUrlToImage());
+                    news.setUrlToImage(response
+                            .getArticles().get(i).getUrlToImage());
 
                 } catch (GeneralSecurityException | IOException e) {
+                    Crashlytics.logException(e);
                     news.setTitle(newsTitle);
+                    news.setDescription(newsDescription);
                 }
                 newses.add(news);
             }
