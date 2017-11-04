@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tabs>
     <tab
-        id="@+id/tab_news_feed"
+        id="@+id/tab_articles"
         icon="@drawable/ic_news_feed"
-        title="@string/tab_news_feed_title"
-        titleSize="8dp"/>
+        title="@string/news_papers_tab_title"
+        titleSize="8sp"
+        />
     <tab
-        id="@+id/tab_live_news"
+        id="@+id/tab_lives"
         icon="@drawable/ic_live_news"
-        title="@string/tab_live_news_title"
-        titleSize="8dp"/>
+        title="@string/lives_tv_tab_title"
+        titleSize="8sp"/>
 </tabs>

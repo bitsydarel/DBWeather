@@ -1,5 +1,8 @@
 package com.dbeginc.dbweather.utils.holder;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,11 +17,25 @@ import java.util.Map;
 
 public class ConstantHolder {
 
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
+    public static final String COMPONENT_NAME_KEY = "COMPONENT_NAME_KEY";
     public static final String NOTIFICATION_KEY = "notification_key";
     public static final String NEWS_TRANSLATION_KEY = "news_translation_key";
+    public static final String LATITUDE = "locationLatitude";
+    public static final String LONGITUDE = "locationLongitude";
+    public static final String CURRENT_LOCATION = "current_location";
+    public static final String LOCATIONS = "locations";
+
+    /****************************** Article Constant ***********************************/
+    public static final String ARTICLES_DATA = "article_data";
+    public static final String NEWS_PAPERS = "news_papers";
+
+    /****************************** DAY Constant ***********************************/
+    public static final String DAY_DATA = "day_data";
+
+    /****************************** Hour Constant ***********************************/
 
     public static final String INTEGER_PRIMARY_KEY = " integer primary key autoincrement not null,";
-    public static final String UPDATE_REQUEST = "update_request";
     public static final String WEATHER_INFO_KEY = "weather_info_key";
     public static final String LOCATION_UPDATE = "dbweather_location_update";
 
@@ -28,6 +45,8 @@ public class ConstantHolder {
     public static final String WRITE_PERMISSION_GRANTED = "WRITE_PERMISSION_GRANTED";
     public static final String WRITE_PERMISSION_DECLINED = "WRITE_PERMISSION_DECLINED";
     public static final String INDEX = "INDEX";
+    public static final String WEATHER_ALERT_CHANNEL_ID = "forecast_alert_id";
+    public static final String WEATHER_ALERT_CHANNEL_NAME = "DBWeather forecast alert";
     public static final int WEATHER_ALERT_ID = 7125205;
     public static final String CACHE_NAME = "dbweather_cache_dir";
     public static final String GlIDE_CACHE_NAME = "dbweather_glide_cache";
@@ -46,14 +65,22 @@ public class ConstantHolder {
     public static final String OLD_INDEX = "OLD_INDEX";
     public static final String MYMEMORY = "MYMEMORY";
     public static final String QUERY_LENGTH_LIMIT = "QUERY LENGTH LIMIT";
+    public static final String SEARCH_QUERY_URI = "content://com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider/search_suggest_query/%s?limit=50";
+    public static final String LIVE_DATABASE_REFERENCE = "live_source";
+    public static final String LIVES_DATA = "lives_data";
+    public static final String FAVORITE_LIVES = "favorite_lives";
 
     private ConstantHolder() {
         //To disable default constructor
     }
 
-    public static final String TAG = "dbweather_application";
+    /********************** Weather **********************/
+    public static final String USER_LOCATION = "user_location";
+    public static final String USER_LATITUDE = "user_latitude";
+    public static final String USER_LONGITUDE = "user_longitude";
+
+    public static final String TAG = "dbweather_app";
     public static final String IS_GPS_PERMISSION_GRANTED = "is_gps_permission_granted";
-    public static final String IS_ACCOUNT_PERMISSION_GRANTED = "is_account_granted";
     public static final String IS_WRITE_PERMISSION_GRANTED = "is_write_granted";
     public static final String PREFS_NAME = "db_weather_prefs";
 
@@ -71,7 +98,7 @@ public class ConstantHolder {
     public static final String NOTIF_SUMMARY = "notif_summary";
     public static final String NOTIF_TEMPERATURE = "notif_temperature";
 
-    public static final String IS_FROM_CITY_KEY = "is_from_city_key";
+    public static final String IS_CURRENT_LOCATION = "is_current_location";
 
 
     public static final List<String> supportedLang = Collections.unmodifiableList(Arrays.asList("ar","az","be","bs","ca","cs","de","el","en","es",

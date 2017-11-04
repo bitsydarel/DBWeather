@@ -1,3 +1,12 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
+}
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -7,27 +16,33 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.22.1'
     }
 }
-apply plugin: 'com.android.application'
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
 }
 
 android {
     signingConfigs {
     }
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.dbeginc.dbweather"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 26
         multiDexEnabled = true
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
+
     }
+
     lintOptions {
         //lint rules
         apply from: "${rootDir}/config/lint.gradle", to: it
@@ -43,12 +58,12 @@ android {
         debug {
             testCoverageEnabled = true
             minifyEnabled false
-            useProguard false
+            shrinkResources false
         }
 
         release {
-            minifyEnabled false
-            useProguard true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -56,6 +71,7 @@ android {
             it.buildConfigField('String', 'YOUTUBE_API_KEY', YoutubeApiKey)
             it.buildConfigField('String', 'NEWS_API_KEY', NewsApiKey)
             it.buildConfigField('String', 'WEATHER_API_KEY', WeatherApiKey)
+            it.buildConfigField('String', 'GEONAME_USERNAME', GeoNameUserName)
             it.buildConfigField('String', 'EMAIL_ACCOUNT', EmailAccount)
         }
     }
@@ -74,21 +90,32 @@ android {
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEX.LIST'
     }
-    dataBinding {
-        enabled = true
-    }
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-    dexOptions {
-        preDexLibraries = false
-    }
-    productFlavors {
+    dataBinding { enabled = true }
+
+    testOptions { unitTests.returnDefaultValues = true }
+
+    dexOptions { preDexLibraries = false }
+
+    productFlavors {}
+
+    sourceSets {
+        test.java { srcDirs += 'src/test/kotlin' }
+
+        androidTest.java { srcDirs += 'src/androidTest/kotlin' }
+
+        main {
+            java { srcDirs += 'src/main/kotlin' }
+        }
     }
 }
 
+
+
 dependencies {
+    implementation 'com.android.support:support-v4:26.1.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(":dbweatherdata")
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -99,7 +126,7 @@ dependencies {
     compile 'com.google.http-client:google-http-client-gson:1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:multidex:1.0.2'
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
@@ -107,6 +134,7 @@ dependencies {
     compile "com.android.support:support-core-utils:$supportLibraryVersion"
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:customtabs:$supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$supportLibraryVersion"
     compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
     compile "com.google.firebase:firebase-core:$googleLibraryVersion"
     compile "com.google.firebase:firebase-ads:$googleLibraryVersion"
@@ -121,10 +149,13 @@ dependencies {
     compile "com.google.dagger:dagger-android:$daggerLibraryVersion"
 
     //Rx JAVA
-    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.2'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.2-SNAPSHOT'
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.1"
 
     //SQUARE
+    compile 'com.facebook.stetho:stetho:1.5.0'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
     compile 'com.squareup.okhttp3:okhttp:3.9.0-SNAPSHOT'
     compile 'com.squareup.retrofit2:retrofit:2.4.0-SNAPSHOT'
     compile 'com.squareup.retrofit2:converter-gson:2.4.0-SNAPSHOT'
@@ -135,25 +166,41 @@ dependencies {
     }
 
     //OTHER
+    compile "org.jetbrains.anko:anko-coroutines:0.10.2"
     compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'com.airbnb.android:lottie:2.0.0-beta4'
-    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
-    compile 'com.github.bumptech.glide:okhttp3-integration:4.0.0-RC0'
+    compile 'com.airbnb.android:lottie:2.2.5'
     compile 'com.roughike:bottom-bar:2.3.1'
     compile 'com.github.clans:fab:1.6.4'
+    compile 'com.github.florent37:viewanimator:1.0.5'
+    compile 'com.jakewharton.timber:timber:4.5.1'
+
+    // Glide stuff
+    compile 'com.github.bumptech.glide:glide:4.1.1'
+    compile 'com.github.bumptech.glide:okhttp3-integration:4.1.1'
+    compile 'com.github.bumptech.glide:annotations:4.1.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
+    kapt 'com.github.bumptech.glide:compiler:4.1.1'
+
+    // Android Arch Lifecycle
+    compile "android.arch.lifecycle:runtime:1.0.0"
+    compile "android.arch.lifecycle:extensions:1.0.0-alpha9-1"
+    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha9-1"
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile 'org.mockito:mockito-core:2.8.47'
 
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerLibraryVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerLibraryVersion"
-    annotationProcessor 'com.github.bumptech.glide:annotations:4.0.0-SNAPSHOT'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-SNAPSHOT'
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    kapt "com.google.dagger:dagger-compiler:$daggerLibraryVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerLibraryVersion"
+    kapt "com.android.databinding:compiler:$androidPluginVersion"
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.0@aar') {
         transitive = true
     }
     compile files('libs/YouTubeAndroidPlayerApi.jar')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 configurations {
@@ -172,3 +219,4 @@ apply from: "${rootDir}/config/codequality-checkstyle.gradle"
 ////code coverage
 apply from: "${rootDir}/config/codecoverage.gradle"
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android-extensions'

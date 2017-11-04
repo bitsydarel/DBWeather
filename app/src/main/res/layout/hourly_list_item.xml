@@ -4,70 +4,68 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.dbeginc.dbweather.utils.utility.weather.WeatherUtil"/>
-        <import type="java.util.TimeZone"/>
         <variable
-            name="HourlyData"
-            type="com.dbeginc.dbweather.models.datatypes.weather.HourlyData"/>
+            name="Hour"
+            type="com.dbeginc.dbweather.viewmodels.weather.HourWeatherModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/hourlyLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        tools:background="#70B2FF"
-        android:clickable="true"
-        android:focusable="true">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        tools:background="#70B2FF">
 
         <TextView
             android:id="@+id/hourlyTime"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{WeatherUtil.getHour(HourlyData.time, TimeZone.getDefault().getID())}"
+            android:text="@{Hour.hourlyTime}"
             android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="8dp"
             tools:text="2:00 PM"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyImage"
+            app:layout_constraintVertical_chainStyle="spread_inside"
+            app:layout_constraintVertical_bias="0"/>
 
         <ImageView
             android:id="@+id/hourlyImage"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/hourly_image_icon"
             tools:src="@drawable/clear_day"
-            app:setImage="@{WeatherUtil.getIconId(HourlyData.icon)}"
+            app:setImage="@{Hour.icon}"
             app:layout_constraintTop_toBottomOf="@id/hourlyTime"
-            app:layout_constraintLeft_toLeftOf="@id/hourlyTime"
-            app:layout_constraintRight_toRightOf="@id/hourlyTime" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyTemperatureValue"
+            app:layout_constraintVertical_bias="0"/>
 
         <TextView
             android:id="@+id/hourlyTemperatureValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text='@{WeatherUtil.getTemperatureInInt(HourlyData.temperature) + "°"}'
+            android:text='@{Hour.temperature + "°"}'
             android:textColor="@android:color/white"
-            android:textSize="24sp"
             android:textStyle="bold"
-            android:gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="16dp"
             tools:text="15°"
             app:layout_constraintTop_toBottomOf="@id/hourlyImage"
-            app:layout_constraintLeft_toLeftOf="@id/hourlyImage"
-            app:layout_constraintRight_toRightOf="@id/hourlyImage"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.3"/>
 
         <TextView
             android:id="@+id/hourlyTemperatureValueUnit"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:text="@{HourlyData.temperatureUnit}"
+            android:text="@{Hour.temperatureUnit}"
             tools:text="C"
             app:layout_constraintTop_toTopOf="@id/hourlyTemperatureValue"
             app:layout_constraintLeft_toRightOf="@id/hourlyTemperatureValue"

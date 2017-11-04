@@ -10,7 +10,7 @@
 # Add any project specific keep options here:
 
 # If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
+# and specify the fully qualified class locationName to the JavaScript interface
 # class:
 -keepclassmembers class fqcn.of.javascript.interface.for.webview {
    public *;
@@ -83,7 +83,7 @@
 -keep public class * extends java.lang.Exception
 -keep public class * extends android.app.Activity
 -keep public class * extends android.support.multidex.MultiDexApplication
--keep public class * extends com.dbeginc.dbweather.ui.BaseActivity
+-keep public class * extends com.dbeginc.dbweather.base.BaseActivity
 -keep public class * extends android.preference.Preference
 -keep class io.reactivex.disposables.CompositeDisposable
 -keep class org.simpleframework.xml.Serializer
@@ -123,7 +123,7 @@
 -keep class com.dbeginc.dbweather.models.datatypes.** { *; }
 -dontwarn com.dbeginc.dbweather.models.datatypes.**
 
-#Keep Model data providers Classes
+#Keep Model articles providers Classes
 -keep class com.dbeginc.dbweather.models.provider.** { *; }
 -dontwarn com.dbeginc.dbweather.models.provider.**
 

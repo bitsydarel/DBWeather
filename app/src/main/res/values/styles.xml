@@ -1,18 +1,164 @@
+<!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/appColorPrimary</item>
+        <item name="colorPrimaryDark">@color/appColorPrimaryDark</item>
+        <item name="colorAccent">@color/appColorSecondary</item>
+        <item name="colorControlNormal">@color/appColorPrimaryLight</item>
+        <item name="colorControlHighlight">@color/appColorSecondaryLight</item>
+        <item name="colorButtonNormal">@color/appColorPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/appColorPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/appColorPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/appColorSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/appColorSecondaryTextColor</item>
+        <!-- ***************** Default component style ***************** -->
+        <item name="android:imageButtonStyle">@style/Widget.AppCompat.ImageButton</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView</item>
+        <item name="switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
+        <item name="android:checkboxStyle">@style/Widget.AppCompat.CompoundButton.CheckBox</item>
+        <item name="android:radioButtonStyle">@style/Widget.AppCompat.CompoundButton.RadioButton</item>
+        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
+        <item name="android:editTextStyle">@style/Widget.AppCompat.EditText</item>
+        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>
+        <item name="android:progressBarStyleHorizontal">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
+        <!-- **************** Window Style **************** -->
+        <item name="android:windowBackground">@color/appColorPrimaryLight</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <!-- ****************************  Intro Screen Theme **************************** -->
+    <style name="AppTheme.Intro" parent="AppTheme">
+        <item name="colorPrimary">@color/introColorPrimary</item>
+        <item name="colorPrimaryDark">@color/introColorPrimaryDark</item>
+        <item name="colorAccent">@color/introColorSecondary</item>
+    </style>
+
+    <!-- ****************************  Splash Screen Theme **************************** -->
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="colorPrimary">@color/splashColorPrimary</item>
+        <item name="colorPrimaryDark">@color/splashColorPrimaryDark</item>
+        <item name="colorAccent">@color/splashColorSecondary</item>
+        <item name="android:textColor">@color/splashTextColor</item>
+    </style>
+
+    <!--******************** Main theme ********************-->
+    <style name="AppTheme.Main" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/mainColorPrimary</item>
+        <item name="colorPrimaryDark">@color/mainColorPrimaryDark</item>
+        <item name="colorAccent">@color/mainColorSecondary</item>
+        <item name="colorControlNormal">@color/mainColorSecondaryLight</item>
+        <item name="colorControlHighlight">@color/mainColorSecondaryLight</item>
+        <item name="colorButtonNormal">@color/mainColorPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/mainColorPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/mainColorPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/mainColorSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/mainColorSecondaryTextColor</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.Light.SearchView</item>
+        <item name="switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
+        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
+        <item name="android:windowBackground">@color/appColorPrimaryLight</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+    <!--********************** News Tab Style **********************-->
+    <style name="AppTheme.Main.NewsTab" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/newsTabPrimary</item>
+        <item name="colorPrimaryDark">@color/newsTabPrimaryDark</item>
+        <item name="colorAccent">@color/newsTabSecondary</item>
+        <item name="colorControlNormal">@color/newsTabSecondaryLight</item>
+        <item name="colorControlHighlight">@color/newsTabSecondaryLight</item>
+        <item name="colorButtonNormal">@color/newsTabPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/newsTabPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/newsTabPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/newsTabSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/newsTabSecondaryTextColor</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.Light.SearchView</item>
+        <item name="switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
+        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
+        <item name="android:windowBackground">@color/appColorPrimaryLight</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+    <!--********************** Configuration Tab Style **********************-->
+    <style name="AppTheme.Main.ConfigTab" parent="AppTheme.Main">
+        <item name="colorPrimary">@color/configTabPrimary</item>
+        <item name="colorPrimaryDark">@color/configTabPrimaryDark</item>
+        <item name="colorAccent">@color/configTabSecondary</item>
+        <item name="colorControlNormal">@color/configTabSecondaryLight</item>
+        <item name="colorControlHighlight">@color/configTabSecondaryLight</item>
+        <item name="colorButtonNormal">@color/configTabPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/configTabPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/configTabPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/configTabSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/configTabSecondaryTextColor</item>
+    </style>
+
+    <!--******************** Manage Locations Theme ********************-->
+    <style name="AppTheme.ManageLocations" parent="AppTheme">
+        <item name="colorPrimary">@color/manageLocationsPrimary</item>
+        <item name="colorPrimaryDark">@color/manageLocationsPrimaryDark</item>
+        <item name="colorAccent">@color/manageLocationsSecondary</item>
+        <item name="colorControlNormal">@color/manageLocationsSecondaryLight</item>
+        <item name="colorControlHighlight">@color/manageLocationsSecondaryLight</item>
+        <item name="colorButtonNormal">@color/manageLocationsPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/manageLocationsPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/manageLocationsPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/manageLocationsSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/manageLocationsSecondaryTextColor</item>
+    </style>
+    <!--******************** Manage Sources Theme ********************-->
+    <style name="AppTheme.ManageSources" parent="AppTheme">
+        <item name="colorPrimary">@color/manageSourcesPrimary</item>
+        <item name="colorPrimaryDark">@color/manageSourcesPrimaryDark</item>
+        <item name="colorAccent">@color/manageSourcesSecondary</item>
+        <item name="colorControlNormal">@color/manageSourcesSecondaryLight</item>
+        <item name="colorControlHighlight">@color/manageSourcesSecondaryLight</item>
+        <item name="colorButtonNormal">@color/manageSourcesPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/manageSourcesPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/manageSourcesPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/manageSourcesSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/manageSourcesSecondaryTextColor</item>
+    </style>
+
+    <!-- ****************************  Live Detail Screen Theme **************************** -->
+    <style name="AppTheme.LiveDetail" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/LiveDetailColorPrimary</item>
+        <item name="colorPrimaryDark">@color/LiveDetailColorPrimaryDark</item>
+        <item name="colorAccent">@color/LiveDetailColorSecondary</item>
+        <item name="colorControlNormal">@color/LiveDetailColorPrimaryLight</item>
+        <item name="colorControlHighlight">@color/LiveDetailColorSecondaryLight</item>
+        <item name="colorButtonNormal">@color/LiveDetailColorPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/LiveDetailColorPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/LiveDetailColorPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/LiveDetailColorPrimaryTextColor</item>
+        <item name="android:textColorSecondary">@color/LiveDetailColorSecondaryTextColor</item>
     </style>
 
     <!-- Transparent themes for notifications and custom dialog -->
-    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.Transparent" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@drawable/notification_background</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -23,53 +169,10 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="NewsActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:drawable/dialog_holo_light_frame</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:backgroundDimEnabled">false</item>
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
-
-    <!--Switch theme -->
-    <style name="Theme.Switch" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/switchColorOn</item>
-        <item name="colorControlActivated">@color/switchColorOn</item>
-        <item name="colorSwitchThumbNormal">@color/switchColorThumbNormal</item>
-        <item name="android:colorForeground">@color/switchColorNormal</item>
-        <item name="android:textOn">On</item>
-        <item name="android:textOff">Off</item>
-    </style>
-
-    <color name="switchColorForeground">#30bdbdbd</color>
-
-    <!--ProgressBar Theme-->
-    <style name="Theme.ProgressBarTheme" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:autoStart">true</item>
-        <item name="android:indeterminate">true</item>
-        <item name="android:minHeight">16dp</item>
-        <item name="android:scaleY">3.0</item>
-    </style>
-
-    <style name="Theme.LocationProgress" parent="android:Widget.ProgressBar.Horizontal">
-        <item name="android:minHeight">8dp</item>
-        <item name="android:indeterminateOnly">true</item>
-    </style>
-
-    <style name="ToolBarStyle" parent="">
-        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <item name="android:colorBackground">@color/colorPrimaryDark</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:minHeight">@dimen/action_bar_default_height_material</item>
-    </style>
-
-    <style name="Theme.TextView" parent="android:TextAppearance.Holo.Widget.TextView">
-        <item name="textAllCaps">false</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:selectable">false</item>
-    </style>
-
 </resources>

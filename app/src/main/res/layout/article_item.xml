@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="Article"
+            type="com.dbeginc.dbweather.viewmodels.news.ArticleModel"/>
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/articleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:id="@+id/articleImage"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:src="@drawable/no_image_icon"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/articleImage"
+                app:setImageUrl="@{Article.urlToImage}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:id="@+id/articleTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{Article.title}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                tools:text="Darel Bitsy has been elected President"
+                app:layout_constraintTop_toBottomOf="@id/articleImage"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:id="@+id/articlePublishAt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{@string/articlePublishTime(Article.publishedAt)}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:gravity="end"
+                android:lines="1"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                tools:text="2h ago"
+                app:layout_constraintTop_toBottomOf="@id/articleTitle"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</layout>

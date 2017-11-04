@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+            android:label="@string/app_name"
+            android:searchSuggestAuthority="com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider"
+            android:searchSuggestIntentAction="android.intent.action.view"
+            android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
+            android:inputType="textShortMessage"
+            android:hint="@string/add_location_search_hint">
+</searchable>

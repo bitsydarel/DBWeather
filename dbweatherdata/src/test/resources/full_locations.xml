@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<geonames style="MEDIUM">
+    <totalResultsCount>122</totalResultsCount>
+    <geoname>
+        <toponymName>London</toponymName>
+        <name>London</name>
+        <lat>51.50853</lat>
+        <lng>-0.12574</lng>
+        <geonameId>2643743</geonameId>
+        <countryCode>GB</countryCode>
+        <countryName>United Kingdom</countryName>
+        <fcl>P</fcl>
+        <fcode>PPLC</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Londres</toponymName>
+        <name>Londres</name>
+        <lat>10.73472</lat>
+        <lng>-69.50556</lng>
+        <geonameId>3751058</geonameId>
+        <countryCode>VE</countryCode>
+        <countryName>Venezuela</countryName>
+        <fcl>L</fcl>
+        <fcode>LCTY</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Londres</toponymName>
+        <name>Londres</name>
+        <lat>-27.71439</lat>
+        <lng>-67.13349</lng>
+        <geonameId>3846616</geonameId>
+        <countryCode>AR</countryCode>
+        <countryName>Argentina</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+</geonames>

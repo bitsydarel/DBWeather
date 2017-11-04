@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/configTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/updateStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="true"
+            android:indeterminateOnly="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ImageView
+            android:id="@+id/settingIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tint="@color/configTabPrimary"
+            android:contentDescription="@string/setting_icon"
+            android:layout_margin="8dp"
+            app:srcCompat="@drawable/settings_tab_icon"
+            app:layout_constraintTop_toBottomOf="@id/updateStatus"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/settingLabel"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_bias="0.05"/>
+
+        <TextView
+            android:id="@+id/settingLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/config_tab_title"
+            android:textColor="@color/configTabPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/updateStatus"
+            app:layout_constraintLeft_toRightOf="@id/settingIcon"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/configTabAd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="ca-app-pub-3786486250382359/3271779424"
+            app:layout_constraintTop_toBottomOf="@id/settingIcon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/iconRightLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/switchLeftLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85"/>
+
+        <ImageView
+            android:id="@+id/manageLocationsIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/configTabPrimary"
+            android:contentDescription="@string/configuration_icon"
+            android:background="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/city_location_icon"
+            app:layout_constraintTop_toBottomOf="@id/configTabAd"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iconRightLimit"
+            app:layout_constraintBottom_toTopOf="@+id/weatherNotificationIcon"/>
+
+        <TextView
+            android:id="@+id/manageLocationsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/manages_locations"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center_horizontal|center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@id/configTabAd"
+            app:layout_constraintLeft_toRightOf="@id/iconRightLimit"
+            app:layout_constraintRight_toLeftOf="@id/switchLeftLimit"
+            app:layout_constraintBottom_toTopOf="@id/weatherNotificationLabel"/>
+
+        <ImageView
+            android:id="@+id/weatherNotificationIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/configTabPrimary"
+            android:contentDescription="@string/configuration_icon"
+            android:background="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_weather_notifications_black"
+            app:layout_constraintTop_toBottomOf="@id/manageLocationsIcon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iconRightLimit"
+            app:layout_constraintBottom_toTopOf="@id/manageSourcesIcon"/>
+
+        <TextView
+            android:id="@+id/weatherNotificationLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_notification"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center_horizontal|center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@id/manageLocationsLabel"
+            app:layout_constraintLeft_toRightOf="@id/iconRightLimit"
+            app:layout_constraintRight_toLeftOf="@id/switchLeftLimit"
+            app:layout_constraintBottom_toTopOf="@id/manageSourcesLabel"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/weatherNotificationSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            tools:checked="true"
+            app:layout_constraintTop_toTopOf="@id/weatherNotificationLabel"
+            app:layout_constraintLeft_toRightOf="@id/switchLeftLimit"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/weatherNotificationLabel"/>
+
+        <ImageView
+            android:id="@+id/manageSourcesIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/configTabPrimary"
+            android:contentDescription="@string/configuration_icon"
+            android:background="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/news_icon"
+            app:layout_constraintTop_toBottomOf="@id/weatherNotificationIcon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iconRightLimit"
+            app:layout_constraintBottom_toTopOf="@+id/translateNewsPaperIcon"/>
+
+        <TextView
+            android:id="@+id/manageSourcesLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/manages_sources"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center_horizontal|center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@id/weatherNotificationLabel"
+            app:layout_constraintLeft_toRightOf="@id/iconRightLimit"
+            app:layout_constraintRight_toLeftOf="@id/switchLeftLimit"
+            app:layout_constraintBottom_toTopOf="@id/translateNewsPaperLabel"/>
+
+        <ImageView
+            android:id="@+id/translateNewsPaperIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/configTabPrimary"
+            android:contentDescription="@string/configuration_icon"
+            android:background="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_g_translate_black"
+            app:layout_constraintTop_toBottomOf="@id/manageSourcesIcon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iconRightLimit"
+            app:layout_constraintBottom_toTopOf="@id/helpIcon"/>
+
+        <TextView
+            android:id="@+id/translateNewsPaperLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/translate_newspapers"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center_horizontal|center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@id/manageSourcesLabel"
+            app:layout_constraintLeft_toRightOf="@id/iconRightLimit"
+            app:layout_constraintRight_toLeftOf="@id/switchLeftLimit"
+            app:layout_constraintBottom_toTopOf="@+id/helpLabel"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/translateNewsPaperSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="@id/translateNewsPaperLabel"
+            app:layout_constraintLeft_toRightOf="@id/switchLeftLimit"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/translateNewsPaperLabel"/>
+
+        <ImageView
+            android:id="@+id/helpIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/configTabPrimary"
+            android:contentDescription="@string/configuration_icon"
+            android:background="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_help_black"
+            app:layout_constraintTop_toBottomOf="@id/translateNewsPaperIcon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iconRightLimit"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/helpLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/help_config"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:gravity="center_horizontal|center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@id/translateNewsPaperLabel"
+            app:layout_constraintLeft_toRightOf="@id/iconRightLimit"
+            app:layout_constraintRight_toLeftOf="@id/switchLeftLimit"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

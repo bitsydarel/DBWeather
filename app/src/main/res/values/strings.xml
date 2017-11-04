@@ -1,14 +1,10 @@
 <resources>
+    <!--**************************************** Application ****************************************-->
     <string name="app_name" translatable="false">DB Weather</string>
     <string name="error_title">Oops! Sorry</string>
     <string name="error_message">There was an error. Please try again.</string>
-    <string name="today_label">Today</string>
-    <string name="tomorrow_label">Tomorrow</string>
-    <string name="network_unavailable_message">Network is unavailable!</string>
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoKnOw3xJFDUYkn72qKC8--DtJstej_tE</string>
-    <string name="no_hourly_weather">There is no data to display\nPlease activate your internet connection\nOr refresh</string>
-    <string name="default_weather_summary">Getting current weather</string>
-    <string name="action_about_us">About Us</string>
+    <!--*********************************************************************************************-->
+    <!--**************************************** Weather ****************************************-->
     <string name="rain_title">Take an umbrella!</string>
     <string name="clear_night_title">Clear night with a beautiful sky!</string>
     <string name="clear_day_title">Wonderful day in sight!</string>
@@ -19,7 +15,6 @@
     <string name="cloudy_title">Cloudy weather</string>
     <string name="partly_cloudy_day_title">Partly cloudy today</string>
     <string name="partly_cloudy_night_title">Partly cloudy this evening</string>
-
     <string name="clear_day_desc" translatable="false">The temperature outside is %1$d°\nI suggest getting dressed not to light and not heavy .\n\nEvery day is a good day to be alive, whether the sun\'s shining or not.</string>
     <string name="snow_desc" translatable="false">The temperature outside is %1$d°\nI suggest getting dressed heavy and take an umbrella if you plan going outside.\n\nA snowball in the face is surely the perfect beginning to a lasting friendship.</string>
     <string name="sleet_desc" translatable="false">The temperature outside is %1$d°\nWith the weather outside watch out for slippery floor!\n\nSometimes it takes a good fall to really know where you stand :)</string>
@@ -30,44 +25,61 @@
     <string name="partly_cloudy_night_desc" translatable="false">The temperature outside is %1$d°\n\nAll shadows of clouds the sun cannot hide like the moon cannot stop oceanic tide but a hidden star can still be smiling at night\'s black spell on darkness, beguiling</string>
     <string name="unknown_location">Unknown Location</string>
     <string name="time_label">At %1$s, it was</string>
-    <string name="news_from" translatable="false">%1$s</string>
     <string name="windSpeedValue" translatable="false">%1$d mps</string>
     <string name="humidity_value" translatable="false">%1$d%%</string>
     <string name="cloudCoverValue" translatable="false">%1$d%%</string>
-    <string name="published_at" translatable="false">%1$s</string>
-    <string name="apparentTemperatureValue" translatable="false">%1$d°</string>
-    <string name="timeLabelValue">At %1$s, it will be</string>
     <string name="precipChanceValue" translatable="false">%1$d%%</string>
+    <string name="timeLabelValue">At %1$s, it will be</string>
+    <string name="apparentTemperatureValue" translatable="false">%1$d°</string>
+    <string name="hourly_time" translatable="false"> %1$s</string>
+    <string name="hourly_temperature_value" translatable="false">%1$d°</string>
+    <!--*********************************************************************************************-->
+    <string-array name="default_sources">
+        <item>hacker-news</item>
+        <item>bbc-news</item>
+        <item>cnn</item>
+        <item>the-new-york-times</item>
+        <item>four-four-two</item>
+        <item>google-news</item>
+        <item>national-geographic</item>
+        <item>techcrunch</item>
+        <item>the-guardian-uk</item>
+    </string-array>
+    <string name="network_unavailable_message">Network is unavailable!</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoKnOw3xJFDUYkn72qKC8--DtJstej_tE</string>
+    <string name="no_hourly_weather">There is no articles to display\nPlease activate your internet connection\nOr refresh</string>
+    <string name="default_weather_summary">Getting current weather</string>
+    <string name="action_about_us">About Us</string>
+    <string name="news_from" translatable="false">%1$s</string>
+    <string name="published_at">%1$s ago</string>
     <string name="precipeChanceTypeLabel" translatable="false">%1$s</string>
     <string name="open_in_browser_text">Open in Browser</string>
     <string name="open_in_browser">Details</string>
     <string name="news_close_text">Close the Window</string>
-
-    <string name="hourly_time" translatable="false"> %1$s</string>
-    <string name="hourly_temperature_value" translatable="false">%1$d°</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="notification_config_title">Weather notification</string>
-    <string name="news_translation_config_title">Translate news feeds</string>
-    <string name="select_news_source_config_title">Select news sources</string>
-    <string name="add_location_search_hint">Enter location name</string>
-    <string name="alert_add_location_text">Do you want to add  %1$s to your list of Location ?</string>
+    <!-- *********************** Configurations *********************** -->
+    <string name="weather_notification">Weather notification</string>
+    <string name="manages_locations">Manages locations</string>
+    <string name="translate_newspapers">Translate newspapers</string>
+    <string name="manages_sources">Manages news sources</string>
+    <string name="configuration_changed">change successfully saved</string>
+    <string name="location_removed">Location successfully removed</string>
+    <string name="about_app">About the app</string>
     <string name="send_to">Share To</string>
-    <string name="display">Display</string>
+    <string name="add_location_search_hint">Enter location name</string>
 
+    <!-- ************************* Day ****************************-->
+    <string name="dayTemps">%1$d°/%2$d°</string>
+    <!-- *********************************************************************************-->
     <!-- *************************Introduction layout ****************************-->
-
-    <string name="news_permission_page_desc">All news feeds from around the world and live TV news in one application</string>
-    <string name="location_permission_page_desc">Please activate the location services to get the most accurate forecasts</string>
+    <string name="location_permission_request">Please grant location permission to get the most accurate forecasts!</string>
     <string name="news_powered_by" translatable="false">Powered By newsapi.org</string>
-    <string name="waiting_page_desc">Downloading the data\nThe app will automatically be launched\nThe connection may be slow</string>
+    <string name="waiting_page_desc">Downloading the articles\nThe app will automatically be launched\nThe connection may be slow</string>
     <string name="successfully_saved_configuration" translatable="false">Successfully Saved Configuration</string>
     <string name="unsuccessfully_saved_changes">Issue while saving Configuration</string>
     <string name="successfully_saved_changes">Successfully saved changes</string>
-    <string name="weather_error_message">Error while getting the weather data</string>
+    <string name="weather_error_message">Error while getting the weather articles</string>
+    <string name="weather_alert_channel_desc">This is forecast alerts</string>
     <string name="news_error_message">Error while loading the news</string>
-    <string name="successfully_added_city">Successfully added city to your list</string>
-    <string name="unsuccessfully_added_city">Could not add the city to your list, please try again</string>
     <string name="retry">Retry</string>
     <string name="degree_image_content_description" translatable="false">Degree Image</string>
     <string name="weather_icon_content_description" translatable="false">Weather Icon</string>
@@ -75,28 +87,29 @@
     <string name="screenshot_attemp_error">Error While Sharing the Data, Please try again</string>
     <string name="notification_alert_city">From %s</string>
     <string name="rain_desc">The temperature outside is %1$d°\n\n It\'s raining so don\'t get sick. DBWeather Team Love you :)</string>
+    <!-- ************************* Tab titles ****************************-->
     <string name="weather_tab_title">Weather</string>
     <string name="news_tab_title">News</string>
-    <string name="tab_news_feed_title">Feed</string>
-    <string name="tab_live_news_title">Live</string>
+    <string name="news_papers_tab_title">Newspapers</string>
+    <string name="lives_tv_tab_title">Live TV</string>
+    <string name="lives_tab_title">Live</string>
+    <string name="favorites_tab_title">Favorites</string>
     <string name="config_tab_title">Settings</string>
+    <!-- *********************************************************************************-->
     <string name="display_add">Display and Add</string>
-    <string name="manage_cities">Manage your cities</string>
     <string name="help_config">Help</string>
     <string name="youtubeVideoImageUrl" translatable="false">https://img.youtube.com/vi/%s/hqdefault.jpg</string>
     <string name="locationName" translatable="false">%1$s, %2$s</string>
     <string name="imageFlag" translatable="false">http://www.geonames.org/flags/x/%s.gif</string>
-    <string name="follow">Follow</string>
-    <string name="unfollow">UnFollow</string>
-    <string name="news_amount">Amount Of News : </string>
-    <string name="grantLocationButtonLabel">It sound good</string>
-    <string name="deniedLocationButtonLabel">No, thanks</string>
+    <string name="followButton">Follow Button</string>
+    <string name="grantLocationButtonLabel">Sounds Good</string>
+    <string name="deniedLocationButtonLabel">No Thanks</string>
     <string name="weather_powered_by" translatable="false">Powered by Dark Sky</string>
     <string name="made_by" translatable="false">Made by Darel Bitsy</string>
-    <string name="searchLocationLabel">For which location would you like to know the forecast ?</string>
-    <string name="no_locations_found">No location found\nPlease add location in the weather tab</string>
-    <string name="subscribe_to_news">Subscribe to sources</string>
-    <string name="connection_issue">Issue while downloading the data, retrying…</string>
+    <string name="searchLocationLabel">Enter location name</string>
+    <string name="no_locations_found">No userLocationSelected found\nPlease add userLocationSelected in the weather tab</string>
+    <string name="subscribe_to_news">Subscribe to sourcesJson</string>
+    <string name="connection_issue">Issue while downloading the articles, retrying…</string>
     <string name="current_location_title">Current Location</string>
     <string name="report_bug">Report bugs</string>
     <string name="rate_on_play_store">Rate on Play Store</string>
@@ -104,4 +117,37 @@
     <string name="SEND_EMAIL_FROM">Send email using</string>
     <string name="NO_EMAIL_CLIENTS">No email clients installed</string>
     <string name="unsuccessfully_saved">Error while saving changes</string>
+    <string name="dayIconDescription">Day Icon</string>
+
+    <string name="title_activity_intro">Intro</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="choose_location">Choose Location</string>
+    <string name="use_gps_location">Use Gps Location</string>
+    <string name="powered_by_dark_sky">Powered by Dark Sky</string>
+    <string name="made_by_darel_bitsy">Made by Darel Bitsy</string>
+    <string name="location_item_desc">Location item</string>
+    <string name="city_name">City name</string>
+    <string name="articleImage">Article Image</string>
+    <string name="articleAuthor">Author: %1$s</string>
+    <string name="articlePublishTime">%1$s ago</string>
+    <string name="default_author_name">Unknow</string>
+    <string name="parentExpanded">parent expanded icon</string>
+    <string name="parentIcon">parent icon</string>
+    <string name="live_thumbnail">Live Thumbnail</string>
+    <string name="live_favorite_icon">Live Favorite Icon</string>
+    <string name="bookmark_live_menu_title">Bookmark</string>
+    <string name="humidity_icon">Humidity Icon</string>
+    <string name="wind_icon">Wind Icon</string>
+    <string name="cloud_cover_icon">Cloud Cover Icon</string>
+    <string name="precip_icon">Precip Icon</string>
+    <string name="sunrise_icon">Sunrise Icon</string>
+    <string name="apparent_temperature_icon">Apparent Temperature Icon</string>
+    <string name="sunset_icon">Sunset Icon</string>
+    <string name="setting_icon">Setting Icon</string>
+    <string name="configuration_icon">Configuration Icon</string>
+    <string name="location_icon">Location Icon</string>
+    <string name="find_source">Find Source</string>
+    <string name="enter_source_name">Enter source name</string>
+    <string name="location_flag">Location Flag</string>
 </resources>

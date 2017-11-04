@@ -1,0 +1,259 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "3efc7b3091654fb31094fb986cc660e4",
+    "entities": [
+      {
+        "tableName": "weather",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `timezone` TEXT NOT NULL, `alerts` TEXT, `location_name` TEXT NOT NULL, `location_latitude` REAL NOT NULL, `location_longitude` REAL NOT NULL, `country_code` TEXT NOT NULL, `country_name` TEXT NOT NULL, `currenttime` INTEGER NOT NULL, `currentsummary` TEXT NOT NULL, `currenticon` TEXT NOT NULL, `currenttemperature` REAL NOT NULL, `currentapparentTemperature` REAL, `currentprecipIntensity` REAL NOT NULL, `currentprecipIntensityError` REAL, `currentprecipProbability` REAL NOT NULL, `currentprecipType` TEXT, `currentnearestStormDistance` INTEGER, `currentnearestStormBearing` INTEGER, `currenthumidity` REAL NOT NULL, `currentwindSpeed` REAL NOT NULL, `currentcloudCover` REAL NOT NULL, `currentwindBearing` INTEGER, `currentvisibility` REAL NOT NULL, `currentdewPoint` REAL, `currentpressure` REAL NOT NULL, `minutelysummary` TEXT, `minutelyicon` TEXT, `minutelydata` TEXT, `hourlysummary` TEXT NOT NULL, `hourlyicon` TEXT NOT NULL, `hourlydata` TEXT NOT NULL, `dailysummary` TEXT NOT NULL, `dailyicon` TEXT NOT NULL, `dailydata` TEXT NOT NULL, `flagssources` TEXT NOT NULL, `flagsunits` TEXT NOT NULL, PRIMARY KEY(`location_name`, `location_latitude`, `location_longitude`, `country_code`, `country_name`))",
+        "fields": [
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "alerts",
+            "columnName": "alerts",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "location.locationName",
+            "columnName": "location_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location.locationLatitude",
+            "columnName": "location_latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location.locationLongitude",
+            "columnName": "location_longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location.countryCode",
+            "columnName": "country_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location.countryName",
+            "columnName": "country_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.time",
+            "columnName": "currenttime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.summary",
+            "columnName": "currentsummary",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.icon",
+            "columnName": "currenticon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.temperature",
+            "columnName": "currenttemperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.apparentTemperature",
+            "columnName": "currentapparentTemperature",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.precipIntensity",
+            "columnName": "currentprecipIntensity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.precipIntensityError",
+            "columnName": "currentprecipIntensityError",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.precipProbability",
+            "columnName": "currentprecipProbability",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.precipType",
+            "columnName": "currentprecipType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.nearestStormDistance",
+            "columnName": "currentnearestStormDistance",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.nearestStormBearing",
+            "columnName": "currentnearestStormBearing",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.humidity",
+            "columnName": "currenthumidity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.windSpeed",
+            "columnName": "currentwindSpeed",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.cloudCover",
+            "columnName": "currentcloudCover",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.windBearing",
+            "columnName": "currentwindBearing",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.visibility",
+            "columnName": "currentvisibility",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currently.dewPoint",
+            "columnName": "currentdewPoint",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currently.pressure",
+            "columnName": "currentpressure",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minutely.summary",
+            "columnName": "minutelysummary",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "minutely.icon",
+            "columnName": "minutelyicon",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "minutely.data",
+            "columnName": "minutelydata",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hourly.summary",
+            "columnName": "hourlysummary",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hourly.icon",
+            "columnName": "hourlyicon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hourly.data",
+            "columnName": "hourlydata",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "daily.summary",
+            "columnName": "dailysummary",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "daily.icon",
+            "columnName": "dailyicon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "daily.data",
+            "columnName": "dailydata",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags.sources",
+            "columnName": "flagssources",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags.units",
+            "columnName": "flagsunits",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "location_name",
+            "location_latitude",
+            "location_longitude",
+            "country_code",
+            "country_name"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3efc7b3091654fb31094fb986cc660e4\")"
+    ]
+  }
+}

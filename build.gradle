@@ -2,13 +2,18 @@
 
 
 buildscript {
+    ext.kotlin_version = '1.1.51'
+    ext.androidPluginVersion = '3.0.0'
+
     repositories {
         jcenter()
         maven { url "https://maven.google.com" }
     }
+    
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha4'
+        classpath "com.android.tools.build:gradle:$androidPluginVersion"
         classpath 'com.google.gms:google-services:3.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -31,9 +36,9 @@ allprojects {
 }
 
 ext {
-    supportLibraryVersion = '25.4.0'
+    supportLibraryVersion = '26.1.0'
     daggerLibraryVersion = '2.11'
-    googleLibraryVersion = '10.2.6'
+    googleLibraryVersion = '11.4.2'
 }
 
 task clean(type: Delete) {

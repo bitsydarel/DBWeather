@@ -26,29 +26,23 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
+        <!--***********************************************************************-->
         <activity
-            android:name=".ui.welcome.WelcomeActivity"
-            android:screenOrientation="portrait">
+            android:name=".splash.view.SplashActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--***********************************************************************-->
         <activity
-            android:name=".ui.notifications.NotificationActivity"
-            android:noHistory="true"
-            android:theme="@style/NewsActivityTheme">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".ui.main.DBWeatherActivity"
+            android:name=".intro.view.IntroActivity"
+            android:label="@string/title_activity_intro"
             android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden|adjustPan"
-            android:screenOrientation="portrait">
+            android:theme="@style/AppTheme.Intro">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -56,95 +50,66 @@
 
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/intro_search_location_searchable" />
         </activity>
-
-        <activity android:name=".ui.intro.IntroductionActivity"
+        <!--***********************************************************************-->
+        <activity
+            android:name=".main.view.MainActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Main"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable2" />
+                android:resource="@xml/weather_tab_searchable" />
         </activity>
-
-        <service
-            android:name=".utils.services.KillCheckerService"
-            android:enabled="true"
-            android:process=":remote"
-            android:stopWithTask="false" />
-        <service
-            android:name=".utils.services.LocationTracker"
-            android:enabled="true"
-            android:exported="false"
-            android:stopWithTask="true" />
-        <service
-            android:name=".utils.services.NewsDatabaseService"
-            android:enabled="true"
-            android:process=":remote"
-            android:stopWithTask="false" />
-        <service
-            android:name=".utils.services.WeatherDatabaseService"
-            android:enabled="true"
-            android:process=":remote"
-            android:stopWithTask="false" />
-        <service
-            android:name=".utils.services.NewsSyncJobScheduler"
-            android:label="News Feed Updater"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".utils.services.WeatherSyncJobScheduler"
-            android:label="Weather Data Updater"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".utils.services.NewsSyncService"
-            android:enabled="true"
-            android:process=":remote"
-            android:stopWithTask="false" />
-        <service
-            android:name=".utils.services.WeatherSyncService"
-            android:enabled="true"
-            android:process=":remote"
-            android:stopWithTask="false" />
-
-        <receiver
-            android:name=".utils.broadcastreceivers.AlarmWeatherReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote">
-            <intent-filter android:priority="999">
-                <action android:name="com.darelbitsy.dbweather.ACTIVATE_NOTIFICATION" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".utils.broadcastreceivers.AlarmConfigOnBoot"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+        <!--***********************************************************************-->
+        <activity android:name=".news.lives.livedetail.view.LiveDetailActivity"
+            android:theme="@style/AppTheme.LiveDetail">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.REBOOT" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </receiver>
+        </activity>
+        <!--***********************************************************************-->
+        <activity android:name=".config.managelocations.view.ManageLocationsActivity"
+            android:theme="@style/AppTheme.ManageLocations">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".config.managesources.view.ManageSourcesActivity"
+            android:theme="@style/AppTheme.ManageSources"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/manage_sources_searchable"/>
 
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".notifications.NotificationActivity"
+            android:noHistory="true">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <provider
-            android:name=".models.provider.geoname.LocationSuggestionProvider"
-            android:authorities="com.dbeginc.dbweather.models.provider.geoname.LocationSuggestionProvider"
+            android:name=".utils.contentprovider.LocationSuggestionProvider"
+            android:authorities="com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider"
             android:enabled="true"
             android:exported="false" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1f70cc235a003a2a3e76e5932bc702c80c4c750" />
+
     </application>
 
 </manifest>

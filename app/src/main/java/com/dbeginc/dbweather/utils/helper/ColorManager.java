@@ -22,7 +22,6 @@ public class ColorManager {
 
     private ColorManager() {
         initialize();
-
     }
 
     private void initialize() {

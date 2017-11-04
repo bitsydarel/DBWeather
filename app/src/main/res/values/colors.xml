@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#536DFE</color>
-    <color name="colorPrimaryDark">#1A237E</color>
-    <color name="colorPrimaryLight">#6EC6FF</color>
-    <color name="colorAccent">#F06292</color>
+    <!-- *********** Application Color *********** -->
+    <color name="appColorPrimary">#9e9e9e</color>
+    <color name="appColorPrimaryDark">#707070</color>
+    <color name="appColorPrimaryLight">#cfcfcf</color>
+    <color name="appColorPrimaryTextColor">#000000</color>
+    <color name="appColorSecondary">#ff1744</color>
+    <color name="appColorSecondaryLight">#ff616f</color>
+    <color name="appColorSecondaryDark">#c4001d</color>
+    <color name="appColorSecondaryTextColor">#000000</color>
+    <!--*******************************************-->
     <color name="transparentWhite">#80ffffff</color>
-    <color name="switchColorOn">#7FFF00</color>
-    <color name="switchColorNormal">#bdbdbd</color>
-    <color name="switchColorThumbNormal">#A9A9A9</color>
     <color name="tabWidgetColor">#4285F4</color>
     <color name="topInactiveTabColor">#50000000</color>
     <color name="bottomInactiveTabColor">#89ffffff</color>
     <color name="bottomActiveTabColor">#FFFFFF</color>
-    <color name="configTabColor">#7C4DFF</color>
-    <color name="configStatusBarColor">#6200EA</color>
-    <color name="newsTabColor">#E91E63</color>
-    <color name="newsStatusBarColor">#880E4F</color>
     <color name="locationIntroPageColor">#03A9F4</color>
     <color name="grantLocationButtonColor">#FF1744</color>
     <color name="grantAccountButtonColor">#28C76D</color>
@@ -25,4 +24,79 @@
     <color name="rain_background">#607d8b</color>
     <color name="fog_background">#c5cae9</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black_overlay">#66000000</color>
+
+    <!-- **************************** Splash Colors **************************** -->
+    <color name="splashColorPrimary">#00b0ff</color>
+    <color name="splashColorPrimaryDark">#0081cb</color>
+    <color name="splashColorSecondary">#18ffff</color>
+    <color name="splashColorSecondaryLight">#76ffff</color>
+    <color name="splashTextColor">#ffffff</color>
+    <!-- **************************** Intro Colors **************************** -->
+    <color name="introColorPrimary">#bdbdbd</color>
+    <color name="introColorPrimaryDark">#8d8d8d</color>
+    <color name="introColorPrimaryLight">#efefef</color>
+    <color name="introColorSecondary">#ff1744</color>
+    <color name="introColorSecondaryDark">#c4001d</color>
+    <color name="introColorSecondaryLight">#ff616f</color>
+    <color name="introTextColor">#000000</color>
+    <!-- **************************** Main Colors **************************** -->
+    <color name="mainColorPrimary">#eeeeee</color>
+    <color name="mainColorPrimaryLight">#ffffff</color>
+    <color name="mainColorPrimaryDark">#bcbcbc</color>
+    <color name="mainColorPrimaryTextColor">#000000</color>
+    <color name="mainColorSecondary">#2979ff</color>
+    <color name="mainColorSecondaryLight">#75a7ff</color>
+    <color name="mainColorSecondaryDark">#004ecb</color>
+    <color name="mainColorSecondaryTextColor">#000000</color>
+    <!-- **************************** Weather Tab Colors **************************** -->
+    <color name="weatherTabPrimary">#536dfe</color>
+    <color name="weatherTabPrimaryLight">#8f9bff</color>
+    <color name="weatherTabPrimaryDark">#0043ca</color>
+    <color name="weatherTabTextColor">#000000</color>
+    <!-- **************************** News Tab Colors **************************** -->
+    <color name="newsTabPrimary">#424242</color>
+    <color name="newsTabPrimaryLight">#6d6d6d</color>
+    <color name="newsTabPrimaryDark">#1b1b1b</color>
+    <color name="newsTabPrimaryTextColor">#ffffff</color>
+    <color name="newsTabSecondary">#ff1744</color>
+    <color name="newsTabSecondaryLight">#ff616f</color>
+    <color name="newsTabSecondaryDark">#c4001d</color>
+    <color name="newsTabSecondaryTextColor">#000000</color>
+    <!-- **************************** Live Detail Colors **************************** -->
+    <color name="LiveDetailColorPrimary">#212121</color>
+    <color name="LiveDetailColorPrimaryLight">#484848</color>
+    <color name="LiveDetailColorPrimaryDark">#000000</color>
+    <color name="LiveDetailColorPrimaryTextColor">#ffffff</color>
+    <color name="LiveDetailColorSecondary">#d81b60</color>
+    <color name="LiveDetailColorSecondaryLight">#ff5c8d</color>
+    <color name="LiveDetailColorSecondaryDark">#a00037</color>
+    <color name="LiveDetailColorSecondaryTextColor">#ffffff</color>
+    <!-- **************************** Config Detail Colors **************************** -->
+    <color name="configTabPrimary">#6a1b9a</color>
+    <color name="configTabPrimaryLight">#9c4dcc</color>
+    <color name="configTabPrimaryDark">#38006b</color>
+    <color name="configTabPrimaryTextColor">#ffffff</color>
+    <color name="configTabSecondary">#18ffff</color>
+    <color name="configTabSecondaryLight">#76ffff</color>
+    <color name="configTabSecondaryDark">#00cbcc</color>
+    <color name="configTabSecondaryTextColor">#000000</color>
+    <!-- **************************** Manage Locations Colors **************************** -->
+    <color name="manageLocationsPrimary">#e3f2fd</color>
+    <color name="manageLocationsPrimaryLight">#ffffff</color>
+    <color name="manageLocationsPrimaryDark">#b1bfca</color>
+    <color name="manageLocationsPrimaryTextColor">#000000</color>
+    <color name="manageLocationsSecondary">#3d5afe</color>
+    <color name="manageLocationsSecondaryLight">#8187ff</color>
+    <color name="manageLocationsSecondaryDark">#0031ca</color>
+    <color name="manageLocationsSecondaryTextColor">#ffffff</color>
+    <!-- **************************** Manage Sources Colors **************************** -->
+    <color name="manageSourcesPrimary">#9e9e9e</color>
+    <color name="manageSourcesPrimaryLight">#cfcfcf</color>
+    <color name="manageSourcesPrimaryDark">#707070</color>
+    <color name="manageSourcesPrimaryTextColor">#000000</color>
+    <color name="manageSourcesSecondary">#f50057</color>
+    <color name="manageSourcesSecondaryLight">#ff5983</color>
+    <color name="manageSourcesSecondaryDark">#bb002f</color>
+    <color name="manageSourcesSecondaryTextColor">#000000</color>
 </resources>

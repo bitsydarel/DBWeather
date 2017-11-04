@@ -1,0 +1,22 @@
+<!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<vector android:autoMirrored="true" android:height="24dp"
+    android:viewportHeight="258.008" android:viewportWidth="258.008"
+    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FF000000" android:pathData="M125.61,122.35H10.05C4.5,122.35 0,126.85 0,132.4v115.56c0,5.55 4.5,10.05 10.05,10.05H125.61c5.55,0 10.05,-4.5 10.05,-10.05v-115.56C135.66,126.85 131.16,122.35 125.61,122.35zM115.56,237.91H20.1v-95.46h95.46V237.91z"/>
+    <path android:fillColor="#FF000000" android:pathData="M247.96,0H10.05C4.5,0 0,4.5 0,10.05v93.31c0,5.55 4.5,10.05 10.05,10.05c5.55,0 10.05,-4.5 10.05,-10.05V20.1h217.81v217.81h-82.92c-5.55,0 -10.05,4.5 -10.05,10.05c0,5.55 4.5,10.05 10.05,10.05h92.96c5.55,0 10.05,-4.5 10.05,-10.05V10.05C258.01,4.5 253.51,0 247.96,0z"/>
+    <path android:fillColor="#FF000000" android:pathData="M154.35,106.88c1.97,1.96 4.53,2.94 7.11,2.94c2.57,0 5.14,-0.98 7.1,-2.94l31.75,-31.76V89.57c0,5.55 4.5,10.05 10.05,10.05c5.55,0 10.05,-4.5 10.05,-10.05V53.05c0,-0.37 -0.07,-0.71 -0.11,-1.07c0.33,-2.93 -0.59,-5.98 -2.84,-8.23c-2.15,-2.15 -5.02,-3.08 -7.83,-2.87c-0.23,-0.02 -0.46,-0.07 -0.7,-0.07h-36.51c-5.55,0 -10.05,4.5 -10.05,10.05c0,5.55 4.5,10.05 10.05,10.05h13.68L154.35,92.67C150.43,96.59 150.43,102.95 154.35,106.88z"/>
+</vector>

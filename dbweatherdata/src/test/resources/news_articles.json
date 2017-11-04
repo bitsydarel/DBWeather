@@ -1,0 +1,76 @@
+{
+	"status": "ok",
+	"source": "the-next-web",
+	"sortBy": "latest",
+	"articles": [{
+		"author": "Conrad Egusa",
+		"title": "Taking the right next step: 3 ways to grow professionally outside of an MBA",
+		"description": "Over the last four years I've had the chance to see our team quadruple in size. But despite new opportunities that have arisen, in turn I’ve had to deal with more challenging times, ...",
+		"url": "https://thenextweb.com/contributors/2017/10/04/taking-the-right-next-step-3-ways-to-grow-professionally-outside-an-mba/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/DSC_0040-social.jpg",
+		"publishedAt": "2017-10-04T21:06:27Z"
+	}, {
+		"author": "Inés Casserly",
+		"title": "Google announces its own wireless earbuds, Pixel Buds",
+		"description": "Google announced today its competition to Apple's AirPods: Google Pixel Buds.\r\n\r\nThe wireless headphones integrate Google Assistant without the need of taking your phone out to check ...",
+		"url": "https://thenextweb.com/google/2017/10/04/google-announces-its-own-wireless-earbud-pixel-buds/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/pixelbuds-social.jpg",
+		"publishedAt": "2017-10-04T20:19:40Z"
+	}, {
+		"author": "Bryan Clark",
+		"title": "Everything Google announced at today’s Pixel event",
+		"description": "At today's Google event, all eyes were obviously on the second generation Pixel phone. Pixel certainly lived up to its expectations, but it wasn't the only notable Google announcement ...",
+		"url": "https://thenextweb.com/google/2017/10/04/everything-google-announced-at-todays-pixel-event/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/Googl-Pixel-2-XL-Pixel-2--social.jpg",
+		"publishedAt": "2017-10-04T20:05:09Z"
+	}, {
+		"author": "Rachel Kaser",
+		"title": "Google Clips is tiny hands-free camera that takes pics by itself",
+		"description": "Google surprised audiences at its Pixel 2 event by revealing Clips, a small camera that takes pictures without the help of human hands.\r\n\r\nhttps://twitter.com/madebygoogle/status/915632428558852096\r\n\r\nThe ...",
+		"url": "https://thenextweb.com/google/2017/10/04/google-clips-tiny-camera-captures-video-pics/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/Clips-Google-social.jpg",
+		"publishedAt": "2017-10-04T19:48:12Z"
+	}, {
+		"author": "Rachel Kaser",
+		"title": "Google debuts the updated Daydream View VR headset",
+		"description": "Google today announced its updated VR headset, the Daydream View.\r\n\r\nhttps://twitter.com/madebygoogle/status/915630911697195008\r\n\r\nThe Daydream works with the new Google Pixel 2, using ...",
+		"url": "https://thenextweb.com/google/2017/10/04/google-debuts-updated-daydream-vr-headset/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/Google-Daydream-social.jpg",
+		"publishedAt": "2017-10-04T19:36:34Z"
+	}, {
+		"author": "Rachel Kaser",
+		"title": "Google is giving Pixel owners a preview of Lens",
+		"description": "Google today gave us a peek behind the curtain of “Lens,” the new image recognition AI inside the Pixel 2.\r\n\r\nhttps://twitter.com/Google/status/915625700979290112\r\n\r\nLens uses sophisticated ...",
+		"url": "https://thenextweb.com/augmented-reality/2017/10/04/google-giving-pixel-owners-preview-lens/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/Screen-Shot-2017-10-04-at-2.13.16-PM-social.png",
+		"publishedAt": "2017-10-04T19:20:49Z"
+	}, {
+		"author": "Nathan Resnick",
+		"title": "How these 12 companies are changing a customer’s online shopping experience",
+		"description": "Thanks to the digital revolution, the business world has evolved more rapidly than we ever could have imagined. From healthcare to entertainment, technology, and especially the Internet, ...",
+		"url": "https://thenextweb.com/contributors/2017/10/04/12-companies-changing-customers-online-shopping-experience/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/blog-05.-image-social.jpg",
+		"publishedAt": "2017-10-04T19:16:26Z"
+	}, {
+		"author": "Napier Lopez",
+		"title": "Google reveals Pixel 2 and Pixel 2 XL with stereo speakers and portrait mode",
+		"description": "After months of rumors and speculations, Google's answers to the iPhone 8 and iPhone X are finally here. Say hello to the Pixel 2 and Pixel 2 XL.\r\n\r\nRumors had given us a pretty concrete ...",
+		"url": "https://thenextweb.com/google/2017/10/04/this-is-the-google-pixel-2/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/Googl-Pixel-2-XL-Pixel-2--social.jpg",
+		"publishedAt": "2017-10-04T19:02:38Z"
+	}, {
+		"author": "Tristan Greene",
+		"title": "Google announces Pixelbook, a tiny 2-in-1 with huge specs",
+		"description": "Google today announced a new 2-in-1 laptop, the Pixelbook. The convertible device will have a 12.3-inch display with 235 pixels per inch, and ship with an Intel Core i5 or i7  processor ...",
+		"url": "https://thenextweb.com/gear/2017/10/04/google-announces-pixelbook-a-2-in-1-with-high-end-specs/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/googlepixelbook-1-social.jpg",
+		"publishedAt": "2017-10-04T18:57:22Z"
+	}, {
+		"author": "Inés Casserly",
+		"title": "Google reveals the Home Mini and Max",
+		"description": "Google announced today the newest additions to the Home family - the Google Home Mini and Max.\r\n\r\nBoth products will be able to do pretty much the same things: integrated Google Assistant, ...",
+		"url": "https://thenextweb.com/events/2017/10/04/google-reveals-home-mini-49/",
+		"urlToImage": "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2017/10/Screen-Shot-2017-10-04-at-18.25.36-social.png",
+		"publishedAt": "2017-10-04T18:31:25Z"
+	}]
+}
