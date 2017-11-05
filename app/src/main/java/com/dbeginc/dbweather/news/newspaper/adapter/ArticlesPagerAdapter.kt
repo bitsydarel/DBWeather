@@ -21,7 +21,6 @@ import com.dbeginc.dbweather.news.CustomPagerAdapter
 import com.dbeginc.dbweather.news.UpdatableContainer
 import com.dbeginc.dbweather.news.newspaper.adapter.page.view.ArticlesPageFragment
 import com.dbeginc.dbweather.viewmodels.news.NewsPaperModel
-import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
 
 /*
@@ -54,7 +53,7 @@ class ArticlesPagerAdapter(data: List<NewsPaperModel>, fragmentManager: Fragment
     fun getData(): List<NewsPaperModel> = newsPapers
 
     fun refresh(newData: List<NewsPaperModel>) {
-        bg {
+        synchronized(this) {
             if (newsPapers.isNotEmpty().and(newsPapers.size == newData.size)) {
                 fillMe(newData)
                 update(newData)

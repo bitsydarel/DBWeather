@@ -32,6 +32,7 @@ interface ArticlesPageContract {
 
     interface ArticlesPagePresenter : IPresenter<ArticlesPageView> {
         fun loadArticles()
-    }
 
+        fun updateModel(articles: List<ArticleModel>)
+    }
 }

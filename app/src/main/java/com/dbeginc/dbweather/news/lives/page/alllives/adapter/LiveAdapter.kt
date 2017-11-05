@@ -26,8 +26,6 @@ import com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter.LivePres
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.view.LiveViewHolder
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
 import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
 
@@ -77,15 +75,14 @@ class LiveAdapter(data: MutableList<LiveModel>, private val favorites: MutableLi
     fun getFavoritesData(): List<String> = favorites
 
     fun updateData(newData: List<LiveModel>) {
-        async(UI) {
-            val result = bg { DiffUtil.calculateDiff(LiveDiffUtils(presenters.map { presenter -> presenter.getData() }, newData.sorted())) }.await()
+        synchronized(this) {
+            val result = DiffUtil.calculateDiff(LiveDiffUtils(presenters.map { presenter -> presenter.getData() }, newData.sorted()))
 
-            container?.post {
-                presenters.clear()
-                newData.mapTo(presenters) { live -> LivePresenterImpl(favorites.contains(live.name), live, addLiveToFavorite) }
-                presenters.sortBy { presenter -> presenter.getData().name }
-                result.dispatchUpdatesTo(this@LiveAdapter)
-            }
+            presenters.clear()
+            newData.mapTo(presenters) { live -> LivePresenterImpl(favorites.contains(live.name), live, addLiveToFavorite) }
+            presenters.sortBy { presenter -> presenter.getData().name }
+
+            container?.post { result.dispatchUpdatesTo(this@LiveAdapter) }
         }
     }
 

@@ -101,7 +101,7 @@ class ArticlesPageFragment : Fragment(), ArticlesPageContract.ArticlesPageView, 
     override fun <T> update(data: T) {
         val casted = data as? NewsPaperModel
 
-        if (casted != null) adapter.update(casted.children)
+        if (casted != null) presenter.updateModel(casted.children)
     }
 
     /************************* Articles Page View Part *************************/

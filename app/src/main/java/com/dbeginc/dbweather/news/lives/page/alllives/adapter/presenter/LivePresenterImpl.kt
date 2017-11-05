@@ -27,19 +27,22 @@ import io.reactivex.disposables.Disposable
  * Live Presenter Implementation
  */
 class LivePresenterImpl(private var isFavorite: Boolean, private val live: LiveModel, private val addLiveToFavorite: AddLiveToFavorite) : LiveContract.LivePresenter {
-    private lateinit var view: LiveContract.LiveView
+    private var view: LiveContract.LiveView? = null
     private var task: Disposable? = null
 
     override fun bind(view: LiveContract.LiveView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
     override fun unBind() {
         task?.dispose()
+        view = null
     }
 
-    override fun loadLive() = view.displayLive(live, isFavorite)
+    override fun loadLive() {
+        view?.displayLive(live, isFavorite)
+    }
 
     override fun getData(): LiveModel = live
 
@@ -48,12 +51,12 @@ class LivePresenterImpl(private var isFavorite: Boolean, private val live: LiveM
         addLiveToFavorite.execute(LiveRequest(live.name, Unit))
                 .doOnSubscribe { disposable ->
                     task = disposable
-                    view.showBookmarkAnimation()
+                    view?.showBookmarkAnimation()
                 }.subscribe(
                 { isFavorite = true },
                 { error ->
-                    view.showUnBookmarkAnimation()
-                    view.showError(error)
+                    view?.showUnBookmarkAnimation()
+                    view?.showError(error)
                 }
         )
     }

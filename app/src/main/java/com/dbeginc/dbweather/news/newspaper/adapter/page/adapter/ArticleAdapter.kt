@@ -24,9 +24,6 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.ArticleItemBinding
 import com.dbeginc.dbweather.utils.utility.toast
 import com.dbeginc.dbweather.viewmodels.news.ArticleModel
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
 
 /**
@@ -55,19 +52,23 @@ class ArticleAdapter(data: List<ArticleModel>) : RecyclerView.Adapter<ArticleAda
     override fun getItemCount(): Int = articles.size
 
     fun update(newData: List<ArticleModel>) {
-        async(UI) {
+        synchronized(this) {
             /*
              * Calculating the difference between the the current data and the new data on background
              * Returning an typedArray and new instance so the data is immutable
              * (nobody will modify it during the calculation)
              */
-            val result = bg { DiffUtil.calculateDiff(ArticleDiffUtils(articles, newData.sorted())) }.await()
+            val result = DiffUtil.calculateDiff(ArticleDiffUtils(articles, newData.sorted()))
 
-            container?.post {
-                articles.clear()
-                articles.addAll(newData.sorted())
-                result.dispatchUpdatesTo(this@ArticleAdapter)
-            }
+            articles.clear()
+
+            articles.addAll(newData.sorted())
+
+            result.dispatchUpdatesTo(this@ArticleAdapter)
+
+//            container?.post {
+//
+//            }
         }
     }
 

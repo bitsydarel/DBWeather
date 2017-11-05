@@ -26,6 +26,7 @@ import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentNewspapersTabBinding
 import com.dbeginc.dbweather.news.newspaper.NewsPapersTabContract
 import com.dbeginc.dbweather.news.newspaper.adapter.ArticlesPagerAdapter
+import com.dbeginc.dbweather.utils.animations.ZoomOutSlideTransformer
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PAPERS
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG
 import com.dbeginc.dbweather.utils.utility.Injector
@@ -78,6 +79,7 @@ class NewsPaperTabFragment : BaseFragment(), NewsPapersTabContract.NewsPapersTab
         if (binding.articlesPage.adapter == null) {
             binding.articlesPage.adapter = pageAdapter
             binding.newsPaperIds.setupWithViewPager(binding.articlesPage, true)
+            binding.articlesPage.setPageTransformer(false, ZoomOutSlideTransformer())
         }
     }
 

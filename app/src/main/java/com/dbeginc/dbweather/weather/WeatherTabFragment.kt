@@ -136,7 +136,7 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
         setupLocationsMenu()
 
         setupDailyWeather(dailyLayoutManager =LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false))
-        setupHourlyWeather(layoutManager=LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false))
+        setupHourlyWeather(hourlyLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false))
 
         binding.searchLocationView.setupLookupFeature()
         binding.srlContainer.setOnRefreshListener { askForWeather() }
@@ -168,8 +168,6 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
             R.drawable.snow -> binding.weatherTabLayout.showSnowFallAnimation()
             else -> binding.weatherTabLayout.removeWeatherAnimation()
         }
-
-        binding.weatherTabLayout.requestLayout()
     }
 
     override fun getLatitude(): Double = preferences.getDouble(LATITUDE)
@@ -298,10 +296,12 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
         }
     }
 
-    private fun setupHourlyWeather(layoutManager: LinearLayoutManager) {
-        binding.hourlyRecyclerView.adapter = hourlyWeatherAdapter
-        binding.hourlyRecyclerView.layoutManager = layoutManager
-        binding.hourlyRecyclerView.setHasFixedSize(true)
+    private fun setupHourlyWeather(hourlyLayoutManager: LinearLayoutManager) {
+        binding.hourlyRecyclerView.apply {
+            adapter = hourlyWeatherAdapter
+            layoutManager = hourlyLayoutManager
+            setHasFixedSize(true)
+        }
     }
 
     private fun showWeatherAlerts(alerts: List<AlertWeatherModel>) {

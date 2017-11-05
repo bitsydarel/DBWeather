@@ -52,8 +52,6 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
 
     fun <DATA: UpdatableModel>update(data: List<DATA>) {
         bg {
-            (currentPrimaryFragment as? UpdatableContainer)?.update(data)
-
             val updatableFragments = fragmentManager.fragments.filterIsInstance(UpdatableContainer::class.java)
 
             data.filter { model -> updatableFragments.indexOfFirst { updatable -> updatable.getUpdatableId() == model.getId() } != -1 }

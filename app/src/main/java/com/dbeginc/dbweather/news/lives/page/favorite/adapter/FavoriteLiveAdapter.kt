@@ -25,8 +25,6 @@ import com.dbeginc.dbweather.databinding.LiveItemBinding
 import com.dbeginc.dbweather.news.lives.page.LiveDiffUtils
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 
 /**
  * Created by darel on 20.10.17.
@@ -59,16 +57,13 @@ class FavoriteLiveAdapter(private val favorites: MutableList<LiveModel>) : Recyc
     fun getData(): List<LiveModel> = favorites
 
     fun updateData(newData: List<LiveModel>) {
-        async(UI) {
-            val result = DiffUtil.calculateDiff(LiveDiffUtils(favorites, newData.sorted()))
+        val result = DiffUtil.calculateDiff(LiveDiffUtils(favorites, newData.sorted()))
 
-            container?.post {
-                favorites.clear()
-                favorites.addAll(newData)
-                favorites.sort()
-                result.dispatchUpdatesTo(this@FavoriteLiveAdapter)
-            }
-        }
+        favorites.clear()
+        favorites.addAll(newData)
+        favorites.sort()
+
+        container?.post { result.dispatchUpdatesTo(this@FavoriteLiveAdapter) }
     }
 
     inner class FavoriteLiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root) {

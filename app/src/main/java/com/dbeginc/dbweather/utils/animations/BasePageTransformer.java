@@ -5,8 +5,9 @@ import android.view.View;
 
 /**
  * Created by Darel Bitsy on 23/03/17.
+ *
+ * Base Pager Transformer
  */
-
 public abstract class BasePageTransformer implements ViewPager.PageTransformer {
 
     /**
@@ -20,7 +21,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
 
     /**
      * Apply a property transformation to the given page. For most use cases, this method should not be overridden.
-     * Instead use {@link #transformPage(android.view.View, float)} to perform typical transformations.
+     * to perform typical transformations.
      *
      * @param page     Apply the transformation to this page
      * @param position Position of page relative to the current front-and-center position of the pager. 0 is front and
@@ -37,7 +38,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      * If the position offset of a fragment is less than negative one or greater than one, returning true will set the
      * fragment alpha to 0f. Otherwise fragment alpha is always defaulted to 1f.
      *
-     * @return
+     * @return true
      */
     protected boolean hideOffscreenPages() {
         return true;
@@ -102,5 +103,7 @@ public abstract class BasePageTransformer implements ViewPager.PageTransformer {
      * @param min
      * @return
      */
-    protected static final float min(final float val, final float min) { return val < min ? min : val; }
+    protected static float min(final float val, final float min) {
+        return val < min ? min : val;
+    }
 }

@@ -28,10 +28,7 @@ import com.dbeginc.dbweather.config.ConfigurationTabContract
 import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsActivity
 import com.dbeginc.dbweather.config.managesources.view.ManageSourcesActivity
 import com.dbeginc.dbweather.databinding.FragmentConfigTabBinding
-import com.dbeginc.dbweather.utils.utility.Injector
-import com.dbeginc.dbweather.utils.utility.hide
-import com.dbeginc.dbweather.utils.utility.show
-import com.dbeginc.dbweather.utils.utility.snack
+import com.dbeginc.dbweather.utils.utility.*
 import com.google.android.gms.ads.AdRequest
 import javax.inject.Inject
 
@@ -104,7 +101,7 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
     }
 
     override fun goToHelpScreen() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        binding.configTabLayout.toast("Go to Help")
     }
 
     override fun displayWeatherNotificationStatus(isOn: Boolean) {

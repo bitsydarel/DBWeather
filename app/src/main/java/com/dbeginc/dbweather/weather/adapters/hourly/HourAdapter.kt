@@ -53,13 +53,16 @@ class HourAdapter(data: List<HourWeatherModel>) : RecyclerView.Adapter<HourAdapt
     }
 
     fun updateData(newData: List<HourWeatherModel>) {
-        val sortedData = newData.sorted().toTypedArray()
+        synchronized(this) {
+            val sortedData = newData.sorted().toTypedArray()
 
-        val diffResult = DiffUtil.calculateDiff(HourDiffCallback(hours.copyOf(), sortedData))
+            val diffResult = DiffUtil.calculateDiff(HourDiffCallback(hours, sortedData))
 
-        container?.post {
             hours = sortedData
+
             diffResult.dispatchUpdatesTo(this)
+
+            container?.postInvalidate()
         }
     }
 

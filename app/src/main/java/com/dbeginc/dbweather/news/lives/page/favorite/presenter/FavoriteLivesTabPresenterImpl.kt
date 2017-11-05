@@ -28,27 +28,28 @@ import io.reactivex.disposables.CompositeDisposable
  * Favorite Lives Tab Presenter Implementation
  */
 class FavoriteLivesTabPresenterImpl(private val getFavoriteLives: GetFavoriteLives, private val getLives: GetLives) : FavoriteLivesTabContract.FavoriteLivesTabPresenter{
-    private lateinit var view: FavoriteLivesTabContract.FavoriteLivesTabView
+    private var view: FavoriteLivesTabContract.FavoriteLivesTabView? = null
     private val subscriptions = CompositeDisposable()
 
     override fun bind(view: FavoriteLivesTabContract.FavoriteLivesTabView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
     override fun unBind() {
         subscriptions.clear()
+        view = null
     }
 
     override fun loadFavoriteLives() {
         getFavoriteLives.execute(Unit)
-                .doOnSubscribe { view.showUpdateStatus() }
-                .doOnTerminate { view.hideUpdateStatus() }
+                .doOnSubscribe { view?.showUpdateStatus() }
+                .doOnTerminate { view?.hideUpdateStatus() }
                 .flatMap { favorites -> getLives.execute(favorites) }
                 .map { favorites -> favorites.map { live -> live.toViewModel() } }
                 .subscribe(
-                { lives -> view.displayFavoriteLives(lives) },
-                { error -> view.showError(error.localizedMessage) })
+                        { lives -> view?.displayFavoriteLives(lives) },
+                        { error -> view?.showError(error.localizedMessage) })
                 .addTo(subscriptions)
     }
 }

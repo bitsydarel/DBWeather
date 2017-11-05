@@ -21,9 +21,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
+import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
 import com.dbeginc.dbweather.weather.adapters.daily.presenter.DayPresenterImpl
 import com.dbeginc.dbweather.weather.adapters.daily.view.DayViewHolder
-import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
 
 /**
  * Created by darel on 23.09.17.
@@ -61,13 +61,16 @@ class DayAdapter(days: List<DayWeatherModel>) : RecyclerView.Adapter<DayViewHold
     }
 
     fun updateData(newData: List<DayWeatherModel>) {
-        val sortedData: Array<DayContract.DayPresenter> = newData.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
+        synchronized(this) {
+            val sortedData: Array<DayContract.DayPresenter> = newData.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
 
-        val diffResult = DiffUtil.calculateDiff(DayDiffCallback(presenters.copyOf(), sortedData), true)
+            val diffResult = DiffUtil.calculateDiff(DayDiffCallback(presenters, sortedData), true)
 
-        container?.post {
             presenters = sortedData
+
             diffResult.dispatchUpdatesTo(this)
+
+            container?.postInvalidate()
         }
     }
 }

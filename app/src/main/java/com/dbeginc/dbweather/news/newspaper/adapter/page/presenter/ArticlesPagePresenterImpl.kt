@@ -23,18 +23,23 @@ import com.dbeginc.dbweather.viewmodels.news.ArticleModel
  *
  * Articles Page Presenter Implementation
  */
-class ArticlesPagePresenterImpl(private val data: List<ArticleModel>) : ArticlesPageContract.ArticlesPagePresenter {
-    private lateinit var view: ArticlesPageContract.ArticlesPageView
+class ArticlesPagePresenterImpl(private var data: List<ArticleModel>) : ArticlesPageContract.ArticlesPagePresenter {
+    private var view: ArticlesPageContract.ArticlesPageView? = null
 
     override fun bind(view: ArticlesPageContract.ArticlesPageView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
-    override fun unBind() {}
+    override fun unBind() {
+        view = null
+    }
 
     override fun loadArticles() {
-        view.displayArticles(data)
+        view?.displayArticles(data)
     }
 
+    override fun updateModel(articles: List<ArticleModel>) {
+        data = articles
+    }
 }

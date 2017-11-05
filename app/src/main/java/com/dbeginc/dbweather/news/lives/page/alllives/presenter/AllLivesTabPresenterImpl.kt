@@ -28,34 +28,35 @@ import io.reactivex.disposables.CompositeDisposable
  * All Lives Tab Presenter Implementation
  */
 class AllLivesTabPresenterImpl(private val getAllLives: GetAllLives, private val getFavoriteLives: GetFavoriteLives) : AllLivesTabContract.AllLivesTabPresenter {
-    private lateinit var view: AllLivesTabContract.AllLivesTabView
+    private var view: AllLivesTabContract.AllLivesTabView? = null
     private val subscriptions = CompositeDisposable()
 
     override fun bind(view: AllLivesTabContract.AllLivesTabView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
     override fun unBind() {
         subscriptions.clear()
+        view = null
     }
 
     override fun loadAllLives() {
         getAllLives.execute(Unit)
-                .doOnSubscribe { view.showUpdateStatus() }
-                .doOnTerminate { view.hideUpdateStatus() }
+                .doOnSubscribe { view?.showUpdateStatus() }
+                .doOnTerminate { view?.hideUpdateStatus() }
                 .map { lives -> lives.map { live -> live.toViewModel() } }
                 .subscribe(
-                        { lives -> view.displayAllLives(lives) },
-                        { error -> view.showError(error.localizedMessage) }
+                        { lives -> view?.displayAllLives(lives) },
+                        { error -> view?.showError(error.localizedMessage) }
                 ).addTo(subscriptions)
     }
 
     override fun getFavorite() {
         getFavoriteLives.execute(Unit)
                 .subscribe(
-                        { favorites -> view.defineFavorites(favorites) },
-                        { error -> view.showError(error.localizedMessage) }
+                        { favorites -> view?.defineFavorites(favorites) },
+                        { error -> view?.showError(error.localizedMessage) }
                 ).addTo(subscriptions)
     }
 }
