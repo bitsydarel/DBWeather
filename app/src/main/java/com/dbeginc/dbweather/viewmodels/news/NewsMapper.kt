@@ -27,10 +27,16 @@ import org.threeten.bp.Instant
  * News Mapper
  */
 fun Article.toViewModel(unknownAuthor: String, currentTime: Instant) : ArticleModel {
+
     val publishTime: String
 
     publishTime = if (publishedAt == null) "..." else {
-        val duration = Duration.between(currentTime, Instant.parse(publishedAt))
+
+        val articleAt = if (publishedAt!!.contains("+")) publishedAt?.substring(0, publishedAt!!.indexOf("+"))?.plus("Z")
+        else publishedAt
+
+        val duration = Duration.between(currentTime, Instant.parse(articleAt))
+
         when {
             duration.days() > 0 -> "${duration.days()}d"
             duration.hours() > 0 -> "${duration.hours()}h"
