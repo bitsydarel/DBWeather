@@ -75,6 +75,15 @@
             </intent-filter>
         </activity>
         <!--***********************************************************************-->
+        <activity
+            android:name=".news.newspaper.articledetail.view.ArticleDetailActivity"
+            android:theme="@style/AppTheme.ArticleDetail"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!--***********************************************************************-->
         <activity android:name=".config.managelocations.view.ManageLocationsActivity"
             android:theme="@style/AppTheme.ManageLocations">
             <intent-filter>
@@ -100,6 +109,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <provider
             android:name=".utils.contentprovider.LocationSuggestionProvider"
             android:authorities="com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider"

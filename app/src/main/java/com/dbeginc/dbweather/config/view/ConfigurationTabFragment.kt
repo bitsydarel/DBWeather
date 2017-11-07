@@ -125,7 +125,10 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
     }
 
     private fun setupAds() {
-        val adRequest = AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build()
+        val adRequest = AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
+                .build()
         binding.configTabAd.loadAd(adRequest)
     }
 }

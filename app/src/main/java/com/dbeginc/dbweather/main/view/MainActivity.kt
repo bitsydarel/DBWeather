@@ -20,18 +20,15 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatDelegate
 import android.view.WindowManager
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
-import com.dbeginc.dbweather.config.view.ConfigurationTabFragment
 import com.dbeginc.dbweather.databinding.ActivityMainBinding
 import com.dbeginc.dbweather.main.MainContract
+import com.dbeginc.dbweather.main.adapter.MainPagerAdapter
 import com.dbeginc.dbweather.main.presenter.MainPresenterImpl
-import com.dbeginc.dbweather.news.view.NewsTabFragment
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_CURRENT_LOCATION
 import com.dbeginc.dbweather.utils.utility.toast
@@ -39,16 +36,12 @@ import com.dbeginc.dbweather.weather.WeatherTabFragment
 import com.roughike.bottombar.OnTabSelectListener
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.coroutines.experimental.bg
 
 class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener {
 
     private lateinit var presenter: MainContract.MainPresenter
     private lateinit var binding: ActivityMainBinding
-    private val weatherTabFragment = WeatherTabFragment()
-    private val newsTabFragment = NewsTabFragment()
-    private val configurationFragment = ConfigurationTabFragment()
-    private var lastVisibleFragment: Int = R.id.tab_weather
+    private lateinit var adapter: MainPagerAdapter
 
     companion object {
         init {
@@ -56,8 +49,6 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
                 AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
             }
         }
-
-        private val LAST_VISIBLE_PAGE = "last_visible_page"
     }
 
     override fun onCreate(savedState: Bundle?) {
@@ -66,19 +57,24 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
 
         presenter = MainPresenterImpl()
 
-        binding.bottomBar.setOnTabSelectListener(this)
-        binding.bottomBar.selectTabWithId(R.id.tab_weather)
-        binding.bottomBar.setDefaultTab(R.id.tab_weather)
+        adapter = MainPagerAdapter(supportFragmentManager)
 
-        if (savedState != null) {
-            lastVisibleFragment = savedState.getInt(LAST_VISIBLE_PAGE, R.id.tab_weather)
-        }
+        binding.mainNavigationBar.setDefaultTab(R.id.tab_weather)
+        binding.mainNavigationBar.setOnTabSelectListener(this)
+
+        binding.tabContent.adapter = adapter
+
     }
 
     override fun onNewIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            if (query.isNotEmpty()) weatherTabFragment.onVoiceQuery(query)
+            async(UI) {
+                supportFragmentManager
+                        .fragments
+                        .filterIsInstance(WeatherTabFragment::class.java)
+                        .firstOrNull()
+                        ?.onVoiceQuery(intent.getStringExtra(SearchManager.QUERY))
+            }
         }
     }
 
@@ -92,48 +88,29 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
         cleanState()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putInt(LAST_VISIBLE_PAGE, lastVisibleFragment)
-    }
+    override fun onTabSelected(tabId: Int) {
+        var color = ResourcesCompat.getColor(resources, R.color.weatherTabPrimaryDark, theme)
 
-    override fun onTabSelected(id: Int) {
+        when (tabId) {
+            R.id.tab_weather -> binding.tabContent.setCurrentItem(0, true)
+
+            R.id.tab_news -> {
+                binding.tabContent.setCurrentItem(1, true)
+                color = ResourcesCompat.getColor(resources, R.color.newsTabPrimaryDark, theme)
+            }
+
+            R.id.tab_config -> {
+                binding.tabContent.setCurrentItem(2, true)
+                color = ResourcesCompat.getColor(resources, R.color.configTabPrimaryDark, theme)
+            }
+        }
+
         async(UI) {
-            val statusBarColor = bg {
-
-                var color = ResourcesCompat.getColor(resources, R.color.weatherTabPrimary, theme)
-
-                val currentVisiblePage: Fragment = when(lastVisibleFragment) {
-                    R.id.tab_weather -> weatherTabFragment
-                    R.id.tab_news -> newsTabFragment
-                    R.id.tab_config -> configurationFragment
-                    else -> weatherTabFragment
-                }
-
-                when (id) {
-                    R.id.tab_weather -> {
-                        showWeatherPage(currentVisiblePage)
-                        lastVisibleFragment = R.id.tab_weather
-                    }
-                    R.id.tab_news -> {
-                        showNewsPage(currentVisiblePage)
-                        color = ResourcesCompat.getColor(resources, R.color.newsTabPrimaryDark, theme)
-                        lastVisibleFragment = R.id.tab_news
-                    }
-                    R.id.tab_config -> {
-                        showConfigurationPage(currentVisiblePage)
-                        color = ResourcesCompat.getColor(resources, R.color.configTabPrimaryDark, theme)
-                        lastVisibleFragment = R.id.tab_config
-                    }
-                }
-
-                return@bg color
-            }.await()
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val window = window
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                window.statusBarColor = statusBarColor
+                window.apply {
+                    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    statusBarColor = color
+                }
             }
         }
     }
@@ -155,61 +132,4 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
 
     override fun showNetworkNotAvailable() = binding.mainLayout.toast(getString(R.string.network_unavailable_message))
 
-    private fun showWeatherPage(currentVisiblePage: Fragment) {
-        val currentPage = supportFragmentManager.findFragmentByTag(WeatherTabFragment::class.java.simpleName)
-
-        if (currentPage == weatherTabFragment && currentVisiblePage != weatherTabFragment) {
-            supportFragmentManager.beginTransaction()
-                    .hide(currentVisiblePage)
-                    .show(weatherTabFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-
-        } else if (currentPage == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.tabContent, weatherTabFragment, WeatherTabFragment::class.java.simpleName)
-                    .show(weatherTabFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-        }
-    }
-
-    private fun showNewsPage(currentVisiblePage: Fragment) {
-        val currentPage = supportFragmentManager.findFragmentByTag(NewsTabFragment::class.java.simpleName)
-
-        if (currentPage == newsTabFragment && currentVisiblePage != newsTabFragment) {
-            supportFragmentManager.beginTransaction()
-                    .hide(currentVisiblePage)
-                    .show(newsTabFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-
-        } else if (currentPage == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.tabContent, newsTabFragment, NewsTabFragment::class.java.simpleName)
-                    .hide(currentVisiblePage)
-                    .show(newsTabFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-        }
-    }
-
-    private fun showConfigurationPage(currentVisiblePage: Fragment) {
-        val currentPage = supportFragmentManager.findFragmentByTag(ConfigurationTabFragment::class.java.simpleName)
-
-        if (currentPage == configurationFragment && currentVisiblePage != configurationFragment) {
-            supportFragmentManager.beginTransaction()
-                    .hide(currentVisiblePage)
-                    .show(configurationFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-        } else if (currentPage == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.tabContent, configurationFragment, ConfigurationTabFragment::class.java.simpleName)
-                    .hide(currentVisiblePage)
-                    .show(configurationFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-        }
-    }
 }

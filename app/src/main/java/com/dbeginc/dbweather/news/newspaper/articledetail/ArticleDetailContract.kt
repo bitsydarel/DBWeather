@@ -15,10 +15,37 @@
 
 package com.dbeginc.dbweather.news.newspaper.articledetail
 
+import com.dbeginc.dbweather.base.IPresenter
+import com.dbeginc.dbweather.base.IView
+import com.dbeginc.dbweather.viewmodels.news.ArticleModel
+
 /**
  * Created by darel on 07.10.17.
  *
  * Article Detail Contract
  */
 interface ArticleDetailContract {
+    interface ArticleDetailView : IView {
+        fun displayArticle(article: ArticleModel)
+
+        fun shareArticle()
+
+        fun getSource(): String
+
+        fun getArticleUrl(): String
+
+        fun openFullArticle()
+
+        fun goBackToArticles()
+    }
+
+    interface ArticleDetailPresenter : IPresenter<ArticleDetailView> {
+        fun loadArticle()
+
+        fun onShare()
+
+        fun onAction()
+
+        fun onBack()
+    }
 }

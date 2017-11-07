@@ -156,7 +156,21 @@
         <item name="android:textColorHighlight">@color/LiveDetailColorPrimaryTextColor</item>
         <item name="android:textColorSecondary">@color/LiveDetailColorSecondaryTextColor</item>
     </style>
-
+    <!-- ****************************  Article Detail Screen Theme **************************** -->
+    <style name="AppTheme.ArticleDetail" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/ArticleDetailColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ArticleDetailColorPrimaryDark</item>
+        <item name="colorAccent">@color/ArticleDetailColorSecondary</item>
+        <item name="colorControlNormal">@color/ArticleDetailColorPrimaryLight</item>
+        <item name="colorControlHighlight">@color/ArticleDetailColorSecondaryLight</item>
+        <item name="colorButtonNormal">@color/ArticleDetailColorPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/ArticleDetailColorPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/ArticleDetailColorPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/ArticleDetailColorPrimaryTextColor</item>
+        <item name="android:textColorSecondary">@color/ArticleDetailColorSecondaryTextColor</item>
+        <item name="android:windowBackground">@color/ArticleDetailColorPrimary</item>
+    </style>
     <!-- Transparent themes for notifications and custom dialog -->
     <style name="Theme.Transparent" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>

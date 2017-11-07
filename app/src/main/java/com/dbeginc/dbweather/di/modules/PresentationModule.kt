@@ -35,6 +35,8 @@ import com.dbeginc.dbweather.news.lives.page.alllives.presenter.AllLivesTabPrese
 import com.dbeginc.dbweather.news.lives.page.favorite.FavoriteLivesTabContract
 import com.dbeginc.dbweather.news.lives.page.favorite.presenter.FavoriteLivesTabPresenterImpl
 import com.dbeginc.dbweather.news.newspaper.NewsPapersTabContract
+import com.dbeginc.dbweather.news.newspaper.articledetail.ArticleDetailContract
+import com.dbeginc.dbweather.news.newspaper.articledetail.presenter.ArticleDetailPresenterImpl
 import com.dbeginc.dbweather.news.newspaper.presenter.NewsPapersTabPresenterImpl
 import com.dbeginc.dbweather.news.presenter.NewsTabPresenterImpl
 import com.dbeginc.dbweather.splash.SplashContract
@@ -59,6 +61,11 @@ import io.reactivex.subjects.BehaviorSubject
  */
 @Module
 class PresentationModule {
+
+    @Provides
+    fun provideArticleDetailPresenter(getArticle: GetArticle): ArticleDetailContract.ArticleDetailPresenter {
+        return ArticleDetailPresenterImpl(getArticle)
+    }
 
     @Provides
     fun provideManageSourcesPresenter(getAllSources: GetAllSources): ManageSourcesContract.ManageSourcesPresenter {

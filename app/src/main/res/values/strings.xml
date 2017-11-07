@@ -53,8 +53,7 @@
     <string name="news_from" translatable="false">%1$s</string>
     <string name="published_at">%1$s ago</string>
     <string name="precipeChanceTypeLabel" translatable="false">%1$s</string>
-    <string name="open_in_browser_text">Open in Browser</string>
-    <string name="open_in_browser">Details</string>
+    <string name="open_with">Open with</string>
     <string name="news_close_text">Close the Window</string>
     <!-- *********************** Configurations *********************** -->
     <string name="weather_notification">Weather notification</string>
@@ -150,4 +149,7 @@
     <string name="find_source">Find Source</string>
     <string name="enter_source_name">Enter source name</string>
     <string name="location_flag">Location Flag</string>
+    <string name="read_the_full_article">Read the full article</string>
+    <string name="share_article_text">Check out this news! Sent from DBWeather App\n</string>
+    <string name="share_with">Share with</string>
 </resources>

@@ -31,13 +31,13 @@ import io.reactivex.disposables.CompositeDisposable
  * Live Detail Presenter Implementation
  */
 class LiveDetailPresenterImpl(private val getLive: GetLive, private val addLiveToFavorite: AddLiveToFavorite, private val removeLiveToFavorite: RemoveLiveToFavorite, private val getFavoriteLives: GetFavoriteLives) : LiveDetailContract.LiveDetailPresenter{
-    private lateinit var view: LiveDetailContract.LiveDetailView
+    private var view: LiveDetailContract.LiveDetailView? = null
     private val subscription = CompositeDisposable()
     private var subscribed = true
 
     override fun bind(view: LiveDetailContract.LiveDetailView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
     override fun unBind() {
@@ -45,61 +45,62 @@ class LiveDetailPresenterImpl(private val getLive: GetLive, private val addLiveT
     }
 
     override fun loadLive() {
-        getLive.execute(LiveRequest(view.getLiveName(), Unit))
-                .doOnSubscribe { view.showUpdatingStatus() }
-                .doAfterTerminate { view.hideUpdatingStatus() }
+        getLive.execute(LiveRequest(view!!.getLiveName(), Unit))
+                .doOnSubscribe { view?.showUpdatingStatus() }
+                .doAfterTerminate { view?.hideUpdatingStatus() }
                 .map { live -> live.toViewModel() }
                 .subscribe(
-                        { live -> view.displayYoutube(live) },
-                        { error -> view.showError(error.localizedMessage) }
+                        { live -> view?.displayYoutube(live) },
+                        { error -> view?.showError(error.localizedMessage) }
                 ).addTo(subscription)
     }
 
     override fun onBookmark() {
         if (subscribed) {
-            removeLiveToFavorite.execute(LiveRequest(view.getLiveName(), Unit))
-                    .doOnSubscribe { view.showUpdatingStatus() }
-                    .doAfterTerminate { view.hideUpdatingStatus() }
+            removeLiveToFavorite.execute(LiveRequest(view!!.getLiveName(), Unit))
+                    .doOnSubscribe { view?.showUpdatingStatus() }
+                    .doAfterTerminate { view?.hideUpdatingStatus() }
                     .subscribe(
                             {
                                 subscribed = false
-                                view.liveFavorite()
+                                view?.liveFavorite()
                             },
-                            { error -> view.showError(error.localizedMessage) }
+                            { error -> view?.showError(error.localizedMessage) }
                     ).addTo(subscription)
         } else {
-            addLiveToFavorite.execute(LiveRequest(view.getLiveName(), Unit))
-                    .doOnSubscribe { view.showUpdatingStatus() }
-                    .doAfterTerminate { view.hideUpdatingStatus() }
+            addLiveToFavorite.execute(LiveRequest(view!!.getLiveName(), Unit))
+                    .doOnSubscribe { view?.showUpdatingStatus() }
+                    .doAfterTerminate { view?.hideUpdatingStatus() }
                     .subscribe(
                             {
                                 subscribed = true
-                                view.liveNotFavorite()
+                                view?.liveNotFavorite()
                             },
-                            { error -> view.showError(error.localizedMessage) }
+                            { error -> view?.showError(error.localizedMessage) }
                     ).addTo(subscription)
         }
     }
 
     override fun onShare() {
-        view.shareLive()
+        view?.shareLive()
     }
 
     override fun onBackClicked() {
-        view.goBackToLiveList()
+        view?.goBackToLiveList()
     }
 
     override fun checkIfLiveFavorite() {
         getFavoriteLives.execute(Unit)
                 .flatMapIterable { favorites -> favorites.toMutableList() }
-                .filter { liveName -> liveName == view.getLiveName() }
+                .filter { liveName -> liveName == view?.getLiveName() }
                 .firstElement()
                 .isEmpty
                 .subscribe(
                         { notFound ->
                             subscribed = notFound
-                            if (notFound) view.liveNotFavorite() else view.liveFavorite() },
-                        { error -> view.showError(error.localizedMessage) }
+                            if (notFound) view?.liveNotFavorite() else view?.liveFavorite()
+                        },
+                        { error -> view?.showError(error.localizedMessage) }
                 ).addTo(subscription)
     }
 }

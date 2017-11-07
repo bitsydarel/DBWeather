@@ -22,7 +22,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.ArticleItemBinding
-import com.dbeginc.dbweather.utils.utility.toast
+import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.viewmodels.news.ArticleModel
 import java.util.*
 
@@ -79,10 +79,7 @@ class ArticleAdapter(data: List<ArticleModel>) : RecyclerView.Adapter<ArticleAda
             binding.executePendingBindings()
         }
 
-        private fun goToArticleDetail() {
-//        Navigator.goToArticleDetail(binding)
-            binding.articleLayout.toast("Opened : ${binding.article?.title}")
-        }
+        private fun goToArticleDetail() = Navigator.goToArticleDetail(binding)
     }
 
     fun getData(): List<ArticleModel> = articles

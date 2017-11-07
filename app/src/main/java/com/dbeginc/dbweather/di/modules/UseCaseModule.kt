@@ -121,8 +121,8 @@ class UseCaseModule {
     }
 
     @Provides
-    internal fun provideGetArticles(newsRepository: NewsRepository) : GetArticles {
-        return GetArticles(newsRepository)
+    internal fun provideGetArticles(newsRepository: NewsRepository, configurationsRepository: ConfigurationsRepository): GetArticles {
+        return GetArticles(newsRepository, configurationsRepository)
     }
 
     @Provides
@@ -138,5 +138,10 @@ class UseCaseModule {
     @Provides
     internal fun provideRemoveLiveFromFavorite(newsRepository: NewsRepository): RemoveLiveToFavorite {
         return RemoveLiveToFavorite(newsRepository)
+    }
+
+    @Provides
+    internal fun provideGetArticle(newsRepository: NewsRepository): GetArticle {
+        return GetArticle(newsRepository)
     }
 }

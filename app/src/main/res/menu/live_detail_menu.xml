@@ -31,7 +31,7 @@
     <item
         android:id="@+id/liveDetaiLShare"
         android:title="Share"
-        android:icon="@drawable/share_icon"
+        android:icon="@drawable/ic_share_white"
         android:enabled="true"
         android:orderInCategory="2"
         android:visible="true"

@@ -13,8 +13,8 @@
     <color name="transparentWhite">#80ffffff</color>
     <color name="tabWidgetColor">#4285F4</color>
     <color name="topInactiveTabColor">#50000000</color>
-    <color name="bottomInactiveTabColor">#89ffffff</color>
-    <color name="bottomActiveTabColor">#FFFFFF</color>
+    <color name="inactiveNavigationTabColor">#89ffffff</color>
+    <color name="activeNavigationTabColor">#FFFFFF</color>
     <color name="locationIntroPageColor">#03A9F4</color>
     <color name="grantLocationButtonColor">#FF1744</color>
     <color name="grantAccountButtonColor">#28C76D</color>
@@ -72,6 +72,15 @@
     <color name="LiveDetailColorSecondaryLight">#ff5c8d</color>
     <color name="LiveDetailColorSecondaryDark">#a00037</color>
     <color name="LiveDetailColorSecondaryTextColor">#ffffff</color>
+    <!-- **************************** Article Detail Colors **************************** -->
+    <color name="ArticleDetailColorPrimary">#212121</color>
+    <color name="ArticleDetailColorPrimaryLight">#484848</color>
+    <color name="ArticleDetailColorPrimaryDark">#000000</color>
+    <color name="ArticleDetailColorPrimaryTextColor">#ffffff</color>
+    <color name="ArticleDetailColorSecondary">#d81b60</color>
+    <color name="ArticleDetailColorSecondaryLight">#ff5c8d</color>
+    <color name="ArticleDetailColorSecondaryDark">#a00037</color>
+    <color name="ArticleDetailColorSecondaryTextColor">#ffffff</color>
     <!-- **************************** Config Detail Colors **************************** -->
     <color name="configTabPrimary">#6a1b9a</color>
     <color name="configTabPrimaryLight">#9c4dcc</color>

@@ -39,10 +39,11 @@
         <item name="progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>
         <item name="android:progressBarStyleHorizontal">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
         <item name="dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
-        <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>"
         <!-- **************** Window Style **************** -->
         <item name="android:windowBackground">@color/appColorPrimaryLight</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowContentTransitions">true</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
@@ -65,5 +66,21 @@
         <item name="android:windowBackground">@color/appColorPrimaryLight</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+    </style>
+    <!-- ****************************  Article Detail Screen Theme **************************** -->
+    <style name="AppTheme.ArticleDetail" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/ArticleDetailColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ArticleDetailColorPrimaryDark</item>
+        <item name="colorAccent">@color/ArticleDetailColorSecondary</item>
+        <item name="colorControlNormal">@color/ArticleDetailColorPrimaryLight</item>
+        <item name="colorControlHighlight">@color/ArticleDetailColorSecondaryLight</item>
+        <item name="colorButtonNormal">@color/ArticleDetailColorPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/ArticleDetailColorPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/ArticleDetailColorPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/ArticleDetailColorPrimaryTextColor</item>
+        <item name="android:textColorSecondary">@color/ArticleDetailColorSecondaryTextColor</item>
+        <item name="android:windowBackground">@color/ArticleDetailColorPrimary</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

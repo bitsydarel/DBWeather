@@ -23,14 +23,15 @@ import com.dbeginc.dbweather.di.components.DBWeatherApplicationComponent
 import com.dbeginc.dbweather.intro.chooselocation.view.ChooseLocationFragment
 import com.dbeginc.dbweather.intro.gpslocationfinder.view.GpsLocationFinderFragment
 import com.dbeginc.dbweather.intro.view.IntroActivity
-import com.dbeginc.dbweather.news.lives.page.alllives.view.AllLivesTabPageFragment
-import com.dbeginc.dbweather.news.lives.page.favorite.view.FavoriteLivesTabFragment
 import com.dbeginc.dbweather.news.lives.LivesTabFragment
 import com.dbeginc.dbweather.news.lives.livedetail.view.LiveDetailActivity
+import com.dbeginc.dbweather.news.lives.page.alllives.view.AllLivesTabPageFragment
+import com.dbeginc.dbweather.news.lives.page.favorite.view.FavoriteLivesTabFragment
+import com.dbeginc.dbweather.news.newspaper.articledetail.view.ArticleDetailActivity
 import com.dbeginc.dbweather.news.newspaper.view.NewsPaperTabFragment
 import com.dbeginc.dbweather.news.view.NewsTabFragment
-import com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider
 import com.dbeginc.dbweather.splash.view.SplashActivity
+import com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider
 import com.dbeginc.dbweather.weather.WeatherTabFragment
 
 /**
@@ -73,4 +74,5 @@ object Injector {
 
     fun injectManageSourcesDep(manageSourcesActivity: ManageSourcesActivity) = appComponent.inject(manageSourcesActivity)
 
+    fun injectArticleDetailDep(articleDetailActivity: ArticleDetailActivity) = appComponent.inject(articleDetailActivity)
 }
