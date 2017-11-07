@@ -17,6 +17,7 @@ package com.dbeginc.dbweatherdomain.usecases.news
 
 import com.dbeginc.dbweatherdomain.entities.news.Article
 import com.dbeginc.dbweatherdomain.entities.requests.news.NewsRequest
+import com.dbeginc.dbweatherdomain.repositories.configurations.ConfigurationsRepository
 import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweatherdomain.usecases.UseCase
 import io.reactivex.Flowable
@@ -26,9 +27,14 @@ import io.reactivex.Flowable
  *
  * Get Articles Use Case
  */
-class GetArticles(private val newsRepo: NewsRepository) : UseCase<List<Article>, NewsRequest<Unit>>() {
+class GetArticles(private val newsRepo: NewsRepository, private val configRepo: ConfigurationsRepository) : UseCase<List<Article>, NewsRequest<Unit>>() {
 
-    override fun buildUseCase(params: NewsRequest<Unit>): Flowable<List<Article>> = newsRepo.getArticles(params)
+    override fun buildUseCase(params: NewsRequest<Unit>): Flowable<List<Article>> {
+        return configRepo.getNewsPapersTranslationStatus()
+                .flatMapPublisher { isTranslationOn ->
+                    if (isTranslationOn) newsRepo.getTranslatedArticles(params) else newsRepo.getArticles(params)
+                }
+    }
     override fun clean() = newsRepo.clean()
 
 }

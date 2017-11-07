@@ -150,4 +150,5 @@
     <string name="find_source">Find Source</string>
     <string name="enter_source_name">Enter source name</string>
     <string name="location_flag">Location Flag</string>
+    <string name="mainNavigationBarBehavior"></string>
 </resources>

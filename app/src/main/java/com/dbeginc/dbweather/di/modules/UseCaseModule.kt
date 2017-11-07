@@ -121,8 +121,8 @@ class UseCaseModule {
     }
 
     @Provides
-    internal fun provideGetArticles(newsRepository: NewsRepository) : GetArticles {
-        return GetArticles(newsRepository)
+    internal fun provideGetArticles(newsRepository: NewsRepository, configurationsRepository: ConfigurationsRepository): GetArticles {
+        return GetArticles(newsRepository, configurationsRepository)
     }
 
     @Provides

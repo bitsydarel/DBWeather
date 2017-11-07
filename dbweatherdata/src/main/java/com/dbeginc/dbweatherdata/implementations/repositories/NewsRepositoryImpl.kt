@@ -72,6 +72,9 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
         return remote.getTranslatedArticles(request.sources)
                 .subscribeOn(thread.io)
                 .doOnNext { articles -> subscriptions.addArticles(articles) }
+                .publish { remoteData ->
+                    Flowable.mergeDelayError(remoteData, local.getArticles(request).takeUntil(remoteData).subscribeOn(thread.computation).toFlowable())
+                }
                 .observeOn(thread.ui)
     }
 

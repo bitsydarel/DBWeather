@@ -13,8 +13,8 @@
     <color name="transparentWhite">#80ffffff</color>
     <color name="tabWidgetColor">#4285F4</color>
     <color name="topInactiveTabColor">#50000000</color>
-    <color name="bottomInactiveTabColor">#89ffffff</color>
-    <color name="bottomActiveTabColor">#FFFFFF</color>
+    <color name="inactiveNavigationTabColor">#89ffffff</color>
+    <color name="activeNavigationTabColor">#FFFFFF</color>
     <color name="locationIntroPageColor">#03A9F4</color>
     <color name="grantLocationButtonColor">#FF1744</color>
     <color name="grantAccountButtonColor">#28C76D</color>

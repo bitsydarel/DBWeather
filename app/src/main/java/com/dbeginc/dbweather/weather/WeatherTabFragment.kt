@@ -207,13 +207,15 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
         }.filterIndexed { index, _ -> index <= 5 }
                 .forEach { location ->
                     val button = FloatingActionButton(context)
-                    button.labelText = location.name.plus(", ").plus(location.countryCode)
-                    button.setImageDrawable(locationIcon)
-                    button.colorNormal = Color.WHITE
-                    button.setColorPressedResId(R.color.appColorPrimary)
-                    button.setColorRippleResId(R.color.appColorPrimaryDark)
-                    button.layoutParams = floatingButtonLayoutParams
-                    button.setOnClickListener { presenter.getWeatherForCity(location) }
+                    button.apply {
+                        labelText = location.name.plus(", ").plus(location.countryCode)
+                        setImageDrawable(locationIcon)
+                        colorNormal = Color.WHITE
+                        setColorPressedResId(R.color.appColorPrimary)
+                        setColorRippleResId(R.color.appColorPrimaryDark)
+                        layoutParams = floatingButtonLayoutParams
+                        setOnClickListener { presenter.getWeatherForCity(location) }
+                    }
 
                     binding.floatingLocationsMenu.addMenuButton(button)
                 }
@@ -300,7 +302,6 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
         binding.hourlyRecyclerView.apply {
             adapter = hourlyWeatherAdapter
             layoutManager = hourlyLayoutManager
-            setHasFixedSize(true)
         }
     }
 
@@ -357,11 +358,13 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
 
         val channel = NotificationChannel(WEATHER_ALERT_CHANNEL_ID, WEATHER_ALERT_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
 
-        channel.description = getString(R.string.weather_alert_channel_desc)
-        channel.enableLights(true)
-        channel.lightColor = Color.RED
-        channel.enableVibration(true)
-        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        channel.apply {
+            description = getString(R.string.weather_alert_channel_desc)
+            enableLights(true)
+            lightColor = Color.RED
+            enableVibration(true)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        }
 
         notificationManager.createNotificationChannel(channel)
     }
@@ -386,8 +389,9 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
     private fun isCurrentLocationFromGps() = preferences.getBoolean(IS_CURRENT_LOCATION, false)
 
     private fun setupLocationsMenu() {
-        binding.currentLocationMenuItem.setImageDrawable(currentLocationIcon)
         binding.floatingLocationsMenu.menuIconView.setImageDrawable(locationMenuIcon)
+
+        binding.currentLocationMenuItem.setImageDrawable(currentLocationIcon)
 
         binding.currentLocationMenuItem.setOnClickListener { presenter.getWeather() }
 
@@ -397,9 +401,11 @@ class WeatherTabFragment : BaseFragment(), WeatherTabContract.WeatherTabView, Se
     private fun getLayoutParameter(): ConstraintLayout.LayoutParams {
         val params = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
 
-        params.topToTop = binding.weatherTabLayout.id
-        params.leftToLeft = binding.weatherTabLayout.id
-        params.rightToRight = binding.weatherTabLayout.id
+        params.apply {
+            topToTop = binding.weatherTabLayout.id
+            leftToLeft = binding.weatherTabLayout.id
+            rightToRight = binding.weatherTabLayout.id
+        }
 
         return params
     }
