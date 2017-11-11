@@ -29,7 +29,10 @@ import com.dbeginc.dbweather.config.managesources.ManageSourcesContract
 import com.dbeginc.dbweather.config.managesources.adapter.SourcesAdapter
 import com.dbeginc.dbweather.databinding.ActivityManageSourcesBinding
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PAPERS
-import com.dbeginc.dbweather.utils.utility.*
+import com.dbeginc.dbweather.utils.utility.Injector
+import com.dbeginc.dbweather.utils.utility.getList
+import com.dbeginc.dbweather.utils.utility.putList
+import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweather.viewmodels.news.SourceModel
 import com.dbeginc.dbweatherdomain.usecases.news.SubscribeToSource
 import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
@@ -46,7 +49,6 @@ class ManageSourcesActivity : BaseActivity(), ManageSourcesContract.ManageSource
     @Inject lateinit var unSubscribeToSource: UnSubscribeToSource
     private lateinit var binding: ActivityManageSourcesBinding
     private lateinit var adapter: SourcesAdapter
-    private val toolbarTitle by lazy { getString(R.string.manages_sources) }
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
@@ -103,8 +105,6 @@ class ManageSourcesActivity : BaseActivity(), ManageSourcesContract.ManageSource
     /******************** Manage Sources Custom View ********************/
     override fun setupView() {
         setSupportActionBar(binding.manageSourceToolbar)
-        supportActionBar?.title = toolbarTitle
-        binding.manageSourceToolbar.setNavigationIcon(R.drawable.back_button_icon)
         binding.manageSourceToolbar.setNavigationOnClickListener { presenter.goBack() }
 
         binding.sourcesList.adapter = adapter

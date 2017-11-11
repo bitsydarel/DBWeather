@@ -44,6 +44,7 @@ class ArticleDetailActivity : BaseActivity(), ArticleDetailContract.ArticleDetai
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
         Injector.injectArticleDetailDep(this)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_article_detail)
 
         binding.article = if (savedState == null) intent.getParcelableExtra(ARTICLES_DATA) else savedState.getParcelable(ARTICLES_DATA)

@@ -23,6 +23,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                app:title="@string/manages_sources"
+                app:navigationIcon="@drawable/ic_arrow_black"
                 style="?attr/toolbarStyle"
                 app:popupTheme="?attr/popupTheme"/>
 

@@ -23,6 +23,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 style="?attr/toolbarStyle"
+                app:title="@string/manages_locations"
+                app:navigationIcon="@drawable/ic_arrow_black"
                 app:popupTheme="?attr/popupTheme"/>
 
         </android.support.design.widget.AppBarLayout>

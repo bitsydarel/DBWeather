@@ -73,8 +73,6 @@ class ManageLocationsActivity: BaseActivity(), ManageLocationsContract.ManageLoc
 
     /******************* Manage Locations Custom Part *******************/
     override fun setupView() {
-        binding.manageLocationsToolbar.setTitle(R.string.manages_locations)
-        binding.manageLocationsToolbar.setNavigationIcon(R.drawable.back_button_icon)
         binding.manageLocationsToolbar.setNavigationOnClickListener { presenter.goBack() }
 
         binding.manageLocations.adapter = adapter
