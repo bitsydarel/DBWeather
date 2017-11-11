@@ -44,7 +44,7 @@
                 android:theme="?attr/toolbarStyle"
                 app:title="@{Live.name}"
                 app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
-                app:navigationIcon="@drawable/ic_arrow_back"
+                app:navigationIcon="@drawable/ic_arrow_white"
                 app:popupTheme="?attr/popupTheme"
                 app:layout_scrollFlags="scroll|enterAlways"
                 tools:targetApi="lollipop" />

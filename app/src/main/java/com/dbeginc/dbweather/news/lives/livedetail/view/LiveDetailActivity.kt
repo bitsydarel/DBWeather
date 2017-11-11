@@ -15,8 +15,10 @@
 
 package com.dbeginc.dbweather.news.lives.livedetail.view
 
+import android.content.ClipDescription
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -47,6 +49,8 @@ import javax.inject.Inject
 class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListener, LiveDetailContract.LiveDetailView {
     @Inject lateinit var presenter: LiveDetailContract.LiveDetailPresenter
     private lateinit var binding: ActivityLiveDetailBinding
+    private val sharedWith by lazy { getString(R.string.share_with) }
+    private val shareLiveText by lazy { getString(R.string.share_live_text) }
     private var player: YouTubePlayer? = null
 
     companion object {
@@ -55,14 +59,14 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
+
         Injector.injectLiveDetailDep(this)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_live_detail)
 
         binding.live = if (savedState == null) intent.getParcelableExtra(LIVES_DATA) else savedState.getParcelable(LIVES_DATA)
 
         binding.liveStream.initialize(BuildConfig.YOUTUBE_API_KEY, this)
-
-        setupToolbar()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -84,11 +88,13 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
         player = youTubePlayer
 
         if(!wasRestored) {
-            player?.cueVideo(binding.live?.url)
-            player?.setShowFullscreenButton(true)
-            player?.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
-            player?.fullscreenControlFlags = YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION
-            player?.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION)
+            player?.apply {
+                cueVideo(binding.live?.url)
+                setShowFullscreenButton(true)
+                setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
+                fullscreenControlFlags = YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION
+                addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION)
+            }
         }
     }
 
@@ -104,13 +110,22 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        presenter.onBackClicked()
-    }
-
     /************************* Live Detail Activity *************************/
     override fun setupView() {
+        binding.detailToolbar.apply {
+            setNavigationOnClickListener { presenter.onBackClicked() }
+
+            if (menu.size() < 2) inflateMenu(R.menu.live_detail_menu)
+
+            setOnMenuItemClickListener { item ->
+                when (item?.itemId) {
+                    R.id.liveDetaiLShare -> presenter.onShare()
+                    R.id.liveDetailBookmark -> presenter.onBookmark()
+                }
+                return@setOnMenuItemClickListener true
+            }
+        }
+
         binding.liveDetailLayout.setBlurBackground(binding.live?.url)
 
         presenter.checkIfLiveFavorite()
@@ -128,6 +143,15 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
     }
 
     override fun shareLive() {
+        val shareIntent = Intent()
+
+        shareIntent.apply {
+            action = Intent.ACTION_SEND
+            type = ClipDescription.MIMETYPE_TEXT_PLAIN
+            putExtra(Intent.EXTRA_TEXT, shareLiveText.format(Uri.parse(binding.live?.url)))
+        }
+
+        startActivity(Intent.createChooser(shareIntent, sharedWith))
     }
 
     override fun showUpdatingStatus() = binding.liveUpdateStatus.show()
@@ -137,11 +161,11 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
     override fun getLiveName(): String = binding.live!!.name
 
     override fun liveNotFavorite() {
-        binding.detailToolbar.menu.findItem(R.id.liveDetailBookmark).setIcon(R.drawable.ic_not_bookmark_white)
+        binding.detailToolbar.menu?.findItem(R.id.liveDetailBookmark)?.setIcon(R.drawable.ic_not_bookmark_white)
     }
 
     override fun liveFavorite() {
-        binding.detailToolbar.menu.findItem(R.id.liveDetailBookmark).setIcon(R.drawable.ic_bookmarked)
+        binding.detailToolbar.menu?.findItem(R.id.liveDetailBookmark)?.setIcon(R.drawable.ic_bookmarked)
     }
 
     override fun goBackToLiveList() {
@@ -151,22 +175,6 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
 
     override fun showError(localizedMessage: String) {
         binding.liveDetailLayout.snack(localizedMessage)
-    }
-
-    private fun setupToolbar() {
-        binding.detailToolbar.apply {
-            setNavigationOnClickListener { presenter.onBackClicked() }
-
-            inflateMenu(R.menu.live_detail_menu)
-
-            setOnMenuItemClickListener { item ->
-                when (item?.itemId) {
-                    R.id.liveDetaiLShare -> presenter.onShare()
-                    R.id.liveDetailBookmark -> presenter.onBookmark()
-                }
-                return@setOnMenuItemClickListener true
-            }
-        }
     }
 
     private fun ViewGroup.setBlurBackground(url: String?) {

@@ -150,4 +150,9 @@
     <string name="find_source">Find Source</string>
     <string name="enter_source_name">Enter source name</string>
     <string name="location_flag">Location Flag</string>
+    <string name="read_the_full_article">Read the full article</string>
+    <string name="share_with">Share with</string>
+    <string name="share_article_text">Check out this news! Sent from DBWeather App\n</string>
+    <string name="share_live_text">Check out this online tv! Sent from DBWeather App\n www.youtube.com/watch?v=%1$s</string>
+    <string name="open_with">Open with</string>
 </resources>
