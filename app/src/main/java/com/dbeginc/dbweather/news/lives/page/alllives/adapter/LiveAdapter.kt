@@ -26,7 +26,7 @@ import com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter.LivePres
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.view.LiveViewHolder
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
 import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import org.jetbrains.anko.coroutines.experimental.bg
+import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
 import java.util.*
 
 /**
@@ -34,13 +34,13 @@ import java.util.*
  *
  * Live adapter
  */
-class LiveAdapter(data: MutableList<LiveModel>, private val favorites: MutableList<String>, private val addLiveToFavorite: AddLiveToFavorite) : RecyclerView.Adapter<LiveViewHolder>() {
+class LiveAdapter(data: MutableList<LiveModel>, private val addLiveToFavorite: AddLiveToFavorite, private val removeLiveToFavorite: RemoveLiveToFavorite) : RecyclerView.Adapter<LiveViewHolder>() {
     private var container: RecyclerView? = null
     private val presenters: LinkedList<LiveContract.LivePresenter>
 
     init {
         // mapping data to presenter
-        presenters = LinkedList(data.map { live -> LivePresenterImpl(favorites.contains(live.name), live, addLiveToFavorite) })
+        presenters = LinkedList(data.map { live -> LivePresenterImpl(live, addLiveToFavorite, removeLiveToFavorite) })
 
         presenters.sortBy { live -> live.getData().name }
     }
@@ -72,24 +72,17 @@ class LiveAdapter(data: MutableList<LiveModel>, private val favorites: MutableLi
 
     fun getData(): List<LiveModel> = presenters.map { presenter -> presenter.getData() }
 
-    fun getFavoritesData(): List<String> = favorites
-
     fun updateData(newData: List<LiveModel>) {
         synchronized(this) {
             val result = DiffUtil.calculateDiff(LiveDiffUtils(presenters.map { presenter -> presenter.getData() }, newData.sorted()))
 
             presenters.clear()
-            newData.mapTo(presenters) { live -> LivePresenterImpl(favorites.contains(live.name), live, addLiveToFavorite) }
+
+            newData.mapTo(presenters) { live -> LivePresenterImpl(live, addLiveToFavorite, removeLiveToFavorite) }
+
             presenters.sortBy { presenter -> presenter.getData().name }
 
             container?.post { result.dispatchUpdatesTo(this@LiveAdapter) }
-        }
-    }
-
-    fun defineFavorites(newData: List<String>) {
-        bg {
-            favorites.clear()
-            favorites.addAll(newData)
         }
     }
 

@@ -26,7 +26,7 @@ import com.dbeginc.dbweather.viewmodels.news.LiveModel
  */
 interface LiveContract {
     interface LiveView : IView {
-        fun displayLive(live: LiveModel, isFavorite: Boolean)
+        fun displayLive(live: LiveModel)
 
         fun definePresenter(presenter: LivePresenter)
 
@@ -44,7 +44,6 @@ interface LiveContract {
 
         fun getData(): LiveModel
 
-        fun addToFavorite()
-
+        fun onAction()
     }
 }

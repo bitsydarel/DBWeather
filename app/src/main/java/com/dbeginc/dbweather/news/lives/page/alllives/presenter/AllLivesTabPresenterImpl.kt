@@ -17,10 +17,13 @@ package com.dbeginc.dbweather.news.lives.page.alllives.presenter
 
 import com.dbeginc.dbweather.news.lives.page.alllives.AllLivesTabContract
 import com.dbeginc.dbweather.utils.utility.addTo
+import com.dbeginc.dbweather.viewmodels.news.LiveModel
 import com.dbeginc.dbweather.viewmodels.news.toViewModel
+import com.dbeginc.dbweatherdomain.entities.news.Live
 import com.dbeginc.dbweatherdomain.usecases.news.GetAllLives
 import com.dbeginc.dbweatherdomain.usecases.news.GetFavoriteLives
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 
 /**
  * Created by darel on 20.10.17.
@@ -43,19 +46,13 @@ class AllLivesTabPresenterImpl(private val getAllLives: GetAllLives, private val
 
     override fun loadAllLives() {
         getAllLives.execute(Unit)
-                .doOnSubscribe { view?.showUpdateStatus() }
+                .zipWith(
+                        getFavoriteLives.execute(Unit),
+                        BiFunction<List<Live>, List<String>, List<LiveModel>> { lives, favorites -> lives.map { live -> live.toViewModel(favorites.contains(live.name)) } }
+                ).doOnSubscribe { view?.showUpdateStatus() }
                 .doOnTerminate { view?.hideUpdateStatus() }
-                .map { lives -> lives.map { live -> live.toViewModel() } }
                 .subscribe(
                         { lives -> view?.displayAllLives(lives) },
-                        { error -> view?.showError(error.localizedMessage) }
-                ).addTo(subscriptions)
-    }
-
-    override fun getFavorite() {
-        getFavoriteLives.execute(Unit)
-                .subscribe(
-                        { favorites -> view?.defineFavorites(favorites) },
                         { error -> view?.showError(error.localizedMessage) }
                 ).addTo(subscriptions)
     }

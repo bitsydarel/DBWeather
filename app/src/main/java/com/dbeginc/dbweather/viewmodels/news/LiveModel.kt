@@ -23,15 +23,16 @@ import android.os.Parcelable
  *
  * Live Model
  */
-data class LiveModel(val name: String, val url: String) : Parcelable, Comparable<LiveModel> {
+data class LiveModel(val name: String, val url: String, var isFavorite: Boolean) : Parcelable, Comparable<LiveModel> {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
-            parcel.readString()
-    )
+            parcel.readString(),
+            parcel.readByte() != 0.toByte())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(url)
+        parcel.writeByte(if (isFavorite) 1 else 0)
     }
 
     override fun describeContents(): Int = 0
@@ -39,8 +40,12 @@ data class LiveModel(val name: String, val url: String) : Parcelable, Comparable
     override fun compareTo(other: LiveModel): Int = name.compareTo(other.name)
 
     companion object CREATOR : Parcelable.Creator<LiveModel> {
-        override fun createFromParcel(parcel: Parcel): LiveModel = LiveModel(parcel)
-        override fun newArray(size: Int): Array<LiveModel?> = arrayOfNulls(size)
-    }
+        override fun createFromParcel(parcel: Parcel): LiveModel {
+            return LiveModel(parcel)
+        }
 
+        override fun newArray(size: Int): Array<LiveModel?> {
+            return arrayOfNulls(size)
+        }
+    }
 }

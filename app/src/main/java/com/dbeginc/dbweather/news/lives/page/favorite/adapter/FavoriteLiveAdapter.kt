@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.LiveItemBinding
 import com.dbeginc.dbweather.news.lives.page.LiveDiffUtils
+import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
 
@@ -60,16 +61,22 @@ class FavoriteLiveAdapter(private val favorites: MutableList<LiveModel>) : Recyc
         val result = DiffUtil.calculateDiff(LiveDiffUtils(favorites, newData.sorted()))
 
         favorites.clear()
+
         favorites.addAll(newData)
+
         favorites.sort()
 
         container?.post { result.dispatchUpdatesTo(this@FavoriteLiveAdapter) }
+
     }
 
     inner class FavoriteLiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.liveFavorite.remove()
+            binding.liveThumbnail.setOnClickListener { play() }
         }
+
+        fun play() = Navigator.goToLiveDetail(binding)
 
         fun bindLive(liveModel: LiveModel) {
             binding.live = liveModel

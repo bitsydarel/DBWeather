@@ -19,16 +19,20 @@ import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveContract
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
 import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
 import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import io.reactivex.disposables.Disposable
+import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by darel on 19.10.17.
  *
  * Live Presenter Implementation
  */
-class LivePresenterImpl(private var isFavorite: Boolean, private val live: LiveModel, private val addLiveToFavorite: AddLiveToFavorite) : LiveContract.LivePresenter {
+class LivePresenterImpl(private val live: LiveModel,
+                        private val addLiveToFavorite: AddLiveToFavorite,
+                        private val removeLiveToFavorite: RemoveLiveToFavorite) : LiveContract.LivePresenter {
+
     private var view: LiveContract.LiveView? = null
-    private var task: Disposable? = null
+    private val tasks = CompositeDisposable()
 
     override fun bind(view: LiveContract.LiveView) {
         this.view = view
@@ -36,28 +40,37 @@ class LivePresenterImpl(private var isFavorite: Boolean, private val live: LiveM
     }
 
     override fun unBind() {
-        task?.dispose()
+        tasks.clear()
         view = null
     }
 
     override fun loadLive() {
-        view?.displayLive(live, isFavorite)
+        view?.displayLive(live)
     }
 
     override fun getData(): LiveModel = live
 
-    override fun addToFavorite() {
-
-        addLiveToFavorite.execute(LiveRequest(live.name, Unit))
-                .doOnSubscribe { disposable ->
-                    task = disposable
-                    view?.showBookmarkAnimation()
-                }.subscribe(
-                { isFavorite = true },
-                { error ->
-                    view?.showUnBookmarkAnimation()
-                    view?.showError(error)
-                }
-        )
+    override fun onAction() {
+        if (live.isFavorite) {
+            removeLiveToFavorite.execute(LiveRequest(live.name, Unit))
+                    .doOnSubscribe { view?.showUnBookmarkAnimation() }
+                    .subscribe(
+                            { live.isFavorite = false },
+                            { error ->
+                                view?.showBookmarkAnimation()
+                                view?.showError(error)
+                            }
+                    )
+        } else {
+            addLiveToFavorite.execute(LiveRequest(live.name, Unit))
+                    .doOnSubscribe { view?.showBookmarkAnimation() }
+                    .subscribe(
+                            { live.isFavorite = true },
+                            { error ->
+                                view?.showUnBookmarkAnimation()
+                                view?.showError(error)
+                            }
+                    )
+        }
     }
 }

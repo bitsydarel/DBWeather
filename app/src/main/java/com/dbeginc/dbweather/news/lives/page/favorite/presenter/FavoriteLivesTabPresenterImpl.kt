@@ -46,10 +46,10 @@ class FavoriteLivesTabPresenterImpl(private val getFavoriteLives: GetFavoriteLiv
                 .doOnSubscribe { view?.showUpdateStatus() }
                 .doOnTerminate { view?.hideUpdateStatus() }
                 .flatMap { favorites -> getLives.execute(favorites) }
-                .map { favorites -> favorites.map { live -> live.toViewModel() } }
+                .map { favorites -> favorites.map { live -> live.toViewModel(true) } }
                 .subscribe(
                         { lives -> view?.displayFavoriteLives(lives) },
-                        { error -> view?.showError(error.localizedMessage) })
-                .addTo(subscriptions)
+                        { error -> view?.showError(error.localizedMessage) }
+                ).addTo(subscriptions)
     }
 }

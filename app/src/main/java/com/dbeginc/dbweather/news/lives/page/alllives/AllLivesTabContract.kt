@@ -29,8 +29,6 @@ interface AllLivesTabContract {
     interface AllLivesTabView : IView {
         fun displayAllLives(lives: List<LiveModel>)
 
-        fun defineFavorites(favorites: List<String>)
-
         fun showUpdateStatus()
 
         fun hideUpdateStatus()
@@ -40,7 +38,5 @@ interface AllLivesTabContract {
 
     interface AllLivesTabPresenter : IPresenter<AllLivesTabView> {
         fun loadAllLives()
-
-        fun getFavorite()
     }
 }

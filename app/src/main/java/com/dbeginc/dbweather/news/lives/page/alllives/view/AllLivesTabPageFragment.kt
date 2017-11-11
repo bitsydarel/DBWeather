@@ -24,9 +24,8 @@ import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentLivesPageBinding
-import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveAdapter
 import com.dbeginc.dbweather.news.lives.page.alllives.AllLivesTabContract
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.FAVORITE_LIVES
+import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveAdapter
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.LIVES_DATA
 import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.getList
@@ -34,7 +33,7 @@ import com.dbeginc.dbweather.utils.utility.putList
 import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
 import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import java.util.*
+import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
 import javax.inject.Inject
 
 /**
@@ -44,6 +43,7 @@ import javax.inject.Inject
  */
 class AllLivesTabPageFragment : BaseFragment(), AllLivesTabContract.AllLivesTabView {
     @Inject lateinit var addLiveToFavorite: AddLiveToFavorite
+    @Inject lateinit var removeToFavorite: RemoveLiveToFavorite
     @Inject lateinit var presenter: AllLivesTabContract.AllLivesTabPresenter
     private lateinit var adapter: LiveAdapter
     private lateinit var binding: FragmentLivesPageBinding
@@ -52,8 +52,9 @@ class AllLivesTabPageFragment : BaseFragment(), AllLivesTabContract.AllLivesTabV
         super.onCreate(savedState)
         Injector.injectLivesPageDep(this)
 
-        adapter = if (savedState == null) LiveAdapter(mutableListOf(), mutableListOf(), addLiveToFavorite)
-        else LiveAdapter(savedState.getList<LiveModel>(LIVES_DATA).toMutableList(), savedState.getStringArrayList(FAVORITE_LIVES), addLiveToFavorite)
+        adapter = if (savedState == null) LiveAdapter(mutableListOf(), addLiveToFavorite, removeToFavorite)
+        else LiveAdapter(savedState.getList<LiveModel>(LIVES_DATA).toMutableList(), addLiveToFavorite, removeToFavorite)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,7 +72,6 @@ class AllLivesTabPageFragment : BaseFragment(), AllLivesTabContract.AllLivesTabV
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putList(LIVES_DATA, adapter.getData())
-        outState?.putStringArrayList(FAVORITE_LIVES, adapter.getFavoritesData() as ArrayList<String>?)
     }
 
     override fun onResume() {
@@ -87,7 +87,6 @@ class AllLivesTabPageFragment : BaseFragment(), AllLivesTabContract.AllLivesTabV
     /********************* All Lives Tab Page Part *********************/
     override fun setupView() {
         presenter.loadAllLives()
-        presenter.getFavorite()
     }
 
     override fun cleanState() {
@@ -96,10 +95,6 @@ class AllLivesTabPageFragment : BaseFragment(), AllLivesTabContract.AllLivesTabV
 
     override fun displayAllLives(lives: List<LiveModel>) {
         adapter.updateData(lives)
-    }
-
-    override fun defineFavorites(favorites: List<String>) {
-        adapter.defineFavorites(favorites)
     }
 
     override fun showUpdateStatus() {

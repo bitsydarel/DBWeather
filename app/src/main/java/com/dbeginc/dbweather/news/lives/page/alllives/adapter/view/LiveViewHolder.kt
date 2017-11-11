@@ -23,6 +23,7 @@ import com.dbeginc.dbweather.databinding.LiveItemBinding
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveContract
 import com.dbeginc.dbweather.utils.holder.ConstantHolder
 import com.dbeginc.dbweather.utils.utility.Navigator
+import com.dbeginc.dbweather.utils.utility.toast
 import com.dbeginc.dbweather.viewmodels.news.LiveModel
 
 /**
@@ -39,33 +40,28 @@ class LiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHo
         presenter?.unBind()
     }
 
-    override fun displayLive(live: LiveModel, isFavorite: Boolean) {
+    override fun displayLive(live: LiveModel) {
         binding.live = live
-        binding.liveFavorite.apply { if (isFavorite) bookmark() else unBookmark() }
+        binding.liveFavorite.apply { if (live.isFavorite) bookmark() else unBookmark() }
         binding.executePendingBindings()
     }
 
-    override fun showBookmarkAnimation() {
-        binding.liveFavorite.bookmark()
-    }
+    override fun showBookmarkAnimation() = binding.liveFavorite.bookmark()
 
-    override fun showUnBookmarkAnimation() {
-        binding.liveFavorite.unBookmark()
-    }
+    override fun showUnBookmarkAnimation() = binding.liveFavorite.unBookmark()
 
     override fun showError(error: Throwable) {
         Log.e(ConstantHolder.TAG, error.localizedMessage, error)
+        binding.root.toast(error.localizedMessage)
     }
 
     override fun definePresenter(presenter: LiveContract.LivePresenter) {
         this.presenter = presenter
-        binding.liveFavorite.setOnClickListener { presenter.addToFavorite() }
+        binding.liveFavorite.setOnClickListener { presenter.onAction() }
         binding.liveThumbnail.setOnClickListener { play() }
     }
 
-    override fun play() {
-        Navigator.goToLiveDetail(binding)
-    }
+    override fun play() = Navigator.goToLiveDetail(binding)
 
     private fun ImageButton.bookmark() = setImageResource(R.drawable.ic_bookmarked)
 

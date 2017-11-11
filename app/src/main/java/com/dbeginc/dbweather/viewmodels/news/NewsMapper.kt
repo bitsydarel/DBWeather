@@ -47,7 +47,7 @@ fun Article.toViewModel(unknownAuthor: String, currentTime: Instant) : ArticleMo
     return ArticleModel(author=author ?: unknownAuthor, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishTime, sourceId=sourceId)
 }
 
-fun Live.toViewModel(): LiveModel = LiveModel(name, url)
+fun Live.toViewModel(isFavorite: Boolean = false): LiveModel = LiveModel(name, url, isFavorite)
 
 fun Source.toViewModel(): SourceModel = SourceModel(id, name, description, url, category, language, country, sortBysAvailable, subscribed)
 
