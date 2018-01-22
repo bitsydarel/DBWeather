@@ -24,8 +24,7 @@ import com.squareup.moshi.Json
  * Remote Article
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteArticle(@Json(name="author") val author: String?, @Json(name="title") var title: String,
+data class RemoteArticle(@Json(name="source") val source: RemoteArticleSource, @Json(name="author") val author: String?, @Json(name="title") var title: String,
                          @Json(name="description") var description: String?, @Json(name="url") val url: String,
-                         @Json(name="urlToImage") val urlToImage: String?, @Json(name="publishedAt") val publishedAt: String?,
-                         @Transient var sourceId : String = ""
+                         @Json(name="urlToImage") val urlToImage: String?, @Json(name="publishedAt") val publishedAt: String?
 )

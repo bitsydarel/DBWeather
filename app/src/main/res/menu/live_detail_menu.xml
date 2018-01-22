@@ -30,11 +30,10 @@
 
     <item
         android:id="@+id/liveDetaiLShare"
-        android:title="Share"
+        android:title="@string/share"
         android:icon="@drawable/ic_share_white"
         android:enabled="true"
         android:orderInCategory="2"
         android:visible="true"
         app:showAsAction="ifRoom"/>
-
 </menu>

@@ -29,12 +29,11 @@ import retrofit2.http.Query
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 interface NewsApi {
-    @GET("/v1/articles")
-    fun getArticles(@Query("source") source: String,
-                    @Query("sortBy") sortBy: String,
+    @GET("v2/top-headlines")
+    fun getArticles(@Query("sources") sources: String,
                     @Query("apiKey") apiKey: String
     ) : Flowable<RemoteNewsResponse>
 
-    @GET("/v1/sources")
-    fun getSources() : Flowable<RemoteSourceResponse>
+    @GET("/v2/sources")
+    fun getSources(@Query("apiKey") apiKey: String) : Flowable<RemoteSourceResponse>
 }

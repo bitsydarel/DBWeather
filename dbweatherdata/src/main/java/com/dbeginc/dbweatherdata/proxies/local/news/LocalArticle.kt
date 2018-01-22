@@ -15,10 +15,7 @@
 
 package com.dbeginc.dbweatherdata.proxies.local.news
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.ConstantHolder.ARTICLES_TABLE
 
@@ -32,13 +29,13 @@ import com.dbeginc.dbweatherdata.ConstantHolder.ARTICLES_TABLE
         tableName = ARTICLES_TABLE,
         foreignKeys = arrayOf(ForeignKey(
                 entity=LocalSource::class,
-                parentColumns= arrayOf("id"),
+                parentColumns= arrayOf("name"),
                 childColumns = arrayOf("source_id"))
         )
 )
-data class LocalArticle(val author: String?, val title: String, val description: String?,
+data class LocalArticle(@ColumnInfo(name="source_id") val sourceId: String,
+                        val author: String?, val title: String, val description: String?,
                         @PrimaryKey val url: String,
                         @ColumnInfo(name = "url_to_image")val urlToImage: String?,
-                        @ColumnInfo(name="published_dat") val publishedAt: String?,
-                        @ColumnInfo(name="source_id") val sourceId: String
+                        @ColumnInfo(name="published_dat") val publishedAt: String?
 )

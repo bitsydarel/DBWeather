@@ -49,7 +49,7 @@ class LocalNewsDataSourceImpl private constructor(private val db: LocalNewsDatab
     }
 
     override fun getArticles(request: NewsRequest<Unit>): Maybe<List<Article>> {
-        return db.newsDao().getArticles(request.sources.map { source -> source.id })
+        return db.newsDao().getArticles(request.sources.map { source -> source.name })
                 .map { articles -> articles.map { article -> article.toDomain()  } }
     }
 
@@ -75,7 +75,7 @@ class LocalNewsDataSourceImpl private constructor(private val db: LocalNewsDatab
     override fun updateSource(source: Source): Completable = Completable.fromAction { db.newsDao().updateSource(source.toProxy()) }
 
     override fun defineDefaultSubscribedSources(sources: List<Source>): Completable {
-        return Completable.fromAction { db.newsDao().putSources(sources.map { source -> source.toProxy() }) }
+        return Completable.fromAction { db.newsDao().defineDefaultSources(sources.map { source -> source.toProxy() }) }
     }
 
     override fun putSources(sources: List<Source>): Completable = Completable.fromAction { db.newsDao().putSources(sources.map { source -> source.toProxy() }) }
@@ -94,10 +94,10 @@ class LocalNewsDataSourceImpl private constructor(private val db: LocalNewsDatab
 
     override fun putLives(lives: List<Live>): Completable = Completable.fromAction { db.newsDao().putLives(lives.map { live -> live.toProxy() }) }
 
-    private fun Article.toProxy() : LocalArticle = LocalArticle(author, title, description, url, urlToImage, publishedAt, sourceId)
+    private fun Article.toProxy() : LocalArticle = LocalArticle(sourceId=sourceId, author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt)
 
     private fun Live.toProxy() : LocalLive = LocalLive(name=name, url=url)
 
-    private fun Source.toProxy() : LocalSource = LocalSource(id=id, name=name, description=description, url=url, category=category, language=language, country=country, sortBysAvailable=sortBysAvailable, subscribed=subscribed)
+    private fun Source.toProxy() : LocalSource = LocalSource(id=id, name=name, description=description, url=url, category=category, language=language, country=country, subscribed=subscribed)
 
 }

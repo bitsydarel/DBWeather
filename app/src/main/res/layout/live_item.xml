@@ -6,7 +6,7 @@
     <data>
         <variable
             name="Live"
-            type="com.dbeginc.dbweather.viewmodels.news.LiveModel"/>
+            type="com.dbeginc.dbweathernews.viewmodels.LiveModel"/>
     </data>
 
     <android.support.v7.widget.CardView
@@ -28,7 +28,6 @@
                 android:layout_width="0dp"
                 android:layout_height="176dp"
                 android:contentDescription="@string/live_thumbnail"
-                android:scaleType="centerCrop"
                 tools:src="@drawable/no_image_icon"
                 app:setYoutubeImage="@{Live.url}"
                 app:layout_constraintTop_toTopOf="parent"

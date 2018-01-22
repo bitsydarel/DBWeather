@@ -55,7 +55,7 @@
     <string name="precipeChanceTypeLabel" translatable="false">%1$s</string>
     <string name="open_in_browser_text">Open in Browser</string>
     <string name="open_in_browser">Details</string>
-    <string name="news_close_text">Close the Window</string>
+    <string name="close_window">Close the Window</string>
     <!-- *********************** Configurations *********************** -->
     <string name="weather_notification">Weather notification</string>
     <string name="manages_locations">Manages locations</string>
@@ -118,7 +118,7 @@
     <string name="NO_EMAIL_CLIENTS">No email clients installed</string>
     <string name="unsuccessfully_saved">Error while saving changes</string>
     <string name="dayIconDescription">Day Icon</string>
-
+    <string name="read_the_full_article">Read the full article</string>
     <string name="title_activity_intro">Intro</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -150,9 +150,14 @@
     <string name="find_source">Find Source</string>
     <string name="enter_source_name">Enter source name</string>
     <string name="location_flag">Location Flag</string>
-    <string name="read_the_full_article">Read the full article</string>
     <string name="share_with">Share with</string>
     <string name="share_article_text">Check out this news! Sent from DBWeather App\n</string>
     <string name="share_live_text">Check out this online tv! Sent from DBWeather App\n www.youtube.com/watch?v=%1$s</string>
     <string name="open_with">Open with</string>
+    <string name="open_full_screen">Expand</string>
+    <string name="share">Share</string>
+    <string name="source_language">Source Language</string>
+    <string name="category">Category</string>
+    <string name="availability">Availability</string>
+    <string name="name">Name</string>
 </resources>

@@ -58,9 +58,9 @@ class RemoteNewsDataSourceImpl private constructor(private val newsRestAdapter: 
                 .map { articles -> articles.map { article -> article.toDomain() } }
     }
 
-    private fun RemoteSource.toDomain() = Source(id=id, name=name, description=description, url=url, category=category, language=language, country=country, sortBysAvailable=sortBysAvailable, subscribed=false)
+    private fun RemoteSource.toDomain() = Source(id=id, name=name, description=description, url=url, category=category, language=language, country=country, subscribed=false)
 
-    private fun Source.toProxy() : RemoteSource = RemoteSource(id=id, name=name, description=description, url=url, category=category, language=language, country=country, sortBysAvailable=sortBysAvailable)
+    private fun Source.toProxy() : RemoteSource = RemoteSource(id=id, name=name, description=description, url=url, category=category, language=language, country=country)
 
     private fun RemoteLive.toDomain() = Live(name=name, url=url)
 }

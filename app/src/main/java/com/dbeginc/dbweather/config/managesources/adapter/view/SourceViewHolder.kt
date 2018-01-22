@@ -17,22 +17,30 @@ package com.dbeginc.dbweather.config.managesources.adapter.view
 
 import android.support.v7.widget.RecyclerView
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.config.managesources.adapter.SourceContract
+import com.dbeginc.dbweather.config.managesources.adapter.contract.SourcePresenter
+import com.dbeginc.dbweather.config.managesources.adapter.contract.SourceView
 import com.dbeginc.dbweather.databinding.SourceItemBinding
+import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweather.utils.utility.show
 import com.dbeginc.dbweather.utils.utility.toast
-import com.dbeginc.dbweather.viewmodels.news.SourceModel
+import com.dbeginc.dbweathernews.viewmodels.SourceModel
 
 /**
  * Created by darel on 27.10.17.
  *
  * Source View Holder
  */
-class SourceViewHolder(private val binding: SourceItemBinding): RecyclerView.ViewHolder(binding.root), SourceContract.SourceView {
-    private var presenter: SourceContract.SourcePresenter? = null
+class SourceViewHolder(private val binding: SourceItemBinding): RecyclerView.ViewHolder(binding.root), SourceView {
+    private var presenter: SourcePresenter? = null
 
-    override fun setupView() {/*** Not needed here ****/}
+    init {
+        binding.sourceLayout.setOnClickListener { presenter?.onAction() }
+
+        binding.sourceSubscribed.setOnClickListener { presenter?.onSubscribe() }
+    }
+
+    override fun setupView() {  }
 
     override fun cleanState() {
         presenter?.unBind()
@@ -40,25 +48,24 @@ class SourceViewHolder(private val binding: SourceItemBinding): RecyclerView.Vie
 
     override fun displaySource(source: SourceModel) {
         binding.source = source
-        binding.sourceSubscribed.setImageResource(if (source.subscribed) R.drawable.follow_icon else R.drawable.un_follow_icon)
+        binding.sourceSubscribed.setImageResource(if (source.subscribed) R.drawable.ic_follow_icon_red else R.drawable.ic_un_follow_icon_grey)
         binding.executePendingBindings()
     }
 
-    override fun showSubscribed() = binding.sourceSubscribed.setImageResource(R.drawable.follow_icon)
-
-    override fun showUnSubscribed() = binding.sourceSubscribed.setImageResource(R.drawable.un_follow_icon)
-
-    override fun goToSourceDetail() = binding.sourceLayout.toast("Going to Detail for ${binding.source?.name}")
-
-    override fun showUpdateStatus() = binding.sourceUpdatingStatus.show()
-
-    override fun hideUpdateStatus() = binding.sourceUpdatingStatus.remove()
-
-    override fun showError(message: String) = binding.sourceLayout.toast(message)
-
-    override fun definePresenter(presenter: SourceContract.SourcePresenter) {
-        this.presenter = presenter
-        binding.sourceLayout.setOnClickListener { this.presenter?.onAction() }
-        binding.sourceSubscribed.setOnClickListener { this.presenter?.onSubscribe() }
+    override fun definePresenter(newPresenter: SourcePresenter) {
+        this.presenter = newPresenter
     }
+
+    override fun showSubscribed() = binding.sourceSubscribed.setImageResource(R.drawable.ic_follow_icon_red)
+
+    override fun showUnSubscribed() = binding.sourceSubscribed.setImageResource(R.drawable.ic_un_follow_icon_grey)
+
+    override fun goToSourceDetail() = Navigator.goToSourceDetail(binding)
+
+    override fun showLoading() = binding.sourceUpdatingStatus.show()
+
+    override fun hideLoading() = binding.sourceUpdatingStatus.remove()
+
+    override fun showError(error: String) = binding.sourceLayout.toast(error)
+
 }

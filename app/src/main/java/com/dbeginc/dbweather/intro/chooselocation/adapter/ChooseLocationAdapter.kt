@@ -22,7 +22,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.intro.chooselocation.adapter.view.ChooseLocationViewHolder
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationItemContract.ChooseLocationItemPresenter
 import com.dbeginc.dbweather.intro.chooselocation.adapter.presenter.ChooseLocationItemPresenterImpl
 import io.reactivex.subjects.PublishSubject

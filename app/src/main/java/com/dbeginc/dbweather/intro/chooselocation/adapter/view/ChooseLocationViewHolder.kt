@@ -18,7 +18,7 @@ package com.dbeginc.dbweather.intro.chooselocation.adapter.view
 import android.support.v7.widget.RecyclerView
 import com.dbeginc.dbweather.databinding.LocationItemBinding
 import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationItemContract
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 import io.reactivex.subjects.PublishSubject
 
 /**

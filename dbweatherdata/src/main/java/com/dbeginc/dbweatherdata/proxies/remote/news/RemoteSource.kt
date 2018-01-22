@@ -30,6 +30,5 @@ data class RemoteSource(@Json(name="id") val id: String,
                         @Json(name="url") val url: String,
                         @Json(name="category") val category: String,
                         @Json(name = "language") val language: String,
-                        @Json(name = "country") val country: String,
-                        @Json(name = "sortBysAvailable") val sortBysAvailable: List<String>
+                        @Json(name = "country") val country: String
 )

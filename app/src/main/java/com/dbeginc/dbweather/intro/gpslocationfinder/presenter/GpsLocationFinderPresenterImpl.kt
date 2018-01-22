@@ -23,17 +23,19 @@ import com.dbeginc.dbweather.intro.gpslocationfinder.GpsLocationFinderContract
  * Gps Location Finder Presenter
  */
 class GpsLocationFinderPresenterImpl : GpsLocationFinderContract.GpsLocationFinderPresenter {
-    private lateinit var view: GpsLocationFinderContract.GpsLocationFinderView
+    private var view: GpsLocationFinderContract.GpsLocationFinderView? = null
 
     override fun bind(view: GpsLocationFinderContract.GpsLocationFinderView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
-    override fun unBind() {}
+    override fun unBind() {
+        this.view = null
+    }
 
     override fun onLocationFind(latitude: Double, longitude: Double) {
-        view.defineGpsLocation(latitude=latitude, longitude=longitude)
-        view.goToMainScreen()
+        view?.defineGpsLocation(latitude=latitude, longitude=longitude)
+        view?.goToMainScreen()
     }
 }

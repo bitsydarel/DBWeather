@@ -30,9 +30,9 @@ import com.google.android.gms.location.*
  * Location Observer
  */
 class LocationObserver(appContext: Context) : LiveData<Location>() {
-    private val locationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private val locationClient: FusedLocationProviderClient
     private val listener: Listener
+    private val locationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private val locationCallback: Callback = Callback()
 
     init {

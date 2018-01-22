@@ -39,12 +39,12 @@ class SplashPresenterImpl(private val defineDefaultSubscribedSources: DefineDefa
 
     override fun onSplashLaunched() {
         if (view.isFirstRun()) {
-            defineDefaultSubscribedSources.execute(view.getDefaultSources()).subscribe (
-                    { view.displayIntroScreen() },
-                    { error -> onError(error) }
-            )
-        }
-        else view.displayMainScreen()
+            defineDefaultSubscribedSources.execute(view.getDefaultSources())
+                    .subscribe (
+                            { view.displayIntroScreen() },
+                            { error -> onError(error) }
+                    )
+        } else view.displayMainScreen()
     }
 
     private fun onError(error: Throwable) {

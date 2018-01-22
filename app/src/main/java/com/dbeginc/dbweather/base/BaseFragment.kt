@@ -16,7 +16,6 @@
 package com.dbeginc.dbweather.base
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
@@ -24,12 +23,9 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v4.util.Pair
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED
+import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
 import com.dbeginc.dbweather.utils.utility.Injector
-import com.google.firebase.database.DataSnapshot
-import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 /**
@@ -38,11 +34,9 @@ import javax.inject.Inject
  */
 
 open class BaseFragment : Fragment() {
-    @Inject
-    lateinit var preferences: SharedPreferences
+    @Inject lateinit var applicationPreferences: ApplicationPreferences
 
-    @Inject
-    lateinit var appContext: Context
+    @Inject lateinit var appContext: Context
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
@@ -50,44 +44,32 @@ open class BaseFragment : Fragment() {
     }
 
     protected fun isNetworkAvailable() : Boolean {
-        val networkInfo: NetworkInfo?
-        val manager = activity.applicationContext
-                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val manager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        networkInfo = manager.activeNetworkInfo
+        val networkInfo: NetworkInfo? = manager.activeNetworkInfo
 
-        var isAvailable = false
-
-        if (networkInfo != null && networkInfo.isConnected) {
-            isAvailable = true
-        }
-
-        return isAvailable
+        return networkInfo != null && networkInfo.isConnected
     }
 
     protected fun askLocationPermIfNeeded(): Boolean {
-        if (ContextCompat.checkSelfPermission(appContext,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(
-                    activity,
+                    activity!!,
                     arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
 
-        } else preferences.edit().putBoolean(IS_GPS_PERMISSION_GRANTED, true).apply()
+        } else applicationPreferences.changeGpsStatus(true)
 
-        return preferences.getBoolean(IS_GPS_PERMISSION_GRANTED, false)
+        return applicationPreferences.isGpsOn()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
-                preferences.edit().putBoolean(IS_GPS_PERMISSION_GRANTED, true).apply()
-
-            } else preferences.edit().putBoolean(IS_GPS_PERMISSION_GRANTED, false).apply()
+            applicationPreferences.changeGpsStatus(grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED)
         }
     }
 }

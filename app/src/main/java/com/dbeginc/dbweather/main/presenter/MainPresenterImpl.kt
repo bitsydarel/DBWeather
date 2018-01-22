@@ -15,6 +15,7 @@
 
 package com.dbeginc.dbweather.main.presenter
 
+import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.main.MainContract
 import io.reactivex.disposables.CompositeDisposable
 
@@ -23,16 +24,25 @@ import io.reactivex.disposables.CompositeDisposable
  * Main Presenter Presenter
  */
 class MainPresenterImpl() : MainContract.MainPresenter{
-    private lateinit var view: MainContract.MainView
+    private var view: MainContract.MainView? = null
     private val subscriptions = CompositeDisposable()
 
 
     override fun bind(view: MainContract.MainView) {
         this.view = view
-        this.view.setupView()
+        this.view?.setupView()
     }
 
     override fun unBind() {
         subscriptions.clear()
+        view = null
+    }
+
+    override fun onNavigation(screenId: Int) {
+        when(screenId) {
+            R.id.tab_weather -> view?.goToWeatherScreen()
+            R.id.tab_news -> view?.goToNewsScreen()
+            R.id.tab_config -> view?.goToConfigurationScreen()
+        }
     }
 }

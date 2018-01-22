@@ -17,7 +17,6 @@ package com.dbeginc.dbweather.main
 
 import com.dbeginc.dbweather.base.IPresenter
 import com.dbeginc.dbweather.base.IView
-import java.io.File
 
 /**
  * Created by darel on 01.10.17.
@@ -28,10 +27,16 @@ interface MainContract {
 
     interface MainView : IView {
         fun showNetworkNotAvailable()
+
+        fun goToWeatherScreen()
+
+        fun goToNewsScreen()
+
+        fun goToConfigurationScreen();
     }
 
     interface MainPresenter : IPresenter<MainView> {
-
+        fun onNavigation(screenId: Int)
     }
 
 }

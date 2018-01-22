@@ -5,17 +5,12 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import com.dbeginc.dbweather.di.scopes.AppScope;
-
-import javax.inject.Named;
+import com.dbeginc.dbweather.utils.helper.ApplicationPreferences;
 
 import dagger.Module;
 import dagger.Provides;
-import io.reactivex.subjects.PublishSubject;
 
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATION_UPDATE;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PERMISSION_EVENT;
 import static com.dbeginc.dbweather.utils.holder.ConstantHolder.PREFS_NAME;
-import static com.dbeginc.dbweather.utils.holder.ConstantHolder.VOICE_QUERY;
 
 /**
  * Created by Darel Bitsy on 24/04/17.
@@ -46,17 +41,7 @@ public class DBWeatherApplicationModule {
 
     @Provides
     @AppScope
-    @Named(LOCATION_UPDATE)
-    PublishSubject<String> providesLocationUpdateEvent() { return PublishSubject.create(); }
-
-    @Provides
-    @AppScope
-    @Named(VOICE_QUERY)
-    PublishSubject<String> providesVoiceQuery() { return PublishSubject.create(); }
-
-    @Provides
-    @AppScope
-    @Named(PERMISSION_EVENT)
-    PublishSubject<Boolean> providesPermissionEvent() {  return PublishSubject.create(); }
-
+    ApplicationPreferences provideApplicationPreferences(final SharedPreferences sharedPreferences) {
+        return new ApplicationPreferences(sharedPreferences);
+    }
 }

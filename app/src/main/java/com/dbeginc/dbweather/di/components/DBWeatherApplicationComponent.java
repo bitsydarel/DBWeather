@@ -3,11 +3,11 @@ package com.dbeginc.dbweather.di.components;
 import com.dbeginc.dbweather.base.BaseActivity;
 import com.dbeginc.dbweather.base.BaseFragment;
 import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsActivity;
-import com.dbeginc.dbweather.config.managesources.view.ManageSourcesActivity;
+import com.dbeginc.dbweather.config.managesources.sourcedetail.SourceDetailActivity;
+import com.dbeginc.dbweather.config.managesources.ManageSourcesActivity;
 import com.dbeginc.dbweather.config.view.ConfigurationTabFragment;
 import com.dbeginc.dbweather.di.modules.DBWeatherApplicationModule;
 import com.dbeginc.dbweather.di.modules.DataModule;
-import com.dbeginc.dbweather.di.modules.NetworkModule;
 import com.dbeginc.dbweather.di.modules.PresentationModule;
 import com.dbeginc.dbweather.di.modules.UseCaseModule;
 import com.dbeginc.dbweather.di.scopes.AppScope;
@@ -15,17 +15,16 @@ import com.dbeginc.dbweather.intro.chooselocation.view.ChooseLocationFragment;
 import com.dbeginc.dbweather.intro.gpslocationfinder.view.GpsLocationFinderFragment;
 import com.dbeginc.dbweather.intro.view.IntroActivity;
 import com.dbeginc.dbweather.news.lives.LivesTabFragment;
-import com.dbeginc.dbweather.news.lives.livedetail.view.LiveDetailActivity;
-import com.dbeginc.dbweather.news.lives.page.alllives.view.AllLivesTabPageFragment;
-import com.dbeginc.dbweather.news.lives.page.favorite.view.FavoriteLivesTabFragment;
-import com.dbeginc.dbweather.news.newspaper.articledetail.view.ArticleDetailActivity;
-import com.dbeginc.dbweather.news.newspaper.view.NewsPaperTabFragment;
-import com.dbeginc.dbweather.news.view.NewsTabFragment;
+import com.dbeginc.dbweather.news.lives.livedetail.LiveDetailActivity;
+import com.dbeginc.dbweather.news.lives.page.alllives.AllLivesTabPageFragment;
+import com.dbeginc.dbweather.news.lives.page.favorite.FavoriteLivesTabFragment;
+import com.dbeginc.dbweather.news.newspaper.articledetail.ArticleDetailActivity;
+import com.dbeginc.dbweather.news.newspaper.NewsPaperTabFragment;
+import com.dbeginc.dbweather.news.NewsTabFragment;
 import com.dbeginc.dbweather.splash.presenter.SplashPresenterImpl;
 import com.dbeginc.dbweather.splash.view.SplashActivity;
 import com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider;
-import com.dbeginc.dbweather.utils.glide.GlideConfiguration;
-import com.dbeginc.dbweather.weather.WeatherTabFragment;
+import com.dbeginc.dbweather.weather.view.WeatherTabFragment;
 
 import dagger.Component;
 
@@ -34,7 +33,7 @@ import dagger.Component;
  * DBWeather Application Component
  */
 @AppScope
-@Component(modules = {DBWeatherApplicationModule.class, DataModule.class, PresentationModule.class, UseCaseModule.class, NetworkModule.class})
+@Component(modules = {DBWeatherApplicationModule.class, DataModule.class, PresentationModule.class, UseCaseModule.class})
 public interface DBWeatherApplicationComponent {
 
     void inject(final LocationSuggestionProvider locationSuggestionProvider);
@@ -48,8 +47,6 @@ public interface DBWeatherApplicationComponent {
     void inject(final BaseActivity baseActivity);
 
     void inject(final SplashActivity splashActivity);
-
-    void inject(final GlideConfiguration glideConfiguration);
 
     void inject(final WeatherTabFragment weatherTabFragment);
 
@@ -76,4 +73,6 @@ public interface DBWeatherApplicationComponent {
     void inject(final ManageSourcesActivity manageSourcesActivity);
 
     void inject(final ArticleDetailActivity articleDetailActivity);
+
+    void inject(final SourceDetailActivity sourceDetailActivity);
 }

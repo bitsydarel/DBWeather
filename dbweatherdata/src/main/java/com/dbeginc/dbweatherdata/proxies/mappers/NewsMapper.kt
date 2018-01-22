@@ -28,12 +28,10 @@ import com.dbeginc.dbweatherdomain.entities.news.Source
  *
  * Mapper of data proxies to domain entities
  */
+fun LocalArticle.toDomain() = Article(sourceId=sourceId, author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt)
 
-
-fun LocalArticle.toDomain() = Article(author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt, sourceId=sourceId)
-
-fun LocalSource.toDomain() = Source(id=id, name=name, description=description, url=url, category=category, language=language, country=country, sortBysAvailable=sortBysAvailable, subscribed=subscribed)
+fun LocalSource.toDomain() = Source(id=id, name=name, description=description, url=url, category=category, language=language, country=country, subscribed=subscribed)
 
 fun LocalLive.toDomain() = Live(name=name, url=url)
 
-fun RemoteArticle.toDomain() = Article(author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt, sourceId=sourceId)
+fun RemoteArticle.toDomain() = Article(author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt, sourceId=source.name)

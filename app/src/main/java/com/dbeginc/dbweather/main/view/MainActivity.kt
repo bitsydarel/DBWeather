@@ -29,10 +29,8 @@ import com.dbeginc.dbweather.databinding.ActivityMainBinding
 import com.dbeginc.dbweather.main.MainContract
 import com.dbeginc.dbweather.main.adapter.MainPagerAdapter
 import com.dbeginc.dbweather.main.presenter.MainPresenterImpl
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_CURRENT_LOCATION
 import com.dbeginc.dbweather.utils.utility.toast
-import com.dbeginc.dbweather.weather.WeatherTabFragment
+import com.dbeginc.dbweather.weather.view.WeatherTabFragment
 import com.roughike.bottombar.OnTabSelectListener
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -53,6 +51,7 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         presenter = MainPresenterImpl()
@@ -60,10 +59,12 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
         adapter = MainPagerAdapter(supportFragmentManager)
 
         binding.mainNavigationBar.setDefaultTab(R.id.tab_weather)
+
         binding.mainNavigationBar.setOnTabSelectListener(this)
 
         binding.tabContent.adapter = adapter
 
+        presenter.bind(this)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -78,31 +79,19 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.bind(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         cleanState()
     }
 
     override fun onTabSelected(tabId: Int) {
         var color = ResourcesCompat.getColor(resources, R.color.weatherTabPrimaryDark, theme)
 
+        presenter.onNavigation(tabId)
+
         when (tabId) {
-            R.id.tab_weather -> binding.tabContent.setCurrentItem(0, true)
-
-            R.id.tab_news -> {
-                binding.tabContent.setCurrentItem(1, true)
-                color = ResourcesCompat.getColor(resources, R.color.newsTabPrimaryDark, theme)
-            }
-
-            R.id.tab_config -> {
-                binding.tabContent.setCurrentItem(2, true)
-                color = ResourcesCompat.getColor(resources, R.color.configTabPrimaryDark, theme)
-            }
+            R.id.tab_news -> color = ResourcesCompat.getColor(resources, R.color.newsTabPrimaryDark, theme)
+            R.id.tab_config -> color = ResourcesCompat.getColor(resources, R.color.configTabPrimaryDark, theme)
         }
 
         async(UI) {
@@ -118,17 +107,21 @@ class MainActivity : BaseActivity(), MainContract.MainView, OnTabSelectListener 
     /************************** Main View Custom Part **************************/
 
     override fun setupView() {
-        if (!isNetworkAvailable) showNetworkNotAvailable()
+        if (!isNetworkAvailable()) showNetworkNotAvailable()
 
-        if (preferences.getBoolean(FIRST_RUN, true)) {
-            preferences.edit().putBoolean(FIRST_RUN, false).apply()
-        }
+        if (applicationPreferences.isFirstLaunchOfApplication()) applicationPreferences.changeFirstLaunchStatus()
     }
 
     override fun cleanState() {
-        preferences.edit().putBoolean(IS_CURRENT_LOCATION, true).apply()
+        applicationPreferences.changeCurrentLocationStatus(true)
         presenter.unBind()
     }
+
+    override fun goToWeatherScreen() = binding.tabContent.setCurrentItem(0, true)
+
+    override fun goToNewsScreen() = binding.tabContent.setCurrentItem(1, true)
+
+    override fun goToConfigurationScreen() = binding.tabContent.setCurrentItem(2, true)
 
     override fun showNetworkNotAvailable() = binding.mainLayout.toast(getString(R.string.network_unavailable_message))
 

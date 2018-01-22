@@ -16,14 +16,15 @@
 package com.dbeginc.dbweather.config.managesources.adapter
 
 import android.support.v7.util.DiffUtil
-import com.dbeginc.dbweather.viewmodels.news.SourceModel
+import com.dbeginc.dbweather.config.managesources.adapter.contract.SourcePresenter
+import com.dbeginc.dbweathernews.viewmodels.SourceModel
 
 /**
  * Created by darel on 27.10.17.
  *
  * Source Difference Util
  */
-class SourceDiffUtil(private val old: List<SourceContract.SourcePresenter>, private val new: List<SourceModel>) : DiffUtil.Callback() {
+class SourceDiffUtil(private val old: List<SourcePresenter>, private val new: List<SourceModel>) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = old.size
 

@@ -17,7 +17,7 @@ package com.dbeginc.dbweather.weather.adapters.daily
 
 import com.dbeginc.dbweather.base.IPresenter
 import com.dbeginc.dbweather.base.IView
-import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
  * Created by darel on 23.09.17.

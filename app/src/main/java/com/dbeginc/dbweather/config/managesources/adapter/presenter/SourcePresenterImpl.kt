@@ -15,12 +15,16 @@
 
 package com.dbeginc.dbweather.config.managesources.adapter.presenter
 
-import com.dbeginc.dbweather.config.managesources.adapter.SourceContract
-import com.dbeginc.dbweather.viewmodels.news.SourceModel
-import com.dbeginc.dbweather.viewmodels.news.toDomain
+import com.dbeginc.dbweather.config.managesources.adapter.contract.SourcePresenter
+import com.dbeginc.dbweather.config.managesources.adapter.contract.SourceView
+import com.dbeginc.dbweather.utils.utility.addTo
+import com.dbeginc.dbweathercommon.logger.Logger
 import com.dbeginc.dbweatherdomain.entities.requests.news.SourceRequest
 import com.dbeginc.dbweatherdomain.usecases.news.SubscribeToSource
 import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
+import com.dbeginc.dbweathernews.viewmodels.SourceModel
+import com.dbeginc.dbweathernews.viewmodels.toDomain
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by darel on 27.10.17.
@@ -29,11 +33,12 @@ import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
  */
 class SourcePresenterImpl(private val source: SourceModel,
                           private val subscribeToSource: SubscribeToSource,
-                          private val unSubscribeToSource: UnSubscribeToSource) : SourceContract.SourcePresenter {
+                          private val unSubscribeToSource: UnSubscribeToSource): SourcePresenter {
 
-    private var view: SourceContract.SourceView? = null
+    private var view: SourceView? = null
+    private val subscriptions = CompositeDisposable()
 
-    override fun bind(view: SourceContract.SourceView) {
+    override fun bind(view: SourceView) {
         this.view = view
         this.view?.setupView()
     }
@@ -41,6 +46,7 @@ class SourcePresenterImpl(private val source: SourceModel,
     override fun unBind() {
         subscribeToSource.clean()
         unSubscribeToSource.clean()
+        subscriptions.clear()
         view = null
     }
 
@@ -55,24 +61,24 @@ class SourcePresenterImpl(private val source: SourceModel,
     override fun onSubscribe() {
         if (source.subscribed) {
             unSubscribeToSource.execute(SourceRequest(source.id, source.apply { subscribed = false }.toDomain()))
-                    .doOnSubscribe { view?.showUpdateStatus() }
-                    .doOnTerminate { view?.hideUpdateStatus() }
-                    .subscribe(
-                            { view?.showUnSubscribed() },
-                            { error -> view?.showError(error.localizedMessage) }
-                    )
+                    .doOnSubscribe { view?.showLoading() }
+                    .doOnTerminate { view?.hideLoading() }
+                    .subscribe({ view?.showUnSubscribed() }, this::onError)
+                    .addTo(subscriptions)
 
         } else {
             subscribeToSource.execute(SourceRequest(source.id, source.apply { subscribed = true }.toDomain()))
-                    .doOnSubscribe { view?.showUpdateStatus() }
-                    .doOnTerminate { view?.hideUpdateStatus() }
-                    .subscribe(
-                            { view?.showSubscribed() },
-                            { error -> view?.showError(error.localizedMessage) }
-                    )
+                    .doOnSubscribe { view?.showLoading() }
+                    .doOnTerminate { view?.hideLoading() }
+                    .subscribe({ view?.showSubscribed() }, this::onError)
+                    .addTo(subscriptions)
         }
     }
 
     override fun getData(): SourceModel = source
 
+    private fun onError(error: Throwable) {
+        Logger.error(SourcePresenterImpl::class.java.simpleName, error.localizedMessage, error)
+        view?.showError(error.localizedMessage)
+    }
 }

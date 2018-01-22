@@ -1,16 +1,17 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.7.5.201505241946"
+    toolVersion = "0.7.9"
+    reportsDir = file("$buildDir/reports/codecoverage")
 }
-task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
+
+task jacocoTestReport(overwrite: true, type: JacocoReport, dependsOn: "testDebugUnitTest") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
         xml.enabled = false
         html.enabled = true
-        html.destination "${buildDir}/reports/codecoverage"
-
+        html.destination file("${buildDir}/reports/codecoverage")
     }
 
 

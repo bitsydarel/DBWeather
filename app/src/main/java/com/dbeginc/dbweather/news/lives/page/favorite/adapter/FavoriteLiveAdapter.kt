@@ -25,19 +25,17 @@ import com.dbeginc.dbweather.databinding.LiveItemBinding
 import com.dbeginc.dbweather.news.lives.page.LiveDiffUtils
 import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.remove
-import com.dbeginc.dbweather.viewmodels.news.LiveModel
+import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import java.util.*
 
 /**
  * Created by darel on 20.10.17.
  *
  * Favorite Live Adapter
  */
-class FavoriteLiveAdapter(private val favorites: MutableList<LiveModel>) : RecyclerView.Adapter<FavoriteLiveAdapter.FavoriteLiveViewHolder>(){
+class FavoriteLiveAdapter(data: List<LiveModel>) : RecyclerView.Adapter<FavoriteLiveAdapter.FavoriteLiveViewHolder>(){
     private var container: RecyclerView? = null
-
-    init {
-        favorites.sort()
-    }
+    private val favorites = LinkedList(data.sorted())
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -73,10 +71,8 @@ class FavoriteLiveAdapter(private val favorites: MutableList<LiveModel>) : Recyc
     inner class FavoriteLiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.liveFavorite.remove()
-            binding.liveThumbnail.setOnClickListener { play() }
+            binding.liveThumbnail.setOnClickListener { Navigator.goToLiveDetail(binding) }
         }
-
-        fun play() = Navigator.goToLiveDetail(binding)
 
         fun bindLive(liveModel: LiveModel) {
             binding.live = liveModel

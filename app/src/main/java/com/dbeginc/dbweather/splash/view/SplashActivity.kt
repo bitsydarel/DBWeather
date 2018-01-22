@@ -21,7 +21,6 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivitySplashBinding
 import com.dbeginc.dbweather.splash.SplashContract
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.FIRST_RUN
 import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.toast
@@ -38,8 +37,8 @@ class SplashActivity : BaseActivity(), SplashContract.SplashView {
     private lateinit var binding: ActivitySplashBinding
     private val defaultSources by lazy { resources.getStringArray(R.array.default_sources) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(savedState: Bundle?) {
+        super.onCreate(savedState)
         Injector.injectSplashDep(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
     }
@@ -63,7 +62,7 @@ class SplashActivity : BaseActivity(), SplashContract.SplashView {
 
     override fun displayIntroScreen() = Navigator.goToIntroScreen(this)
 
-    override fun isFirstRun(): Boolean = preferences.getBoolean(FIRST_RUN, true)
+    override fun isFirstRun(): Boolean = applicationPreferences.isFirstLaunchOfApplication()
 
     override fun getDefaultSources(): List<String> = defaultSources.toList()
 
@@ -72,12 +71,6 @@ class SplashActivity : BaseActivity(), SplashContract.SplashView {
                 .zoomOut()
                 .bounce()
                 .zoomIn()
-                .andAnimate(binding.poweredByDarkSky)
-                .slideRight()
-                .slideLeft()
-                .andAnimate(binding.madeByMe)
-                .slideLeft()
-                .slideRight()
                 .onStop { presenter.onSplashLaunched() }
                 .duration(resources.getInteger(android.R.integer.config_shortAnimTime).toLong())
                 .start()

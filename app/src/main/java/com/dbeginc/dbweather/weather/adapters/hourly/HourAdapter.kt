@@ -22,7 +22,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.HourlyListItemBinding
-import com.dbeginc.dbweather.viewmodels.weather.HourWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.HourWeatherModel
 
 /**
  * Created by Darel Bitsy on 12/01/17.

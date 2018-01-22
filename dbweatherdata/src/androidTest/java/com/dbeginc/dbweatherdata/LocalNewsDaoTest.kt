@@ -56,12 +56,12 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_articles_get_inserted_articles_and_get_specific_article() {
-        val androidSource = LocalSource("android-source", "Android Source", "News About android", "https://developer.android.com", "Development", "en", "us", false, listOf("top", "latest"))
-        val iosSource = LocalSource("ios-source", "Ios Source", "News About ios", "https://developer.apple.com/", "Development", "en", "us", false, listOf("top"))
+        val androidSource = LocalSource("android-source", "Android Source", "News About android", "https://developer.android.com", "Development", "en", "us", false)
+        val iosSource = LocalSource("ios-source", "Ios Source", "News About ios", "https://developer.apple.com/", "Development", "en", "us", false)
 
-        val androidArticle1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", null, null, androidSource.id)
-        val androidArticle2 = LocalArticle("D Bitsy", "Android spaceship", "short desc", "androidUrl2", null, "2017-10-03T15:27:02Z", androidSource.id)
-        val iosArticle1 = LocalArticle("Darel Bitsy", "IOS spaceship", null, "iosUrl1", null, "2017-10-03T15:27:02Z", iosSource.id)
+        val androidArticle1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", "", null, androidSource.id)
+        val androidArticle2 = LocalArticle("D Bitsy", "Android spaceship", "short desc", "androidUrl2", "", "2017-10-03T15:27:02Z", androidSource.id)
+        val iosArticle1 = LocalArticle("Darel Bitsy", "IOS spaceship", "", "iosUrl1", "", "2017-10-03T15:27:02Z", iosSource.id)
 
         /**
          * Before getting a articles we need to have the corresponding article source in the database
@@ -86,7 +86,7 @@ class LocalNewsDaoTest {
     fun should_not_insert_article_if_source_not_in_Db() {
         val sourceId = "android-source"
 
-        val article1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", null, null, sourceId)
+        val article1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", "", null, sourceId)
 
         assertFailsWith(SQLiteConstraintException::class) {
             db.newsDao().putArticles(listOf(article1))
@@ -95,8 +95,8 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_sources_and_get_inserted_sources() {
-        val androidSource = LocalSource("android-source", "Android Source", "Android stuff", "https://developer.android.com", "Development", "en", "us", false, listOf("top", "latest"))
-        val iosSource = androidSource.copy(id="ios-source",name="Ios Source", description="Ios Stuff", url="https://developer.apple.com/", sortBysAvailable = listOf("top"))
+        val androidSource = LocalSource("android-source", "Android Source", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
+        val iosSource = androidSource.copy(id="ios-source",name="Ios Source", description="Ios Stuff", url="https://developer.apple.com/")
 
         db.newsDao().putSources(listOf(androidSource, iosSource))
 
@@ -114,9 +114,9 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_sources_and_get_subscribed_sources() {
-        val androidSource = LocalSource("android-source", "Android Source", "Android stuff", "https://developer.android.com", "Development", "en", "us", false, listOf("top", "latest"))
-        val iosSource = androidSource.copy(id="ios-source",name="Ios Source", description="Ios Stuff", url="https://developer.apple.com", sortBysAvailable = listOf("top"))
-        val windowsSource = androidSource.copy(id="windows-source",name="Windows Source", description="Windows Stuff", url="https://developer.microsoft.com", sortBysAvailable = listOf("top", "latest"))
+        val androidSource = LocalSource("android-source", "Android Source", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
+        val iosSource = androidSource.copy(id="ios-source",name="Ios Source", description="Ios Stuff", url="https://developer.apple.com")
+        val windowsSource = androidSource.copy(id="windows-source",name="Windows Source", description="Windows Stuff", url="https://developer.microsoft.com")
 
         db.newsDao().putSources(listOf(androidSource, iosSource, windowsSource))
 

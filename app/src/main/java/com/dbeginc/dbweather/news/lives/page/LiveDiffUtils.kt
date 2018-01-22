@@ -16,7 +16,7 @@
 package com.dbeginc.dbweather.news.lives.page
 
 import android.support.v7.util.DiffUtil
-import com.dbeginc.dbweather.viewmodels.news.LiveModel
+import com.dbeginc.dbweathernews.viewmodels.LiveModel
 
 /**
  * Created by darel on 22.10.17.

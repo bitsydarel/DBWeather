@@ -20,7 +20,7 @@ package com.dbeginc.dbweatherdomain.entities.news
  *
  * NewsPaper Feed Article
  */
-data class Article(val author: String?, val title: String, val description: String?,
-                   val url: String, val urlToImage: String?, val publishedAt: String?,
-                   val sourceId: String
+data class Article(val sourceId: String, val author: String?, val title: String,
+                   val description: String?, val url: String, val urlToImage: String?,
+                   val publishedAt: String?
 )

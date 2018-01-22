@@ -28,7 +28,7 @@ import com.dbeginc.dbweather.config.managelocations.adapter.LocationsAdapter
 import com.dbeginc.dbweather.databinding.ActivityManageLocationsBinding
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATIONS
 import com.dbeginc.dbweather.utils.utility.*
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 import javax.inject.Inject
 
 
@@ -54,15 +54,13 @@ class ManageLocationsActivity: BaseActivity(), ManageLocationsContract.ManageLoc
         adapter = if (savedState == null) LocationsAdapter(mutableListOf()) else LocationsAdapter(savedState.getList<LocationWeatherModel>(LOCATIONS).toMutableList())
 
         itemTouchHelper = ItemTouchHelper(SwipeToRemove(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT))
-    }
 
-    override fun onResume() {
-        super.onResume()
         presenter.bind(this)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
+
         cleanState()
     }
 
@@ -76,15 +74,15 @@ class ManageLocationsActivity: BaseActivity(), ManageLocationsContract.ManageLoc
         binding.manageLocationsToolbar.setNavigationOnClickListener { presenter.goBack() }
 
         binding.manageLocations.adapter = adapter
+
         binding.manageLocations.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
         itemTouchHelper.attachToRecyclerView(binding.manageLocations)
 
         presenter.loadUserLocations()
     }
 
-    override fun cleanState() {
-        presenter.unBind()
-    }
+    override fun cleanState() = presenter.unBind()
 
     override fun displayLocations(locations: List<LocationWeatherModel>) {
         adapter.update(locations)
@@ -104,12 +102,10 @@ class ManageLocationsActivity: BaseActivity(), ManageLocationsContract.ManageLoc
     override fun showError(message: String) = binding.manageLocationsLayout.snack(message)
 
     private inner class SwipeToRemove internal constructor(dragDirs: Int, swipeDirs: Int) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder1: RecyclerView.ViewHolder): Boolean {
-            return false
-        }
 
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            presenter.removeLocation(adapter.remove(viewHolder.adapterPosition))
-        }
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder1: RecyclerView.ViewHolder): Boolean = false
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) = presenter.removeLocation(adapter.remove(viewHolder.adapterPosition))
+
     }
 }

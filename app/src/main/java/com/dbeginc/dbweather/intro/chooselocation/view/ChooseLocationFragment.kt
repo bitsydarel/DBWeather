@@ -28,11 +28,9 @@ import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentChooseLocationBinding
 import com.dbeginc.dbweather.intro.chooselocation.ChooseLocationContract
 import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationAdapter
-import com.dbeginc.dbweather.utils.holder.ConstantHolder
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.LOCATIONS
 import com.dbeginc.dbweather.utils.utility.*
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
@@ -75,9 +73,9 @@ class ChooseLocationFragment : BaseFragment(), ChooseLocationContract.ChooseLoca
         cleanState()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putList(LOCATIONS, adapter.getData())
+        outState.putList(LOCATIONS, adapter.getData())
     }
 
     override fun onSearchQuery(query: String?) {
@@ -110,13 +108,9 @@ class ChooseLocationFragment : BaseFragment(), ChooseLocationContract.ChooseLoca
     }
 
     override fun defineCurrentLocation(latitude: Double, longitude: Double, locationName: String) {
-        preferences.putDouble(ConstantHolder.LATITUDE, latitude)
-                .putDouble(ConstantHolder.LONGITUDE, longitude)
-                .edit()
-                .putString(ConstantHolder.CURRENT_LOCATION, locationName)
-                .apply()
-        preferences.edit().putBoolean(IS_GPS_PERMISSION_GRANTED, false).apply()
-        preferences.edit().putBoolean(ConstantHolder.IS_CURRENT_LOCATION, true).apply()
+        applicationPreferences.updateGpsCoordinates(locationName, latitude, longitude)
+        applicationPreferences.changeGpsStatus(false)
+        applicationPreferences.changeCurrentLocationStatus(true)
     }
 
     override fun showLoadingStatus() = binding.chooseLocationLoading.show()
@@ -138,13 +132,13 @@ class ChooseLocationFragment : BaseFragment(), ChooseLocationContract.ChooseLoca
     }
 
     override fun goToMainScreen() {
-        Navigator.goToMainScreen(context)
-        activity.finish()
+        Navigator.goToMainScreen(context!!)
+        activity?.finish()
     }
 
     private fun setupSearchView() {
-        val searchManager = context.getSystemService(SEARCH_SERVICE) as SearchManager
-        binding.chooseLocationSearch.setSearchableInfo(searchManager.getSearchableInfo(activity.componentName))
+        val searchManager = context?.getSystemService(SEARCH_SERVICE) as SearchManager
+        binding.chooseLocationSearch.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
         binding.chooseLocationSearch.isSubmitButtonEnabled = true
     }
 

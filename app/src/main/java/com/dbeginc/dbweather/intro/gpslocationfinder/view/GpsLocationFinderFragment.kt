@@ -26,11 +26,8 @@ import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentGpsLocationFinderBinding
 import com.dbeginc.dbweather.intro.gpslocationfinder.GpsLocationFinderContract
 import com.dbeginc.dbweather.utils.helper.LocationObserver
-import com.dbeginc.dbweather.utils.holder.ConstantHolder
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.IS_GPS_PERMISSION_GRANTED
 import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.Navigator
-import com.dbeginc.dbweather.utils.utility.putDouble
 import com.dbeginc.dbweather.utils.utility.snack
 import javax.inject.Inject
 
@@ -43,15 +40,19 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
     @Inject lateinit var presenter: GpsLocationFinderContract.GpsLocationFinderPresenter
     private lateinit var binding: FragmentGpsLocationFinderBinding
     private lateinit var locationFinder: LocationObserver
-    private val observer = Observer()
+    private lateinit var observer: Observer
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
+
         Injector.injectGpsLocationFinder(this)
+
         locationFinder = LocationObserver(appContext)
+
+        observer = Observer(presenter)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_gps_location_finder, container, false)
         return binding.root
     }
@@ -63,14 +64,14 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
 
     override fun onStop() {
         super.onStop()
-        presenter.unBind()
+        cleanState()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         binding.gpsLocationFinderLayout.post {
-            if (preferences.getBoolean(IS_GPS_PERMISSION_GRANTED, false)) {
+            if (applicationPreferences.isGpsOn()) {
                 playAnimation()
                 locationFinder.observe(this, observer)
 
@@ -102,23 +103,22 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
     }
 
     override fun defineGpsLocation(latitude: Double, longitude: Double) {
-        preferences.putDouble(ConstantHolder.LATITUDE, latitude)
-                .putDouble(ConstantHolder.LONGITUDE, longitude)
-        preferences.edit().putBoolean(ConstantHolder.IS_CURRENT_LOCATION, true).apply()
+        applicationPreferences.updateGpsCoordinates(applicationPreferences.getGpsLocation(), latitude, longitude)
+        applicationPreferences.changeCurrentLocationStatus(true)
     }
 
     override fun goToMainScreen() {
-        Navigator.goToMainScreen(context)
-        activity.finish()
+        Navigator.goToMainScreen(context!!)
+        activity?.finish()
     }
 
     private fun playAnimation() = binding.gpsLocationFinderAnimation.playAnimation()
 
     private fun pauseAnimation() = binding.gpsLocationFinderAnimation.pauseAnimation()
 
-    private inner class Observer : android.arch.lifecycle.Observer<android.location.Location> {
+    private inner class Observer(val locationPresenter: GpsLocationFinderContract.GpsLocationFinderPresenter) : android.arch.lifecycle.Observer<android.location.Location> {
         override fun onChanged(location: Location?) {
-            if (location != null) presenter.onLocationFind(latitude=location.latitude, longitude=location.longitude)
+            if (location != null) locationPresenter.onLocationFind(latitude=location.latitude, longitude=location.longitude)
         }
     }
 }

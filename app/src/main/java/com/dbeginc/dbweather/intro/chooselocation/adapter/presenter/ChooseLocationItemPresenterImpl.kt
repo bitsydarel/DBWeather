@@ -16,7 +16,7 @@
 package com.dbeginc.dbweather.intro.chooselocation.adapter.presenter
 
 import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationItemContract
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 
 /**
  * Created by darel on 30.09.17.

@@ -2,7 +2,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".config.managesources.view.ManageSourcesActivity"
+    tools:context=".config.managesources.ManageSourcesActivity"
     tools:menu="activity_manage_sources_menu">
 
     <data/>

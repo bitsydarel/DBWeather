@@ -18,8 +18,8 @@ package com.dbeginc.dbweather.news.lives
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import com.dbeginc.dbweather.news.lives.page.alllives.view.AllLivesTabPageFragment
-import com.dbeginc.dbweather.news.lives.page.favorite.view.FavoriteLivesTabFragment
+import com.dbeginc.dbweather.news.lives.page.alllives.AllLivesTabPageFragment
+import com.dbeginc.dbweather.news.lives.page.favorite.FavoriteLivesTabFragment
 
 /**
  * Created by darel on 18.10.17.
@@ -28,29 +28,23 @@ import com.dbeginc.dbweather.news.lives.page.favorite.view.FavoriteLivesTabFragm
  */
 class LivesPageAdapter(private val liveTitle: String, private val favoriteTitle:String, fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 
-    override fun getItem(position: Int): Fragment {
-        return when(position) {
-            0 -> AllLivesTabPageFragment()
-            1 -> FavoriteLivesTabFragment()
-            else -> AllLivesTabPageFragment()
-        }
+    override fun getItem(position: Int): Fragment = when(position) {
+        0 -> AllLivesTabPageFragment()
+        1 -> FavoriteLivesTabFragment()
+        else -> AllLivesTabPageFragment()
     }
 
     override fun getCount(): Int = 2
 
-    override fun getItemId(position: Int): Long {
-        return when(position) {
-            0 -> 0
-            1 -> 1
-            else -> 0
-        }
+    override fun getItemId(position: Int): Long = when(position) {
+        0 -> 0
+        1 -> 1
+        else -> 0
     }
 
-    override fun getPageTitle(position: Int): CharSequence {
-        return when(position) {
-            0 -> liveTitle
-            1 -> favoriteTitle
-            else -> liveTitle
-        }
+    override fun getPageTitle(position: Int): CharSequence = when(position) {
+        0 -> liveTitle
+        1 -> favoriteTitle
+        else -> liveTitle
     }
 }

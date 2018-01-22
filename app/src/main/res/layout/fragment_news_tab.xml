@@ -17,7 +17,7 @@
             android:layout_height="64dp"
             app:bb_titleTextAppearance="@style/TextAppearance.AppCompat.Title"
             app:bb_tabXmlResource="@xml/news_top_tabs"
-            app:bb_inActiveTabColor="@color/newsTabPrimary"
+            app:bb_inActiveTabColor="@color/newsTabPrimaryTextColor"
             app:bb_activeTabColor="@color/newsTabSecondary"
             app:bb_showShadow="true"
             app:layout_constraintTop_toTopOf="parent"
@@ -34,7 +34,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <FrameLayout
+        <com.dbeginc.dbweather.utils.customviews.NotSwipingViewPager
             android:id="@+id/newsTabContent"
             android:layout_width="0dp"
             android:layout_height="0dp"

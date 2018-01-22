@@ -19,6 +19,8 @@ import android.content.Context
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.BuildConfig
 import com.dbeginc.dbweatherdata.ConstantHolder
+import com.dbeginc.dbweatherdata.ConstantHolder.CACHE_SIZE
+import com.dbeginc.dbweatherdata.ConstantHolder.WEATHER_CACHE_NAME
 import com.dbeginc.dbweatherdata.proxies.remote.weather.RemoteWeather
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocations
@@ -61,7 +63,7 @@ class WeatherRestAdapter private constructor(client: OkHttpClient) {
                     .writeTimeout(35, TimeUnit.SECONDS)
                     .readTimeout(55, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
-                    .cache(Cache(File(context.cacheDir, ConstantHolder.CACHE_NAME), ConstantHolder.CACHE_SIZE))
+                    .cache(Cache(File(context.cacheDir, WEATHER_CACHE_NAME), CACHE_SIZE))
 
 //            if (BuildConfig.DEBUG) client.addNetworkInterceptor(StethoInterceptor())
 

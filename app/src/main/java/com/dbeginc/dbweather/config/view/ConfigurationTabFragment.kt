@@ -26,7 +26,7 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.config.ConfigurationTabContract
 import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsActivity
-import com.dbeginc.dbweather.config.managesources.view.ManageSourcesActivity
+import com.dbeginc.dbweather.config.managesources.ManageSourcesActivity
 import com.dbeginc.dbweather.databinding.FragmentConfigTabBinding
 import com.dbeginc.dbweather.utils.utility.*
 import com.google.android.gms.ads.AdRequest
@@ -44,17 +44,14 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
+
         Injector.injectConfigurationDep(this)
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.bind(this)
-    }
 
-    override fun onStop() {
-        super.onStop()
-        cleanState()
+        setupAds()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -64,7 +61,20 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
                 container,
                 false
         )
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        presenter.bind(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        cleanState()
     }
 
     override fun onClick(view: View) {
@@ -77,32 +87,26 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
 
     /**************************** Configuration Custom View ****************************/
     override fun setupView() {
-        setupAds()
         binding.manageLocationsLabel.setOnClickListener(this)
+
         binding.manageSourcesLabel.setOnClickListener(this)
+
         binding.helpLabel.setOnClickListener(this)
 
         binding.weatherNotificationSwitch.setOnCheckedChangeListener { _, isOn -> presenter.onWeatherNotification(isOn) }
+
         binding.translateNewsPaperSwitch.setOnCheckedChangeListener { _, isOn -> presenter.onNewsPaperTranslation(isOn) }
 
         presenter.loadConfigurations()
     }
 
-    override fun cleanState() {
-        presenter.unBind()
-    }
+    override fun cleanState() = presenter.unBind()
 
-    override fun goToManageLocationScreen() {
-        startActivity(Intent(context, ManageLocationsActivity::class.java))
-    }
+    override fun goToManageLocationScreen() = startActivity(Intent(context, ManageLocationsActivity::class.java))
 
-    override fun goToManageSourcesScreen() {
-        startActivity(Intent(context, ManageSourcesActivity::class.java))
-    }
+    override fun goToManageSourcesScreen() = startActivity(Intent(context, ManageSourcesActivity::class.java))
 
-    override fun goToHelpScreen() {
-        binding.configTabLayout.toast("Go to Help")
-    }
+    override fun goToHelpScreen() = binding.configTabLayout.toast("Go to Help")
 
     override fun displayWeatherNotificationStatus(isOn: Boolean) {
         binding.weatherNotificationSwitch.isChecked = isOn
@@ -116,13 +120,9 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
 
     override fun hideUpdatingStatus() = binding.updateStatus.hide()
 
-    override fun showStatusChanged() {
-        binding.configTabLayout.snack(configurationSaved, duration=Snackbar.LENGTH_SHORT)
-    }
+    override fun showStatusChanged() = binding.configTabLayout.snack(configurationSaved, duration=Snackbar.LENGTH_SHORT)
 
-    override fun showError(message: String) {
-        binding.configTabLayout.snack(message)
-    }
+    override fun showError(message: String) = binding.configTabLayout.snack(message)
 
     private fun setupAds() {
         val adRequest = AdRequest.Builder()

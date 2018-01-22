@@ -113,8 +113,8 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
                 .observeOn(thread.ui)
     }
 
-    override fun getSource(id: String): Single<Source> {
-        return local.getSource(id)
+    override fun getSource(request: SourceRequest<Unit>): Single<Source> {
+        return local.getSource(request.sourceId)
                 .subscribeOn(thread.computation)
                 .observeOn(thread.io)
     }

@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 import com.dbeginc.dbweather.weather.adapters.daily.presenter.DayPresenterImpl
 import com.dbeginc.dbweather.weather.adapters.daily.view.DayViewHolder
 

@@ -81,8 +81,14 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
+    <!--********************** Weather Tab Style **********************-->
+    <style name="AppTheme.Main.WeatherTab" parent="AppTheme.Main">
+        <item name="android:textColorPrimary">@color/weatherTabTextColor</item>
+        <item name="android:textColorSecondary">@color/weatherTabTextColor</item>
+    </style>
+
     <!--********************** News Tab Style **********************-->
-    <style name="AppTheme.Main.NewsTab" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Main.NewsTab" parent="AppTheme.Main">
         <item name="colorPrimary">@color/newsTabPrimary</item>
         <item name="colorPrimaryDark">@color/newsTabPrimaryDark</item>
         <item name="colorAccent">@color/newsTabSecondary</item>
@@ -171,16 +177,27 @@
         <item name="android:textColorSecondary">@color/ArticleDetailColorSecondaryTextColor</item>
         <item name="android:windowBackground">@color/ArticleDetailColorPrimary</item>
     </style>
-    <!-- Transparent themes for notifications and custom dialog -->
-    <style name="Theme.Transparent" parent="Theme.AppCompat.NoActionBar">
+    <!-- Notification Screen Theme -->
+    <style name="AppTheme.Notification" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/notificationPrimary</item>
+        <item name="colorPrimaryDark">@color/notificationPrimaryDark</item>
+        <item name="colorAccent">@color/notificationSecondary</item>
+        <item name="colorControlNormal">@color/notificationPrimaryLight</item>
+        <item name="colorControlHighlight">@color/notificationSecondaryLight</item>
+        <item name="colorButtonNormal">@color/notificationPrimaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/notificationPrimaryLight</item>
+        <item name="android:textColorPrimary">@color/notificationPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/notificationPrimaryTextColor</item>
+        <item name="android:textColorSecondary">@color/notificationSecondaryTextColor</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@drawable/notification_background</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+        <!--<item name="android:windowNoTitle">true</item>-->
         <item name="android:windowIsFloating">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:backgroundDimEnabled">false</item>
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="android:backgroundDimEnabled">false</item>-->
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">

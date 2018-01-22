@@ -46,14 +46,12 @@ class ConfigurationRepositoryImpl private constructor(private val preferences: S
         return Single.fromCallable { preferences.getBoolean(WEATHER_NOTIFICATION, false) }
                 .observeOn(thread.ui)
                 .subscribeOn(thread.io)
-                .unsubscribeOn(thread.io)
     }
 
     override fun getNewsPapersTranslationStatus(): Single<Boolean> {
         return Single.fromCallable { preferences.getBoolean(NEWS_PAPER_TRANSLATION, false) }
                 .observeOn(thread.ui)
                 .subscribeOn(thread.io)
-                .unsubscribeOn(thread.io)
     }
 
     override fun changeWeatherNotificationStatus(isOn: Boolean): Completable {

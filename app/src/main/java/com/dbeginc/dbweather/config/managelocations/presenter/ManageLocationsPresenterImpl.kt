@@ -16,8 +16,9 @@
 package com.dbeginc.dbweather.config.managelocations.presenter
 
 import com.dbeginc.dbweather.config.managelocations.ManageLocationsContract
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
-import com.dbeginc.dbweather.viewmodels.weather.toViewModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.toViewModel
+import com.dbeginc.dbweathercommon.ThreadProvider
 import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.usecases.weather.GetAllUserLocations
 import com.dbeginc.dbweatherdomain.usecases.weather.RemoveLocation
@@ -27,7 +28,7 @@ import com.dbeginc.dbweatherdomain.usecases.weather.RemoveLocation
  *
  * Manage Locations Presenter Implementation
  */
-class ManageLocationsPresenterImpl(private val getAllUserLocations: GetAllUserLocations, private val removeLocation: RemoveLocation) : ManageLocationsContract.ManageLocationsPresenter {
+class ManageLocationsPresenterImpl(private val getAllUserLocations: GetAllUserLocations, private val removeLocation: RemoveLocation, private val threads: ThreadProvider) : ManageLocationsContract.ManageLocationsPresenter {
     private lateinit var view: ManageLocationsContract.ManageLocationsView
 
     override fun bind(view: ManageLocationsContract.ManageLocationsView) {
@@ -43,8 +44,10 @@ class ManageLocationsPresenterImpl(private val getAllUserLocations: GetAllUserLo
     override fun loadUserLocations() {
         getAllUserLocations.execute(Unit)
                 .doOnSubscribe { view.showUpdateStatus() }
-                .doOnTerminate { view.hideUpdateStatus() }
+                .doAfterTerminate{ view.hideUpdateStatus() }
+                .observeOn(threads.computation)
                 .map { locations -> locations.map { location -> location.toViewModel() } }
+                .observeOn(threads.ui)
                 .subscribe(
                         { locations -> if (locations.isEmpty()) view.displayNoLocations() else view.displayLocations(locations) },
                         { error -> view.showError(error.localizedMessage) }

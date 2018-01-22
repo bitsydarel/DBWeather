@@ -58,6 +58,9 @@ interface LocalNewsDao {
     @Insert(onConflict=OnConflictStrategy.IGNORE)
     fun putSources(sources: List<LocalSource>)
 
+    @Insert(onConflict=OnConflictStrategy.REPLACE)
+    fun defineDefaultSources(sources: List<LocalSource>)
+
     @Update(onConflict=OnConflictStrategy.REPLACE)
     fun updateSource(source: LocalSource)
 

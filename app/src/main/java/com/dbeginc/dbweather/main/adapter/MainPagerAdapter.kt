@@ -19,8 +19,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.dbeginc.dbweather.config.view.ConfigurationTabFragment
-import com.dbeginc.dbweather.news.view.NewsTabFragment
-import com.dbeginc.dbweather.weather.WeatherTabFragment
+import com.dbeginc.dbweather.news.NewsTabFragment
+import com.dbeginc.dbweather.weather.view.WeatherTabFragment
 
 /**
  * Created by darel on 06.11.17.

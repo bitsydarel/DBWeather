@@ -15,24 +15,26 @@
 
 package com.dbeginc.dbweather.utils.utility
 
+import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsActivity
-import com.dbeginc.dbweather.config.managesources.view.ManageSourcesActivity
+import com.dbeginc.dbweather.config.managesources.sourcedetail.SourceDetailActivity
+import com.dbeginc.dbweather.config.managesources.ManageSourcesActivity
 import com.dbeginc.dbweather.config.view.ConfigurationTabFragment
 import com.dbeginc.dbweather.di.components.DBWeatherApplicationComponent
 import com.dbeginc.dbweather.intro.chooselocation.view.ChooseLocationFragment
 import com.dbeginc.dbweather.intro.gpslocationfinder.view.GpsLocationFinderFragment
 import com.dbeginc.dbweather.intro.view.IntroActivity
 import com.dbeginc.dbweather.news.lives.LivesTabFragment
-import com.dbeginc.dbweather.news.lives.livedetail.view.LiveDetailActivity
-import com.dbeginc.dbweather.news.lives.page.alllives.view.AllLivesTabPageFragment
-import com.dbeginc.dbweather.news.lives.page.favorite.view.FavoriteLivesTabFragment
-import com.dbeginc.dbweather.news.newspaper.articledetail.view.ArticleDetailActivity
-import com.dbeginc.dbweather.news.newspaper.view.NewsPaperTabFragment
-import com.dbeginc.dbweather.news.view.NewsTabFragment
+import com.dbeginc.dbweather.news.lives.livedetail.LiveDetailActivity
+import com.dbeginc.dbweather.news.lives.page.alllives.AllLivesTabPageFragment
+import com.dbeginc.dbweather.news.lives.page.favorite.FavoriteLivesTabFragment
+import com.dbeginc.dbweather.news.newspaper.articledetail.ArticleDetailActivity
+import com.dbeginc.dbweather.news.newspaper.NewsPaperTabFragment
+import com.dbeginc.dbweather.news.NewsTabFragment
 import com.dbeginc.dbweather.splash.view.SplashActivity
 import com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider
-import com.dbeginc.dbweather.weather.WeatherTabFragment
+import com.dbeginc.dbweather.weather.view.WeatherTabFragment
 
 /**
  * Created by darel on 27.09.17.
@@ -53,6 +55,8 @@ object Injector {
     fun injectSplashDep(splashActivity: SplashActivity) = appComponent.inject(splashActivity)
 
     fun injectGpsLocationFinder(gpsLocationFinderFragment: GpsLocationFinderFragment) = appComponent.inject(gpsLocationFinderFragment)
+
+    fun injectBaseActivityDep(baseActivity: BaseActivity) = appComponent.inject(baseActivity)
 
     fun injectBaseFragmentDep(baseFragment: BaseFragment) = appComponent.inject(baseFragment)
 
@@ -75,4 +79,6 @@ object Injector {
     fun injectManageSourcesDep(manageSourcesActivity: ManageSourcesActivity) = appComponent.inject(manageSourcesActivity)
 
     fun injectArticleDetailDep(articleDetailActivity: ArticleDetailActivity) = appComponent.inject(articleDetailActivity)
+
+    fun injectSourceDetailDep(sourceDetailActivity: SourceDetailActivity) = appComponent.inject(sourceDetailActivity)
 }

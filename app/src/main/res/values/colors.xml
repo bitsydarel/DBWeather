@@ -53,12 +53,12 @@
     <color name="weatherTabPrimary">#536dfe</color>
     <color name="weatherTabPrimaryLight">#8f9bff</color>
     <color name="weatherTabPrimaryDark">#0043ca</color>
-    <color name="weatherTabTextColor">#000000</color>
+    <color name="weatherTabTextColor">#ffffff</color>
     <!-- **************************** News Tab Colors **************************** -->
-    <color name="newsTabPrimary">#424242</color>
-    <color name="newsTabPrimaryLight">#6d6d6d</color>
-    <color name="newsTabPrimaryDark">#1b1b1b</color>
-    <color name="newsTabPrimaryTextColor">#ffffff</color>
+    <color name="newsTabPrimary">#fafafa</color>
+    <color name="newsTabPrimaryLight">#ffffff</color>
+    <color name="newsTabPrimaryDark">#c7c7c7</color>
+    <color name="newsTabPrimaryTextColor">#000000</color>
     <color name="newsTabSecondary">#ff1744</color>
     <color name="newsTabSecondaryLight">#ff616f</color>
     <color name="newsTabSecondaryDark">#c4001d</color>
@@ -108,4 +108,18 @@
     <color name="manageSourcesSecondaryLight">#ff5983</color>
     <color name="manageSourcesSecondaryDark">#bb002f</color>
     <color name="manageSourcesSecondaryTextColor">#000000</color>
+    <!-- **************************** Notification Colors **************************** -->
+    <color name="notificationPrimary">#304ffe</color>
+    <color name="notificationPrimaryLight">#7a7cff</color>
+    <color name="notificationPrimaryDark">#0026ca</color>
+    <color name="notificationPrimaryTextColor">#ffffff</color>
+    <color name="notificationSecondary">#ffff00</color>
+    <color name="notificationSecondaryLight">#ffff5a</color>
+    <color name="notificationSecondaryDark">#c7cc00</color>
+    <color name="notificationSecondaryTextColor">#000000</color>
+    <!-- **************************** Source Detail Colors **************************** -->
+    <color name="category_business">#3d5afe</color>
+    <color name="category_entertainment">#ff9100</color>
+    <color name="category_gaming">#212121</color>
+    <color name="category_general">#ffea00</color>
 </resources>

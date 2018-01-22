@@ -6,70 +6,43 @@
     <data>
         <variable
             name="Current"
-            type="com.dbeginc.dbweather.viewmodels.weather.CurrentWeatherModel"/>
+            type="com.dbeginc.dbweatherweather.viewmodels.CurrentWeatherModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/current_weather_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:background="@color/appColorPrimaryDark">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/locationLabel"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal|center_vertical"
             android:text="@{Current.location}"
-            android:textColor="@android:color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:layout_marginTop="8dp"
             tools:text="Ternopil, Ukraine"
-            app:setFont="@{true}"
+            style="@style/AppTheme.Main.WeatherTab"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintVertical_chainStyle="spread"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/timeLabel"/>
 
         <TextView
             android:id="@+id/timeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/transparentWhite"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             tools:text="Today, at 15 AM"
+            style="@style/AppTheme.Main.WeatherTab"
             app:setUpdateTime="@{Current.time}"
-            app:setFont="@{true}"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintTop_toBottomOf="@+id/locationLabel"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationLabel"/>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/topIconWeatherLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2"/>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/leftIconWeatherLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.3"/>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/rightIconWeatherLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.7"/>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/bottomIconWeatherLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.35"/>
+            app:layout_constraintBottom_toTopOf="@+id/iconImageView"/>
 
         <ImageView
             android:id="@+id/iconImageView"
@@ -78,26 +51,27 @@
             android:scaleType="fitXY"
             android:contentDescription="@string/weather_icon_content_description"
             android:layout_marginTop="24dp"
+            style="@style/AppTheme.Main.WeatherTab"
             app:setImage="@{Current.icon}"
             tools:src="@drawable/clear_day"
-            app:layout_constraintTop_toBottomOf="@id/topIconWeatherLimit"
-            app:layout_constraintLeft_toRightOf="@id/leftIconWeatherLimit"
-            app:layout_constraintRight_toLeftOf="@id/rightIconWeatherLimit"
-            app:layout_constraintBottom_toTopOf="@id/bottomIconWeatherLimit"/>
+            app:layout_constraintTop_toBottomOf="@id/timeLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/temperatureLabel"/>
 
         <TextView
             android:id="@+id/temperatureLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text='@{Current.temperature + "°"}'
-            android:textColor="@android:color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             android:layout_marginTop="24dp"
             tools:text="15°"
+            app:layout_constrainedWidth="true"
             app:layout_constraintTop_toBottomOf="@id/iconImageView"
-            app:layout_constraintLeft_toRightOf="@id/leftIconWeatherLimit"
-            app:layout_constraintRight_toLeftOf="@+id/temperatureUnit"
-            app:layout_constraintHorizontal_chainStyle="packed"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/summaryLabel" />
 
         <TextView
             android:id="@+id/temperatureUnit"
@@ -105,11 +79,9 @@
             android:layout_height="wrap_content"
             android:text="@{Current.temperatureUnit}"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-            android:textColor="@android:color/white"
             tools:text="C"
             app:layout_constraintTop_toTopOf="@id/temperatureLabel"
             app:layout_constraintLeft_toRightOf="@id/temperatureLabel"
-            app:layout_constraintRight_toLeftOf="@id/rightIconWeatherLimit"
             app:layout_constraintBottom_toBottomOf="@id/temperatureLabel"/>
 
         <TextView
@@ -118,12 +90,13 @@
             android:layout_height="wrap_content"
             android:text="@{Current.summary}"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/transparentWhite"
             android:gravity="center_horizontal|center_vertical"
             tools:text="@string/default_weather_summary"
+            app:layout_constrainedWidth="true"
             app:layout_constraintTop_toBottomOf="@id/temperatureLabel"
-            app:layout_constraintLeft_toLeftOf="@id/temperatureLabel"
-            app:layout_constraintRight_toRightOf="@id/temperatureUnit"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/weatherDetailsTopLimit"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/weatherDetailsTopLimit"
@@ -132,31 +105,17 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.7"/>
 
-        <android.support.constraint.Guideline
-            android:id="@+id/weatherDetailsLeftLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15"/>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/weatherDetailsRightLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.85"/>
-
         <ImageView
             android:id="@+id/humidityIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="@drawable/humidity_icon"
-            app:layout_constraintTop_toBottomOf="@id/weatherDetailsTopLimit"
-            app:layout_constraintLeft_toRightOf="@id/weatherDetailsLeftLimit"
+            android:contentDescription="@string/humidity_icon"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/windSpeedIcon"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            android:contentDescription="@string/humidity_icon" />
+            app:layout_constraintTop_toBottomOf="@id/weatherDetailsTopLimit"
+            app:srcCompat="@drawable/humidity_icon" />
 
         <TextView
             android:id="@+id/humidityValue"
@@ -164,7 +123,6 @@
             android:layout_height="wrap_content"
             android:text="@{Current.humidity}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
             android:layout_marginTop="8dp"
             tools:text="87%"
             app:layout_constraintTop_toBottomOf="@id/humidityIcon"
@@ -188,7 +146,6 @@
             android:layout_height="wrap_content"
             android:text="@{Current.windSpeed}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
             android:layout_marginTop="8dp"
             tools:text="5 mps"
             app:layout_constraintTop_toBottomOf="@id/windSpeedIcon"
@@ -213,7 +170,6 @@
             android:layout_height="wrap_content"
             android:text="@{Current.cloudCover}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
             android:layout_marginTop="8dp"
             tools:text="87%"
             app:layout_constraintTop_toBottomOf="@id/cloudCoverIcon"
@@ -229,7 +185,7 @@
             app:srcCompat="@drawable/ic_rain"
             app:layout_constraintTop_toBottomOf="@id/weatherDetailsTopLimit"
             app:layout_constraintLeft_toRightOf="@id/cloudCoverIcon"
-            app:layout_constraintRight_toRightOf="@id/weatherDetailsRightLimit" />
+            app:layout_constraintRight_toRightOf="parent" />
 
         <TextView
             android:id="@+id/precipValue"
@@ -237,7 +193,6 @@
             android:layout_height="wrap_content"
             android:text="@{Current.precipitationProbability}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
             android:layout_marginTop="8dp"
             tools:text="87%"
             app:layout_constraintTop_toBottomOf="@id/precipIcon"
@@ -261,15 +216,14 @@
             android:layout_height="wrap_content"
             android:text="@{Current.sunrise}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
             android:gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:paddingBottom="16dp"
+            android:layout_marginBottom="16dp"
             tools:text="5:15 AM"
-            app:setFont="@{true}"
             app:layout_constraintTop_toBottomOf="@id/sunriseIcon"
             app:layout_constraintLeft_toLeftOf="@id/sunriseIcon"
-            app:layout_constraintRight_toRightOf="@id/sunriseIcon"/>
+            app:layout_constraintRight_toRightOf="@id/sunriseIcon"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
             android:id="@+id/apparentTemperatureIcon"
@@ -288,15 +242,14 @@
             android:layout_height="wrap_content"
             android:text="@{@string/apparentTemperatureValue(Current.apparentTemperature)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
             android:gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:paddingBottom="16dp"
+            android:layout_marginBottom="16dp"
             tools:text="15°"
-            app:setFont="@{true}"
             app:layout_constraintTop_toBottomOf="@id/apparentTemperatureIcon"
             app:layout_constraintLeft_toLeftOf="@id/apparentTemperatureIcon"
-            app:layout_constraintRight_toRightOf="@id/apparentTemperatureIcon"/>
+            app:layout_constraintRight_toRightOf="@id/apparentTemperatureIcon"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/apparentTemperatureUnit"
@@ -304,14 +257,11 @@
             android:layout_height="wrap_content"
             android:text="@{Current.temperatureUnit}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
-            android:gravity="center_horizontal"
-            android:paddingBottom="16dp"
             tools:text="C"
-            app:setFont="@{true}"
             app:layout_constraintTop_toTopOf="@id/apparentTemperature"
             app:layout_constraintLeft_toRightOf="@id/apparentTemperature"
-            app:layout_constraintBottom_toBottomOf="@id/apparentTemperature"/>
+            app:layout_constraintBottom_toBottomOf="@id/apparentTemperature"
+            />
 
         <ImageView
             android:id="@+id/sunsetIcon"
@@ -330,15 +280,13 @@
             android:layout_height="wrap_content"
             android:text="@{Current.sunset}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/white"
-            android:gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:paddingBottom="16dp"
+            android:layout_marginBottom="16dp"
             tools:text="6:15 PM"
-            app:setFont="@{true}"
             app:layout_constraintTop_toBottomOf="@id/sunsetIcon"
             app:layout_constraintLeft_toLeftOf="@id/sunsetIcon"
-            app:layout_constraintRight_toRightOf="@id/sunsetIcon"/>
+            app:layout_constraintRight_toRightOf="@id/sunsetIcon"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

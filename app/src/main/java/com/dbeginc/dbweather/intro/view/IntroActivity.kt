@@ -37,8 +37,8 @@ class IntroActivity : BaseActivity(), IntroContract.IntroView {
     private val chooseLocation: ChooseLocationFragment = ChooseLocationFragment()
     private val gpsLocationFinder : GpsLocationFinderFragment = GpsLocationFinderFragment()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(savedState: Bundle?) {
+        super.onCreate(savedState)
         Injector.injectIntroDep(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_intro)
     }

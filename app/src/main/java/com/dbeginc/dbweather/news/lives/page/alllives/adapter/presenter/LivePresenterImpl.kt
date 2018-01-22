@@ -15,11 +15,12 @@
 
 package com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter
 
-import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveContract
-import com.dbeginc.dbweather.viewmodels.news.LiveModel
+import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LivePresenter
+import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LiveView
 import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
 import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
 import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
+import com.dbeginc.dbweathernews.viewmodels.LiveModel
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -29,12 +30,12 @@ import io.reactivex.disposables.CompositeDisposable
  */
 class LivePresenterImpl(private val live: LiveModel,
                         private val addLiveToFavorite: AddLiveToFavorite,
-                        private val removeLiveToFavorite: RemoveLiveToFavorite) : LiveContract.LivePresenter {
+                        private val removeLiveToFavorite: RemoveLiveToFavorite) : LivePresenter {
 
-    private var view: LiveContract.LiveView? = null
+    private var view: LiveView? = null
     private val tasks = CompositeDisposable()
 
-    override fun bind(view: LiveContract.LiveView) {
+    override fun bind(view: LiveView) {
         this.view = view
         this.view?.setupView()
     }

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="Source"
-            type="com.dbeginc.dbweather.viewmodels.news.SourceModel"/>
+            type="com.dbeginc.dbweathernews.viewmodels.SourceModel"/>
     </data>
 
     <android.support.v7.widget.CardView
@@ -73,7 +73,7 @@ The latest UK and international business, finance, economic and political news, 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/follow_icon"
+                app:srcCompat="@drawable/ic_follow_icon_red"
                 app:layout_constraintTop_toBottomOf="@id/sourceDescription"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -19,11 +19,8 @@ task pmd(type: Pmd, dependsOn: "assembleDebug") {
     reports {
         xml.enabled = false
         html.enabled = true
-        xml {
-            destination "$reportsDir/pmd/pmd.xml"
-        }
         html {
-            destination "$reportsDir/pmd/pmd.html"
+            destination file("$reportsDir/pmd/pmd.html")
         }
     }
 }

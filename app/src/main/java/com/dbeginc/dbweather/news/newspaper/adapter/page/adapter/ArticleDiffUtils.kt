@@ -16,7 +16,7 @@
 package com.dbeginc.dbweather.news.newspaper.adapter.page.adapter
 
 import android.support.v7.util.DiffUtil
-import com.dbeginc.dbweather.viewmodels.news.ArticleModel
+import com.dbeginc.dbweathernews.viewmodels.ArticleModel
 
 /**
  * Created by darel on 10.10.17.

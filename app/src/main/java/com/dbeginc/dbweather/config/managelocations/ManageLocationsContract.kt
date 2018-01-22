@@ -17,7 +17,7 @@ package com.dbeginc.dbweather.config.managelocations
 
 import com.dbeginc.dbweather.base.IPresenter
 import com.dbeginc.dbweather.base.IView
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 
 /**
  * Created by darel on 26.10.17.

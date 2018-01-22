@@ -17,10 +17,11 @@ package com.dbeginc.dbweather.news.newspaper.adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import com.dbeginc.dbweather.news.CustomPagerAdapter
-import com.dbeginc.dbweather.news.UpdatableContainer
-import com.dbeginc.dbweather.news.newspaper.adapter.page.view.ArticlesPageFragment
-import com.dbeginc.dbweather.viewmodels.news.NewsPaperModel
+import android.view.ViewGroup
+import com.dbeginc.dbweathercommon.utils.CustomPagerAdapter
+import com.dbeginc.dbweather.news.newspaper.adapter.page.ArticlesPageFragment
+import com.dbeginc.dbweathercommon.utils.UpdatableContainer
+import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 import java.util.*
 
 /*
@@ -28,45 +29,65 @@ import java.util.*
  *
  * Articles Adapter
  */
-class ArticlesPagerAdapter(data: List<NewsPaperModel>, fragmentManager: FragmentManager) : CustomPagerAdapter(fragmentManager) {
-    private val newsPapers: LinkedList<NewsPaperModel> = LinkedList(data)
+class ArticlesPagerAdapter(data: List<NewsPaperModel>, private val fragmentManager: FragmentManager) : CustomPagerAdapter(fragmentManager) {
+    private var newsPapers: LinkedList<NewsPaperModel> = LinkedList(data)
+    private var temporaryIds: List<String>? = null
 
     override fun getItem(position: Int): Fragment {
         val newsPaper = newsPapers[position]
         return ArticlesPageFragment.newInstance(newsPaper.name, newsPaper.children)
     }
 
-    override fun getUniqueIdentifier(position: Int): String = newsPapers[position].name
+    override fun finishUpdate(container: ViewGroup) {
+        super.finishUpdate(container)
+
+        //Cleanup  the temporary list of ids
+        temporaryIds = null
+    }
+
+    //TODO need to keep reference to previous dataset if updating
+    override fun getUniqueIdentifier(position: Int): String = temporaryIds?.getOrNull(position) ?: newsPapers[position].name
 
     override fun getCount(): Int = newsPapers.size
 
     override fun getPageTitle(position: Int): CharSequence = newsPapers[position].name
 
-    override fun getItemPosition(`object`: Any?): Int {
-        val updatableFragment = `object` as? UpdatableContainer
+    override fun getItemPosition(`object`: Any): Int {
+        val updatableFragment = `object` as UpdatableContainer
 
-        val founded = newsPapers.firstOrNull { newsPaper -> updatableFragment?.getUpdatableId() == newsPaper.getId() } != null
+        //val founded = newsPapers.firstOrNull { newsPaper -> updatableFragment?.getUpdatableId() == newsPaper.getId() } != null
+        // check if newsPaper is not in dataset if is not we need to create the page
+        if (newsPapers.firstOrNull { newspaper -> newspaper.name == updatableFragment.getUpdatableId() } == null) return POSITION_NONE
+
+        // check if we already have an instance of the fragment
+        val founded = fragmentManager.fragments
+                .filterIsInstance(UpdatableContainer::class.java)
+                .firstOrNull { page -> page.getUpdatableId() == updatableFragment.getUpdatableId() } != null
 
         return if (founded) POSITION_UNCHANGED else POSITION_NONE
     }
 
     fun getData(): List<NewsPaperModel> = newsPapers
 
+    @Synchronized
     fun refresh(newData: List<NewsPaperModel>) {
-        synchronized(this) {
-            if (newsPapers.isNotEmpty().and(newsPapers.size == newData.size)) {
-                fillMe(newData)
-                update(newData)
 
-            } else {
-                fillMe(newData)
-                notifyDataSetChanged()
-            }
+        if (newsPapers.isNotEmpty().and(newsPapers.size == newData.size)) {
+            newsPapers = LinkedList(newData)
+
+            update(newData)
         }
-    }
+        else {
+            /**
+             * make an copy of the old news papers unique ids
+             * it's required to handle auto update of page
+             * when new newspapers are added dynamically
+             */
+            temporaryIds = newsPapers.map { newsPaper -> newsPaper.name }
 
-    private fun fillMe(newData: List<NewsPaperModel>) {
-        newsPapers.clear()
-        newsPapers.addAll(newData.sortedBy { newsPaper -> newsPaper.name })
+            newsPapers = LinkedList(newData)
+
+            notifyDataSetChanged()
+        }
     }
 }

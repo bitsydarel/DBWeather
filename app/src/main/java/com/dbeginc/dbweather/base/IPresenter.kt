@@ -20,7 +20,7 @@ package com.dbeginc.dbweather.base
  *
  * Representation of Presenter
  */
-interface IPresenter<V: IView> {
+interface IPresenter<in V: IView> {
     fun bind(view: V)
     fun unBind()
 }

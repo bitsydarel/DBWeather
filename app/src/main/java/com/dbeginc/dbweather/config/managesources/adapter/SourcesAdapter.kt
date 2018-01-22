@@ -21,11 +21,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
+import com.dbeginc.dbweather.config.managesources.adapter.contract.SourcePresenter
 import com.dbeginc.dbweather.config.managesources.adapter.presenter.SourcePresenterImpl
 import com.dbeginc.dbweather.config.managesources.adapter.view.SourceViewHolder
-import com.dbeginc.dbweather.viewmodels.news.SourceModel
 import com.dbeginc.dbweatherdomain.usecases.news.SubscribeToSource
 import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
+import com.dbeginc.dbweathernews.viewmodels.SourceModel
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.coroutines.experimental.bg
@@ -41,7 +42,7 @@ class SourcesAdapter(sources: List<SourceModel>,
                      private val unSubscribeToSource: UnSubscribeToSource) : RecyclerView.Adapter<SourceViewHolder>() {
 
     private var container: RecyclerView? = null
-    private val presenters: LinkedList<SourceContract.SourcePresenter>
+    private val presenters: LinkedList<SourcePresenter>
 
     init {
         presenters = LinkedList(

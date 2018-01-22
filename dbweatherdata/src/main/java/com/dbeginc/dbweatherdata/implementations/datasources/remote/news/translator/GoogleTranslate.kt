@@ -21,7 +21,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.translate.Translate
 import com.google.api.services.translate.TranslateRequestInitializer
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 
 /**
  * Created by darel on 05.10.17.

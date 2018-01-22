@@ -17,8 +17,8 @@ package com.dbeginc.dbweather.weather
 
 import com.dbeginc.dbweather.base.IPresenter
 import com.dbeginc.dbweather.base.IView
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
-import com.dbeginc.dbweather.viewmodels.weather.WeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.WeatherModel
 
 /**
  * Created by darel on 18.09.17.
@@ -28,16 +28,14 @@ import com.dbeginc.dbweather.viewmodels.weather.WeatherModel
 interface WeatherTabContract {
 
     interface WeatherTabView: IView {
-        fun getLatitude() : Double
-        fun getLongitude() : Double
-        fun getCurrentLocation() : String
+        fun getGpsLatitude() : Double
+        fun getGpsLongitude() : Double
+        fun getGpsLocation() : String
         fun displayWeather(weather: WeatherModel)
-        fun defineUserLocations(locations: List<LocationWeatherModel>)
-        fun defineGpsLocation(location: LocationWeatherModel)
-        fun defineUserLocation(location: LocationWeatherModel)
-        fun defineGpsLatitude(latitude: Double)
-        fun defineGpsLongitude(longitude: Double)
-        fun isCurrentLocation(isCurrent: Boolean)
+        fun defineGpsCoordinates(location: LocationWeatherModel)
+        fun defineLastPreviewedCoordinates(location: LocationWeatherModel)
+        fun changeCurrentLocationSource(isGpsLocation: Boolean)
+        fun showUserLocations(locations: List<LocationWeatherModel>)
         fun displayLoadingWeatherStatus()
         fun hideLoadingWeatherStatus()
         fun displayUpdatingStatus()
@@ -49,9 +47,9 @@ interface WeatherTabContract {
     interface WeatherTabPresenter: IPresenter<WeatherTabView> {
         fun getWeatherForCity(location: LocationWeatherModel)
         fun getWeather()
-        fun onGpsLocationChange(latitude: Double, longitude: Double)
+        fun onGpsLocationChanged(latitude: Double, longitude: Double)
         fun loadUserCities()
-        fun onLocationSelected(position: Int)
+        fun onUserLocationSelected(position: Int)
         fun retryWeatherRequest()
     }
 }

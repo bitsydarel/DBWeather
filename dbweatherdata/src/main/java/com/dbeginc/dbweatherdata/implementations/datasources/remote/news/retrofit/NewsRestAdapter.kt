@@ -19,8 +19,8 @@ import android.content.Context
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.BuildConfig
 import com.dbeginc.dbweatherdata.ConstantHolder
-import com.dbeginc.dbweatherdata.ConstantHolder.CACHE_NAME
 import com.dbeginc.dbweatherdata.ConstantHolder.CACHE_SIZE
+import com.dbeginc.dbweatherdata.ConstantHolder.NEWS_CACHE_NAME
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.GoogleTranslate
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.Translator
 import com.dbeginc.dbweatherdata.proxies.remote.news.RemoteArticle
@@ -59,9 +59,7 @@ class NewsRestAdapter private constructor(client: OkHttpClient, private val live
                     .writeTimeout(35, TimeUnit.SECONDS)
                     .readTimeout(55, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
-                    .cache(Cache(File(context.cacheDir, CACHE_NAME), CACHE_SIZE))
-
-//            if (BuildConfig.DEBUG) client.addNetworkInterceptor(StethoInterceptor())
+                    .cache(Cache(File(context.cacheDir, NEWS_CACHE_NAME), CACHE_SIZE))
 
             val liveApi = FirebaseDatabase.getInstance(FirebaseApp.initializeApp(context)).reference.child(ConstantHolder.LIVE_SOURCE_REFERENCE)
 
@@ -98,15 +96,16 @@ class NewsRestAdapter private constructor(client: OkHttpClient, private val live
 
     fun getArticles(sources: List<RemoteSource>) : Flowable<List<RemoteArticle>> {
         return Flowable.fromIterable(sources)
-                .flatMap({ source -> newsApi.getArticles(source.id, source.sortBysAvailable.first(), BuildConfig.NEWS_API_KEY) }, true)
-                .map { response -> response.articles.map { article -> article.apply { sourceId = response.source } } }
+                .buffer(5)
+                .map { fiveSources -> fiveSources.joinToString(separator=",", transform={ source -> source.id }) }
+                .flatMap({ joinedSources -> newsApi.getArticles(sources=joinedSources, apiKey=BuildConfig.NEWS_API_KEY) }, true)
+                .map { response -> response.articles }
                 .collect({ mutableListOf<RemoteArticle>() }, { container, articles -> container.addAll(articles) })
                 .flatMapPublisher { articles -> Flowable.just(articles.toList()) }
-
     }
 
     fun getSources() : Flowable<List<RemoteSource>> {
-        return newsApi.getSources()
+        return newsApi.getSources(apiKey=BuildConfig.NEWS_API_KEY)
                 .map { response -> response.sources }
     }
 

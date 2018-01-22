@@ -37,7 +37,7 @@ interface NewsRepository : Cleanable {
 
     fun getSources() : Flowable<List<Source>>
     fun getSubscribedSources() : Flowable<List<Source>>
-    fun getSource(id: String) : Single<Source>
+    fun getSource(request: SourceRequest<Unit>) : Single<Source>
     fun subscribeToSource(request: SourceRequest<Source>) : Completable
     fun unSubscribeToSource(request: SourceRequest<Source>) : Completable
     fun defineDefaultSubscribedSources(sourcesId: List<String>): Completable

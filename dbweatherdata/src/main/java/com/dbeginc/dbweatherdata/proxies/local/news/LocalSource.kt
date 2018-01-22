@@ -17,6 +17,7 @@ package com.dbeginc.dbweatherdata.proxies.local.news
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.ConstantHolder.SOURCE_TABLE
@@ -27,10 +28,9 @@ import com.dbeginc.dbweatherdata.ConstantHolder.SOURCE_TABLE
  * Local Source
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Entity(tableName=SOURCE_TABLE)
+@Entity(tableName=SOURCE_TABLE, indices = arrayOf(Index(value= ["name"], unique=true)))
 data class LocalSource(@PrimaryKey val id: String, val name: String,
                        val description: String, val url: String,
                        val category: String, val language: String,
-                       val country: String, var subscribed: Boolean,
-                       @ColumnInfo(name="sort_bys_available") val sortBysAvailable: List<String>
+                       val country: String, var subscribed: Boolean
 )

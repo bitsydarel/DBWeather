@@ -6,7 +6,7 @@
     <data>
         <variable
             name="Location"
-            type="com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel"/>
+            type="com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel"/>
     </data>
 
     <android.support.v7.widget.CardView
@@ -37,12 +37,13 @@
 
             <TextView
                 android:id="@+id/locationName"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@{@string/locationName(Location.name, Location.countryName)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:gravity="start"
-                android:text="@{@string/locationName(Location.name, Location.countryName)}"
                 tools:text="Pointe-Noire, Republic of Congo"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/getLocationsIcon"
                 app:layout_constraintRight_toLeftOf="@+id/locationFlag"

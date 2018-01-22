@@ -36,112 +36,71 @@ import dagger.Provides
 class UseCaseModule {
 
     @Provides
-    internal fun provideRemoveLocationUseCase(weatherRepo: WeatherRepository): RemoveLocation {
-        return RemoveLocation(weatherRepo)
-    }
+    internal fun provideRemoveLocationUseCase(weatherRepo: WeatherRepository): RemoveLocation = RemoveLocation(weatherRepo)
 
     @Provides
-    internal fun provideUnSubscribeToSourceUseCase(newsRepository: NewsRepository): UnSubscribeToSource {
-        return UnSubscribeToSource(newsRepository)
-    }
+    internal fun provideGetSourceUseCase(newsRepository: NewsRepository): GetSource = GetSource(newsRepository)
 
     @Provides
-    internal fun provideSubscribeToSourceUseCase(newsRepository: NewsRepository): SubscribeToSource {
-        return SubscribeToSource(newsRepository)
-    }
+    internal fun provideUnSubscribeToSourceUseCase(newsRepository: NewsRepository): UnSubscribeToSource = UnSubscribeToSource(newsRepository)
 
     @Provides
-    internal fun provideGetAllSources(newsRepository: NewsRepository): GetAllSources {
-        return GetAllSources(newsRepository)
-    }
+    internal fun provideSubscribeToSourceUseCase(newsRepository: NewsRepository): SubscribeToSource = SubscribeToSource(newsRepository)
 
     @Provides
-    internal fun provideGetWeatherNotificationStatus(configurationsRepository: ConfigurationsRepository): GetWeatherNotificationStatus {
-        return GetWeatherNotificationStatus(configurationsRepository)
-    }
+    internal fun provideGetAllSources(newsRepository: NewsRepository): GetAllSources = GetAllSources(newsRepository)
 
     @Provides
-    internal fun provideGetNewsPaperTranslationStatus(configurationsRepository: ConfigurationsRepository): GetNewsPaperTranslationStatus {
-        return GetNewsPaperTranslationStatus(configurationsRepository)
-    }
+    internal fun provideGetWeatherNotificationStatus(configurationsRepository: ConfigurationsRepository): GetWeatherNotificationStatus = GetWeatherNotificationStatus(configurationsRepository)
 
     @Provides
-    internal fun provideChangeWeatherNotification(configurationsRepository: ConfigurationsRepository): ChangeWeatherNotificationStatus {
-        return ChangeWeatherNotificationStatus(configurationsRepository)
-    }
+    internal fun provideGetNewsPaperTranslationStatus(configurationsRepository: ConfigurationsRepository): GetNewsPaperTranslationStatus = GetNewsPaperTranslationStatus(configurationsRepository)
 
     @Provides
-    internal fun provideChangeNewsPaperTranslation(configurationsRepository: ConfigurationsRepository): ChangeNewsPaperTranslationStatus {
-        return ChangeNewsPaperTranslationStatus(configurationsRepository)
-    }
+    internal fun provideChangeWeatherNotification(configurationsRepository: ConfigurationsRepository): ChangeWeatherNotificationStatus = ChangeWeatherNotificationStatus(configurationsRepository)
 
     @Provides
-    internal fun provideGetLive(newsRepository: NewsRepository): GetLive {
-        return GetLive(newsRepository)
-    }
+    internal fun provideChangeNewsPaperTranslation(configurationsRepository: ConfigurationsRepository): ChangeNewsPaperTranslationStatus = ChangeNewsPaperTranslationStatus(configurationsRepository)
 
     @Provides
-    internal fun provideGetLives(newsRepository: NewsRepository): GetLives {
-        return GetLives(newsRepository)
-    }
+    internal fun provideGetLive(newsRepository: NewsRepository): GetLive = GetLive(newsRepository)
 
     @Provides
-    internal fun provideGetAllLives(newsRepository: NewsRepository) : GetAllLives {
-        return GetAllLives(newsRepository)
-    }
+    internal fun provideGetLives(newsRepository: NewsRepository): GetLives = GetLives(newsRepository)
 
     @Provides
-    internal fun provideGetFavoriteLives(newsRepository: NewsRepository) : GetFavoriteLives {
-        return GetFavoriteLives(newsRepository)
-    }
+    internal fun provideGetAllLives(newsRepository: NewsRepository) : GetAllLives = GetAllLives(newsRepository)
 
     @Provides
-    internal fun provideGetLocationsUseCase(weatherRepo: WeatherRepository) : GetLocations {
-        return GetLocations(weatherRepo)
-    }
+    internal fun provideGetFavoriteLives(newsRepository: NewsRepository) : GetFavoriteLives = GetFavoriteLives(newsRepository)
 
     @Provides
-    internal fun provideGetWeatherUseCase(weatherRepo: WeatherRepository) : GetWeather {
-        return GetWeather(weatherRepo)
-    }
+    internal fun provideGetLocationsUseCase(weatherRepo: WeatherRepository) : GetLocations = GetLocations(weatherRepo)
 
     @Provides
-    internal fun provideGetAllUserListUseCase(weatherRepo: WeatherRepository) : GetAllUserLocations {
-        return GetAllUserLocations(weatherRepo)
-    }
+    internal fun provideGetWeatherUseCase(weatherRepo: WeatherRepository) : GetWeather = GetWeather(weatherRepo)
 
     @Provides
-    internal fun provideGetWeatherByLocationUseCase(weatherRepo: WeatherRepository) : GetWeatherByLocation {
-        return GetWeatherByLocation(weatherRepo)
-    }
+    internal fun provideGetAllUserListUseCase(weatherRepo: WeatherRepository) : GetAllUserLocations = GetAllUserLocations(weatherRepo)
 
     @Provides
-    internal fun provideGetSubscribedSource(newsRepository: NewsRepository) : GetSubscribedSources {
-        return GetSubscribedSources(newsRepository)
-    }
+    internal fun provideGetWeatherByLocationUseCase(weatherRepo: WeatherRepository) : GetWeatherByLocation = GetWeatherByLocation(weatherRepo)
 
     @Provides
-    internal fun provideGetArticles(newsRepository: NewsRepository, configurationsRepository: ConfigurationsRepository): GetArticles {
-        return GetArticles(newsRepository, configurationsRepository)
-    }
+    internal fun provideGetSubscribedSource(newsRepository: NewsRepository) : GetSubscribedSources = GetSubscribedSources(newsRepository)
 
     @Provides
-    internal fun provideDefineDefaultSubscribedSources(newsRepository: NewsRepository) : DefineDefaultSubscribedSources {
-        return DefineDefaultSubscribedSources(newsRepository)
-    }
+    internal fun provideGetArticles(newsRepository: NewsRepository, configurationsRepository: ConfigurationsRepository): GetArticles = GetArticles(newsRepository, configurationsRepository)
 
     @Provides
-    internal fun provideAddLiveToFavorite(newsRepository: NewsRepository): AddLiveToFavorite {
-        return AddLiveToFavorite(newsRepository)
-    }
+    internal fun provideDefineDefaultSubscribedSources(newsRepository: NewsRepository) : DefineDefaultSubscribedSources = DefineDefaultSubscribedSources(newsRepository)
 
     @Provides
-    internal fun provideRemoveLiveFromFavorite(newsRepository: NewsRepository): RemoveLiveToFavorite {
-        return RemoveLiveToFavorite(newsRepository)
-    }
+    internal fun provideAddLiveToFavorite(newsRepository: NewsRepository): AddLiveToFavorite = AddLiveToFavorite(newsRepository)
 
     @Provides
-    internal fun provideGetArticle(newsRepository: NewsRepository): GetArticle {
-        return GetArticle(newsRepository)
-    }
+    internal fun provideRemoveLiveFromFavorite(newsRepository: NewsRepository): RemoveLiveToFavorite = RemoveLiveToFavorite(newsRepository)
+
+    @Provides
+    internal fun provideGetArticle(newsRepository: NewsRepository): GetArticle = GetArticle(newsRepository)
 }

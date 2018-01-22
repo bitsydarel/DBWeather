@@ -15,32 +15,23 @@
 
 package com.dbeginc.dbweather.utils.utility
 
-import android.content.Context
 import android.databinding.BindingAdapter
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Typeface
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.design.widget.Snackbar
 import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.ViewTarget
-import com.bumptech.glide.request.transition.Transition
 import com.dbeginc.dbweather.R
+import com.dbeginc.dbweather.utils.glide.BlurBackgroundTarget
 import com.dbeginc.dbweather.utils.glide.BlurTransformation
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.*
-
-import com.dbeginc.dbweather.viewmodels.weather.toFormattedTime
-import com.dbeginc.dbweatherdata.ConstantHolder
-import com.dbeginc.dbweatherdata.ConstantHolder.YOUTUBE_THUMBNAIL_URL
+import com.dbeginc.dbweather.utils.holder.ConstantHolder.YOUTUBE_THUMBNAIL_URL
+import com.dbeginc.dbweatherweather.viewmodels.toFormattedTime
 import java.util.*
 
 /**
@@ -88,8 +79,10 @@ fun setImage(imageView: ImageView, url: String?) {
     if (url != null && url.isNotEmpty()) {
         Glide.with(imageView)
                 .load(url)
-                .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
                 .apply(RequestOptions.skipMemoryCacheOf(true))
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
+                .apply(RequestOptions.centerCropTransform())
                 .into(imageView)
     }
 }
@@ -110,57 +103,18 @@ fun setYoutubeImage(imageView: ImageView, url: String?) {
         Glide.with(imageView)
                 .load(YOUTUBE_THUMBNAIL_URL.format(url))
                 .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
-                .apply(RequestOptions.skipMemoryCacheOf(true))
+                .apply(RequestOptions.centerCropTransform())
                 .into(imageView)
     }
 }
 
-@BindingAdapter("setFont")
-fun setFont(textView: TextView, shouldSet: Boolean) {
-    if (shouldSet) {
-        textView.typeface = getAppGlobalTypeFace(textView.context)
+@BindingAdapter("setBlurYoutubeBackgroundImage")
+fun setBlurBackground(viewGroup: ViewGroup, url: String?) {
+    if (url != null && url.isNotEmpty()) {
+        Glide.with(viewGroup.context)
+                .load(YOUTUBE_THUMBNAIL_URL.format(url))
+                .apply(RequestOptions.centerCropTransform())
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(viewGroup.context)))
+                .into(BlurBackgroundTarget(viewGroup))
     }
-}
-
-@BindingAdapter("setFont")
-fun setFont(button: Button, shouldSet: Boolean) {
-    if (shouldSet) {
-        button.typeface = getAppGlobalTypeFace(button.context)
-    }
-}
-
-@BindingAdapter("setToolbarFont")
-fun setToolbarFont(textView: TextView, shouldSet: Boolean) {
-    if (shouldSet) {
-        textView.typeface = Typeface.createFromAsset(textView.context.assets, "fonts/toolbar_font.ttf")
-    }
-}
-
-@BindingAdapter("tintMyBackground")
-fun setBackgroundTint(button: ImageButton, shouldTint: Boolean) {
-    if (shouldTint && Build.VERSION_CODES.M > Build.VERSION.SDK_INT) {
-        button.setBackgroundColor(Color.TRANSPARENT)
-    }
-}
-
-@BindingAdapter("setTint")
-fun tintFollowButton(imageView: ImageView, isFollowing: Boolean) {
-    if (isFollowing) {
-        imageView.setColorFilter(ContextCompat.getColor(imageView.context, android.R.color.holo_red_light))
-    } else {
-        imageView.setColorFilter(ContextCompat.getColor(imageView.context, android.R.color.darker_gray))
-    }
-}
-
-private fun getAppGlobalTypeFace(context: Context): Typeface? {
-    var typeface: Typeface? = null
-
-    for ((key, value) in LIST_OF_TYPEFACES) {
-        if (key.contains(USER_LANGUAGE)) {
-            typeface = Typeface.createFromAsset(context.assets,
-                    value)
-        }
-    }
-
-    return typeface
 }

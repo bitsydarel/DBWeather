@@ -38,10 +38,10 @@ class LivesTabFragment : BaseFragment() {
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        Injector.injectLivesTabDep(this)
-        pagerAdapter = if (savedState == null) LivesPageAdapter(liveTitle, favoritesTitle,childFragmentManager)
-        else LivesPageAdapter(liveTitle, favoritesTitle, childFragmentManager)
 
+        Injector.injectLivesTabDep(this)
+
+        pagerAdapter = LivesPageAdapter(liveTitle, favoritesTitle, childFragmentManager)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,11 +49,11 @@ class LivesTabFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (binding.livesVP.adapter == null) {
-            binding.livesVP.adapter = pagerAdapter
-            binding.livesTabIds.setupWithViewPager(binding.livesVP)
-        }
+
+        binding.livesVP.adapter = pagerAdapter
+
+        binding.livesTabIds.setupWithViewPager(binding.livesVP)
     }
 }

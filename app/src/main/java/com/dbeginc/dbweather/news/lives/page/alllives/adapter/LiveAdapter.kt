@@ -22,11 +22,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.news.lives.page.LiveDiffUtils
+import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LivePresenter
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter.LivePresenterImpl
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.view.LiveViewHolder
-import com.dbeginc.dbweather.viewmodels.news.LiveModel
 import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
 import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
+import com.dbeginc.dbweathernews.viewmodels.LiveModel
 import java.util.*
 
 /**
@@ -34,9 +35,9 @@ import java.util.*
  *
  * Live adapter
  */
-class LiveAdapter(data: MutableList<LiveModel>, private val addLiveToFavorite: AddLiveToFavorite, private val removeLiveToFavorite: RemoveLiveToFavorite) : RecyclerView.Adapter<LiveViewHolder>() {
+class LiveAdapter(data: List<LiveModel>, private val addLiveToFavorite: AddLiveToFavorite, private val removeLiveToFavorite: RemoveLiveToFavorite) : RecyclerView.Adapter<LiveViewHolder>() {
     private var container: RecyclerView? = null
-    private val presenters: LinkedList<LiveContract.LivePresenter>
+    private val presenters: LinkedList<LivePresenter>
 
     init {
         // mapping data to presenter

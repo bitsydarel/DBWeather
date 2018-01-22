@@ -19,7 +19,7 @@ import android.support.v7.widget.RecyclerView
 import com.dbeginc.dbweather.databinding.DailyListItemBinding
 import com.dbeginc.dbweather.weather.adapters.daily.DayContract
 import com.dbeginc.dbweather.utils.utility.toast
-import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
  * Created by darel on 23.09.17.

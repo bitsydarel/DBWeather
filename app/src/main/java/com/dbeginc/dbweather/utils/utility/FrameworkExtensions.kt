@@ -40,8 +40,8 @@ fun <T : Parcelable> Bundle.putList(key: String, list: List<T>) {
 
 fun <T : Parcelable> Bundle.getList(key: String) : List<T> = getParcelableArrayList(key)
 
-fun SharedPreferences.putDouble(key: String, value: Double): SharedPreferences {
-    edit().putLong(key, java.lang.Double.doubleToRawLongBits(value)).apply()
+fun SharedPreferences.Editor.putDouble(key: String, value: Double): SharedPreferences.Editor {
+    putLong(key, java.lang.Double.doubleToRawLongBits(value)).apply()
     return this
 }
 

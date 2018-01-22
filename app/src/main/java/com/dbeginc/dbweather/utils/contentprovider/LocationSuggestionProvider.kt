@@ -9,7 +9,6 @@ import android.net.Uri
 import android.provider.BaseColumns
 import android.util.Log
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.di.components.DaggerDBWeatherApplicationComponent
 import com.dbeginc.dbweather.di.modules.DBWeatherApplicationModule
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG
 import com.dbeginc.dbweather.utils.utility.Injector
@@ -25,16 +24,13 @@ import javax.inject.Inject
  * Location Suggestion provider
  */
 class LocationSuggestionProvider : ContentProvider() {
-    @Inject
-    lateinit var mGetLocationsCommand: GetLocations
-    @Inject
-    lateinit var queryEventResult: BehaviorSubject<List<Location>>
+    @Inject lateinit var mGetLocationsCommand: GetLocations
+    @Inject lateinit var queryEventResult: BehaviorSubject<List<Location>>
 
     override fun onCreate(): Boolean {
-        Injector.appComponent = DaggerDBWeatherApplicationComponent.builder()
-                .dBWeatherApplicationModule(DBWeatherApplicationModule(context))
-                .build()
+
         Injector.injectLocationProviderDep(this)
+
         return true
     }
 
@@ -47,14 +43,11 @@ class LocationSuggestionProvider : ContentProvider() {
 
         val matrixCursor = MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2), 3)
 
-        if (userQuery != null && userQuery.isNotEmpty() && userQuery != SearchManager.SUGGEST_URI_PATH_QUERY) {
+        if (userQuery != null && userQuery != SearchManager.SUGGEST_URI_PATH_QUERY && userQuery.isNotEmpty()) {
             mGetLocationsCommand.execute(LocationRequest(userQuery))
                     .subscribe(
                             { locations -> queryEventResult.onNext(locations) },
-                            { error ->
-                                Log.e(TAG, error.localizedMessage, error)
-                                queryEventResult.onError(error)
-                            }
+                            { error -> Log.e(TAG, error.localizedMessage, error) }
                     )
         }
 

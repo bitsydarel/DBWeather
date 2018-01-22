@@ -24,6 +24,4 @@ import com.squareup.moshi.Json
  * News Response
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteNewsResponse(@Json(name="status") val status: String, @Json(name="source") val source: String,
-                              @Json(name="sortBy") val sortBy: String, @Json(name="articles") val articles: List<RemoteArticle>
-)
+data class RemoteNewsResponse(@Json(name="status") val status: String, @Json(name="articles") val articles: List<RemoteArticle>)

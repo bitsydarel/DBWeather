@@ -20,19 +20,20 @@ import android.util.Log
 import android.widget.ImageButton
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.LiveItemBinding
-import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveContract
+import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LivePresenter
+import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LiveView
 import com.dbeginc.dbweather.utils.holder.ConstantHolder
 import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.toast
-import com.dbeginc.dbweather.viewmodels.news.LiveModel
+import com.dbeginc.dbweathernews.viewmodels.LiveModel
 
 /**
  * Created by darel on 19.10.17.
  *
  * Live View Holder
  */
-class LiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root), LiveContract.LiveView {
-    private var presenter: LiveContract.LivePresenter? = null
+class LiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root), LiveView {
+    private var presenter: LivePresenter? = null
 
     override fun setupView() {}
 
@@ -55,7 +56,7 @@ class LiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHo
         binding.root.toast(error.localizedMessage)
     }
 
-    override fun definePresenter(presenter: LiveContract.LivePresenter) {
+    override fun definePresenter(presenter: LivePresenter) {
         this.presenter = presenter
         binding.liveFavorite.setOnClickListener { presenter.onAction() }
         binding.liveThumbnail.setOnClickListener { play() }

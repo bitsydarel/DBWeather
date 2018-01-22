@@ -16,7 +16,6 @@
 package com.dbeginc.dbweather.weather.adapters.daily
 
 import android.support.v7.util.DiffUtil
-import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
 
 /**
  * Created by darel on 23.09.17.

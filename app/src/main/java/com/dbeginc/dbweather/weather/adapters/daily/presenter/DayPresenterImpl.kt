@@ -16,7 +16,7 @@
 package com.dbeginc.dbweather.weather.adapters.daily.presenter
 
 import com.dbeginc.dbweather.weather.adapters.daily.DayContract
-import com.dbeginc.dbweather.viewmodels.weather.DayWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
  * Created by darel on 23.09.17.

@@ -25,6 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertNotNull
 
 
 /**
@@ -56,16 +57,16 @@ class WeatherRemoteApiTest {
     @Test
     fun shouldReturnWeather() {
         adapter.getWeather(50.45,30.5233).subscribe {
-            weather -> assert(weather != null)
+            weather -> assertNotNull(weather)
         }
     }
 
     @Test
     fun shouldReturnError() {
         adapter.getWeather(0.0, 0.0).subscribe({
-            weather -> weather == null
+            weather -> assertNotNull(weather)
         }, {
-            error -> assert(error != null)
+            error -> assertNotNull(error)
         })
     }
 }

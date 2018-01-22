@@ -17,21 +17,19 @@ package com.dbeginc.dbweather.utils.utility
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
 import com.dbeginc.dbweather.R
+import com.dbeginc.dbweather.config.managesources.sourcedetail.SourceDetailActivity
 import com.dbeginc.dbweather.databinding.ArticleItemBinding
 import com.dbeginc.dbweather.databinding.DailyListItemBinding
 import com.dbeginc.dbweather.databinding.LiveItemBinding
+import com.dbeginc.dbweather.databinding.SourceItemBinding
 import com.dbeginc.dbweather.intro.chooselocation.view.ChooseLocationFragment
 import com.dbeginc.dbweather.intro.gpslocationfinder.view.GpsLocationFinderFragment
 import com.dbeginc.dbweather.intro.view.IntroActivity
 import com.dbeginc.dbweather.main.view.MainActivity
-import com.dbeginc.dbweather.news.lives.LivesTabFragment
-import com.dbeginc.dbweather.news.lives.livedetail.view.LiveDetailActivity
-import com.dbeginc.dbweather.news.newspaper.articledetail.view.ArticleDetailActivity
-import com.dbeginc.dbweather.news.newspaper.view.NewsPaperTabFragment
+import com.dbeginc.dbweather.news.lives.livedetail.LiveDetailActivity
+import com.dbeginc.dbweather.news.newspaper.articledetail.ArticleDetailActivity
 import com.dbeginc.dbweather.splash.view.SplashActivity
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.*
 import com.dbeginc.dbweather.weather.daydetail.DayDetailActivity
@@ -68,57 +66,22 @@ object Navigator {
                 .commit()
     }
 
-    fun goToMainScreen(context: Context) {
-        val mainIntent = Intent(context, MainActivity::class.java)
-        context.startActivity(mainIntent)
-    }
+    fun goToMainScreen(context: Context) = context.startActivity(Intent(context, MainActivity::class.java))
 
     fun goToIntroScreen(splash: SplashActivity) {
-        val intro = Intent(splash, IntroActivity::class.java)
-        splash.startActivity(intro)
+        splash.startActivity(Intent(splash, IntroActivity::class.java))
         splash.finish()
-    }
-
-    fun goToNewsPaper(childFragmentManager: FragmentManager?, currentVisibleFragment: Fragment, articlesTabFragment: NewsPaperTabFragment, tag: String) {
-        val fragment = childFragmentManager?.findFragmentByTag(tag)
-        val transaction = childFragmentManager?.beginTransaction()
-
-        if (fragment == articlesTabFragment ) {
-            transaction
-                    ?.show(articlesTabFragment)
-                    ?.hide(currentVisibleFragment)
-
-        } else if (fragment == null) {
-            transaction
-                    ?.add(R.id.newsTabContent, articlesTabFragment, tag)
-                    ?.show(articlesTabFragment)
-        }
-
-        transaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)?.commit()
-    }
-
-    fun goToLives(childFragmentManager: FragmentManager?, currentVisibleFragment: Fragment, livesTabFragment: LivesTabFragment, tag: String) {
-        val fragment = childFragmentManager?.findFragmentByTag(tag)
-        val transaction = childFragmentManager?.beginTransaction()
-
-        if (fragment == livesTabFragment ) {
-            transaction
-                    ?.show(livesTabFragment)
-                    ?.hide(currentVisibleFragment)
-
-        } else if (fragment == null) {
-            transaction
-                    ?.add(R.id.newsTabContent, livesTabFragment, tag)
-                    ?.hide(currentVisibleFragment)
-                    ?.show(livesTabFragment)
-        }
-
-        transaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)?.commit()
     }
 
     fun goToLiveDetail(binding: LiveItemBinding) {
         val intent = Intent(binding.root.context, LiveDetailActivity::class.java)
         intent.putExtra(LIVES_DATA, binding.live)
+        binding.root.context.startActivity(intent)
+    }
+
+    fun goToSourceDetail(binding: SourceItemBinding) {
+        val intent = Intent(binding.root.context, SourceDetailActivity::class.java)
+        intent.putExtra(SOURCE_KEY, binding.source)
         binding.root.context.startActivity(intent)
     }
 }

@@ -16,7 +16,7 @@
 package com.dbeginc.dbweather.weather.adapters.hourly
 
 import android.support.v7.util.DiffUtil
-import com.dbeginc.dbweather.viewmodels.weather.HourWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.HourWeatherModel
 
 /**
  * Created by Bitsy Darel on 16.05.17.

@@ -19,8 +19,8 @@ import android.util.Log
 import com.dbeginc.dbweather.intro.chooselocation.ChooseLocationContract
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG
 import com.dbeginc.dbweather.utils.utility.addTo
-import com.dbeginc.dbweather.viewmodels.weather.LocationWeatherModel
-import com.dbeginc.dbweather.viewmodels.weather.toViewModel
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
+import com.dbeginc.dbweatherweather.viewmodels.toViewModel
 import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.usecases.weather.GetLocations
 import io.reactivex.disposables.CompositeDisposable
