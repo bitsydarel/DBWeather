@@ -15,26 +15,19 @@
 
 package com.dbeginc.dbweather.utils.utility
 
-import com.dbeginc.dbweather.base.BaseActivity
-import com.dbeginc.dbweather.base.BaseFragment
-import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsActivity
-import com.dbeginc.dbweather.config.managesources.sourcedetail.SourceDetailActivity
-import com.dbeginc.dbweather.config.managesources.ManageSourcesActivity
-import com.dbeginc.dbweather.config.view.ConfigurationTabFragment
-import com.dbeginc.dbweather.di.components.DBWeatherApplicationComponent
-import com.dbeginc.dbweather.intro.chooselocation.view.ChooseLocationFragment
-import com.dbeginc.dbweather.intro.gpslocationfinder.view.GpsLocationFinderFragment
-import com.dbeginc.dbweather.intro.view.IntroActivity
-import com.dbeginc.dbweather.news.lives.LivesTabFragment
-import com.dbeginc.dbweather.news.lives.livedetail.LiveDetailActivity
-import com.dbeginc.dbweather.news.lives.page.alllives.AllLivesTabPageFragment
-import com.dbeginc.dbweather.news.lives.page.favorite.FavoriteLivesTabFragment
-import com.dbeginc.dbweather.news.newspaper.articledetail.ArticleDetailActivity
-import com.dbeginc.dbweather.news.newspaper.NewsPaperTabFragment
-import com.dbeginc.dbweather.news.NewsTabFragment
-import com.dbeginc.dbweather.splash.view.SplashActivity
-import com.dbeginc.dbweather.utils.contentprovider.LocationSuggestionProvider
-import com.dbeginc.dbweather.weather.view.WeatherTabFragment
+import android.app.Activity
+import android.app.Application
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
+import android.view.View
+import com.dbeginc.dbweather.di.WithChildDependencies
+import com.dbeginc.dbweather.di.WithDependencies
+import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerApplication
+
 
 /**
  * Created by darel on 27.09.17.
@@ -42,43 +35,49 @@ import com.dbeginc.dbweather.weather.view.WeatherTabFragment
  * Dependency Injector
  */
 object Injector {
-    lateinit var appComponent: DBWeatherApplicationComponent
 
-    fun injectLocationProviderDep(provider: LocationSuggestionProvider) = appComponent.inject(provider)
+    fun init(application: DaggerApplication) {
 
-    fun injectWeatherTabDep(weatherTabFragment: WeatherTabFragment) = appComponent.inject(weatherTabFragment)
+        application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, p1: Bundle?) {
+                if (activity is WithDependencies) {
+                    AndroidInjection.inject(activity)
+                }
 
-    fun injectIntroDep(introActivity: IntroActivity) = appComponent.inject(introActivity)
+                if (activity is WithChildDependencies) {
+                    injectFragmentsDependencies(activity)
+                }
+            }
 
-    fun injectChooseLocation(chooseLocationFragment: ChooseLocationFragment) = appComponent.inject(chooseLocationFragment)
+            override fun onActivityPaused(p0: Activity?) {}
+            override fun onActivityResumed(p0: Activity?) {}
+            override fun onActivityStarted(p0: Activity?) {}
+            override fun onActivityDestroyed(p0: Activity?) {}
+            override fun onActivitySaveInstanceState(p0: Activity?, p1: Bundle?) {}
+            override fun onActivityStopped(p0: Activity?) {}
+        })
+    }
 
-    fun injectSplashDep(splashActivity: SplashActivity) = appComponent.inject(splashActivity)
+    private fun injectFragmentsDependencies(activity: Activity) {
+        if (activity is FragmentActivity) {
+            activity.supportFragmentManager
+                    .registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+                        override fun onFragmentCreated(fm: FragmentManager?, fragment: Fragment?, savedInstanceState: Bundle?) {
+                            if (fragment is WithDependencies) AndroidSupportInjection.inject(fragment)
 
-    fun injectGpsLocationFinder(gpsLocationFinderFragment: GpsLocationFinderFragment) = appComponent.inject(gpsLocationFinderFragment)
+                            if (fragment is WithChildDependencies) injectFragmentsChildDependencies(fragment)
+                        }
+                    }, true)
+        }
+    }
 
-    fun injectBaseActivityDep(baseActivity: BaseActivity) = appComponent.inject(baseActivity)
+    private fun injectFragmentsChildDependencies(fragment: Fragment) {
+        fragment.childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(fm: FragmentManager?, f: Fragment?, v: View?, savedInstanceState: Bundle?) {
+                if (f is WithDependencies) AndroidSupportInjection.inject(f)
 
-    fun injectBaseFragmentDep(baseFragment: BaseFragment) = appComponent.inject(baseFragment)
-
-    fun injectArticlesTabDep(articlesTabFragment: NewsPaperTabFragment) = appComponent.inject(articlesTabFragment)
-
-    fun injectNewsTabDep(newsTabFragment: NewsTabFragment) = appComponent.inject(newsTabFragment)
-
-    fun injectLivesPageDep(livesPageFragment: AllLivesTabPageFragment) = appComponent.inject(livesPageFragment)
-
-    fun injectLivesTabDep(livesTabFragment: LivesTabFragment) = appComponent.inject(livesTabFragment)
-
-    fun injectFavoriteLivesPageDep(favoriteLivesTabFragment: FavoriteLivesTabFragment) = appComponent.inject(favoriteLivesTabFragment)
-
-    fun injectLiveDetailDep(liveDetailActivity: LiveDetailActivity) = appComponent.inject(liveDetailActivity)
-
-    fun injectConfigurationDep(configurationTabFragment: ConfigurationTabFragment) = appComponent.inject(configurationTabFragment)
-
-    fun injectManageLocationsDep(manageLocationsActivity: ManageLocationsActivity) = appComponent.inject(manageLocationsActivity)
-
-    fun injectManageSourcesDep(manageSourcesActivity: ManageSourcesActivity) = appComponent.inject(manageSourcesActivity)
-
-    fun injectArticleDetailDep(articleDetailActivity: ArticleDetailActivity) = appComponent.inject(articleDetailActivity)
-
-    fun injectSourceDetailDep(sourceDetailActivity: SourceDetailActivity) = appComponent.inject(sourceDetailActivity)
+                if (f is WithChildDependencies) injectFragmentsChildDependencies(f)
+            }
+        }, true)
+    }
 }

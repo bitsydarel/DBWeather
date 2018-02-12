@@ -11,17 +11,19 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License
- */package com.dbeginc.dbweathernews.sourcesmanager.contract
+ */
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
-import com.dbeginc.dbweathernews.viewmodels.SourceModel
+package com.dbeginc.dbweathernews.sourcesmanager.contract
+
+import com.dbeginc.dbweathercommon.view.MVPVView
 
 /**
  * Created by darel on 18.11.17.
  *
  *  Sources Manager view
  */
-interface SourcesManagerView : IAsyncView {
-    fun displaySources(sources: List<SourceModel>)
+interface SourcesManagerView : MVPVView {
+    fun onSourcesRequestFailed()
+
     fun close()
 }

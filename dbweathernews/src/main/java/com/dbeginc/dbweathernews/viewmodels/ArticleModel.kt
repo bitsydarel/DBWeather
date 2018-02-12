@@ -16,6 +16,7 @@
 package com.dbeginc.dbweathernews.viewmodels
 
 import android.os.Parcelable
+import android.support.annotation.VisibleForTesting
 import kotlinx.android.parcel.Parcelize
 import java.util.regex.Pattern
 
@@ -26,48 +27,43 @@ import java.util.regex.Pattern
  */
 @Parcelize
 data class ArticleModel(val author: String, val title: String, val description: String?,
-                        val url: String, val urlToImage: String?, val publishedAt: String?,
+                        val url: String, val urlToImage: String?, val publishedAt: String,
                         val sourceId: String
 ) : Parcelable, Comparable<ArticleModel> {
 
     override fun compareTo(other: ArticleModel): Int {
-        val currentPublish = if (publishedAt == "...") (0).to(publishedAt)
-        else {
-            publishedAt?.split(regex=Pattern.compile("\\D"))
-                    ?.first { it.isNotEmpty() }
-                    ?.toInt()!!
-                    .to(publishedAt.split(regex= Pattern.compile("\\d")).first { it.isNotEmpty() })
-        }
+        val currentPublishTime: Pair<Short, String> = if ("..." == publishedAt) (0).toShort() to publishedAt else extractPublishTime(publishedAt)
 
-        val otherPublish = if (other.publishedAt == "...") (0).to(other.publishedAt)
-        else {
-            other.publishedAt?.split(regex=Pattern.compile("\\D"))
-                    ?.first { it.isNotEmpty() }
-                    ?.toInt()!!
-                    .to(other.publishedAt.split(regex= Pattern.compile("\\d")).first { it.isNotEmpty() })
-        }
+        val otherPublishTime: Pair<Short, String> = if (other.publishedAt == "...") (0).toShort() to other.publishedAt else extractPublishTime(other.publishedAt)
 
         return when {
-            currentPublish == otherPublish-> return IS_EQUAL
+            currentPublishTime == otherPublishTime -> return IS_EQUAL
             // Minutes Check
-            currentPublish.second == "m" && otherPublish.second == "m" -> return currentPublish.first.compareTo(otherPublish.first)
-            currentPublish.second == "m" -> return IS_LESS
-            otherPublish.second == "m" -> return IS_GREATER
+            currentPublishTime.second == "m" && otherPublishTime.second == "m" -> return currentPublishTime.first.compareTo(otherPublishTime.first)
+            currentPublishTime.second == "m" -> return IS_LESS
+            otherPublishTime.second == "m" -> return IS_GREATER
             // Hours check
-            currentPublish.second == "h" && otherPublish.second == "h" -> return currentPublish.first.compareTo(otherPublish.first)
-            currentPublish.second == "h" -> return IS_LESS
-            otherPublish.second == "h" -> return IS_GREATER
+            currentPublishTime.second == "h" && otherPublishTime.second == "h" -> return currentPublishTime.first.compareTo(otherPublishTime.first)
+            currentPublishTime.second == "h" -> return IS_LESS
+            otherPublishTime.second == "h" -> return IS_GREATER
             // No times check
-            currentPublish.second == "..." -> return IS_LESS
-            otherPublish.second == "..." -> return IS_GREATER
+            currentPublishTime.second == "..." -> return IS_LESS
+            otherPublishTime.second == "..." -> return IS_GREATER
             // Days check
-            else -> currentPublish.first.compareTo(otherPublish.first)
+            else -> currentPublishTime.first.compareTo(otherPublishTime.first)
         }
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun extractPublishTime(publishTime: String): Pair<Short, String> = publishTime.numericalPart() to publishTime.letterPart()
+
+    private fun String.numericalPart(): Short = this.split(regex = Pattern.compile("\\D")).first { it.isNotEmpty() }.toShort()
+
+    private fun String.letterPart(): String = this.split(regex = Pattern.compile("\\d")).first { it.isNotEmpty() }
+
     companion object {
-        private val IS_EQUAL = 0
-        private val IS_LESS = -1
-        private val IS_GREATER = 1
+        private const val IS_EQUAL = 0
+        private const val IS_LESS = -1
+        private const val IS_GREATER = 1
     }
 }

@@ -60,8 +60,13 @@ dependencies {
     implementation kotlinLibs.reflect
     implementation otherLibs.threetenabp
 
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation architectureComponentLibs.lifecycle_extensions
+
+    implementation "com.jakewharton.rxrelay2:rxrelay:2.0.0"
+
     testImplementation otherLibs.junit
+
+    compileOnly 'javax.inject:javax.inject:1'
 
     androidTestImplementation androidSupportLibs.android_test_runner
 }

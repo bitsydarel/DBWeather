@@ -15,18 +15,15 @@
 
 package com.dbeginc.dbweathernews.livedetail.presenter
 
-import com.dbeginc.dbweathernews.viewmodels.toViewModel
-import com.dbeginc.dbweathercommon.ThreadProvider
-import com.dbeginc.dbweathercommon.addTo
-import com.dbeginc.dbweathercommon.logger.Logger
+import android.support.annotation.VisibleForTesting
+import com.dbeginc.dbweathercommon.utils.ThreadProvider
+import com.dbeginc.dbweathercommon.utils.addTo
+import com.dbeginc.dbweathercommon.utils.onError
 import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
-import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import com.dbeginc.dbweatherdomain.usecases.news.GetFavoriteLives
-import com.dbeginc.dbweatherdomain.usecases.news.GetLive
-import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.livedetail.contract.LiveDetailPresenter
 import com.dbeginc.dbweathernews.livedetail.contract.LiveDetailView
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import com.dbeginc.dbweathernews.viewmodels.toViewModel
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -34,90 +31,64 @@ import io.reactivex.disposables.CompositeDisposable
  *
  * Live Detail Presenter Implementation
  */
-class LiveDetailPresenterImpl(private val getLive: GetLive, private val addLiveToFavorite: AddLiveToFavorite, private val removeLiveToFavorite: RemoveLiveToFavorite, private val getFavoriteLives: GetFavoriteLives, private val threads: ThreadProvider): LiveDetailPresenter {
-    private var view: LiveDetailView? = null
-    private var subscribed = true
+class LiveDetailPresenterImpl(private val model: NewsRepository, private val threads: ThreadProvider) : LiveDetailPresenter {
     private val subscription = CompositeDisposable()
+    private var subscribed = true
 
-    override fun bind(view: LiveDetailView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: LiveDetailView) = view.setupView()
 
-    override fun unBind() {
-        getLive.clean()
-        addLiveToFavorite.clean()
-        removeLiveToFavorite.clean()
-        getFavoriteLives.clean()
-        subscription.clear()
-    }
+    override fun unBind() = subscription.clear()
 
-    override fun loadLive() {
-        getLive.execute(LiveRequest(view!!.getLiveName(), Unit))
-                .doOnSubscribe { view?.showLoading() }
-                .doAfterTerminate { view?.hideLoading() }
+    override fun loadLive(view: LiveDetailView) {
+        model.getLive(view.getLiveName())
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate { view.hideLoading() }
                 .map { live -> live.toViewModel() }
-                .subscribe(this::onValue, this::onError)
+                .subscribe(view::displayLive, view::onError)
                 .addTo(subscription)
     }
 
-    override fun onBookmark() {
-        if (subscribed) {
-            removeLiveToFavorite.execute(LiveRequest(view!!.getLiveName(), Unit))
-                    .doOnSubscribe { view?.showLoading() }
-                    .doAfterTerminate { view?.hideLoading() }
-                    .subscribe(
-                            {
-                                subscribed = false
-                                view?.showLiveIsNotFavorite()
-                            },
-                            { error -> onError(error) }
-                    ).addTo(subscription)
-        } else {
-            addLiveToFavorite.execute(LiveRequest(view!!.getLiveName(), Unit))
-                    .doOnSubscribe { view?.showLoading() }
-                    .doAfterTerminate { view?.hideLoading() }
-                    .subscribe(
-                            {
-                                subscribed = true
-                                view?.showLiveIsFavorite()
-                            },
-                            { error -> onError(error) }
-                    ).addTo(subscription)
-        }
+    override fun onBookmark(view: LiveDetailView) = if (subscribed) removeLiveFromFavorites(view) else addLiveToFavorites(view)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun removeLiveFromFavorites(view: LiveDetailView) {
+        model.removeLiveFromFavorites(LiveRequest(view.getLiveName(), Unit))
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate { view.hideLoading() }
+                .subscribe({ updateSubscription(false, view::showLiveIsNotFavorite) }, view::onError)
+                .addTo(subscription)
     }
 
-    override fun onShare() {
-        view?.shareLive()
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun addLiveToFavorites(view: LiveDetailView) {
+        model.addLiveToFavorites(LiveRequest(view.getLiveName(), Unit))
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate { view.hideLoading() }
+                .subscribe({ updateSubscription(true, view::showLiveIsFavorite) }, view::onError)
+                .addTo(subscription)
     }
 
-    override fun onExitAction() {
-        view?.close()
-    }
+    override fun onShare(view: LiveDetailView) = view.shareLive()
 
-    override fun checkIfLiveFavorite() {
-        getFavoriteLives.execute(Unit)
+    override fun onExitAction(view: LiveDetailView) = view.close()
+
+    override fun checkIfLiveFavorite(view: LiveDetailView) {
+        model.getFavoriteLives()
                 .observeOn(threads.computation)
                 .flatMapIterable { favorites -> favorites }
-                .filter { liveName -> liveName == view?.getLiveName() }
+                .filter { liveName -> liveName == view.getLiveName() }
                 .firstElement()
                 .isEmpty
                 .observeOn(threads.ui)
                 .subscribe(
-                        { notFound ->
-                            subscribed = notFound
-                            if (notFound) view?.showLiveIsNotFavorite() else view?.showLiveIsFavorite()
-                        },
-                        { error -> onError(error) }
-                ).addTo(subscription)
+                        { notFound -> updateSubscription(notFound, if (notFound) view::showLiveIsNotFavorite else view::showLiveIsFavorite) },
+                        view::onError
+                )
+                .addTo(subscription)
     }
 
-    override fun onValue(newValue: LiveModel) {
-        view?.displayLive(newValue)
-    }
-
-    override fun onError(error: Throwable) {
-        Logger.error(LiveDetailPresenterImpl::class.java.simpleName, error.localizedMessage, error)
-        view?.showError(error.localizedMessage)
+    private fun updateSubscription(hasBeenSubscribe: Boolean, action: () -> Unit) {
+        subscribed = hasBeenSubscribe
+        action()
     }
 }

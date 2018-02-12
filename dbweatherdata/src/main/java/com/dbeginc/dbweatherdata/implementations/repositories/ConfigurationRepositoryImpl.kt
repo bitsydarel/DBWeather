@@ -54,16 +54,16 @@ class ConfigurationRepositoryImpl private constructor(private val preferences: S
                 .subscribeOn(thread.io)
     }
 
-    override fun changeWeatherNotificationStatus(isOn: Boolean): Completable {
+    override fun changeWeatherNotificationStatus(enable: Boolean): Completable {
         return Completable.fromAction {
-            preferences.edit().putBoolean(WEATHER_NOTIFICATION, isOn).apply()
+            preferences.edit().putBoolean(WEATHER_NOTIFICATION, enable).apply()
 
         }.observeOn(thread.ui).subscribeOn(thread.io).unsubscribeOn(thread.io)
     }
 
-    override fun changeNewsPapersTranslationStatus(isOn: Boolean): Completable {
+    override fun changeNewsPapersTranslationStatus(shouldTranslate: Boolean): Completable {
         return Completable.fromAction {
-            preferences.edit().putBoolean(NEWS_PAPER_TRANSLATION, isOn).apply()
+            preferences.edit().putBoolean(NEWS_PAPER_TRANSLATION, shouldTranslate).apply()
 
         }.observeOn(thread.ui).subscribeOn(thread.io).unsubscribeOn(thread.io)
     }

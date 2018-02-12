@@ -15,14 +15,13 @@
 
 package com.dbeginc.dbweathernews.lives.contract
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import com.dbeginc.dbweathercommon.view.MVPVView
 
 /**
  * Created by darel on 17.11.17.
  *
  * Lives View
  */
-interface LivesView: IAsyncView {
-    fun displayLives(lives: List<LiveModel>)
+interface LivesView : MVPVView {
+    fun onLivesRequestFailed()
 }

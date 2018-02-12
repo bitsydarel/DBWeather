@@ -83,4 +83,10 @@
         <item name="android:windowBackground">@color/ArticleDetailColorPrimary</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
+
+    <style name="WeatherSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorPrimary">@color/appColorPrimaryTextColor</item>
+        <item name="android:textColorSecondary">@color/appColorSecondaryTextColor</item>
+        <item name="android:textColorHighlight">@color/mainColorSecondaryLight</item>
+    </style>
 </resources>

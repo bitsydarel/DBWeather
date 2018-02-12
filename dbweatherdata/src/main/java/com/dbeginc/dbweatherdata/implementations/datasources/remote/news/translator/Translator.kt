@@ -22,7 +22,7 @@ import android.support.annotation.RestrictTo
  *
  * Translator
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 interface Translator {
     fun translate(text: String, language: String) : String
 }

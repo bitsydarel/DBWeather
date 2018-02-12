@@ -51,5 +51,11 @@ dependencies {
 
     implementation otherLibs.threetenabp
 
+    implementation "com.jakewharton.rxrelay2:rxrelay:2.0.0"
+
+    implementation architectureComponentLibs.lifecycle_extensions
+
+    compileOnly 'javax.inject:javax.inject:1'
+
     testImplementation otherLibs.junit
 }

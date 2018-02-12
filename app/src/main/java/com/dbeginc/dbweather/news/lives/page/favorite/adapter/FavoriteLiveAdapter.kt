@@ -43,8 +43,13 @@ class FavoriteLiveAdapter(data: List<LiveModel>) : RecyclerView.Adapter<Favorite
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteLiveViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return FavoriteLiveViewHolder(DataBindingUtil.inflate(inflater, R.layout.live_item, parent, false))
+        return FavoriteLiveViewHolder(
+                DataBindingUtil.inflate(
+                        LayoutInflater.from(parent.context),
+                        R.layout.live_item, parent,
+                        false
+                )
+        )
     }
 
     override fun onBindViewHolder(holder: FavoriteLiveViewHolder?, position: Int) {
@@ -65,17 +70,18 @@ class FavoriteLiveAdapter(data: List<LiveModel>) : RecyclerView.Adapter<Favorite
         favorites.sort()
 
         container?.post { result.dispatchUpdatesTo(this@FavoriteLiveAdapter) }
-
     }
 
     inner class FavoriteLiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.liveFavorite.remove()
+
             binding.liveThumbnail.setOnClickListener { Navigator.goToLiveDetail(binding) }
         }
 
         fun bindLive(liveModel: LiveModel) {
             binding.live = liveModel
+
             binding.executePendingBindings()
         }
     }

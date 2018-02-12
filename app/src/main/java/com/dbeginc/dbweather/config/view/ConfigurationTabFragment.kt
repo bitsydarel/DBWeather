@@ -15,20 +15,18 @@
 
 package com.dbeginc.dbweather.config.view
 
-import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
-import com.dbeginc.dbweather.config.ConfigurationTabContract
-import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsActivity
-import com.dbeginc.dbweather.config.managesources.ManageSourcesActivity
+import com.dbeginc.dbweather.config.presenter.ConfigurationTabPresenter
 import com.dbeginc.dbweather.databinding.FragmentConfigTabBinding
-import com.dbeginc.dbweather.utils.utility.*
+import com.dbeginc.dbweather.di.WithDependencies
+import com.dbeginc.dbweather.utils.utility.Navigator
+import com.dbeginc.dbweather.utils.utility.snack
 import com.google.android.gms.ads.AdRequest
 import javax.inject.Inject
 
@@ -37,21 +35,20 @@ import javax.inject.Inject
  *
  * Configuration Fragment
  */
-class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.ConfigurationTabView, View.OnClickListener {
-    @Inject lateinit var presenter: ConfigurationTabContract.ConfigurationTabPresenter
+class ConfigurationTabFragment : BaseFragment(), ConfigurationTabView, WithDependencies, View.OnClickListener {
+    @Inject
+    lateinit var presenter: ConfigurationTabPresenter
     private lateinit var binding: FragmentConfigTabBinding
-    private val configurationSaved by lazy { getString(R.string.configuration_changed) }
-
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
-
-        Injector.injectConfigurationDep(this)
-    }
 
     override fun onResume() {
         super.onResume()
 
-        setupAds()
+        val adRequest = AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
+                .build()
+
+        binding.configTabAd.loadAd(adRequest)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,9 +76,8 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
 
     override fun onClick(view: View) {
         when(view.id) {
-            R.id.manageLocationsLabel -> presenter.onManageLocation()
-            R.id.manageSourcesLabel -> presenter.onManageSources()
-            R.id.helpLabel -> presenter.onHelp()
+            R.id.manageLocationsLabel -> presenter.onManageLocation(this)
+            R.id.manageSourcesLabel -> presenter.onManageSources(this)
         }
     }
 
@@ -91,22 +87,18 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
 
         binding.manageSourcesLabel.setOnClickListener(this)
 
-        binding.helpLabel.setOnClickListener(this)
+        binding.weatherNotificationSwitch.setOnCheckedChangeListener { _, isOn -> presenter.onWeatherNotification(this, isOn) }
 
-        binding.weatherNotificationSwitch.setOnCheckedChangeListener { _, isOn -> presenter.onWeatherNotification(isOn) }
+        binding.translateNewsPaperSwitch.setOnCheckedChangeListener { _, isOn -> presenter.onNewsPaperTranslation(this, isOn) }
 
-        binding.translateNewsPaperSwitch.setOnCheckedChangeListener { _, isOn -> presenter.onNewsPaperTranslation(isOn) }
-
-        presenter.loadConfigurations()
+        presenter.loadConfigurations(this)
     }
 
     override fun cleanState() = presenter.unBind()
 
-    override fun goToManageLocationScreen() = startActivity(Intent(context, ManageLocationsActivity::class.java))
+    override fun goToManageLocationScreen() = Navigator.goToManageLocationScreen(this)
 
-    override fun goToManageSourcesScreen() = startActivity(Intent(context, ManageSourcesActivity::class.java))
-
-    override fun goToHelpScreen() = binding.configTabLayout.toast("Go to Help")
+    override fun goToManageSourcesScreen() = Navigator.goToManageSourcesScreen(this)
 
     override fun displayWeatherNotificationStatus(isOn: Boolean) {
         binding.weatherNotificationSwitch.isChecked = isOn
@@ -116,19 +108,6 @@ class ConfigurationTabFragment : BaseFragment(), ConfigurationTabContract.Config
         binding.translateNewsPaperSwitch.isChecked = isOn
     }
 
-    override fun showUpdatingStatus() = binding.updateStatus.show()
+    override fun showMessage(message: String) = binding.configTabLayout.snack(message)
 
-    override fun hideUpdatingStatus() = binding.updateStatus.hide()
-
-    override fun showStatusChanged() = binding.configTabLayout.snack(configurationSaved, duration=Snackbar.LENGTH_SHORT)
-
-    override fun showError(message: String) = binding.configTabLayout.snack(message)
-
-    private fun setupAds() {
-        val adRequest = AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
-                .build()
-        binding.configTabAd.loadAd(adRequest)
-    }
 }

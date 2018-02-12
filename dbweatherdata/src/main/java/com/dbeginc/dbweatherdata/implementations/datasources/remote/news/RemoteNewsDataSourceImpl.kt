@@ -32,7 +32,7 @@ import io.reactivex.Flowable
  *
  * Remote News Data Source Implementation
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 class RemoteNewsDataSourceImpl private constructor(private val newsRestAdapter: NewsRestAdapter) : RemoteNewsDataSource {
 
     companion object {

@@ -17,6 +17,7 @@ package com.dbeginc.dbweather.utils.utility
 
 import android.databinding.BindingAdapter
 import android.os.Build
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.view.View
@@ -31,6 +32,8 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.utils.glide.BlurBackgroundTarget
 import com.dbeginc.dbweather.utils.glide.BlurTransformation
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.YOUTUBE_THUMBNAIL_URL
+import com.dbeginc.dbweather.utils.views.animations.widgets.RainFallView
+import com.dbeginc.dbweather.utils.views.animations.widgets.SnowFallView
 import com.dbeginc.dbweatherweather.viewmodels.toFormattedTime
 import java.util.*
 
@@ -53,13 +56,11 @@ fun View.hide() {
 
 fun View.isVisible() : Boolean = visibility == View.VISIBLE
 
-fun View.toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
+fun View.isNotVisible(): Boolean = visibility == View.INVISIBLE || visibility == View.GONE
 
-fun ViewGroup.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
-    Snackbar.make(this, message, duration).show()
-}
+fun View.toast(message: String, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+fun ViewGroup.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) = Snackbar.make(this, message, duration).show()
 
 @BindingAdapter("setUpdateTime")
 fun setWeatherUpdateTime(textView: TextView, time: Long) {
@@ -117,4 +118,37 @@ fun setBlurBackground(viewGroup: ViewGroup, url: String?) {
                 .apply(RequestOptions.bitmapTransform(BlurTransformation(viewGroup.context)))
                 .into(BlurBackgroundTarget(viewGroup))
     }
+}
+
+fun ConstraintLayout.showRainingAnimation() {
+    val snowAnimation = findViewById<SnowFallView>(SnowFallView.VIEW_ID)
+
+    if (snowAnimation != null) removeView(snowAnimation)
+
+    if (findViewById<RainFallView>(RainFallView.VIEW_ID) == null) addView(RainFallView(context), getLayoutParameter())
+}
+
+fun ConstraintLayout.showSnowFallAnimation() {
+    val rainAnimation = findViewById<RainFallView>(RainFallView.VIEW_ID)
+
+    if (rainAnimation != null) removeView(rainAnimation)
+
+    if (findViewById<SnowFallView>(SnowFallView.VIEW_ID) == null) addView(SnowFallView(context), getLayoutParameter())
+}
+
+fun ConstraintLayout.removeWeatherAnimation() {
+    removeView(findViewById<SnowFallView>(SnowFallView.VIEW_ID))
+    removeView(findViewById<RainFallView>(RainFallView.VIEW_ID))
+}
+
+private fun getLayoutParameter(): ConstraintLayout.LayoutParams {
+    val params = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+
+    params.apply {
+        topToTop = R.id.weather_tab_layout
+        leftToLeft = R.id.weather_tab_layout
+        rightToRight = R.id.weather_tab_layout
+    }
+
+    return params
 }

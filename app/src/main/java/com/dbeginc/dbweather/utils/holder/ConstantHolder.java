@@ -1,6 +1,19 @@
-package com.dbeginc.dbweather.utils.holder;
+/*
+ *  Copyright (C) 2017 Darel Bitsy
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License
+ */
 
-import org.jetbrains.annotations.Nullable;
+package com.dbeginc.dbweather.utils.holder;
 
 /**
  * Created by Darel Bitsy on 18/02/17.
@@ -10,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 public class ConstantHolder {
 
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7125;
-    public static final String COMPONENT_NAME_KEY = "COMPONENT_NAME_KEY";
     public static final String NOTIFICATION_KEY = "notification_key";
     public static final String LATITUDE = "locationLatitude";
     public static final String LONGITUDE = "locationLongitude";
@@ -21,13 +33,7 @@ public class ConstantHolder {
     public static final String ARTICLES_DATA = "article_data";
     public static final String NEWS_PAPERS = "news_papers";
 
-    /****************************** DAY Constant ***********************************/
-    public static final String DAY_DATA = "day_data";
-
     /****************************** Hour Constant ***********************************/
-
-    public static final String WEATHER_INFO_KEY = "weather_info_key";
-    public static final String LOCATION_UPDATE = "dbweather_location_update";
 
     public static final String WEATHER_ALERT_CHANNEL_ID = "forecast_alert_id";
     public static final String WEATHER_ALERT_CHANNEL_NAME = "DBWeather forecast alert";

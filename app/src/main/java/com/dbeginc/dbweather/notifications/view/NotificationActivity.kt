@@ -26,6 +26,7 @@ import com.dbeginc.dbweather.notifications.NotificationContract
 import com.dbeginc.dbweather.notifications.presenter.NotificationPresenterImpl
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.NOTIFICATION_KEY
 import com.dbeginc.dbweather.utils.utility.Navigator
+import com.dbeginc.dbweather.utils.utility.toast
 import com.dbeginc.dbweather.viewmodels.notifications.WeatherNotificationModel
 
 /**
@@ -75,13 +76,9 @@ class NotificationActivity : AppCompatActivity(), NotificationContract.Notificat
     }
 
     /******************* Notification Custom view *******************/
-    override fun setupView() {
-        presenter.loadNotification()
-    }
+    override fun setupView() = presenter.loadNotification()
 
-    override fun cleanState() {
-        presenter.unBind()
-    }
+    override fun cleanState() = presenter.unBind()
 
     override fun displayNotification(notification: WeatherNotificationModel) {
         binding.notification = notification
@@ -89,9 +86,11 @@ class NotificationActivity : AppCompatActivity(), NotificationContract.Notificat
 
     override fun openMainScreen() {
         Navigator.goToMainScreen(this)
+
         finish()
     }
 
     override fun closeScreen() = finish()
 
+    override fun showMessage(message: String) = binding.root.toast(message)
 }

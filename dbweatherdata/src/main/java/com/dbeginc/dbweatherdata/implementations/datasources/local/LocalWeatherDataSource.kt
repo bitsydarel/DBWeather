@@ -16,13 +16,12 @@
 package com.dbeginc.dbweatherdata.implementations.datasources.local
 
 import android.support.annotation.RestrictTo
-import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
 import com.dbeginc.dbweatherdomain.entities.weather.Location
 import com.dbeginc.dbweatherdomain.entities.weather.Weather
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.Single
 
 /**
  * Created by darel on 15.09.17.
@@ -31,11 +30,11 @@ import io.reactivex.Single
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 interface LocalWeatherDataSource {
-    fun getWeather(request: WeatherRequest<String>) : Maybe<Weather>
+    fun getWeather(request: WeatherRequest<String>): Flowable<Weather>
 
-    fun getWeatherForLocation(locationName: String) : Single<Weather>
+    fun getWeatherForLocation(locationName: String): Flowable<Weather>
 
-    fun getLocations(request: LocationRequest) : Maybe<List<Location>>
+    fun getLocations(name: String): Maybe<List<Location>>
 
     fun getUserLocations() : Maybe<List<Location>>
 

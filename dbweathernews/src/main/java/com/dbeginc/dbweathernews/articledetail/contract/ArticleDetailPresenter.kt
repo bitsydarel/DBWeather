@@ -15,20 +15,19 @@
 
 package com.dbeginc.dbweathernews.articledetail.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
-import com.dbeginc.dbweathernews.viewmodels.ArticleModel
+import com.dbeginc.dbweathercommon.presenter.IPresenter
 
 /**
  * Created by darel on 17.11.17.
  *
  * Article Detail Presenter
  */
-interface ArticleDetailPresenter : IAsyncPresenter<ArticleDetailView, ArticleModel> {
-    fun loadArticle()
+interface ArticleDetailPresenter : IPresenter<ArticleDetailView> {
+    fun loadArticle(view: ArticleDetailView)
 
-    fun onShareAction()
+    fun onShareAction(view: ArticleDetailView)
 
-    fun onAction()
+    fun onAction(view: ArticleDetailView)
 
-    fun onExitAction()
+    fun onExitAction(view: ArticleDetailView)
 }

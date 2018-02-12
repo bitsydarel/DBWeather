@@ -16,12 +16,14 @@
 package com.dbeginc.dbweathercommon.view
 
 /**
- * Created by darel on 17.11.17.
+ * Created by darel on 09.02.18.
  *
- * Base definition of view
+ * Model View Presenter
  */
 interface IView {
     fun setupView()
 
     fun cleanState()
+
+    fun showMessage(message: String)
 }

@@ -21,13 +21,11 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ArticleDetailFeatureBinding
+import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.ARTICLES_DATA
-import com.dbeginc.dbweather.utils.utility.Injector
-import com.dbeginc.dbweather.utils.utility.remove
-import com.dbeginc.dbweather.utils.utility.show
 import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweathernews.articledetail.contract.ArticleDetailPresenter
 import com.dbeginc.dbweathernews.articledetail.contract.ArticleDetailView
@@ -40,7 +38,7 @@ import javax.inject.Inject
  *
  * Article Detail
  */
-class ArticleDetailActivity : BaseActivity(), ArticleDetailView {
+class ArticleDetailActivity : AppCompatActivity(), ArticleDetailView, WithDependencies {
     @Inject lateinit var presenter: ArticleDetailPresenter
     private lateinit var binding: ArticleDetailFeatureBinding
     private val sharedWith by lazy { getString(R.string.share_with) }
@@ -49,7 +47,6 @@ class ArticleDetailActivity : BaseActivity(), ArticleDetailView {
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        Injector.injectArticleDetailDep(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.article_detail_feature)
 
@@ -60,7 +57,6 @@ class ArticleDetailActivity : BaseActivity(), ArticleDetailView {
 
     override fun onDestroy() {
         super.onDestroy()
-
         cleanState()
     }
 
@@ -73,19 +69,20 @@ class ArticleDetailActivity : BaseActivity(), ArticleDetailView {
     override fun setupView() {
         setSupportActionBar(binding.articleDetailToolbar)
 
-        binding.articleDetailToolbar.setNavigationOnClickListener { presenter.onExitAction() }
+        binding.articleDetailToolbar.setNavigationOnClickListener { presenter.onExitAction(this) }
 
-        binding.shareArticleFab.setOnClickListener { presenter.onShareAction() }
+        binding.shareArticleFab.setOnClickListener { presenter.onShareAction(this) }
 
-        binding.openFullArticle.setOnClickListener { presenter.onAction() }
+        binding.openFullArticle.setOnClickListener { presenter.onAction(this) }
 
-        presenter.loadArticle()
+        presenter.loadArticle(this)
     }
 
     override fun cleanState() = presenter.unBind()
 
     override fun displayArticle(article: ArticleModel) {
         binding.article = article
+
         binding.executePendingBindings()
     }
 
@@ -103,10 +100,6 @@ class ArticleDetailActivity : BaseActivity(), ArticleDetailView {
         startActivity(Intent.createChooser(shareIntent, sharedWith))
     }
 
-    override fun showLoading() = binding.loadingStatus.show()
-
-    override fun hideLoading() = binding.loadingStatus.remove()
-
     override fun getSourceName(): String = binding.article!!.sourceId
 
     override fun close() = finish()
@@ -115,5 +108,6 @@ class ArticleDetailActivity : BaseActivity(), ArticleDetailView {
 
     override fun openFullArticle() = startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(binding.article?.url)), getString(R.string.open_with)))
 
-    override fun showError(error: String) = binding.articleDetailLayout.snack(error, duration=Snackbar.LENGTH_LONG)
+    override fun showMessage(message: String) = binding.articleDetailLayout.snack(message, duration = Snackbar.LENGTH_LONG)
+
 }

@@ -206,4 +206,9 @@
         <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
+
+    <style name="WeatherSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorPrimary">@color/appColorPrimaryTextColor</item>
+        <item name="android:textColorSecondary">@color/appColorSecondaryTextColor</item>
+    </style>
 </resources>

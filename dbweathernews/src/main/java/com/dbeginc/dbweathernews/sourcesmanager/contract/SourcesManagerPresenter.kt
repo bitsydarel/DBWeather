@@ -15,18 +15,15 @@
 
 package com.dbeginc.dbweathernews.sourcesmanager.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
-import com.dbeginc.dbweathernews.viewmodels.SourceModel
+import com.dbeginc.dbweathercommon.presenter.MVPVPresenter
 
 /**
  * Created by darel on 18.11.17.
  *
  * Sources Manager presenter
  */
-interface SourcesManagerPresenter : IAsyncPresenter<SourcesManagerView, List<SourceModel>> {
-    fun findSource(query: String)
+interface SourcesManagerPresenter : MVPVPresenter<SourcesManagerView> {
+    fun retrySourcesRequest()
 
-    fun loadSources()
-
-    fun onExitAction()
+    fun onExitAction(view: SourcesManagerView)
 }

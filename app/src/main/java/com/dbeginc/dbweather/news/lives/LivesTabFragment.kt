@@ -17,20 +17,20 @@ package com.dbeginc.dbweather.news.lives
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentLivesTabBinding
-import com.dbeginc.dbweather.utils.utility.Injector
+import com.dbeginc.dbweather.di.WithChildDependencies
 
 /**
  * Created by darel on 16.10.17.
  *
  * Lives Fragment
  */
-class LivesTabFragment : BaseFragment() {
+class LivesTabFragment : Fragment(), WithChildDependencies {
     private lateinit var binding: FragmentLivesTabBinding
     private lateinit var pagerAdapter: LivesPageAdapter
     private val liveTitle by lazy { getString(R.string.lives_tab_title) }
@@ -38,8 +38,6 @@ class LivesTabFragment : BaseFragment() {
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-
-        Injector.injectLivesTabDep(this)
 
         pagerAdapter = LivesPageAdapter(liveTitle, favoritesTitle, childFragmentManager)
     }

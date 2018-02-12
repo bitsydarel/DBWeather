@@ -15,45 +15,23 @@
 
 package com.dbeginc.dbweather.di.modules
 
-import com.dbeginc.dbweather.config.ConfigurationTabContract
-import com.dbeginc.dbweather.config.managelocations.ManageLocationsContract
+import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Resources
+import com.dbeginc.dbweather.config.managelocations.presenter.ManageLocationsPresenter
 import com.dbeginc.dbweather.config.managelocations.presenter.ManageLocationsPresenterImpl
+import com.dbeginc.dbweather.config.presenter.ConfigurationTabPresenter
 import com.dbeginc.dbweather.config.presenter.ConfigurationTabPresenterImpl
-import com.dbeginc.dbweather.intro.IntroContract
-import com.dbeginc.dbweather.intro.chooselocation.ChooseLocationContract
-import com.dbeginc.dbweather.intro.chooselocation.presenter.ChooseLocationPresenterImpl
-import com.dbeginc.dbweather.intro.gpslocationfinder.GpsLocationFinderContract
-import com.dbeginc.dbweather.intro.gpslocationfinder.presenter.GpsLocationFinderPresenterImpl
-import com.dbeginc.dbweather.intro.presenter.IntroPresenterImpl
-import com.dbeginc.dbweather.splash.SplashContract
+import com.dbeginc.dbweather.splash.presenter.SplashPresenter
 import com.dbeginc.dbweather.splash.presenter.SplashPresenterImpl
-import com.dbeginc.dbweather.weather.WeatherTabContract
-import com.dbeginc.dbweather.weather.presenter.WeatherTabPresenterImpl
-import com.dbeginc.dbweathercommon.ThreadProvider
-import com.dbeginc.dbweatherdomain.entities.weather.Location
-import com.dbeginc.dbweatherdomain.usecases.configurations.ChangeNewsPaperTranslationStatus
-import com.dbeginc.dbweatherdomain.usecases.configurations.ChangeWeatherNotificationStatus
-import com.dbeginc.dbweatherdomain.usecases.configurations.GetNewsPaperTranslationStatus
-import com.dbeginc.dbweatherdomain.usecases.configurations.GetWeatherNotificationStatus
-import com.dbeginc.dbweatherdomain.usecases.news.*
-import com.dbeginc.dbweatherdomain.usecases.weather.*
-import com.dbeginc.dbweathernews.articledetail.contract.ArticleDetailPresenter
-import com.dbeginc.dbweathernews.articledetail.presenter.ArticleDetailPresenterImpl
-import com.dbeginc.dbweathernews.favoritelives.contract.FavoriteLivesPresenter
-import com.dbeginc.dbweathernews.favoritelives.presenter.FavoriteLivesPresenterImpl
-import com.dbeginc.dbweathernews.livedetail.contract.LiveDetailPresenter
-import com.dbeginc.dbweathernews.livedetail.presenter.LiveDetailPresenterImpl
-import com.dbeginc.dbweathernews.lives.contract.LivesPresenter
-import com.dbeginc.dbweathernews.lives.presenter.LivesPresenterImpl
-import com.dbeginc.dbweathernews.newspapers.contract.NewsPapersPresenter
-import com.dbeginc.dbweathernews.newspapers.presenter.NewsPapersPresenterImpl
-import com.dbeginc.dbweathernews.sourcedetail.contract.SourceDetailPresenter
-import com.dbeginc.dbweathernews.sourcedetail.presenter.SourceDetailPresenterImpl
-import com.dbeginc.dbweathernews.sourcesmanager.contract.SourcesManagerPresenter
-import com.dbeginc.dbweathernews.sourcesmanager.presenter.SourcesManagerPresenterImpl
+import com.dbeginc.dbweather.utils.holder.ConstantHolder
+import com.dbeginc.dbweathercommon.utils.AppScope
+import com.dbeginc.dbweathercommon.utils.ThreadProvider
+import com.dbeginc.dbweatherdomain.repositories.configurations.ConfigurationsRepository
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
+import com.dbeginc.dbweatherdomain.repositories.weather.WeatherRepository
 import dagger.Module
 import dagger.Provides
-import io.reactivex.subjects.BehaviorSubject
 
 /**
  * Created by darel on 18.09.17.
@@ -63,53 +41,20 @@ import io.reactivex.subjects.BehaviorSubject
 @Module
 class PresentationModule {
     @Provides
-    fun provideSourceDetailPresenter(subscribeToSource: SubscribeToSource, unSubscribeToSource: UnSubscribeToSource, getSource: GetSource) : SourceDetailPresenter = SourceDetailPresenterImpl(subscribeToSource, unSubscribeToSource, getSource)
+    fun provideManageLocationsPresenter(model: WeatherRepository): ManageLocationsPresenter = ManageLocationsPresenterImpl(model, ThreadProvider)
 
     @Provides
-    fun provideArticleDetailPresenter(getArticle: GetArticle): ArticleDetailPresenter = ArticleDetailPresenterImpl(getArticle)
+    fun provideConfigurationTabPresenter(model: ConfigurationsRepository): ConfigurationTabPresenter = ConfigurationTabPresenterImpl(model)
 
     @Provides
-    fun provideManageSourcesPresenter(getAllSources: GetAllSources): SourcesManagerPresenter = SourcesManagerPresenterImpl(getAllSources, ThreadProvider)
+    fun provideSplashPresenter(model: NewsRepository): SplashPresenter = SplashPresenterImpl(model)
 
     @Provides
-    fun provideManageLocationsPresenter(getAllUserList: GetAllUserLocations, removeLocation: RemoveLocation) : ManageLocationsContract.ManageLocationsPresenter = ManageLocationsPresenterImpl(getAllUserList, removeLocation, ThreadProvider)
+    @AppScope
+    fun providesAppResource(context: Context): Resources = context.resources
 
     @Provides
-    fun provideConfigurationTabPresenter(changeNewsPaperTranslationStatus: ChangeNewsPaperTranslationStatus,
-                                         changeWeatherNotificationStatus: ChangeWeatherNotificationStatus,
-                                         getNewsPaperTranslationStatus: GetNewsPaperTranslationStatus,
-                                         getWeatherNotificationStatus: GetWeatherNotificationStatus) : ConfigurationTabContract.ConfigurationTabPresenter {
+    @AppScope
+    fun providesSharedPreferences(context: Context): SharedPreferences = context.getSharedPreferences(ConstantHolder.PREFS_NAME, Context.MODE_PRIVATE)
 
-        return ConfigurationTabPresenterImpl(getWeatherNotificationStatus, getNewsPaperTranslationStatus, changeWeatherNotificationStatus, changeNewsPaperTranslationStatus)
-    }
-
-    @Provides
-    fun provideLiveDetailPresenter(getLive: GetLive, removeLiveToFavorite: RemoveLiveToFavorite, addLiveToFavorite: AddLiveToFavorite, getFavoriteLives: GetFavoriteLives): LiveDetailPresenter =
-            LiveDetailPresenterImpl(getLive, addLiveToFavorite, removeLiveToFavorite, getFavoriteLives, ThreadProvider)
-
-    @Provides
-    fun provideAllLivesTabPresenter(getAllLives: GetAllLives, getFavoriteLives: GetFavoriteLives): LivesPresenter = LivesPresenterImpl(getAllLives, getFavoriteLives, ThreadProvider)
-
-    @Provides
-    fun provideFavoriteLivesTabPresenter(getFavoriteLives: GetFavoriteLives, getLives: GetLives) : FavoriteLivesPresenter =
-            FavoriteLivesPresenterImpl(getFavoriteLives, getLives, ThreadProvider)
-
-    @Provides
-    fun provideWeatherTabPresenter(getLocations: GetLocations, getWeather: GetWeather, getAllUserList: GetAllUserLocations, locationSearchEvent: BehaviorSubject<List<Location>>, getWeatherByLocation: GetWeatherByLocation) : WeatherTabContract.WeatherTabPresenter =
-            WeatherTabPresenterImpl(getLocations, getWeather, getWeatherByLocation, getAllUserList, locationSearchEvent, ThreadProvider)
-
-    @Provides
-    fun provideArticlesTabPresenter(getArticles: GetArticles, getSubscribedSources: GetSubscribedSources) : NewsPapersPresenter = NewsPapersPresenterImpl(getArticles, getSubscribedSources, ThreadProvider)
-
-    @Provides
-    fun provideIntroPresenter() : IntroContract.IntroPresenter = IntroPresenterImpl()
-
-    @Provides
-    fun provideSplashPresenter(defineDefaultSubscribedSources: DefineDefaultSubscribedSources) : SplashContract.SplashPresenter = SplashPresenterImpl(defineDefaultSubscribedSources)
-
-    @Provides
-    fun provideChooseLocationPresenter(getLocations: GetLocations) : ChooseLocationContract.ChooseLocationPresenter = ChooseLocationPresenterImpl(getLocations)
-
-    @Provides
-    fun provideGpsLocationFinderPresenter() : GpsLocationFinderContract.GpsLocationFinderPresenter = GpsLocationFinderPresenterImpl()
 }

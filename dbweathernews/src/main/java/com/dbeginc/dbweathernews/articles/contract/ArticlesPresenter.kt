@@ -24,7 +24,7 @@ import com.dbeginc.dbweathernews.viewmodels.ArticleModel
  * Articles Presenter
  */
 interface ArticlesPresenter : IPresenter<ArticlesView>{
-    fun loadArticles()
+    fun loadArticles(view: ArticlesView)
 
-    fun updateModel(articles: List<ArticleModel>)
+    fun updateModel(view: ArticlesView, articles: List<ArticleModel>)
 }

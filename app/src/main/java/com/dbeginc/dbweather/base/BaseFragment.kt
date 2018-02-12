@@ -15,17 +15,14 @@
 
 package com.dbeginc.dbweather.base
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
-import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-import com.dbeginc.dbweather.utils.utility.Injector
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 /**
@@ -33,23 +30,12 @@ import javax.inject.Inject
  * Base Fragment
  */
 
-open class BaseFragment : Fragment() {
-    @Inject lateinit var applicationPreferences: ApplicationPreferences
-
+open class BaseFragment : DaggerFragment() {
+    @Inject
+    lateinit var preferences: ApplicationPreferences
     @Inject lateinit var appContext: Context
-
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
-        Injector.injectBaseFragmentDep(this)
-    }
-
-    protected fun isNetworkAvailable() : Boolean {
-        val manager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        val networkInfo: NetworkInfo? = manager.activeNetworkInfo
-
-        return networkInfo != null && networkInfo.isConnected
-    }
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
 
     protected fun askLocationPermIfNeeded(): Boolean {
         if (ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -60,16 +46,16 @@ open class BaseFragment : Fragment() {
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
 
-        } else applicationPreferences.changeGpsStatus(true)
+        } else preferences.changeGpsPermissionStatus(true)
 
-        return applicationPreferences.isGpsOn()
+        return preferences.isGpsPermissionOn()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            applicationPreferences.changeGpsStatus(grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED)
+            preferences.changeGpsPermissionStatus(grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED)
         }
     }
 }

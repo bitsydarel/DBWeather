@@ -15,13 +15,12 @@
 
 package com.dbeginc.dbweathernews.articledetail.presenter
 
-import com.dbeginc.dbweathernews.viewmodels.toViewModel
-import com.dbeginc.dbweathercommon.logger.Logger
+import com.dbeginc.dbweathercommon.utils.onError
 import com.dbeginc.dbweatherdomain.entities.requests.news.ArticleRequest
-import com.dbeginc.dbweatherdomain.usecases.news.GetArticle
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.articledetail.contract.ArticleDetailPresenter
 import com.dbeginc.dbweathernews.articledetail.contract.ArticleDetailView
-import com.dbeginc.dbweathernews.viewmodels.ArticleModel
+import com.dbeginc.dbweathernews.viewmodels.toViewModel
 import io.reactivex.disposables.Disposable
 import org.threeten.bp.ZonedDateTime
 
@@ -30,44 +29,25 @@ import org.threeten.bp.ZonedDateTime
  *
  * Article Detail Presenter Implementation
  */
-class ArticleDetailPresenterImpl(private val getArticle: GetArticle) : ArticleDetailPresenter {
-    private var view: ArticleDetailView? = null
+class ArticleDetailPresenterImpl(private val model: NewsRepository) : ArticleDetailPresenter {
     private var subscription: Disposable? = null
 
-    override fun bind(view: ArticleDetailView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: ArticleDetailView) = view.setupView()
 
     override fun unBind() {
         subscription?.dispose()
-        this.view = null
     }
 
-    override fun loadArticle() {
-        subscription = getArticle.execute(ArticleRequest(view!!.getSourceName(), view!!.getArticleUrl(), Unit))
-                .map { article -> article.toViewModel(view!!.getDefaultAuthorName(), ZonedDateTime.now().toInstant()) }
-                .subscribe(this::onValue, this::onError)
+    override fun loadArticle(view: ArticleDetailView) {
+        model.getArticle(ArticleRequest(view.getSourceName(), view.getArticleUrl(), Unit))
+                .map { article -> article.toViewModel(view.getDefaultAuthorName(), ZonedDateTime.now().toInstant()) }
+                .subscribe(view::displayArticle, view::onError)
+                .also { subscription = it }
     }
 
-    override fun onShareAction() {
-        view?.shareArticle()
-    }
+    override fun onShareAction(view: ArticleDetailView) = view.shareArticle()
 
-    override fun onAction() {
-        view?.openFullArticle()
-    }
+    override fun onAction(view: ArticleDetailView) = view.openFullArticle()
 
-    override fun onExitAction() {
-        view?.close()
-    }
-
-    override fun onValue(newValue: ArticleModel) {
-        view?.displayArticle(newValue)
-    }
-
-    override fun onError(error: Throwable) {
-        Logger.error(ArticleDetailPresenterImpl::class.java.canonicalName, error.localizedMessage, error)
-        view?.showError(error.localizedMessage)
-    }
+    override fun onExitAction(view: ArticleDetailView) = view.close()
 }

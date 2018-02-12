@@ -17,8 +17,8 @@ package com.dbeginc.dbweather.weather.adapters.daily.view
 
 import android.support.v7.widget.RecyclerView
 import com.dbeginc.dbweather.databinding.DailyListItemBinding
-import com.dbeginc.dbweather.weather.adapters.daily.DayContract
 import com.dbeginc.dbweather.utils.utility.toast
+import com.dbeginc.dbweather.weather.adapters.daily.presenter.DayPresenter
 import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
@@ -26,7 +26,7 @@ import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
  *
  * Day View Implementation
  */
-class DayViewHolder(val binding: DailyListItemBinding) : RecyclerView.ViewHolder(binding.root), DayContract.DayView {
+class DayViewHolder(val binding: DailyListItemBinding) : RecyclerView.ViewHolder(binding.root), DayView {
     override fun setupView() { /* Not needed for now */}
 
     override fun cleanState() { /* No resource to clean */ }
@@ -40,7 +40,9 @@ class DayViewHolder(val binding: DailyListItemBinding) : RecyclerView.ViewHolder
 //        Navigator.goToDayDetailScreen(binding)
     }
 
-    override fun setupActionListener(presenter: DayContract.DayPresenter) {
+    override fun setupActionListener(presenter: DayPresenter) {
         binding.dayLayout.setOnClickListener { presenter.goToDayDetail() }
     }
+
+    override fun showMessage(message: String) = binding.root.toast(message)
 }

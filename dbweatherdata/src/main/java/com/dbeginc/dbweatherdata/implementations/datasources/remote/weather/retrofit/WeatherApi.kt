@@ -27,7 +27,7 @@ import retrofit2.http.Query
  *
  * Weather Api Service
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 interface WeatherApi {
     @GET("forecast/{apiKey}/{coordinates}")
     fun getWeather(

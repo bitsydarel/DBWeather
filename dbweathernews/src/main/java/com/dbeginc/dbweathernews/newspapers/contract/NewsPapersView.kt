@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweathernews.newspapers.contract
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
+import com.dbeginc.dbweathercommon.view.MVPVView
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 
 /**
@@ -23,8 +23,8 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  *
  * NewsPapers View
  */
-interface NewsPapersView : IAsyncView {
+interface NewsPapersView : MVPVView {
     fun displayNewsPapers(newsPapers: List<NewsPaperModel>)
 
-    fun getDefaultAuthorName(): String
+    fun onRequestNewsFailed()
 }

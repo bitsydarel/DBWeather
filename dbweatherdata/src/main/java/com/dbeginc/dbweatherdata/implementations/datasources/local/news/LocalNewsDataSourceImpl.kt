@@ -31,6 +31,7 @@ import com.dbeginc.dbweatherdomain.entities.requests.news.ArticleRequest
 import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
 import com.dbeginc.dbweatherdomain.entities.requests.news.NewsRequest
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
@@ -48,7 +49,7 @@ class LocalNewsDataSourceImpl private constructor(private val db: LocalNewsDatab
         }
     }
 
-    override fun getArticles(request: NewsRequest<Unit>): Maybe<List<Article>> {
+    override fun getArticles(request: NewsRequest<Unit>): Flowable<List<Article>> {
         return db.newsDao().getArticles(request.sources.map { source -> source.name })
                 .map { articles -> articles.map { article -> article.toDomain()  } }
     }
@@ -60,7 +61,7 @@ class LocalNewsDataSourceImpl private constructor(private val db: LocalNewsDatab
 
     override fun putArticles(articles: List<Article>): Completable = Completable.fromAction { db.newsDao().putArticles(articles.map { article -> article.toProxy() }) }
 
-    override fun getSources(): Maybe<List<Source>> {
+    override fun getSources(): Flowable<List<Source>> {
         return db.newsDao().getSources()
                 .map { sources -> sources.map { source -> source.toDomain() } }
     }
@@ -80,7 +81,7 @@ class LocalNewsDataSourceImpl private constructor(private val db: LocalNewsDatab
 
     override fun putSources(sources: List<Source>): Completable = Completable.fromAction { db.newsDao().putSources(sources.map { source -> source.toProxy() }) }
 
-    override fun getAllLives(): Maybe<List<Live>> = db.newsDao().getAllLives().map { lives -> lives.map { live -> live.toDomain() } }
+    override fun getAllLives(): Flowable<List<Live>> = db.newsDao().getAllLives().map { lives -> lives.map { live -> live.toDomain() } }
 
     override fun getLives(names: List<String>): Maybe<List<Live>> = db.newsDao().getLives(names).map { lives -> lives.map { live -> live.toDomain() } }
 

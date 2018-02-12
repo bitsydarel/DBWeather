@@ -28,7 +28,7 @@ import org.apache.commons.text.StringEscapeUtils
  *
  * Google Translate
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 class GoogleTranslate : Translator {
     private val service: Translate = Translate
             .Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(),null)

@@ -21,23 +21,25 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
+import com.dbeginc.dbweather.intro.chooselocation.adapter.presenter.ChooseLocationItemPresenter
+import com.dbeginc.dbweather.intro.chooselocation.adapter.presenter.ChooseLocationItemPresenterImpl
 import com.dbeginc.dbweather.intro.chooselocation.adapter.view.ChooseLocationViewHolder
 import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
-import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationItemContract.ChooseLocationItemPresenter
-import com.dbeginc.dbweather.intro.chooselocation.adapter.presenter.ChooseLocationItemPresenterImpl
 import io.reactivex.subjects.PublishSubject
+import java.util.*
 
 /**
  * Created by darel on 30.09.17.
  *
  * Choose Location Adapter
  */
-class ChooseLocationAdapter(locations: MutableList<LocationWeatherModel>, val locationEvent: PublishSubject<LocationWeatherModel>) : RecyclerView.Adapter<ChooseLocationViewHolder>() {
+class ChooseLocationAdapter(locations: List<LocationWeatherModel>) : RecyclerView.Adapter<ChooseLocationViewHolder>() {
     private var container: RecyclerView? = null
-    private val presenters: MutableList<ChooseLocationItemPresenter>
+    private val presenters: LinkedList<ChooseLocationItemPresenter>
+    val locationSelectionEvent: PublishSubject<LocationWeatherModel> = PublishSubject.create()
 
     init {
-        presenters = locations.map { location -> ChooseLocationItemPresenterImpl(location) }.toMutableList()
+        presenters = LinkedList(locations.map { location -> ChooseLocationItemPresenterImpl(location) })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ChooseLocationViewHolder {
@@ -45,7 +47,7 @@ class ChooseLocationAdapter(locations: MutableList<LocationWeatherModel>, val lo
 
         return ChooseLocationViewHolder(
                 DataBindingUtil.inflate(inflater, R.layout.location_item, container, false),
-                locationEvent
+                locationSelectionEvent
         )
     }
 
@@ -60,7 +62,7 @@ class ChooseLocationAdapter(locations: MutableList<LocationWeatherModel>, val lo
         // to it's presenter
         holder.setupClickForwarding(presenter)
 
-        presenter.loadLocation()
+        presenter.loadLocation(holder)
     }
 
     override fun getItemCount(): Int = presenters.size

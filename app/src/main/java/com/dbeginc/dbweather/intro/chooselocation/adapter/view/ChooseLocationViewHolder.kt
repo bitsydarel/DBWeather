@@ -17,7 +17,8 @@ package com.dbeginc.dbweather.intro.chooselocation.adapter.view
 
 import android.support.v7.widget.RecyclerView
 import com.dbeginc.dbweather.databinding.LocationItemBinding
-import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationItemContract
+import com.dbeginc.dbweather.intro.chooselocation.adapter.presenter.ChooseLocationItemPresenter
+import com.dbeginc.dbweather.utils.utility.toast
 import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 import io.reactivex.subjects.PublishSubject
 
@@ -26,7 +27,8 @@ import io.reactivex.subjects.PublishSubject
  *
  * Choose Location View Holder
  */
-class ChooseLocationViewHolder(val binding: LocationItemBinding, val locationEvent: PublishSubject<LocationWeatherModel>) : RecyclerView.ViewHolder(binding.root), ChooseLocationItemContract.ChooseLocationItemView {
+class ChooseLocationViewHolder(val binding: LocationItemBinding, private val locationEvent: PublishSubject<LocationWeatherModel>) : RecyclerView.ViewHolder(binding.root), ChooseLocationItemView {
+
     override fun setupView() { /******* Not needed *******/ }
 
     override fun cleanState() { /******* Not needed *******/ }
@@ -36,10 +38,11 @@ class ChooseLocationViewHolder(val binding: LocationItemBinding, val locationEve
         binding.executePendingBindings()
     }
 
-    override fun setupClickForwarding(presenter: ChooseLocationItemContract.ChooseLocationItemPresenter) {
-        binding.root.setOnClickListener { presenter.onClick() }
+    override fun setupClickForwarding(presenter: ChooseLocationItemPresenter) {
+        binding.root.setOnClickListener { presenter.onClick(this) }
     }
 
     override fun defineUserLocation(location: LocationWeatherModel) = locationEvent.onNext(location)
 
+    override fun showMessage(message: String) = binding.root.toast(message)
 }

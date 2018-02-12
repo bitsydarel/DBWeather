@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract
 
-import com.dbeginc.dbweather.base.IPresenter
+import com.dbeginc.dbweathercommon.presenter.IPresenter
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
 
 /**
@@ -24,9 +24,9 @@ import com.dbeginc.dbweathernews.viewmodels.LiveModel
  * Live Presenter
  */
 interface LivePresenter : IPresenter<LiveView> {
-    fun loadLive()
+    fun loadLive(view: LiveView)
 
     fun getData(): LiveModel
 
-    fun onAction()
+    fun onAction(view: LiveView)
 }

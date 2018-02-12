@@ -50,9 +50,14 @@ dependencies {
     }
     api rxLibs.rxAndroid
 
-    kotlinLibs.stdlib
+    implementation kotlinLibs.stdlib
 
     compileOnly androidSupportLibs.appcompat_v7
+    compileOnly 'javax.inject:javax.inject:1'
+
+    implementation('com.crashlytics.sdk.android:crashlytics:2.7.0@aar') {
+        transitive = true
+    }
 
     testImplementation otherLibs.junit
 }

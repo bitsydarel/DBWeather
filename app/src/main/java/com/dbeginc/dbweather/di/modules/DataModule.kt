@@ -16,17 +16,17 @@
 package com.dbeginc.dbweather.di.modules
 
 import android.content.Context
-import com.dbeginc.dbweather.di.scopes.AppScope
+import android.content.SharedPreferences
+import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
+import com.dbeginc.dbweathercommon.utils.AppScope
 import com.dbeginc.dbweatherdata.implementations.repositories.ConfigurationRepositoryImpl
 import com.dbeginc.dbweatherdata.implementations.repositories.NewsRepositoryImpl
 import com.dbeginc.dbweatherdata.implementations.repositories.WeatherRepositoryImpl
-import com.dbeginc.dbweatherdomain.entities.weather.Location
 import com.dbeginc.dbweatherdomain.repositories.configurations.ConfigurationsRepository
 import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweatherdomain.repositories.weather.WeatherRepository
 import dagger.Module
 import dagger.Provides
-import io.reactivex.subjects.BehaviorSubject
 
 /**
  * Created by darel on 18.09.17.
@@ -38,25 +38,23 @@ class DataModule {
 
     @AppScope
     @Provides
-    internal fun provideWeatherRepository(context: Context) : WeatherRepository {
+    fun provideWeatherRepository(context: Context): WeatherRepository {
         return WeatherRepositoryImpl.create(context)
     }
 
     @AppScope
     @Provides
-    internal fun provideNewsRepository(context: Context) : NewsRepository {
+    fun provideNewsRepository(context: Context): NewsRepository {
         return NewsRepositoryImpl.create(context)
     }
 
     @AppScope
     @Provides
-    internal fun provideConfigurationRepository(context: Context): ConfigurationsRepository {
+    fun provideConfigurationRepository(context: Context): ConfigurationsRepository {
         return ConfigurationRepositoryImpl.create(context)
     }
 
     @Provides
     @AppScope
-    internal fun provideSearchQueryResponse() : BehaviorSubject<List<Location>> {
-        return BehaviorSubject.create()
-    }
+    fun provideApplicationPreferences(sharedPreferences: SharedPreferences): ApplicationPreferences = ApplicationPreferences(sharedPreferences)
 }

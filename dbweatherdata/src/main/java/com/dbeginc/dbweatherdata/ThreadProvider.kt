@@ -16,6 +16,7 @@
 package com.dbeginc.dbweatherdata
 
 import android.support.annotation.RestrictTo
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -26,7 +27,7 @@ import io.reactivex.schedulers.Schedulers
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object ThreadProvider {
-    val io = Schedulers.io()
-    val computation = Schedulers.computation()
-    val ui = AndroidSchedulers.mainThread()
+    val io: Scheduler = Schedulers.io()
+    val computation: Scheduler = Schedulers.computation()
+    val ui: Scheduler = AndroidSchedulers.mainThread()
 }

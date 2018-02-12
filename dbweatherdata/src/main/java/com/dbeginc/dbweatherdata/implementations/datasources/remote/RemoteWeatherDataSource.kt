@@ -16,7 +16,6 @@
 package com.dbeginc.dbweatherdata.implementations.datasources.remote
 
 import android.support.annotation.RestrictTo
-import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
 import com.dbeginc.dbweatherdomain.entities.weather.Location
 import com.dbeginc.dbweatherdomain.entities.weather.Weather
@@ -27,9 +26,9 @@ import io.reactivex.Flowable
  *
  * Remote Weather Repository
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 interface RemoteWeatherDataSource {
     fun getWeather(request: WeatherRequest<Unit>) : Flowable<Weather>
     fun getWeatherForLocation(request: WeatherRequest<Unit>) : Flowable<Weather>
-    fun getLocations(request: LocationRequest) : Flowable<List<Location>>
+    fun getLocations(name: String): Flowable<List<Location>>
 }

@@ -27,7 +27,6 @@ import com.dbeginc.dbweather.news.lives.page.favorite.FavoriteLivesTabFragment
  * Lives Page Adapter
  */
 class LivesPageAdapter(private val liveTitle: String, private val favoriteTitle:String, fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
-
     override fun getItem(position: Int): Fragment = when(position) {
         0 -> AllLivesTabPageFragment()
         1 -> FavoriteLivesTabFragment()

@@ -23,7 +23,6 @@ import com.dbeginc.dbweatherdata.implementations.datasources.local.weather.room.
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalLocation
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalWeather
 import com.dbeginc.dbweatherdata.proxies.mappers.toDomain
-import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
 import io.reactivex.Maybe
 import io.reactivex.plugins.RxJavaPlugins
@@ -84,7 +83,7 @@ class LocalWeatherDataSourceImplTest {
     fun getLocations() {
         Mockito.`when`(locationDB.weatherDao().getLocations(weather.location.locationName)).thenReturn(Maybe.just(listOf(weather.location)))
 
-        localWeatherDataSource.getLocations(LocationRequest(weather.location.locationName))
+        localWeatherDataSource.getLocations(weather.location.locationName)
                 .test()
                 .assertValue(listOf(weather.location.toDomain()))
     }

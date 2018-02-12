@@ -18,38 +18,44 @@ package com.dbeginc.dbweather.splash.view
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivitySplashBinding
-import com.dbeginc.dbweather.splash.SplashContract
-import com.dbeginc.dbweather.utils.utility.Injector
+import com.dbeginc.dbweather.di.WithDependencies
+import com.dbeginc.dbweather.splash.presenter.SplashPresenter
+import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
 import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.toast
 import com.github.florent37.viewanimator.ViewAnimator
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
 /**
  * Created by Darel Bitsy on 13/02/17.
+ *
  * Welcome screen and initializer
  */
-
-class SplashActivity : BaseActivity(), SplashContract.SplashView {
-    @Inject lateinit var presenter: SplashContract.SplashPresenter
+class SplashActivity : DaggerAppCompatActivity(), SplashView, WithDependencies {
+    @Inject
+    lateinit var presenter: SplashPresenter
+    @Inject
+    lateinit var applicationPreferences: ApplicationPreferences
     private lateinit var binding: ActivitySplashBinding
     private val defaultSources by lazy { resources.getStringArray(R.array.default_sources) }
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        Injector.injectSplashDep(this)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
     }
 
     override fun onResume() {
         super.onResume()
+
         presenter.bind(this)
     }
 
     override fun onStop() {
         super.onStop()
+
         cleanState()
     }
 
@@ -57,6 +63,7 @@ class SplashActivity : BaseActivity(), SplashContract.SplashView {
 
     override fun displayMainScreen() {
         Navigator.goToMainScreen(this)
+
         finish()
     }
 
@@ -71,14 +78,12 @@ class SplashActivity : BaseActivity(), SplashContract.SplashView {
                 .zoomOut()
                 .bounce()
                 .zoomIn()
-                .onStop { presenter.onSplashLaunched() }
+                .onStop { presenter.onSplashLaunched(this) }
                 .duration(resources.getInteger(android.R.integer.config_shortAnimTime).toLong())
                 .start()
     }
 
     override fun cleanState() = presenter.unBind()
 
-    override fun showError(message: String) {
-        binding.madeByMe.toast(message)
-    }
+    override fun showMessage(message: String) = binding.madeByMe.toast(message)
 }

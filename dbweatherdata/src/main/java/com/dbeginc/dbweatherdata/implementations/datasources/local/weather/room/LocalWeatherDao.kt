@@ -20,6 +20,7 @@ import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.ConstantHolder
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalLocation
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalWeather
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
@@ -40,10 +41,10 @@ interface LocalWeatherDao {
      * @return [Single] of [LocalWeather]
      */
     @Query(value = "SELECT * FROM ${ConstantHolder.WEATHER_TABLE} WHERE location_name LIKE :location")
-    fun getWeatherByLocation(location: String) : Maybe<LocalWeather>
+    fun getWeatherByLocation(location: String): Flowable<LocalWeather>
 
-    @Query(value="SELECT location_name, location_latitude, location_longitude, country_code, country_name FROM ${ConstantHolder.WEATHER_TABLE} WHERE location_name LIKE :query")
-    fun getLocations(query: String) : Maybe<List<LocalLocation>>
+    @Query(value = "SELECT location_name, location_latitude, location_longitude, country_code, country_name FROM ${ConstantHolder.WEATHER_TABLE} WHERE location_name LIKE :name")
+    fun getLocations(name: String): Maybe<List<LocalLocation>>
 
     @Query(value="SELECT location_name, location_latitude, location_longitude, country_code, country_name FROM ${ConstantHolder.WEATHER_TABLE}")
     fun getUserLocations() : Maybe<List<LocalLocation>>

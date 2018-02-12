@@ -15,14 +15,12 @@
 
 package com.dbeginc.dbweathernews.favoritelives.presenter
 
-import com.dbeginc.dbweathernews.viewmodels.toViewModel
-import com.dbeginc.dbweathercommon.ThreadProvider
-import com.dbeginc.dbweathercommon.logger.Logger
-import com.dbeginc.dbweatherdomain.usecases.news.GetFavoriteLives
-import com.dbeginc.dbweatherdomain.usecases.news.GetLives
+import com.dbeginc.dbweathercommon.utils.ThreadProvider
+import com.dbeginc.dbweathercommon.utils.onError
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.favoritelives.contract.FavoriteLivesPresenter
 import com.dbeginc.dbweathernews.favoritelives.contract.FavoriteLivesView
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import com.dbeginc.dbweathernews.viewmodels.toViewModel
 import io.reactivex.disposables.Disposable
 
 /**
@@ -30,37 +28,24 @@ import io.reactivex.disposables.Disposable
  *
  * Favorite Lives Presenter Implementation
  */
-class FavoriteLivesPresenterImpl(private val getFavoriteLives: GetFavoriteLives, private val getLives: GetLives, private val threads: ThreadProvider)  : FavoriteLivesPresenter {
-    private var view: FavoriteLivesView? = null
+class FavoriteLivesPresenterImpl(private val model: NewsRepository, private val threads: ThreadProvider) : FavoriteLivesPresenter {
     private var subscription: Disposable? = null
 
-    override fun bind(view: FavoriteLivesView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: FavoriteLivesView) = view.setupView()
 
     override fun unBind() {
         subscription?.dispose()
-        view = null
     }
 
-    override fun loadFavoriteLives() {
-        subscription = getFavoriteLives.execute(Unit)
-                .doOnSubscribe { view?.showLoading() }
-                .doAfterTerminate{ view?.hideLoading() }
+    override fun loadFavoriteLives(view: FavoriteLivesView) {
+        model.getFavoriteLives()
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate { view.hideLoading() }
                 .observeOn(threads.computation)
-                .flatMap { favorites -> getLives.execute(favorites) }
+                .flatMap { favoriteNames -> model.getLives(favoriteNames) }
                 .map { favorites -> favorites.map { live -> live.toViewModel(true) } }
                 .observeOn(threads.ui)
-                .subscribe(this::onValue, this::onError)
-    }
-
-    override fun onValue(newValue: List<LiveModel>) {
-        view?.displayFavoriteLives(newValue)
-    }
-
-    override fun onError(error: Throwable) {
-        Logger.error(FavoriteLivesPresenterImpl::class.java.canonicalName, error.localizedMessage, error)
-        view?.showError(error.localizedMessage)
+                .subscribe(view::displayFavoriteLives, view::onError)
+                .also { subscription = it }
     }
 }

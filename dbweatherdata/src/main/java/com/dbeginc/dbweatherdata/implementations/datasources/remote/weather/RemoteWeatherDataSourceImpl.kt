@@ -17,10 +17,10 @@ package com.dbeginc.dbweatherdata.implementations.datasources.remote.weather
 
 import android.content.Context
 import android.support.annotation.RestrictTo
+import android.support.annotation.VisibleForTesting
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.RemoteWeatherDataSource
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.weather.retrofit.WeatherRestAdapter
 import com.dbeginc.dbweatherdata.proxies.mappers.toDomain
-import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
 import com.dbeginc.dbweatherdomain.entities.weather.Location
 import com.dbeginc.dbweatherdomain.entities.weather.Weather
@@ -31,13 +31,16 @@ import io.reactivex.Flowable
  *
  * Remote Weather Data Provider
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 class RemoteWeatherDataSourceImpl private constructor(private val apiManager: WeatherRestAdapter) : RemoteWeatherDataSource {
 
     companion object {
         fun create(context: Context): RemoteWeatherDataSource {
             return RemoteWeatherDataSourceImpl(WeatherRestAdapter.create(context))
         }
+
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        fun create(adapter: WeatherRestAdapter): RemoteWeatherDataSource = RemoteWeatherDataSourceImpl(adapter)
     }
 
     override fun getWeather(request: WeatherRequest<Unit>): Flowable<Weather> {
@@ -52,8 +55,8 @@ class RemoteWeatherDataSourceImpl private constructor(private val apiManager: We
                 .toFlowable()
     }
 
-    override fun getLocations(request: LocationRequest): Flowable<List<Location>> {
-        return apiManager.getLocationsFor(request.query)
+    override fun getLocations(name: String): Flowable<List<Location>> {
+        return apiManager.getLocationsFor(name)
                 .flatMapPublisher { locations ->
                     Flowable.just(locations.locations.map { location -> location.toDomain() })
                 }

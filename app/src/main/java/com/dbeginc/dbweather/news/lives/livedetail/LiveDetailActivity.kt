@@ -20,11 +20,14 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.widget.Toolbar
+import android.view.MenuItem
+import android.view.View
 import com.dbeginc.dbweather.BuildConfig
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.LiveDetailFeatureBinding
+import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.LIVES_DATA
-import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweather.utils.utility.show
 import com.dbeginc.dbweather.utils.utility.snack
@@ -41,7 +44,8 @@ import javax.inject.Inject
  *
  * Live Detail Activity
  */
-class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListener, LiveDetailView {
+class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListener, LiveDetailView, WithDependencies, Toolbar.OnMenuItemClickListener, View.OnClickListener {
+
     @Inject lateinit var presenter: LiveDetailPresenter
     private lateinit var binding: LiveDetailFeatureBinding
     private val sharedWith by lazy { getString(R.string.share_with) }
@@ -54,8 +58,6 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-
-        Injector.injectLiveDetailDep(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.live_detail_feature)
 
@@ -73,14 +75,14 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
 
     override fun onDestroy() {
         super.onDestroy()
-
         cleanState()
     }
 
     override fun onInitializationSuccess(youtubeProvider: YouTubePlayer.Provider?, youTubePlayer: YouTubePlayer, wasRestored: Boolean) {
         player = youTubePlayer
 
-        if(!wasRestored) {
+        if (wasRestored.not()) {
+
             player?.apply {
                 cueVideo(binding.live?.url)
                 setShowFullscreenButton(true)
@@ -98,6 +100,7 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
             binding.liveStream.initialize(BuildConfig.YOUTUBE_API_KEY, this)
         }
@@ -106,28 +109,23 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
     /************************* Live Detail Activity *************************/
     override fun setupView() {
         binding.detailToolbar.apply {
-            setNavigationOnClickListener { presenter.onExitAction() }
+            setNavigationOnClickListener(this@LiveDetailActivity::onClick)
 
             if (menu.size() < 2) inflateMenu(R.menu.live_detail_menu)
 
-            setOnMenuItemClickListener { item ->
-                when (item?.itemId) {
-                    R.id.liveDetaiLShare -> presenter.onShare()
-                    R.id.liveDetailBookmark -> presenter.onBookmark()
-                }
-                return@setOnMenuItemClickListener true
-            }
+            setOnMenuItemClickListener(this@LiveDetailActivity::onMenuItemClick)
         }
 
-        presenter.checkIfLiveFavorite()
+        presenter.checkIfLiveFavorite(this)
 
-        presenter.loadLive()
+        presenter.loadLive(this)
     }
 
     override fun cleanState() = presenter.unBind()
 
     override fun displayLive(live: LiveModel) {
         binding.live = live
+
         player?.loadVideo(live.url)
     }
 
@@ -162,6 +160,16 @@ class LiveDetailActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedLis
         finish()
     }
 
-    override fun showError(error: String) = binding.liveDetailLayout.snack(error)
+    override fun showMessage(message: String) = binding.liveDetailLayout.snack(message)
 
+    override fun onClick(clickedView: View) = presenter.onExitAction(this)
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.liveDetaiLShare -> presenter.onShare(this)
+            R.id.liveDetailBookmark -> presenter.onBookmark(this)
+        }
+
+        return true
+    }
 }

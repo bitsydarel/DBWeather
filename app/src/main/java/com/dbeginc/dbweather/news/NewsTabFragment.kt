@@ -17,13 +17,13 @@ package com.dbeginc.dbweather.news
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentNewsTabBinding
-import com.dbeginc.dbweather.utils.utility.Injector
+import com.dbeginc.dbweather.di.WithChildDependencies
 import com.google.android.gms.ads.AdRequest
 import com.roughike.bottombar.OnTabSelectListener
 
@@ -32,15 +32,9 @@ import com.roughike.bottombar.OnTabSelectListener
  * Created by darel on 28.05.17.
  * News Tab Fragment
  */
-class NewsTabFragment : BaseFragment(), OnTabSelectListener {
+class NewsTabFragment : Fragment(), OnTabSelectListener, WithChildDependencies {
     private lateinit var binding: FragmentNewsTabBinding
     private val pagerAdapter by lazy { NewsTabPagerAdapter(childFragmentManager) }
-
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
-
-        Injector.injectNewsTabDep(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(
@@ -75,6 +69,7 @@ class NewsTabFragment : BaseFragment(), OnTabSelectListener {
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("687D1ACC5C0ACF7F698DBA9A4E258FFA")
                 .build()
+
         binding.newsTabAds.loadAd(adRequest)
     }
 }

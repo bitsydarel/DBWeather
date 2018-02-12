@@ -35,9 +35,9 @@ class SourceViewHolder(private val binding: SourceItemBinding): RecyclerView.Vie
     private var presenter: SourcePresenter? = null
 
     init {
-        binding.sourceLayout.setOnClickListener { presenter?.onAction() }
+        binding.sourceLayout.setOnClickListener { presenter?.onAction(this) }
 
-        binding.sourceSubscribed.setOnClickListener { presenter?.onSubscribe() }
+        binding.sourceSubscribed.setOnClickListener { presenter?.onSubscribe(this) }
     }
 
     override fun setupView() {  }
@@ -66,6 +66,6 @@ class SourceViewHolder(private val binding: SourceItemBinding): RecyclerView.Vie
 
     override fun hideLoading() = binding.sourceUpdatingStatus.remove()
 
-    override fun showError(error: String) = binding.sourceLayout.toast(error)
+    override fun showMessage(message: String) = binding.sourceLayout.toast(message)
 
 }

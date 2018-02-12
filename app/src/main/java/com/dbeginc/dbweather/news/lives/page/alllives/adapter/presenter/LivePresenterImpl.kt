@@ -15,11 +15,13 @@
 
 package com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter
 
+import android.support.annotation.VisibleForTesting
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LivePresenter
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LiveView
+import com.dbeginc.dbweathercommon.utils.addTo
+import com.dbeginc.dbweathercommon.utils.onError
 import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
-import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
 import io.reactivex.disposables.CompositeDisposable
 
@@ -29,49 +31,44 @@ import io.reactivex.disposables.CompositeDisposable
  * Live Presenter Implementation
  */
 class LivePresenterImpl(private val live: LiveModel,
-                        private val addLiveToFavorite: AddLiveToFavorite,
-                        private val removeLiveToFavorite: RemoveLiveToFavorite) : LivePresenter {
+                        private val model: NewsRepository) : LivePresenter {
 
-    private var view: LiveView? = null
     private val tasks = CompositeDisposable()
 
-    override fun bind(view: LiveView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: LiveView) = view.setupView()
 
-    override fun unBind() {
-        tasks.clear()
-        view = null
-    }
+    override fun unBind() = tasks.clear()
 
-    override fun loadLive() {
-        view?.displayLive(live)
-    }
+    override fun loadLive(view: LiveView) = view.displayLive(live)
 
     override fun getData(): LiveModel = live
 
-    override fun onAction() {
-        if (live.isFavorite) {
-            removeLiveToFavorite.execute(LiveRequest(live.name, Unit))
-                    .doOnSubscribe { view?.showUnBookmarkAnimation() }
-                    .subscribe(
-                            { live.isFavorite = false },
-                            { error ->
-                                view?.showBookmarkAnimation()
-                                view?.showError(error)
-                            }
-                    )
-        } else {
-            addLiveToFavorite.execute(LiveRequest(live.name, Unit))
-                    .doOnSubscribe { view?.showBookmarkAnimation() }
-                    .subscribe(
-                            { live.isFavorite = true },
-                            { error ->
-                                view?.showUnBookmarkAnimation()
-                                view?.showError(error)
-                            }
-                    )
-        }
+    override fun onAction(view: LiveView) {
+        if (live.isFavorite) removeFromFavorites(live, view)
+        else addInFavorites(live, view)
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun removeFromFavorites(live: LiveModel, view: LiveView) {
+        model.removeLiveFromFavorites(LiveRequest(live.name, Unit))
+                .subscribe(
+                        {
+                            view.showUnBookmarkAnimation()
+                            live.isFavorite = false
+                        },
+                        view::onError
+                ).addTo(tasks)
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun addInFavorites(live: LiveModel, view: LiveView) {
+        model.addLiveToFavorites(LiveRequest(live.name, Unit))
+                .subscribe(
+                        {
+                            view.showBookmarkAnimation()
+                            live.isFavorite = true
+                        },
+                        view::onError
+                ).addTo(tasks)
     }
 }

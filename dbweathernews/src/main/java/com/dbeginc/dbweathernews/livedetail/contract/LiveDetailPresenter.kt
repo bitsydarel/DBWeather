@@ -15,22 +15,21 @@
 
 package com.dbeginc.dbweathernews.livedetail.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import com.dbeginc.dbweathercommon.presenter.IPresenter
 
 /**
  * Created by darel on 17.11.17.
  *
  * Live Detail Presenter
  */
-interface LiveDetailPresenter : IAsyncPresenter<LiveDetailView, LiveModel> {
-    fun loadLive()
+interface LiveDetailPresenter : IPresenter<LiveDetailView> {
+    fun loadLive(view: LiveDetailView)
 
-    fun onShare()
+    fun onShare(view: LiveDetailView)
 
-    fun onBookmark()
+    fun onBookmark(view: LiveDetailView)
 
-    fun onExitAction()
+    fun onExitAction(view: LiveDetailView)
 
-    fun checkIfLiveFavorite()
+    fun checkIfLiveFavorite(view: LiveDetailView)
 }

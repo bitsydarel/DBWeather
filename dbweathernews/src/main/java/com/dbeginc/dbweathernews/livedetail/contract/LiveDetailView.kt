@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweathernews.livedetail.contract
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
+import com.dbeginc.dbweathercommon.view.IView
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
 
 /**
@@ -23,7 +23,7 @@ import com.dbeginc.dbweathernews.viewmodels.LiveModel
  *
  * Live Detail View
  */
-interface LiveDetailView : IAsyncView {
+interface LiveDetailView : IView {
     fun displayLive(live: LiveModel)
 
     fun getLiveName(): String
@@ -35,4 +35,8 @@ interface LiveDetailView : IAsyncView {
     fun shareLive()
 
     fun close()
+
+    fun showLoading()
+
+    fun hideLoading()
 }

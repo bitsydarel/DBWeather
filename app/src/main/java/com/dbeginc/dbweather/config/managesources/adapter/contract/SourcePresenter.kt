@@ -15,7 +15,6 @@
 
 package com.dbeginc.dbweather.config.managesources.adapter.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
 import com.dbeginc.dbweathercommon.presenter.IPresenter
 import com.dbeginc.dbweathernews.viewmodels.SourceModel
 
@@ -25,11 +24,11 @@ import com.dbeginc.dbweathernews.viewmodels.SourceModel
  * Source Presenter
  */
 interface SourcePresenter : IPresenter<SourceView> {
-    fun loadSource()
+    fun loadSource(view: SourceView)
 
-    fun onAction()
+    fun onAction(view: SourceView)
 
-    fun onSubscribe()
+    fun onSubscribe(view: SourceView)
 
     fun getData(): SourceModel
 }

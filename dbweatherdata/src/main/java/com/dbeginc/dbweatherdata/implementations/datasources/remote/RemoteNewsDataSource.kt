@@ -26,7 +26,7 @@ import io.reactivex.Flowable
  *
  * Remote News DataSource
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 interface RemoteNewsDataSource {
     fun getTranslatedArticles(sources: List<Source>) : Flowable<List<Article>>
     fun getArticles(sources: List<Source>): Flowable<List<Article>>

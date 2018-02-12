@@ -15,15 +15,13 @@
 
 package com.dbeginc.dbweathernews.sourcedetail.presenter
 
-import com.dbeginc.dbweathercommon.addTo
-import com.dbeginc.dbweathercommon.logger.Logger
+import android.support.annotation.VisibleForTesting
+import com.dbeginc.dbweathercommon.utils.addTo
+import com.dbeginc.dbweathercommon.utils.onError
 import com.dbeginc.dbweatherdomain.entities.requests.news.SourceRequest
-import com.dbeginc.dbweatherdomain.usecases.news.GetSource
-import com.dbeginc.dbweatherdomain.usecases.news.SubscribeToSource
-import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.sourcedetail.contract.SourceDetailPresenter
 import com.dbeginc.dbweathernews.sourcedetail.contract.SourceDetailView
-import com.dbeginc.dbweathernews.viewmodels.SourceModel
 import com.dbeginc.dbweathernews.viewmodels.toDomain
 import com.dbeginc.dbweathernews.viewmodels.toViewModel
 import io.reactivex.disposables.CompositeDisposable
@@ -33,62 +31,41 @@ import io.reactivex.disposables.CompositeDisposable
  *
  * Source Detail Presenter Implementation
  */
-class SourceDetailPresenterImpl(private val subscribeToSource: SubscribeToSource,
-                                private val unSubscribeToSource: UnSubscribeToSource,
-                                private val getSource: GetSource) : SourceDetailPresenter {
+class SourceDetailPresenterImpl(private val model: NewsRepository) : SourceDetailPresenter {
 
-    private var view: SourceDetailView? = null
     private val subscriptions = CompositeDisposable()
 
-    override fun bind(view: SourceDetailView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: SourceDetailView) = view.setupView()
 
-    override fun unBind() {
-        subscribeToSource.clean()
-        unSubscribeToSource.clean()
-        subscriptions.clear()
-        view = null
-    }
+    override fun unBind() = subscriptions.clear()
 
-    override fun loadSourceDetail() {
-        getSource.execute(SourceRequest(view?.getSource()!!.id, Unit))
-                .doOnSubscribe { view?.showLoading() }
-                .doAfterTerminate { view?.hideLoading() }
+    override fun loadSourceDetail(view: SourceDetailView) {
+        model.getSource(SourceRequest(view.getSource().id, Unit))
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate { view.hideLoading() }
                 .map { source -> source.toViewModel() }
-                .subscribe(this::onValue, this::onError)
+                .subscribe(view::displaySourceDetail, view::onError)
     }
 
-    override fun onValue(newValue: SourceModel) {
-        view?.displaySourceDetail(newValue)
+    override fun onSubscribeAction(view: SourceDetailView) = if (view.getSource().subscribed) unSubscribeToSource(view) else subscribeToSource(view)
+
+    override fun onExitAction(view: SourceDetailView) = view.close()
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun unSubscribeToSource(view: SourceDetailView) {
+        model.unSubscribeToSource(SourceRequest(view.getSource().id, view.getSource().apply { subscribed = false }.toDomain()))
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate { view.hideLoading() }
+                .subscribe(view::showUnSubscribedToSource, view::onError)
+                .addTo(subscriptions)
     }
 
-    override fun onError(error: Throwable) {
-        Logger.error(SourceDetailPresenterImpl::class.java.simpleName, error.localizedMessage, error)
-        view?.showError(error.localizedMessage)
-    }
-
-    override fun onSubscribeAction() {
-        if (view?.getSource()?.subscribed!!) {
-            unSubscribeToSource.execute(SourceRequest(view!!.getSource().id, view!!.getSource().apply {  subscribed = false}.toDomain()))
-                    .doOnSubscribe {
-                        view?.showUnSubscribedToSource()
-                        view?.showLoading()
-                    }.doAfterTerminate { view?.hideLoading() }
-                    .subscribe({ view?.showUnSubscribedToSource() }, this::onError)
-                    .addTo(subscriptions)
-
-        } else {
-            subscribeToSource.execute(SourceRequest(view!!.getSource().id, view!!.getSource().apply {  subscribed = true}.toDomain()))
-                    .doOnSubscribe { view?.showLoading() }
-                    .doAfterTerminate { view?.hideLoading() }
-                    .subscribe({ view?.showSubscribedToSource() }, this::onError)
-                    .addTo(subscriptions)
-        }
-    }
-
-    override fun onExitAction() {
-        view?.close()
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun subscribeToSource(view: SourceDetailView) {
+        model.subscribeToSource(SourceRequest(view.getSource().id, view.getSource().apply { subscribed = true }.toDomain()))
+                .doOnSubscribe { view.showLoading() }
+                .doAfterTerminate(view::hideLoading)
+                .subscribe(view::showSubscribedToSource, view::onError)
+                .addTo(subscriptions)
     }
 }

@@ -36,6 +36,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Consumer
 import io.reactivex.observers.DisposableCompletableObserver
 
 /**
@@ -45,7 +46,7 @@ import io.reactivex.observers.DisposableCompletableObserver
  */
 class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
                                              private val local: LocalNewsDataSource,
-                                             private val remote: RemoteNewsDataSource) : NewsRepository {
+                                             private val remote: RemoteNewsDataSource) : NewsRepository, Consumer<Throwable> {
 
     companion object {
         fun create(context: Context): NewsRepository {
@@ -60,20 +61,29 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
     private val subscriptions = CompositeDisposable()
 
     override fun getArticles(request: NewsRequest<Unit>): Flowable<List<Article>> {
-        return remote.getArticles(request.sources)
-                .subscribeOn(thread.io)
-                .doOnNext { articles -> subscriptions.addArticles(articles) }
-                .publish {
-                    remoteData -> Flowable.mergeDelayError(remoteData, local.getArticles(request).takeUntil(remoteData).subscribeOn(thread.computation).toFlowable())
-                }.observeOn(thread.ui)
+        return local.getArticles(request)
+                .subscribeOn(thread.computation)
+                .doOnSubscribe {
+                    remote.getArticles(request.sources)
+                            .subscribeOn(thread.io)
+                            .subscribe(
+                                    { articles -> subscriptions.addArticles(articles) },
+                                    this::accept
+                            )
+                }
+                .observeOn(thread.ui)
     }
 
     override fun getTranslatedArticles(request: NewsRequest<Unit>): Flowable<List<Article>> {
-        return remote.getTranslatedArticles(request.sources)
-                .subscribeOn(thread.io)
-                .doOnNext { articles -> subscriptions.addArticles(articles) }
-                .publish { remoteData ->
-                    Flowable.mergeDelayError(remoteData, local.getArticles(request).takeUntil(remoteData).subscribeOn(thread.computation).toFlowable())
+        return local.getArticles(request)
+                .subscribeOn(thread.computation)
+                .doOnSubscribe {
+                    remote.getTranslatedArticles(request.sources)
+                            .subscribeOn(thread.io)
+                            .subscribe(
+                                    { articles -> subscriptions.addArticles(articles) },
+                                    this::accept
+                            )
                 }
                 .observeOn(thread.ui)
     }
@@ -84,14 +94,19 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
                 .observeOn(thread.ui)
     }
 
-    override fun getSources(): Flowable<List<Source>> {
-        return remote.getSources()
-                .subscribeOn(thread.io)
-                .doOnNext { sources -> subscriptions.addSources(sources) }
-                .zipWith(local.getSources().subscribeOn(thread.computation).toFlowable(), BiFunction<List<Source>, List<Source>, List<Source>> {
-                    remoteResponse, localResponse -> remoteResponse.zip(localResponse, { right, left -> right.apply { subscribed = left.subscribed }})
-                })
-                .observeOn(thread.ui)
+    override fun getAllSources(): Flowable<List<Source>> {
+        return local.getSources()
+                .subscribeOn(thread.computation)
+                .doOnSubscribe {
+                    remote.getSources().subscribeOn(thread.io)
+                            .zipWith(
+                                    local.getSources().subscribeOn(thread.computation),
+                                    BiFunction<List<Source>, List<Source>, List<Source>> { remoteResponse, localResponse ->
+                                        remoteResponse.zip(localResponse, { right, left -> right.apply { subscribed = left.subscribed } })
+                                    }
+                            )
+                            .subscribe({ sources -> subscriptions.addSources(sources) }, this::accept)
+                }.observeOn(thread.ui)
     }
 
     override fun getSubscribedSources(): Flowable<List<Source>> {
@@ -120,13 +135,15 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
     }
 
     override fun getAllLives(): Flowable<List<Live>> {
-        return remote.getAllLives()
-                .subscribeOn(thread.io)
-                .doOnNext { lives -> subscriptions.addLives(lives) }
-                .publish {
-                    remoteData -> Flowable.mergeDelayError(remoteData, local.getAllLives().subscribeOn(thread.computation).takeUntil(remoteData).toFlowable())
-                }
-                .observeOn(thread.ui)
+        return local.getAllLives()
+                .subscribeOn(thread.computation)
+                .doOnSubscribe {
+                    remote.getAllLives().subscribeOn(thread.io)
+                            .subscribe(
+                                    { lives -> subscriptions.addLives(lives) },
+                                    this::accept
+                            )
+                }.observeOn(thread.ui)
     }
 
     override fun getLives(names: List<String>): Flowable<List<Live>> {
@@ -149,13 +166,13 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
                 .observeOn(thread.ui)
     }
 
-    override fun addLiveToFavorite(request: LiveRequest<Unit>): Completable {
+    override fun addLiveToFavorites(request: LiveRequest<Unit>): Completable {
         return local.addLiveToFavorite(request)
                 .subscribeOn(thread.computation)
                 .observeOn(thread.ui)
     }
 
-    override fun removeLiveFromFavorite(request: LiveRequest<Unit>): Completable {
+    override fun removeLiveFromFavorites(request: LiveRequest<Unit>): Completable {
         return local.removeLiveFromFavorite(request)
                 .subscribeOn(thread.computation)
                 .observeOn(thread.ui)
@@ -169,29 +186,33 @@ class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
                 .observeOn(thread.ui)
     }
 
+    override fun accept(error: Throwable?) {
+        Log.e(ConstantHolder.TAG, "Error: ${NewsRepository::class.java.simpleName}", error)
+    }
+
     override fun clean() = subscriptions.clear()
 
     private fun CompositeDisposable.addSources(sources: List<Source>) {
         add(local.putSources(sources)
                 .subscribeOn(thread.computation)
-                .subscribeWith(UpdateObserver())
+                .subscribeWith(TaskObserver())
         )
     }
 
     private fun CompositeDisposable.addArticles(articles: List<Article>) {
         add(local.putArticles(articles)
                 .subscribeOn(thread.computation)
-                .subscribeWith(UpdateObserver())
+                .subscribeWith(TaskObserver())
         )
     }
 
     private fun CompositeDisposable.addLives(lives: List<Live>) {
         add(local.putLives(lives).subscribeOn(thread.computation)
-                .subscribeWith(UpdateObserver())
+                .subscribeWith(TaskObserver())
         )
     }
 
-    private inner class UpdateObserver : DisposableCompletableObserver() {
+    private inner class TaskObserver : DisposableCompletableObserver() {
         override fun onComplete() {
             Log.i(ConstantHolder.TAG, "Update of data done in ${NewsRepository::class.java.simpleName}")
         }

@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweathernews.favoritelives.contract
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
+import com.dbeginc.dbweathercommon.view.IView
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
 
 /**
@@ -23,6 +23,10 @@ import com.dbeginc.dbweathernews.viewmodels.LiveModel
  *
  * Favorite Lives View
  */
-interface FavoriteLivesView : IAsyncView {
+interface FavoriteLivesView : IView {
     fun displayFavoriteLives(lives: List<LiveModel>)
+
+    fun showLoading()
+
+    fun hideLoading()
 }

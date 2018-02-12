@@ -22,12 +22,11 @@ import com.dbeginc.dbweatherdata.implementations.datasources.local.weather.room.
 import com.dbeginc.dbweatherdata.implementations.datasources.local.weather.room.LocalLocationWeatherDatabase
 import com.dbeginc.dbweatherdata.proxies.local.weather.*
 import com.dbeginc.dbweatherdata.proxies.mappers.toDomain
-import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
 import com.dbeginc.dbweatherdomain.entities.weather.*
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.Single
 import org.jetbrains.annotations.TestOnly
 
 /**
@@ -53,19 +52,18 @@ class LocalWeatherDataSourceImpl private constructor(private val currentDatabase
 
     }
 
-    override fun getWeather(request: WeatherRequest<String>): Maybe<Weather> {
+    override fun getWeather(request: WeatherRequest<String>): Flowable<Weather> {
         return currentDatabase.weatherDao().getWeatherByLocation(request.arg)
                 .map { proxy -> proxy.toDomain() }
     }
 
-    override fun getWeatherForLocation(locationName: String): Single<Weather> {
+    override fun getWeatherForLocation(locationName: String): Flowable<Weather> {
         return locationDatabase.weatherDao().getWeatherByLocation(locationName)
                 .map { proxy -> proxy.toDomain() }
-                .toSingle()
     }
 
-    override fun getLocations(request: LocationRequest): Maybe<List<Location>> {
-        return locationDatabase.weatherDao().getLocations(request.query)
+    override fun getLocations(name: String): Maybe<List<Location>> {
+        return locationDatabase.weatherDao().getLocations(name)
                 .map { locations -> locations.map { location -> location.toDomain() } }
     }
 
@@ -76,7 +74,6 @@ class LocalWeatherDataSourceImpl private constructor(private val currentDatabase
 
     override fun updateWeather(weather: Weather): Completable {
         return Completable.fromAction {
-            currentDatabase.weatherDao().deleteAll()
             currentDatabase.weatherDao().putWeather(weather.toProxy())
         }
     }

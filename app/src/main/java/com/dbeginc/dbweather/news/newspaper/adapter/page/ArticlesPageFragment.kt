@@ -17,6 +17,7 @@ package com.dbeginc.dbweather.news.newspaper.adapter.page
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -24,12 +25,12 @@ import android.view.ViewGroup
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.ArticlesFeatureBinding
 import com.dbeginc.dbweather.news.newspaper.adapter.page.adapter.ArticleAdapter
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.ARTICLES_DATA
 import com.dbeginc.dbweather.utils.utility.getList
 import com.dbeginc.dbweather.utils.utility.putList
+import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweathercommon.utils.UpdatableContainer
 import com.dbeginc.dbweathernews.articles.contract.ArticlesPresenter
 import com.dbeginc.dbweathernews.articles.contract.ArticlesView
@@ -42,7 +43,7 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  *
  * Articles Page Fragment
  */
-class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
+class ArticlesPageFragment : Fragment(), ArticlesView, UpdatableContainer {
 
     companion object {
         private const val SOURCE_ID = "source_id"
@@ -51,10 +52,10 @@ class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
         fun newInstance(sourceId: String, articles: List<ArticleModel>) : ArticlesPageFragment {
             val fragment = ArticlesPageFragment()
 
-            val args = Bundle()
-            args.putList(ARTICLES_DATA, articles)
-            args.putString(SOURCE_ID, sourceId)
-            fragment.arguments = args
+            fragment.arguments = Bundle().apply {
+                putList(ARTICLES_DATA, articles)
+                putString(SOURCE_ID, sourceId)
+            }
 
             return fragment
         }
@@ -88,6 +89,7 @@ class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.articles_feature, container, false)
+
         return binding.root
     }
 
@@ -105,7 +107,9 @@ class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+
         outState.putList(ARTICLES_DATA, adapter.getData())
+
         outState.putString(SOURCE_ID, pageId)
     }
 
@@ -114,7 +118,7 @@ class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
     override fun <T> update(data: T) {
         val casted = data as? NewsPaperModel
 
-        if (casted != null) presenter.updateModel(casted.children)
+        if (casted != null) presenter.updateModel(this, casted.children)
     }
 
     /************************* Articles Page View Part *************************/
@@ -127,7 +131,7 @@ class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
 
         binding.articlesList.addOnScrollListener(preloader)
 
-        presenter.loadArticles()
+        presenter.loadArticles(this)
     }
 
     override fun cleanState() = presenter.unBind()
@@ -135,4 +139,8 @@ class ArticlesPageFragment : BaseFragment(), ArticlesView, UpdatableContainer {
     override fun displayArticles(articles: List<ArticleModel>) {
         if (userVisibleHint) adapter.update(articles)
     }
+
+    override fun showMessage(message: String) = binding.articlesList.snack(message)
+
+    override fun toString(): String = super.toString() + "@${arguments.getString(SOURCE_ID)}"
 }

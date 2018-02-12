@@ -26,7 +26,7 @@ import retrofit2.http.Query
  *
  * Location Api Service
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 interface LocationApi {
     @GET("/search")
     fun getLocation(@Query("q") query: String,

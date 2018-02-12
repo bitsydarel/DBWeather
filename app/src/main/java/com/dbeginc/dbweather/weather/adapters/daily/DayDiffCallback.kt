@@ -16,13 +16,14 @@
 package com.dbeginc.dbweather.weather.adapters.daily
 
 import android.support.v7.util.DiffUtil
+import com.dbeginc.dbweather.weather.adapters.daily.presenter.DayPresenter
 
 /**
  * Created by darel on 23.09.17.
  *
  * Day Difference Calculator
  */
-class DayDiffCallback(private val oldData: Array<DayContract.DayPresenter>, private val newData: Array<DayContract.DayPresenter>) : DiffUtil.Callback() {
+class DayDiffCallback(private val oldData: Array<DayPresenter>, private val newData: Array<DayPresenter>) : DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldData[oldItemPosition].getModel().dayName == newData[newItemPosition].getModel().dayName
     }

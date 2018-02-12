@@ -15,9 +15,9 @@
 
 package com.dbeginc.dbweather.notifications
 
-import com.dbeginc.dbweather.base.IPresenter
-import com.dbeginc.dbweather.base.IView
 import com.dbeginc.dbweather.viewmodels.notifications.WeatherNotificationModel
+import com.dbeginc.dbweathercommon.presenter.IPresenter
+import com.dbeginc.dbweathercommon.view.IView
 
 /**
  * Created by darel on 11.11.17.
@@ -31,7 +31,7 @@ interface NotificationContract {
         fun closeScreen()
     }
 
-    interface NotificationPresenter: IPresenter<NotificationView> {
+    interface NotificationPresenter : IPresenter<NotificationView> {
         fun loadNotification()
         fun getData(): WeatherNotificationModel
         fun onExpand()

@@ -15,27 +15,21 @@
 
 package com.dbeginc.dbweather.intro.gpslocationfinder.presenter
 
-import com.dbeginc.dbweather.intro.gpslocationfinder.GpsLocationFinderContract
+import com.dbeginc.dbweather.intro.gpslocationfinder.view.GpsLocationFinderView
 
 /**
  * Created by darel on 30.09.17.
  *
  * Gps Location Finder Presenter
  */
-class GpsLocationFinderPresenterImpl : GpsLocationFinderContract.GpsLocationFinderPresenter {
-    private var view: GpsLocationFinderContract.GpsLocationFinderView? = null
+class GpsLocationFinderPresenterImpl : GpsLocationFinderPresenter {
 
-    override fun bind(view: GpsLocationFinderContract.GpsLocationFinderView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: GpsLocationFinderView) = view.setupView()
 
-    override fun unBind() {
-        this.view = null
-    }
+    override fun unBind() {}
 
-    override fun onLocationFind(latitude: Double, longitude: Double) {
-        view?.defineGpsLocation(latitude=latitude, longitude=longitude)
-        view?.goToMainScreen()
+    override fun onLocationFind(view: GpsLocationFinderView, latitude: Double, longitude: Double) {
+        view.defineGpsLocation(latitude = latitude, longitude = longitude)
+        view.goToMainScreen()
     }
 }

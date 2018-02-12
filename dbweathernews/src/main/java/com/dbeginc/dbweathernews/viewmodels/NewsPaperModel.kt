@@ -15,7 +15,6 @@
 
 package com.dbeginc.dbweathernews.viewmodels
 
-import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.DrawableRes
 import com.dbeginc.dbweathercommon.utils.UpdatableModel
@@ -28,7 +27,5 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class NewsPaperModel(var name: String, @DrawableRes val logo: Int=0, val children: List<ArticleModel> = mutableListOf()) : Parcelable, UpdatableModel {
-
     override fun getId() = name
-
 }

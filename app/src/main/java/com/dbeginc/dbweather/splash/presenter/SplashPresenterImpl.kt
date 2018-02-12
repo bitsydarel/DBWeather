@@ -15,40 +15,30 @@
 
 package com.dbeginc.dbweather.splash.presenter
 
-import android.util.Log
-import com.dbeginc.dbweather.splash.SplashContract
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.TAG
-import com.dbeginc.dbweatherdomain.usecases.news.DefineDefaultSubscribedSources
+import com.dbeginc.dbweather.splash.view.SplashView
+import com.dbeginc.dbweathercommon.utils.onError
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import io.reactivex.disposables.Disposable
 
 /**
  * Created by Darel Bitsy on 24/04/17.
- * Welcome Acy
+ *
+ * Splash Presenter Implementation
  */
+class SplashPresenterImpl(private val model: NewsRepository) : SplashPresenter {
+    private var subscription: Disposable? = null
 
-class SplashPresenterImpl(private val defineDefaultSubscribedSources: DefineDefaultSubscribedSources) : SplashContract.SplashPresenter{
-    private lateinit var view: SplashContract.SplashView
-    private var disposable : Disposable? = null
+    override fun bind(view: SplashView) = view.setupView()
 
-    override fun bind(view: SplashContract.SplashView) {
-        this.view = view
-        this.view.setupView()
+    override fun unBind() {
+        subscription?.dispose()
     }
 
-    override fun unBind() { disposable?.dispose() }
-
-    override fun onSplashLaunched() {
+    override fun onSplashLaunched(view: SplashView) {
         if (view.isFirstRun()) {
-            defineDefaultSubscribedSources.execute(view.getDefaultSources())
-                    .subscribe (
-                            { view.displayIntroScreen() },
-                            { error -> onError(error) }
-                    )
+            model.defineDefaultSubscribedSources(view.getDefaultSources())
+                    .subscribe(view::displayIntroScreen, view::onError)
+                    .also { subscription = it }
         } else view.displayMainScreen()
-    }
-
-    private fun onError(error: Throwable) {
-        Log.e(TAG, error.localizedMessage, error)
-        view.showError(error.localizedMessage?:"Unknown")
     }
 }

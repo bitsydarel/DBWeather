@@ -15,57 +15,49 @@
 
 package com.dbeginc.dbweather.config.managelocations.presenter
 
-import com.dbeginc.dbweather.config.managelocations.ManageLocationsContract
+import com.dbeginc.dbweather.config.managelocations.view.ManageLocationsView
+import com.dbeginc.dbweathercommon.utils.ThreadProvider
+import com.dbeginc.dbweathercommon.utils.addTo
+import com.dbeginc.dbweathercommon.utils.onError
+import com.dbeginc.dbweatherdomain.repositories.weather.WeatherRepository
 import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 import com.dbeginc.dbweatherweather.viewmodels.toViewModel
-import com.dbeginc.dbweathercommon.ThreadProvider
-import com.dbeginc.dbweatherdomain.entities.requests.weather.LocationRequest
-import com.dbeginc.dbweatherdomain.usecases.weather.GetAllUserLocations
-import com.dbeginc.dbweatherdomain.usecases.weather.RemoveLocation
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by darel on 26.10.17.
  *
  * Manage Locations Presenter Implementation
  */
-class ManageLocationsPresenterImpl(private val getAllUserLocations: GetAllUserLocations, private val removeLocation: RemoveLocation, private val threads: ThreadProvider) : ManageLocationsContract.ManageLocationsPresenter {
-    private lateinit var view: ManageLocationsContract.ManageLocationsView
+class ManageLocationsPresenterImpl(private val model: WeatherRepository, private val threads: ThreadProvider) : ManageLocationsPresenter {
+    private val subscriptions = CompositeDisposable()
 
-    override fun bind(view: ManageLocationsContract.ManageLocationsView) {
-        this.view = view
-        this.view.setupView()
-    }
+    override fun bind(view: ManageLocationsView) = view.setupView()
 
-    override fun unBind() {
-        getAllUserLocations.clean()
-        removeLocation.clean()
-    }
+    override fun unBind() = subscriptions.clear()
 
-    override fun loadUserLocations() {
-        getAllUserLocations.execute(Unit)
+    override fun loadUserLocations(view: ManageLocationsView) {
+        model.getAllUserLocations()
                 .doOnSubscribe { view.showUpdateStatus() }
-                .doAfterTerminate{ view.hideUpdateStatus() }
+                .doAfterTerminate(view::hideUpdateStatus)
                 .observeOn(threads.computation)
                 .map { locations -> locations.map { location -> location.toViewModel() } }
                 .observeOn(threads.ui)
                 .subscribe(
                         { locations -> if (locations.isEmpty()) view.displayNoLocations() else view.displayLocations(locations) },
-                        { error -> view.showError(error.localizedMessage) }
-                )
+                        view::onError
+                ).addTo(subscriptions)
     }
 
-    override fun removeLocation(removedItem: LocationWeatherModel) {
-        removeLocation.execute(LocationRequest(removedItem.name))
+    override fun removeLocation(view: ManageLocationsView, removedItem: LocationWeatherModel) {
+        model.deleteWeatherForLocation(removedItem.name)
                 .doOnSubscribe { view.showUpdateStatus() }
-                .doAfterTerminate { view.hideUpdateStatus() }
-                .subscribe(
-                        { view.showLocationRemovedMessage() },
-                        { error ->
-                            view.showError(error.localizedMessage)
-                            loadUserLocations()
-                        }
-                )
+                .doAfterTerminate(view::hideUpdateStatus)
+                .doOnError { loadUserLocations(view) }
+                .subscribe(view::showLocationRemovedMessage, view::onError)
+                .addTo(subscriptions)
     }
 
-    override fun goBack() = view.goBackToConfiguration()
+    override fun goBack(view: ManageLocationsView) = view.goBackToConfiguration()
+
 }

@@ -24,28 +24,26 @@ import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentGpsLocationFinderBinding
-import com.dbeginc.dbweather.intro.gpslocationfinder.GpsLocationFinderContract
+import com.dbeginc.dbweather.di.WithDependencies
+import com.dbeginc.dbweather.intro.gpslocationfinder.presenter.GpsLocationFinderPresenter
+import com.dbeginc.dbweather.intro.gpslocationfinder.presenter.GpsLocationFinderPresenterImpl
 import com.dbeginc.dbweather.utils.helper.LocationObserver
-import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.snack
-import javax.inject.Inject
 
 /**
  * Created by darel on 29.09.17.
  *
  * Gps Location Finder
  */
-class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsLocationFinderView {
-    @Inject lateinit var presenter: GpsLocationFinderContract.GpsLocationFinderPresenter
+class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderView, WithDependencies {
+    private val presenter: GpsLocationFinderPresenter = GpsLocationFinderPresenterImpl()
     private lateinit var binding: FragmentGpsLocationFinderBinding
     private lateinit var locationFinder: LocationObserver
     private lateinit var observer: Observer
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-
-        Injector.injectGpsLocationFinder(this)
 
         locationFinder = LocationObserver(appContext)
 
@@ -57,13 +55,15 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         presenter.bind(this)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroyView() {
+        super.onDestroyView()
+
         cleanState()
     }
 
@@ -71,7 +71,7 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         binding.gpsLocationFinderLayout.post {
-            if (applicationPreferences.isGpsOn()) {
+            if (preferences.isGpsPermissionOn()) {
                 playAnimation()
                 locationFinder.observe(this, observer)
 
@@ -81,7 +81,9 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
 
     private fun reAskLocation() {
         binding.gpsLocationFinderAnimation.pauseAnimation()
-        binding.gpsLocationFinderLayout.snack(getString(R.string.location_permission_request))
+
+        showMessage(getString(R.string.location_permission_request))
+
         binding.gpsLocationFinderLayout.postDelayed({ askLocationPermIfNeeded() }, 320)
     }
 
@@ -103,22 +105,24 @@ class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderContract.GpsL
     }
 
     override fun defineGpsLocation(latitude: Double, longitude: Double) {
-        applicationPreferences.updateGpsCoordinates(applicationPreferences.getGpsLocation(), latitude, longitude)
-        applicationPreferences.changeCurrentLocationStatus(true)
+        preferences.updateDefaultCoordinates(preferences.getDefaultLocation(), latitude, longitude)
+        preferences.changeDefaultLocationStatus(true)
     }
 
     override fun goToMainScreen() {
-        Navigator.goToMainScreen(context!!)
+        Navigator.goToMainScreen(context)
         activity?.finish()
     }
+
+    override fun showMessage(message: String) = binding.gpsLocationFinderLayout.snack(message)
 
     private fun playAnimation() = binding.gpsLocationFinderAnimation.playAnimation()
 
     private fun pauseAnimation() = binding.gpsLocationFinderAnimation.pauseAnimation()
 
-    private inner class Observer(val locationPresenter: GpsLocationFinderContract.GpsLocationFinderPresenter) : android.arch.lifecycle.Observer<android.location.Location> {
+    private inner class Observer(val locationPresenter: GpsLocationFinderPresenter) : android.arch.lifecycle.Observer<android.location.Location> {
         override fun onChanged(location: Location?) {
-            if (location != null) locationPresenter.onLocationFind(latitude=location.latitude, longitude=location.longitude)
+            if (location != null) locationPresenter.onLocationFind(this@GpsLocationFinderFragment, location.latitude, location.longitude)
         }
     }
 }

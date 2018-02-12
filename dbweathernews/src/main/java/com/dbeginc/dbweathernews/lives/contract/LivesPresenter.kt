@@ -15,14 +15,13 @@
 
 package com.dbeginc.dbweathernews.lives.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import com.dbeginc.dbweathercommon.presenter.MVPVPresenter
 
 /**
  * Created by darel on 17.11.17.
  *
  * Lives Presenter
  */
-interface LivesPresenter : IAsyncPresenter<LivesView, List<LiveModel>> {
-    fun loadAllLives()
+interface LivesPresenter : MVPVPresenter<LivesView> {
+    fun retryLivesRequest()
 }

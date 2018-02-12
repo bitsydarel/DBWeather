@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweathernews.articledetail.contract
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
+import com.dbeginc.dbweathercommon.view.IView
 import com.dbeginc.dbweathernews.viewmodels.ArticleModel
 
 /**
@@ -23,7 +23,7 @@ import com.dbeginc.dbweathernews.viewmodels.ArticleModel
  *
  * Article Detail View
  */
-interface ArticleDetailView : IAsyncView {
+interface ArticleDetailView : IView {
     fun displayArticle(article: ArticleModel)
 
     fun shareArticle()

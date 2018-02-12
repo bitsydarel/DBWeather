@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweather.weather.adapters.daily.presenter
 
-import com.dbeginc.dbweather.weather.adapters.daily.DayContract
+import com.dbeginc.dbweather.weather.adapters.daily.view.DayView
 import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
@@ -23,10 +23,10 @@ import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
  *
  * Day View Presenter Implementation
  */
-class DayPresenterImpl(private var day: DayWeatherModel) : DayContract.DayPresenter {
-    private lateinit var view: DayContract.DayView
+class DayPresenterImpl(private var day: DayWeatherModel) : DayPresenter {
+    private lateinit var view: DayView
 
-    override fun bind(view: DayContract.DayView) {
+    override fun bind(view: DayView) {
         this.view = view
         this.view.setupView()
     }

@@ -15,45 +15,55 @@
 
 package com.dbeginc.dbweather.news.newspaper
 
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentNewspapersTabBinding
-import com.dbeginc.dbweather.news.newspaper.adapter.ArticlesPagerAdapter
-import com.dbeginc.dbweather.utils.animations.ZoomOutSlideTransformer
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PAPERS
-import com.dbeginc.dbweather.utils.utility.Injector
-import com.dbeginc.dbweather.utils.utility.getList
-import com.dbeginc.dbweather.utils.utility.putList
-import com.dbeginc.dbweather.utils.utility.snack
-import com.dbeginc.dbweathernews.newspapers.contract.NewsPapersPresenter
+import com.dbeginc.dbweather.di.WithChildDependencies
+import com.dbeginc.dbweather.di.WithDependencies
+import com.dbeginc.dbweather.news.newspaper.adapter.ArticlesPagerAdapter2
+import com.dbeginc.dbweather.utils.views.animations.ZoomOutSlideTransformer
+import com.dbeginc.dbweathercommon.utils.RequestState
+import com.dbeginc.dbweathernews.newspapers.NewsPapersViewModel
 import com.dbeginc.dbweathernews.newspapers.contract.NewsPapersView
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
-import javax.inject.Inject
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 
 /**
  * Created by darel on 06.10.17.
  *
  * Articles Tab Fragment
  */
-class NewsPaperTabFragment : BaseFragment(), NewsPapersView {
-    @Inject lateinit var presenter: NewsPapersPresenter
+class NewsPaperTabFragment : BaseFragment(), NewsPapersView, WithDependencies, WithChildDependencies, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentNewspapersTabBinding
-    private lateinit var pageAdapter: ArticlesPagerAdapter
+    private lateinit var viewModel: NewsPapersViewModel
     private val defaultAuthor by lazy { getString(R.string.default_author_name) }
+    private val pageAdapter by lazy { ArticlesPagerAdapter2(listOf(), childFragmentManager) }
+    private var stateSubscription: Disposable? = null
+    override val state: BehaviorSubject<RequestState> = BehaviorSubject.create()
 
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
 
-        Injector.injectArticlesTabDep(this)
+        viewModel = ViewModelProviders.of(activity, factory)[NewsPapersViewModel::class.java]
+    }
 
-        pageAdapter = if (savedState == null) ArticlesPagerAdapter(listOf(), childFragmentManager)
-        else ArticlesPagerAdapter(savedState.getList(NEWS_PAPERS), childFragmentManager)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
+        viewModel.getNewsPapers().observe(this, android.arch.lifecycle.Observer {
+            pageAdapter.refresh(it!!)
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,51 +79,52 @@ class NewsPaperTabFragment : BaseFragment(), NewsPapersView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        presenter.bind(this)
+        state.subscribe(this::onStateChanged).also { stateSubscription = it }
+
+        viewModel.presenter.bind(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
 
-        cleanState()
+        stateSubscription?.dispose()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putList(NEWS_PAPERS, pageAdapter.getData())
+    override fun onStateChanged(state: RequestState) {
+        when (state) {
+            RequestState.LOADING -> binding.articlesSRL.isRefreshing = true
+            RequestState.COMPLETED -> binding.articlesSRL.isRefreshing = false
+            RequestState.ERROR -> onRequestNewsFailed()
+        }
     }
 
     /******************************************** Articles Tab View Part ********************************************/
     override fun setupView() {
         binding.articlesSRL.setColorSchemeResources(R.color.newsTabPrimaryTextColor)
 
-        binding.articlesSRL.setOnRefreshListener { presenter.loadArticles() }
+        binding.articlesSRL.setOnRefreshListener(this::onRefresh)
 
-        binding.articlesPage.adapter = pageAdapter
+        binding.articlesPage.offscreenPageLimit = 3
 
         binding.articlesPage.setPageTransformer(false, ZoomOutSlideTransformer())
 
+        binding.articlesPage.adapter = pageAdapter
+
         binding.newsPaperIds.setupWithViewPager(binding.articlesPage, true)
 
-        presenter.loadArticles()
-    }
-
-    override fun cleanState() = presenter.unBind()
-
-    override fun showLoading() {
-        binding.articlesSRL.isRefreshing = true
-    }
-
-    override fun hideLoading() {
-        binding.articlesSRL.isRefreshing = false
+        viewModel.loadArticles(state, defaultAuthor)
     }
 
     override fun displayNewsPapers(newsPapers: List<NewsPaperModel>) {
         if(userVisibleHint) pageAdapter.refresh(newsPapers)
     }
 
-    override fun getDefaultAuthorName(): String = defaultAuthor
+    override fun onRequestNewsFailed() {
+        Snackbar.make(binding.articlesSRL, R.string.news_error_message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED)
+                .setAction(R.string.retry, { viewModel.presenter.retryNewsRequest() })
+    }
 
-    override fun showError(error: String) = binding.articlesTabLayout.snack(error)
+    override fun onRefresh() = viewModel.loadArticles(state, defaultAuthor)
 
 }

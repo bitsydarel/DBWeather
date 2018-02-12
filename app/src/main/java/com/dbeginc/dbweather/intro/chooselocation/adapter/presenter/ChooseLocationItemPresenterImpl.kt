@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweather.intro.chooselocation.adapter.presenter
 
-import com.dbeginc.dbweather.intro.chooselocation.adapter.ChooseLocationItemContract
+import com.dbeginc.dbweather.intro.chooselocation.adapter.view.ChooseLocationItemView
 import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
 
 /**
@@ -23,19 +23,15 @@ import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
  *
  * Choose Location Item Presenter
  */
-class ChooseLocationItemPresenterImpl(val location: LocationWeatherModel) : ChooseLocationItemContract.ChooseLocationItemPresenter {
-    private lateinit var view: ChooseLocationItemContract.ChooseLocationItemView
+class ChooseLocationItemPresenterImpl(val location: LocationWeatherModel) : ChooseLocationItemPresenter {
 
-    override fun bind(view: ChooseLocationItemContract.ChooseLocationItemView) {
-        this.view = view
-        this.view.setupView()
-    }
+    override fun bind(view: ChooseLocationItemView) = view.setupView()
 
     override fun unBind() {}
 
     override fun getModel(): LocationWeatherModel = location
 
-    override fun loadLocation() = view.displayLocation(location)
+    override fun loadLocation(view: ChooseLocationItemView) = view.displayLocation(location)
 
-    override fun onClick() { view.defineUserLocation(location) }
+    override fun onClick(view: ChooseLocationItemView) = view.defineUserLocation(location)
 }

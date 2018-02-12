@@ -16,7 +16,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.dbeginc.dbweather.intro.view.IntroActivity">
+    tools:context="com.dbeginc.dbweather.intro.IntroActivity">
 
     <data/>
 

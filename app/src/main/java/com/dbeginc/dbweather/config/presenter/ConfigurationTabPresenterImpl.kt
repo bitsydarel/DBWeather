@@ -15,12 +15,10 @@
 
 package com.dbeginc.dbweather.config.presenter
 
-import com.dbeginc.dbweather.config.ConfigurationTabContract
-import com.dbeginc.dbweather.utils.utility.addTo
-import com.dbeginc.dbweatherdomain.usecases.configurations.ChangeNewsPaperTranslationStatus
-import com.dbeginc.dbweatherdomain.usecases.configurations.ChangeWeatherNotificationStatus
-import com.dbeginc.dbweatherdomain.usecases.configurations.GetNewsPaperTranslationStatus
-import com.dbeginc.dbweatherdomain.usecases.configurations.GetWeatherNotificationStatus
+import com.dbeginc.dbweather.config.view.ConfigurationTabView
+import com.dbeginc.dbweathercommon.utils.addTo
+import com.dbeginc.dbweathercommon.utils.onError
+import com.dbeginc.dbweatherdomain.repositories.configurations.ConfigurationsRepository
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 
@@ -29,73 +27,45 @@ import io.reactivex.functions.BiFunction
  *
  * Configuration Presenter Implementation
  */
-class ConfigurationTabPresenterImpl(private val getWeatherNotificationStatus: GetWeatherNotificationStatus,
-                                    private val getNewsPaperTranslationStatus: GetNewsPaperTranslationStatus,
-                                    private val changeWeatherNotificationStatus: ChangeWeatherNotificationStatus,
-                                    private val changeNewsPaperTranslationStatus: ChangeNewsPaperTranslationStatus) : ConfigurationTabContract.ConfigurationTabPresenter {
-
-    private var view: ConfigurationTabContract.ConfigurationTabView? = null
+class ConfigurationTabPresenterImpl(private val model: ConfigurationsRepository) : ConfigurationTabPresenter {
     private val subscriptions = CompositeDisposable()
 
-    override fun bind(view: ConfigurationTabContract.ConfigurationTabView) {
-        this.view = view
-        this.view?.setupView()
-    }
+    override fun bind(view: ConfigurationTabView) = view.setupView()
 
-    override fun unBind() {
-        subscriptions.clear()
-        view = null
-    }
+    override fun unBind() = subscriptions.clear()
 
-    override fun loadConfigurations() {
-        getWeatherNotificationStatus.execute(Unit)
-                .zipWith(getNewsPaperTranslationStatus.execute(Unit), BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> { weatherStatus, newsPaperTranslationStatus -> weatherStatus.to(newsPaperTranslationStatus) })
-                .doOnSubscribe { view?.showUpdatingStatus() }
-                .doAfterTerminate { view?.hideUpdatingStatus() }
-                .subscribe(
-                        { status -> 
-                            view?.displayWeatherNotificationStatus(status.first)
-                            view?.displayNewsPaperTranslationStatus(status.second)
-                        }, 
-                        { error -> view?.showError(error.localizedMessage) }
-                ).addTo(subscriptions)
-    }
-
-    override fun onManageLocation() {
-        view?.goToManageLocationScreen()
-    }
-
-    override fun onManageSources() {
-        view?.goToManageSourcesScreen()
-    }
-
-    override fun onHelp() {
-        view?.goToHelpScreen()
-    }
-
-    override fun onWeatherNotification(isOn: Boolean) {
-        changeWeatherNotificationStatus.execute(isOn)
-                .doOnSubscribe { view?.showUpdatingStatus() }
-                .doAfterTerminate { view?.hideUpdatingStatus() }
-                .subscribe(
-                        { view?.showStatusChanged() },
-                        { error ->
-                            view?.displayWeatherNotificationStatus(isOn.not())
-                            view?.showError(error.localizedMessage)
+    override fun loadConfigurations(view: ConfigurationTabView) {
+        model.getWeatherNotificationStatus()
+                .zipWith(
+                        model.getNewsPapersTranslationStatus(),
+                        BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> { weatherStatus, newsPaperTranslationStatus ->
+                            weatherStatus to newsPaperTranslationStatus
                         }
+                )
+                .subscribe(
+                        { status ->
+                            view.displayWeatherNotificationStatus(status.first)
+                            view.displayNewsPaperTranslationStatus(status.second)
+                        },
+                        view::onError
                 ).addTo(subscriptions)
     }
 
-    override fun onNewsPaperTranslation(isOn: Boolean) {
-        changeNewsPaperTranslationStatus.execute(isOn)
-                .doOnSubscribe { view?.showUpdatingStatus() }
-                .doAfterTerminate { view?.hideUpdatingStatus() }
-                .subscribe(
-                        { view?.showStatusChanged() },
-                        { error ->
-                            view?.displayNewsPaperTranslationStatus(isOn.not())
-                            view?.showError(error.localizedMessage)
-                        }
-                ).addTo(subscriptions)
+    override fun onManageLocation(view: ConfigurationTabView) = view.goToManageLocationScreen()
+
+    override fun onManageSources(view: ConfigurationTabView) = view.goToManageSourcesScreen()
+
+    override fun onWeatherNotification(view: ConfigurationTabView, isOn: Boolean) {
+        model.changeWeatherNotificationStatus(isOn)
+                .doOnError { view.displayWeatherNotificationStatus(isOn.not()) }
+                .subscribe({ view.displayWeatherNotificationStatus(isOn) }, view::onError)
+                .addTo(subscriptions)
+    }
+
+    override fun onNewsPaperTranslation(view: ConfigurationTabView, isOn: Boolean) {
+        model.changeNewsPapersTranslationStatus(isOn)
+                .doOnError { view.displayNewsPaperTranslationStatus(isOn.not()) }
+                .subscribe({ view.displayNewsPaperTranslationStatus(isOn) }, view::onError)
+                .addTo(subscriptions)
     }
 }

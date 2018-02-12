@@ -15,11 +15,17 @@
 
 package com.dbeginc.dbweather.utils.utility
 
+import android.annotation.TargetApi
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import android.view.Window
+import android.view.WindowManager
+import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
+import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
+import com.github.clans.fab.FloatingActionButton
+import com.github.clans.fab.FloatingActionMenu
 import java.util.*
 
 /**
@@ -27,12 +33,6 @@ import java.util.*
  *
  * Framework extensions or helpers
  */
-fun Disposable.addTo(subscription: CompositeDisposable) = subscription.add(this)
-
-fun Double.round() : Int = Math.round(this).toInt()
-
-fun Long.toDate() : Date = Date(this)
-
 fun <T : Parcelable> Bundle.putList(key: String, list: List<T>) {
     val arrayList : ArrayList<T> = ArrayList(list)
     putParcelableArrayList(key, arrayList)
@@ -48,3 +48,37 @@ fun SharedPreferences.Editor.putDouble(key: String, value: Double): SharedPrefer
 fun SharedPreferences.getDouble(key: String) : Double {
     return java.lang.Double.longBitsToDouble(getLong(key, 0))
 }
+
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+fun Window.changeStatusBarColor(color: Int) {
+    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    statusBarColor = color
+}
+
+fun ApplicationPreferences.findDefaultLocation(): LocationWeatherModel {
+    return LocationWeatherModel(
+            getDefaultLocation(),
+            getDefaultLatitude(),
+            getDefaultLongitude(),
+            "",
+            ""
+    )
+}
+
+fun ApplicationPreferences.findCustomLocation(): LocationWeatherModel {
+    val location = getCustomLocation().split(",")
+    val latitude = getCustomLatitude()
+    val longitude = getCustomLongitude()
+
+    return if (location.isEmpty() || location.size < 3) LocationWeatherModel("", latitude, longitude, "", "")
+    else LocationWeatherModel(name = location[0], countryCode = location[2], countryName = location[1], latitude = latitude, longitude = longitude)
+}
+
+fun FloatingActionMenu.availableLocations(): List<String> {
+    return (childCount.minus(1) downTo 0)
+            .mapNotNull { getChildAt(it) }
+            .filterIsInstance(FloatingActionButton::class.java)
+            .mapNotNull { view -> view.labelText }
+}
+
+fun LocationWeatherModel.fullName() = name.plus(", ").plus(countryCode)

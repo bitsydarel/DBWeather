@@ -21,9 +21,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
+import com.dbeginc.dbweather.weather.adapters.daily.presenter.DayPresenter
 import com.dbeginc.dbweather.weather.adapters.daily.presenter.DayPresenterImpl
 import com.dbeginc.dbweather.weather.adapters.daily.view.DayViewHolder
+import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
  * Created by darel on 23.09.17.
@@ -32,7 +33,7 @@ import com.dbeginc.dbweather.weather.adapters.daily.view.DayViewHolder
  */
 class DayAdapter(days: List<DayWeatherModel>) : RecyclerView.Adapter<DayViewHolder>() {
     private var container: RecyclerView? = null
-    private var presenters: Array<DayContract.DayPresenter> = days.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
+    private var presenters: Array<DayPresenter> = days.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -62,7 +63,7 @@ class DayAdapter(days: List<DayWeatherModel>) : RecyclerView.Adapter<DayViewHold
 
     fun updateData(newData: List<DayWeatherModel>) {
         synchronized(this) {
-            val sortedData: Array<DayContract.DayPresenter> = newData.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
+            val sortedData: Array<DayPresenter> = newData.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
 
             val diffResult = DiffUtil.calculateDiff(DayDiffCallback(presenters, sortedData), true)
 

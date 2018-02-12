@@ -26,13 +26,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.dbeginc.dbweather.R
+import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
 import com.dbeginc.dbweather.utils.holder.ConstantHolder
-import com.dbeginc.dbweather.utils.utility.Injector
 import com.google.android.gms.ads.MobileAds
+import dagger.android.support.DaggerAppCompatActivity
 import java.io.IOException
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ import javax.inject.Inject
  * Base DBWeather Activity
  */
 
-open class BaseActivity : AppCompatActivity() {
+open class BaseActivity : DaggerAppCompatActivity(), WithDependencies {
     @Inject lateinit var applicationPreferences: ApplicationPreferences
 
     protected fun isNetworkAvailable(): Boolean {
@@ -54,8 +54,6 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-
-        Injector.injectBaseActivityDep(this)
 
         MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826")
 

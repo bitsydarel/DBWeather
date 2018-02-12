@@ -15,18 +15,17 @@
 
 package com.dbeginc.dbweathernews.sourcedetail.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
-import com.dbeginc.dbweathernews.viewmodels.SourceModel
+import com.dbeginc.dbweathercommon.presenter.IPresenter
 
 /**
  * Created by darel on 18.11.17.
  *
  * Source Detail Presenter
  */
-interface SourceDetailPresenter : IAsyncPresenter<SourceDetailView, SourceModel>{
-    fun onSubscribeAction()
+interface SourceDetailPresenter : IPresenter<SourceDetailView> {
+    fun onSubscribeAction(view: SourceDetailView)
 
-    fun loadSourceDetail()
+    fun loadSourceDetail(view: SourceDetailView)
 
-    fun onExitAction()
+    fun onExitAction(view: SourceDetailView)
 }

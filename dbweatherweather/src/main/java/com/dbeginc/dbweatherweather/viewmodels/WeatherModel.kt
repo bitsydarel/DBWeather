@@ -24,5 +24,6 @@ import kotlinx.android.parcel.Parcelize
  * Weather Model
  */
 @Parcelize
-data class WeatherModel(val location: LocationWeatherModel, val current: CurrentWeatherModel, val hourly: List<HourWeatherModel>,
-                        val daily: List<DayWeatherModel>, val alerts: List<AlertWeatherModel>?) : Parcelable
+data class WeatherModel(var location: LocationWeatherModel, var current: CurrentWeatherModel, var hourly: List<HourWeatherModel>,
+                        var daily: List<DayWeatherModel>, var alerts: List<AlertWeatherModel>?
+) : Parcelable

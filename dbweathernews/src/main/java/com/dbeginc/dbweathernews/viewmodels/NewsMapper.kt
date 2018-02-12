@@ -15,6 +15,7 @@
 
 package com.dbeginc.dbweathernews.viewmodels
 
+import com.dbeginc.dbweathercommon.utils.LogDispatcher
 import com.dbeginc.dbweatherdomain.entities.news.Article
 import com.dbeginc.dbweatherdomain.entities.news.Live
 import com.dbeginc.dbweatherdomain.entities.news.Source
@@ -28,22 +29,25 @@ import org.threeten.bp.Instant
  */
 fun Article.toViewModel(unknownAuthor: String, currentTime: Instant) : ArticleModel {
 
-    val publishTime: String
+    var publishTime: String = "..."
 
-    publishTime = if (publishedAt == null) "..." else {
-        val articleAt = if(!publishedAt!!.toUpperCase().endsWith("Z"))
-        {
-            if (publishedAt!!.contains("+")) publishedAt?.substring(0, publishedAt!!.indexOf("+"))?.plus("Z") else publishedAt.plus("Z")
+    try {
+        if (publishedAt != null) {
+            val articleAt = if (!publishedAt!!.toUpperCase().endsWith("Z")) {
+                if (publishedAt!!.contains("+")) publishedAt?.substring(0, publishedAt!!.indexOf("+"))?.plus("Z") else publishedAt.plus("Z")
 
-        } else publishedAt
+            } else publishedAt
 
-        val duration = Duration.between(currentTime, Instant.parse(articleAt))
+            val duration = Duration.between(currentTime, Instant.parse(articleAt))
 
-        when {
-            duration.days() > 0 -> "${duration.days()}d"
-            duration.hours() > 0 -> "${duration.hours()}h"
-            else -> "${duration.minutes()}m"
+            publishTime = when {
+                duration.days() > 0 -> "${duration.days()}d"
+                duration.hours() > 0 -> "${duration.hours()}h"
+                else -> "${duration.minutes()}m"
+            }
         }
+    } catch (error: Throwable) {
+        LogDispatcher.logError(error)
     }
 
     return ArticleModel(author=author ?: unknownAuthor, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishTime, sourceId=sourceId)

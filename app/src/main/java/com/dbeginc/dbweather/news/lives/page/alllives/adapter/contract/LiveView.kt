@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract
 
-import com.dbeginc.dbweather.base.IView
+import com.dbeginc.dbweathercommon.view.IView
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
 
 /**
@@ -33,6 +33,4 @@ interface LiveView : IView {
     fun showBookmarkAnimation()
 
     fun showUnBookmarkAnimation()
-
-    fun showError(error: Throwable)
 }

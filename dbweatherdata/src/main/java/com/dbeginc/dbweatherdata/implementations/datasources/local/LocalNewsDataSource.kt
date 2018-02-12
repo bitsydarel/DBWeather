@@ -23,6 +23,7 @@ import com.dbeginc.dbweatherdomain.entities.requests.news.ArticleRequest
 import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
 import com.dbeginc.dbweatherdomain.entities.requests.news.NewsRequest
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
@@ -33,13 +34,13 @@ import io.reactivex.Single
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 interface LocalNewsDataSource {
-    fun getArticles(request: NewsRequest<Unit>) : Maybe<List<Article>>
+    fun getArticles(request: NewsRequest<Unit>): Flowable<List<Article>>
 
     fun getArticle(request: ArticleRequest<Unit>) : Single<Article>
 
     fun putArticles(articles: List<Article>): Completable
 
-    fun getSources() : Maybe<List<Source>>
+    fun getSources(): Flowable<List<Source>>
 
     fun getSubscribedSources() : Maybe<List<Source>>
 
@@ -49,7 +50,7 @@ interface LocalNewsDataSource {
 
     fun putSources(sources: List<Source>) : Completable
 
-    fun getAllLives() : Maybe<List<Live>>
+    fun getAllLives(): Flowable<List<Live>>
 
     fun getLives(names: List<String>) : Maybe<List<Live>>
 

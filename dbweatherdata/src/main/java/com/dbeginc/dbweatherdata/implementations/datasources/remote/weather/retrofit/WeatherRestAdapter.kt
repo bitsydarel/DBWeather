@@ -17,8 +17,8 @@ package com.dbeginc.dbweatherdata.implementations.datasources.remote.weather.ret
 
 import android.content.Context
 import android.support.annotation.RestrictTo
+import android.support.annotation.VisibleForTesting
 import com.dbeginc.dbweatherdata.BuildConfig
-import com.dbeginc.dbweatherdata.ConstantHolder
 import com.dbeginc.dbweatherdata.ConstantHolder.CACHE_SIZE
 import com.dbeginc.dbweatherdata.ConstantHolder.WEATHER_CACHE_NAME
 import com.dbeginc.dbweatherdata.proxies.remote.weather.RemoteWeather
@@ -41,8 +41,8 @@ import java.util.concurrent.TimeUnit
  *
  * Weather Api Rest Adapter
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-class WeatherRestAdapter private constructor(client: OkHttpClient) {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+class WeatherRestAdapter @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE) constructor(client: OkHttpClient) {
     private val deviceLanguage by lazy { Locale.getDefault().language }
     private val weatherApi: WeatherApi
     private val locationApi: LocationApi
@@ -65,13 +65,12 @@ class WeatherRestAdapter private constructor(client: OkHttpClient) {
                     .retryOnConnectionFailure(true)
                     .cache(Cache(File(context.cacheDir, WEATHER_CACHE_NAME), CACHE_SIZE))
 
-//            if (BuildConfig.DEBUG) client.addNetworkInterceptor(StethoInterceptor())
-
             return WeatherRestAdapter(client.build())
         }
 
         @TestOnly
         @RestrictTo(RestrictTo.Scope.TESTS)
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         fun create(client: OkHttpClient) : WeatherRestAdapter = WeatherRestAdapter(client)
     }
 

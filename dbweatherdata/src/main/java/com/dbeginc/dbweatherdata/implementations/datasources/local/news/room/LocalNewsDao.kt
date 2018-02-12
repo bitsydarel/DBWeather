@@ -25,6 +25,7 @@ import com.dbeginc.dbweatherdata.proxies.local.news.LocalArticle
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalFavoriteLive
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalLive
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalSource
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
@@ -38,7 +39,7 @@ import io.reactivex.Single
 interface LocalNewsDao {
 
     @Query("SELECT * FROM $ARTICLES_TABLE WHERE source_id IN (:sources)")
-    fun getArticles(sources: List<String>) : Maybe<List<LocalArticle>>
+    fun getArticles(sources: List<String>): Flowable<List<LocalArticle>>
 
     @Query("SELECT * FROM $ARTICLES_TABLE WHERE source_id LIKE :sourceId AND url LIKE :articleUrl")
     fun getArticle(sourceId: String, articleUrl: String) : Single<LocalArticle>
@@ -47,7 +48,7 @@ interface LocalNewsDao {
     fun putArticles(articles: List<LocalArticle>)
 
     @Query("SELECT * FROM $SOURCE_TABLE")
-    fun getSources() : Maybe<List<LocalSource>>
+    fun getSources(): Flowable<List<LocalSource>>
 
     @Query("SELECT * FROM $SOURCE_TABLE WHERE subscribed LIKE :value")
     fun getSubscribedSources(value: Boolean = true) : Maybe<List<LocalSource>>
@@ -65,7 +66,7 @@ interface LocalNewsDao {
     fun updateSource(source: LocalSource)
 
     @Query("SELECT * FROM $LIVE_TABLE")
-    fun getAllLives() : Maybe<List<LocalLive>>
+    fun getAllLives(): Flowable<List<LocalLive>>
 
     @Query("SELECT * FROM $LIVE_TABLE WHERE name IN (:names)")
     fun getLives(names: List<String>): Maybe<List<LocalLive>>

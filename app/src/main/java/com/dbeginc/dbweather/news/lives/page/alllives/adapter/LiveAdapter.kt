@@ -25,8 +25,7 @@ import com.dbeginc.dbweather.news.lives.page.LiveDiffUtils
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.contract.LivePresenter
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter.LivePresenterImpl
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.view.LiveViewHolder
-import com.dbeginc.dbweatherdomain.usecases.news.AddLiveToFavorite
-import com.dbeginc.dbweatherdomain.usecases.news.RemoveLiveToFavorite
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
 import java.util.*
 
@@ -35,13 +34,13 @@ import java.util.*
  *
  * Live adapter
  */
-class LiveAdapter(data: List<LiveModel>, private val addLiveToFavorite: AddLiveToFavorite, private val removeLiveToFavorite: RemoveLiveToFavorite) : RecyclerView.Adapter<LiveViewHolder>() {
+class LiveAdapter(data: List<LiveModel>, private val model: NewsRepository) : RecyclerView.Adapter<LiveViewHolder>() {
     private var container: RecyclerView? = null
-    private val presenters: LinkedList<LivePresenter>
+    private var presenters: LinkedList<LivePresenter>
 
     init {
         // mapping data to presenter
-        presenters = LinkedList(data.map { live -> LivePresenterImpl(live, addLiveToFavorite, removeLiveToFavorite) })
+        presenters = LinkedList(data.map { live -> LivePresenterImpl(live, model) })
 
         presenters.sortBy { live -> live.getData().name }
     }
@@ -54,8 +53,13 @@ class LiveAdapter(data: List<LiveModel>, private val addLiveToFavorite: AddLiveT
     override fun getItemCount(): Int = presenters.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): LiveViewHolder {
-        val inflater = LayoutInflater.from(parent?.context)
-        return LiveViewHolder(DataBindingUtil.inflate(inflater, R.layout.live_item, parent, false))
+        return LiveViewHolder(
+                DataBindingUtil.inflate(
+                        LayoutInflater.from(parent?.context),
+                        R.layout.live_item, parent,
+                        false
+                )
+        )
     }
 
     override fun onBindViewHolder(holder: LiveViewHolder, position: Int) {
@@ -68,23 +72,19 @@ class LiveAdapter(data: List<LiveModel>, private val addLiveToFavorite: AddLiveT
 
         presenter.bind(holder)
 
-        presenter.loadLive()
+        presenter.loadLive(holder)
     }
-
-    fun getData(): List<LiveModel> = presenters.map { presenter -> presenter.getData() }
 
     fun updateData(newData: List<LiveModel>) {
         synchronized(this) {
-            val result = DiffUtil.calculateDiff(LiveDiffUtils(presenters.map { presenter -> presenter.getData() }, newData.sorted()))
+            val oldList = presenters.map { presenter -> presenter.getData() }.sorted()
+            val newList = newData.sorted()
 
-            presenters.clear()
+            val result = DiffUtil.calculateDiff(LiveDiffUtils(oldList, newList))
 
-            newData.mapTo(presenters) { live -> LivePresenterImpl(live, addLiveToFavorite, removeLiveToFavorite) }
-
-            presenters.sortBy { presenter -> presenter.getData().name }
+            presenters = LinkedList(newList.map { live -> LivePresenterImpl(live, model) })
 
             container?.post { result.dispatchUpdatesTo(this@LiveAdapter) }
         }
     }
-
 }

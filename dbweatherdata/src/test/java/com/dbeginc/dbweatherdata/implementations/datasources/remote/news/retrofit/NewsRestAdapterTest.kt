@@ -15,17 +15,19 @@
 
 package com.dbeginc.dbweatherdata.implementations.datasources.remote.news.retrofit
 
-import com.dbeginc.dbweatherdata.getFileAsStringJVM
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.Translator
+import com.dbeginc.dbweatherdata.proxies.remote.news.RemoteSource
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import okhttp3.OkHttpClient
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by darel on 04.10.17.
@@ -34,52 +36,114 @@ import org.mockito.junit.MockitoJUnitRunner
  */
 @RunWith(MockitoJUnitRunner::class)
 class NewsRestAdapterTest {
-    private lateinit var mockServer: MockWebServer
-    private lateinit var newsRestAdapter: NewsRestAdapter
-    private lateinit var sourcesJson: String
-    private lateinit var articlesJson: String
+    private lateinit var adapter: NewsRestAdapter
+    @Mock
+    lateinit var liveDB: DatabaseReference
+    @Mock
+    lateinit var translator: Translator
+    private lateinit var sources: List<RemoteSource>
+    private lateinit var livesSnapshot: DataSnapshot
 
     @Before
     fun setUp() {
-        mockServer = MockWebServer()
+        val client = OkHttpClient.Builder()
+                .connectTimeout(35, TimeUnit.SECONDS)
+                .writeTimeout(35, TimeUnit.SECONDS)
+                .readTimeout(55, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build()
+
+        adapter = NewsRestAdapter.create(client, liveDB, translator)
+
+        sources = adapter.getSources().blockingFirst()
+
+        livesSnapshot = Mockito.mock(DataSnapshot::class.java)
+
+        /*val mockServer = MockWebServer()
+
         mockServer.start()
 
         NewsRestAdapter.NEWS_API_URL = mockServer.url("/").toString()
-        newsRestAdapter = NewsRestAdapter.create(OkHttpClient(), Mockito.mock(DatabaseReference::class.java), Mockito.mock(Translator::class.java))
 
-        sourcesJson = getFileAsStringJVM("news_source.json")
-        articlesJson = getFileAsStringJVM("news_articles.json")
+        val mockedAdapter = NewsRestAdapter.create(OkHttpClient(), liveDB, translator)
 
-    }
-
-    @Test
-    fun `Test of getting sources and articles`() {
         val responseSource = MockResponse().apply {
             setResponseCode(200)
             addHeader("Cache-Control", "no-cache")
             addHeader("Content-Length", "22386")
             addHeader("Content-Type", "application/json; charset=utf-8")
-            setBody(sourcesJson)
+            setBody(getFileAsStringJVM("news_source.json"))
         }
 
         mockServer.enqueue(responseSource)
 
-        val sourcesResponse = newsRestAdapter.getSources().blockingFirst().subList(0, 3)
+        sources =  mockedAdapter.getSources().blockingFirst().subList(0, 3)*/
+    }
 
-        for (index in IntRange(0, 3)) {
-            mockServer.enqueue(
-                    MockResponse().apply {
-                        setResponseCode(200)
-                        addHeader("Cache-Control", "no-cache")
-                        addHeader("Content-Length", "22386")
-                        addHeader("Content-Type", "application/json; charset=utf-8")
-                        setBody(articlesJson)
-                    }
-            )
+    @Test
+    fun getTranslatedArticles() {
+        Mockito.`when`(translator.translate(Mockito.anyString(), Mockito.anyString())).thenReturn("Translated value")
+
+        adapter.getTranslatedArticles(sources)
+                .test()
+                .assertValue { articles -> articles.all { article -> article.title == "Translated value" } }
+                .assertNoErrors()
+                .assertComplete()
+
+        Mockito.verify(translator, Mockito.atLeast(sources.size)).translate(Mockito.anyString(), Mockito.anyString())
+
+        Mockito.verifyZeroInteractions(liveDB)
+    }
+
+    @Test
+    fun getArticles() {
+        adapter.getArticles(sources)
+                .test()
+                .assertValue { articles -> articles.isNotEmpty() && articles.size > sources.size }
+                .assertNoErrors()
+                .assertComplete()
+
+        Mockito.verifyZeroInteractions(translator)
+
+        Mockito.verifyZeroInteractions(liveDB)
+    }
+
+    @Test
+    fun getSources() {
+        adapter.getSources()
+                .test()
+                .assertValue { sources -> sources.isNotEmpty() }
+                .assertNoErrors()
+                .assertNoTimeout()
+                .assertComplete()
+
+        Mockito.verifyZeroInteractions(translator)
+
+        Mockito.verifyZeroInteractions(liveDB)
+    }
+
+    @Test
+    fun getLives() {
+        val lives = mapOf(
+                "France 24" to "adsadasd",
+                "CNN" to "https://cnn"
+        )
+
+        Mockito.`when`(livesSnapshot.value).thenReturn(lives)
+
+        Mockito.`when`(liveDB.addListenerForSingleValueEvent(Mockito.any())).then {
+            (it.arguments[0] as ValueEventListener).onDataChange(livesSnapshot)
         }
 
-        newsRestAdapter.getArticles(sourcesResponse)
+        adapter.getLives()
                 .test()
-                .assertValue { result -> result.size == 30 }
+                .assertValue { it.size == 2 }
+                .assertNoErrors()
+                .assertNoTimeout()
+                .assertComplete()
+
+        Mockito.verify(liveDB, Mockito.only()).addListenerForSingleValueEvent(Mockito.any())
+
+        Mockito.verify(livesSnapshot, Mockito.only()).value
     }
 }

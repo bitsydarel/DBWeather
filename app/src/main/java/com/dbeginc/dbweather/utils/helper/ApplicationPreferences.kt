@@ -29,19 +29,19 @@ import com.dbeginc.dbweather.utils.utility.putDouble
  */
 class ApplicationPreferences(private val sharedPreferences: SharedPreferences) {
 
-    fun getGpsLatitude() : Double = sharedPreferences.getDouble(ConstantHolder.LATITUDE)
+    fun getDefaultLatitude(): Double = sharedPreferences.getDouble(ConstantHolder.LATITUDE)
 
-    fun getGpsLongitude() : Double = sharedPreferences.getDouble(ConstantHolder.LONGITUDE)
+    fun getDefaultLongitude(): Double = sharedPreferences.getDouble(ConstantHolder.LONGITUDE)
 
-    fun getGpsLocation() : String = sharedPreferences.getString(CURRENT_LOCATION, "")
+    fun getDefaultLocation(): String = sharedPreferences.getString(CURRENT_LOCATION, "")
 
-    fun getLastPreviewedLatitude() : Double = sharedPreferences.getDouble(USER_LATITUDE)
+    fun getCustomLatitude(): Double = sharedPreferences.getDouble(USER_LATITUDE)
 
-    fun getLastPreviewedLongitude(): Double = sharedPreferences.getDouble(USER_LONGITUDE)
+    fun getCustomLongitude(): Double = sharedPreferences.getDouble(USER_LONGITUDE)
 
-    fun getLastPreviewedLocation(): String = sharedPreferences.getString(USER_LOCATION, "")
+    fun getCustomLocation(): String = sharedPreferences.getString(USER_LOCATION, "")
 
-    fun updateGpsCoordinates(location: String, latitude: Double, longitude: Double) {
+    fun updateDefaultCoordinates(location: String, latitude: Double, longitude: Double) {
         sharedPreferences.edit()
                 .putString(CURRENT_LOCATION, location)
                 .putDouble(LATITUDE, latitude)
@@ -49,7 +49,7 @@ class ApplicationPreferences(private val sharedPreferences: SharedPreferences) {
                 .apply()
     }
 
-    fun updateLastPreviewedCoordinates(location: String, latitude: Double, longitude: Double) {
+    fun updateCustomCoordinates(location: String, latitude: Double, longitude: Double) {
         sharedPreferences.edit()
                 .putString(USER_LONGITUDE, location)
                 .putDouble(USER_LATITUDE, latitude)
@@ -57,15 +57,15 @@ class ApplicationPreferences(private val sharedPreferences: SharedPreferences) {
                 .apply()
     }
 
-    fun changeGpsStatus(isOn: Boolean) = sharedPreferences.edit().putBoolean(IS_GPS_PERMISSION_GRANTED, isOn).apply()
+    fun changeGpsPermissionStatus(isOn: Boolean) = sharedPreferences.edit().putBoolean(IS_GPS_PERMISSION_GRANTED, isOn).apply()
 
-    fun isGpsOn() : Boolean = sharedPreferences.getBoolean(IS_GPS_PERMISSION_GRANTED, false)
+    fun isGpsPermissionOn(): Boolean = sharedPreferences.getBoolean(IS_GPS_PERMISSION_GRANTED, false)
 
-    fun updateCurrentLocationSource(isGpsLocation: Boolean) = sharedPreferences.edit().putBoolean(IS_GPS_LOCATION, isGpsLocation).apply()
+    fun updateCurrentLocationType(isDefault: Boolean) = sharedPreferences.edit().putBoolean(IS_GPS_LOCATION, isDefault).apply()
 
-    fun isCurrentLocationFromGps(): Boolean = sharedPreferences.getBoolean(IS_GPS_LOCATION, false)
+    fun isCurrentLocationDefault(): Boolean = sharedPreferences.getBoolean(IS_GPS_LOCATION, false)
 
-    fun changeCurrentLocationStatus(isFromGps: Boolean) = sharedPreferences.edit().putBoolean(ConstantHolder.IS_GPS_LOCATION, isFromGps).apply()
+    fun changeDefaultLocationStatus(isFromGps: Boolean) = sharedPreferences.edit().putBoolean(ConstantHolder.IS_GPS_LOCATION, isFromGps).apply()
 
     fun isFirstLaunchOfApplication(): Boolean = sharedPreferences.getBoolean(FIRST_RUN, true)
 

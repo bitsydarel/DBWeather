@@ -23,13 +23,53 @@ import io.reactivex.Single
  * Created by darel on 25.10.17.
  *
  * Configuration Repository
+ *
+ * Interface following repository pattern.
+ *
+ * Each method in this interface are threaded as Use Cases (Interactor in terms of Clean Architecture).
  */
 interface ConfigurationsRepository : Cleanable{
+
+    /**
+     * Created by darel on 26.10.17.
+     *
+     * Get weather notification status
+     *
+     * @return [Single] reactive stream of [Boolean] that provide a [Boolean] of true or false if notification is enable or an error
+     */
     fun getWeatherNotificationStatus() : Single<Boolean>
 
+
+    /**
+     * Created by darel on 26.10.17.
+     *
+     * Get NewsPaper Translation status
+     *
+     * @return [Single] reactive stream of [Boolean] that provide a [Boolean] of true or false if translation is enable or an error
+     */
     fun getNewsPapersTranslationStatus(): Single<Boolean>
 
-    fun changeWeatherNotificationStatus(isOn: Boolean): Completable
 
-    fun changeNewsPapersTranslationStatus(isOn: Boolean): Completable
+    /**
+     * Created by darel on 25.10.17.
+     *
+     * Change weather notification status
+     *
+     * @param enable weather notifications
+     *
+     * @return [Completable] reactive stream that notify completion of the task
+     */
+    fun changeWeatherNotificationStatus(enable: Boolean): Completable
+
+
+    /**
+     * Created by darel on 25.10.17.
+     *
+     * Change NewsPaper Translation Status
+     *
+     * @param shouldTranslate newsPapers
+     *
+     * @return [Completable] reactive stream that notify completion of the task
+     */
+    fun changeNewsPapersTranslationStatus(shouldTranslate: Boolean): Completable
 }

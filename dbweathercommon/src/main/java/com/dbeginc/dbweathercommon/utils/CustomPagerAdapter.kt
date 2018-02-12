@@ -24,7 +24,6 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 
 
@@ -53,11 +52,14 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
     }
 
     fun <DATA: UpdatableModel>update(data: List<DATA>) {
-        val updatableFragments = fragmentManager.fragments.filterIsInstance(UpdatableContainer::class.java)
+        async {
+            val updatableFragments = fragmentManager.fragments.filterIsInstance(UpdatableContainer::class.java)
 
-        data.filter { model -> updatableFragments.indexOfFirst { updatable -> updatable.getUpdatableId() == model.getId() } != -1 }
-                .mapNotNull { model -> updatableFragments.find { updatable -> updatable.getUpdatableId() == model.getId() }?.to(model) }
-                .forEach { (updatable, model) -> updatable.update(model) }
+            data.filter { model -> updatableFragments.indexOfFirst { updatable -> updatable.getUpdatableId() == model.getId() } != -1 }
+                    .mapNotNull { model -> updatableFragments.find { updatable -> updatable.getUpdatableId() == model.getId() }?.to(model) }
+                    .forEach { (updatable, model) -> updatable.update(model) }
+
+        }
     }
 
     /**
@@ -75,20 +77,21 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
          * Checking if we already have a fragment
          * at the following position we return it
          */
-        if (pagerFragments.contains(uniqueIdentifier)) return pagerFragments[uniqueIdentifier]!!
+        if (pagerFragments.contains(uniqueIdentifier)) return pagerFragments.getValue(uniqueIdentifier)
 
         if (currentTransaction == null) currentTransaction = fragmentManager.beginTransaction()
 
         // we get a new fragment
-        val fragment = getItem(position)
-
-        fragment.setMenuVisibility(false)
-        fragment.userVisibleHint = false
+        val fragment = getItem(position).apply {
+            setMenuVisibility(false)
+            userVisibleHint = false
+        }
 
         // checked if we saved the state of fragment at the position
         if (pagerFragmentStates.contains(uniqueIdentifier)) fragment.setInitialSavedState(pagerFragmentStates[uniqueIdentifier])
 
-        pagerFragments.put(uniqueIdentifier, fragment)
+        pagerFragments[uniqueIdentifier] = fragment
+
         currentTransaction?.add(container.id, fragment, uniqueIdentifier)
 
         return fragment
@@ -102,10 +105,12 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
 
         // If Pager adapter has been recently the fragment
         // inconsistency will be
+
         try {
-            pagerFragmentStates.put(uniqueId, fragmentManager.saveFragmentInstanceState(fragment))
+            pagerFragmentStates[uniqueId] = fragmentManager.saveFragmentInstanceState(fragment)
 
         } catch (fragmentNotAdded: IllegalStateException) {
+            LogDispatcher.logError(fragmentNotAdded)
             Toast.makeText(container.context, fragmentNotAdded.localizedMessage, Toast.LENGTH_LONG).show()
         }
 
@@ -116,23 +121,28 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
     }
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any?) {
-        val fragment = `object` as Fragment?
+        val fragment = `object` as? Fragment
 
         if (fragment !== currentPrimaryFragment) {
-            currentPrimaryFragment?.setMenuVisibility(false)
-            currentPrimaryFragment?.userVisibleHint = false
+            currentPrimaryFragment?.apply {
+                setMenuVisibility(false)
+                userVisibleHint = false
+            }
 
-            fragment?.setMenuVisibility(true)
-            fragment?.userVisibleHint = true
+            currentPrimaryFragment = fragment?.apply {
+                setMenuVisibility(true)
+                userVisibleHint = true
+            }
 
-            currentPrimaryFragment = fragment
-
+            //TODO Experimental
+            currentTransaction?.setPrimaryNavigationFragment(currentPrimaryFragment)
         }
     }
 
     override fun finishUpdate(container: ViewGroup) {
         if (currentTransaction != null) {
-            currentTransaction?.commitAllowingStateLoss()
+            //currentTransaction?.commitAllowingStateLoss()
+            currentTransaction?.commit()
             currentTransaction = null
             fragmentManager.executePendingTransactions()
         }
@@ -190,8 +200,8 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
             pagerFragments.clear()
             pagerFragmentStates.clear()
 
-            fragmentSavedStatesKeys?.zip(fragmentSavedStates)?.forEach {
-                (key, state) -> pagerFragmentStates.put(key, state as Fragment.SavedState)
+            fragmentSavedStatesKeys?.zip(fragmentSavedStates)?.forEach { (key, state) ->
+                pagerFragmentStates[key] = state as Fragment.SavedState
             }
 
             states.keySet()
@@ -201,8 +211,7 @@ abstract class CustomPagerAdapter(private val fragmentManager: FragmentManager) 
                         val fragment = fragmentManager.getFragment(states, key)
 
                         if (fragment != null) {
-                            pagerFragments.put(key, fragment)
-                            fragment.setMenuVisibility(false)
+                            pagerFragments[key] = fragment.apply { setMenuVisibility(false) }
                         }
                     }
 

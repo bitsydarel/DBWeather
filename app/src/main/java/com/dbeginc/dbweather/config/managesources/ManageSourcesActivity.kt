@@ -16,10 +16,14 @@
 package com.dbeginc.dbweather.config.managesources
 
 import android.app.SearchManager
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.Menu
@@ -27,16 +31,18 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.config.managesources.adapter.SourcesAdapter
 import com.dbeginc.dbweather.databinding.ActivityManageSourcesBinding
+import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.NEWS_PAPERS
-import com.dbeginc.dbweather.utils.utility.Injector
+import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.getList
 import com.dbeginc.dbweather.utils.utility.putList
-import com.dbeginc.dbweather.utils.utility.snack
-import com.dbeginc.dbweatherdomain.usecases.news.SubscribeToSource
-import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
-import com.dbeginc.dbweathernews.sourcesmanager.contract.SourcesManagerPresenter
+import com.dbeginc.dbweathercommon.utils.RequestState
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
+import com.dbeginc.dbweathernews.sourcesmanager.SourcesManagerViewModel
 import com.dbeginc.dbweathernews.sourcesmanager.contract.SourcesManagerView
 import com.dbeginc.dbweathernews.viewmodels.SourceModel
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
 /**
@@ -44,28 +50,41 @@ import javax.inject.Inject
  *
  * Manage Sources Activity
  */
-class ManageSourcesActivity : BaseActivity(), SourcesManagerView {
-    @Inject lateinit var presenter: SourcesManagerPresenter
-    @Inject lateinit var subscribeToSource: SubscribeToSource
-    @Inject lateinit var unSubscribeToSource: UnSubscribeToSource
+class ManageSourcesActivity : BaseActivity(), SourcesManagerView, WithDependencies {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    @Inject
+    lateinit var model: NewsRepository
+    private lateinit var viewModel: SourcesManagerViewModel
     private lateinit var binding: ActivityManageSourcesBinding
     private lateinit var adapter: SourcesAdapter
+    override val state: BehaviorSubject<RequestState> = BehaviorSubject.create()
+    private var stateSubscription: Disposable? = null
+
+    override fun onBackPressed() {
+        Navigator.goToMainScreen(this)
+        super.onBackPressed()
+    }
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        Injector.injectManageSourcesDep(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_manage_sources)
 
-        adapter = if (savedState == null) SourcesAdapter(emptyList(), subscribeToSource, unSubscribeToSource) else SourcesAdapter(savedState.getList(NEWS_PAPERS), subscribeToSource, unSubscribeToSource)
+        adapter = if (savedState == null) SourcesAdapter(emptyList(), model) else SourcesAdapter(savedState.getList(NEWS_PAPERS), model)
 
-        presenter.bind(this)
-    }
+        viewModel = ViewModelProviders.of(this, factory)[SourcesManagerViewModel::class.java]
 
-    override fun onDestroy() {
-        super.onDestroy()
+        viewModel.getSources().observe(
+                this,
+                android.arch.lifecycle.Observer {
+                    displaySources(it!!)
+                }
+        )
 
-        cleanState()
+        state.subscribe(this::onStateChanged).also { stateSubscription = it }
+
+        viewModel.presenter.bind(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -107,33 +126,35 @@ class ManageSourcesActivity : BaseActivity(), SourcesManagerView {
     override fun setupView() {
         setSupportActionBar(binding.manageSourceToolbar)
 
-        binding.manageSourceToolbar.setNavigationOnClickListener { presenter.onExitAction() }
+        binding.manageSourceToolbar.setNavigationOnClickListener { viewModel.presenter.onExitAction(this) }
 
         binding.sourcesList.adapter = adapter
 
         binding.sourcesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        binding.manageSourcesUpdateStatus.setOnRefreshListener { presenter.loadSources() }
+        binding.manageSourcesUpdateStatus.setOnRefreshListener { viewModel.loadSources(state) }
 
-        presenter.loadSources()
+        viewModel.loadSources(state)
     }
 
-    override fun cleanState() = presenter.unBind()
-
-    override fun showLoading() {
-        binding.manageSourcesUpdateStatus.isRefreshing = true
+    override fun onStateChanged(state: RequestState) {
+        when (state) {
+            RequestState.LOADING -> binding.manageSourcesUpdateStatus.isRefreshing = true
+            RequestState.COMPLETED -> binding.manageSourcesUpdateStatus.isRefreshing = false
+            RequestState.ERROR -> onSourcesRequestFailed()
+        }
     }
 
-    override fun hideLoading() {
-        binding.manageSourcesUpdateStatus.isRefreshing = false
+    override fun close() = onBackPressed()
+
+    override fun onSourcesRequestFailed() {
+        Snackbar.make(binding.manageSourcesLayout, R.string.sources_error_message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED)
+                .setAction(R.string.retry, { viewModel.presenter.retrySourcesRequest() })
     }
 
-    override fun displaySources(sources: List<SourceModel>) = adapter.update(sources)
+    private fun handleSearchQuery(query: String) = if (query.isNotEmpty()) viewModel.findSource(state, query.toLowerCase()) else viewModel.loadSources(state)
 
-    override fun close() = finish()
-
-    override fun showError(error: String) = binding.manageSourcesLayout.snack(error)
-
-    private fun handleSearchQuery(query: String) = if (query.isNotEmpty()) presenter.findSource(query.toLowerCase()) else presenter.loadSources()
+    private fun displaySources(sources: List<SourceModel>) = adapter.update(sources)
 
 }

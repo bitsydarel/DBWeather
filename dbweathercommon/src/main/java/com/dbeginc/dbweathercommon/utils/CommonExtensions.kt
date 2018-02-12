@@ -15,6 +15,7 @@
 
 package com.dbeginc.dbweathercommon.utils
 
+import com.dbeginc.dbweathercommon.view.IView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.util.*
@@ -29,3 +30,5 @@ fun Disposable.addTo(subscription: CompositeDisposable) = subscription.add(this)
 fun Double.round() : Int = Math.round(this).toInt()
 
 fun Long.toDate() : Date = Date(this)
+
+fun IView.onError(error: Throwable) = LogDispatcher.logError(error, this)

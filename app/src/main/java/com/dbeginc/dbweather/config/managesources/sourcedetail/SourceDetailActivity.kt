@@ -23,8 +23,8 @@ import android.view.MenuItem
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.SourceDetailFeatureBinding
+import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.SOURCE_KEY
-import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweather.utils.utility.show
 import com.dbeginc.dbweather.utils.utility.snack
@@ -34,15 +34,13 @@ import com.dbeginc.dbweathernews.viewmodels.SourceModel
 import javax.inject.Inject
 
 
-class SourceDetailActivity : BaseActivity(), SourceDetailView {
+class SourceDetailActivity : BaseActivity(), SourceDetailView, WithDependencies {
     @Inject lateinit var presenter: SourceDetailPresenter
     private lateinit var binding: SourceDetailFeatureBinding
     private var sourceDetailMenu: Menu? = null
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-
-        Injector.injectSourceDetailDep(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.source_detail_feature)
 
@@ -76,7 +74,7 @@ class SourceDetailActivity : BaseActivity(), SourceDetailView {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
-            R.id.sourceDetailSubscribe -> presenter.onSubscribeAction()
+            R.id.sourceDetailSubscribe -> presenter.onSubscribeAction(this)
         }
         return true
     }
@@ -86,7 +84,7 @@ class SourceDetailActivity : BaseActivity(), SourceDetailView {
 
         setSupportActionBar(binding.sourceDetailToolbar)
 
-        binding.sourceDetailToolbar.setNavigationOnClickListener { presenter.onExitAction() }
+        binding.sourceDetailToolbar.setNavigationOnClickListener { presenter.onExitAction(this) }
     }
 
     override fun cleanState() = presenter.unBind()
@@ -97,7 +95,7 @@ class SourceDetailActivity : BaseActivity(), SourceDetailView {
 
     override fun hideLoading() = binding.sourceDetailUpdateAnimation.remove()
 
-    override fun showError(error: String) = binding.sourceDetailLayout.snack(error)
+    override fun showMessage(message: String) = binding.sourceDetailLayout.snack(message)
 
     override fun showSubscribedToSource() {
         sourceDetailMenu?.findItem(R.id.sourceDetailSubscribe)?.setIcon(R.drawable.ic_follow_icon_red)

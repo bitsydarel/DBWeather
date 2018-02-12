@@ -15,14 +15,13 @@
 
 package com.dbeginc.dbweathernews.favoritelives.contract
 
-import com.dbeginc.dbweathercommon.presenter.IAsyncPresenter
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
+import com.dbeginc.dbweathercommon.presenter.IPresenter
 
 /**
  * Created by darel on 17.11.17.
  *
  * Favorite Lives Presenter
  */
-interface FavoriteLivesPresenter : IAsyncPresenter<FavoriteLivesView, List<LiveModel>>{
-    fun loadFavoriteLives()
+interface FavoriteLivesPresenter : IPresenter<FavoriteLivesView> {
+    fun loadFavoriteLives(view: FavoriteLivesView)
 }

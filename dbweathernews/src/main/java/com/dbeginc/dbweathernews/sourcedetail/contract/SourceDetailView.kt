@@ -15,7 +15,7 @@
 
 package com.dbeginc.dbweathernews.sourcedetail.contract
 
-import com.dbeginc.dbweathercommon.view.IAsyncView
+import com.dbeginc.dbweathercommon.view.IView
 import com.dbeginc.dbweathernews.viewmodels.SourceModel
 
 /**
@@ -23,7 +23,7 @@ import com.dbeginc.dbweathernews.viewmodels.SourceModel
  *
  * Source Detail View
  */
-interface SourceDetailView : IAsyncView {
+interface SourceDetailView : IView {
     fun showSubscribedToSource()
 
     fun showUnSubscribedToSource()
@@ -31,6 +31,10 @@ interface SourceDetailView : IAsyncView {
     fun displaySourceDetail(source: SourceModel)
 
     fun getSource() : SourceModel
+
+    fun showLoading()
+
+    fun hideLoading()
 
     fun close()
 }

@@ -17,9 +17,10 @@ package com.dbeginc.dbweather.news.newspaper.adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.dbeginc.dbweathercommon.utils.CustomPagerAdapter
 import com.dbeginc.dbweather.news.newspaper.adapter.page.ArticlesPageFragment
+import com.dbeginc.dbweathercommon.utils.CustomPagerAdapter
 import com.dbeginc.dbweathercommon.utils.UpdatableContainer
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 import java.util.*
@@ -35,17 +36,28 @@ class ArticlesPagerAdapter(data: List<NewsPaperModel>, private val fragmentManag
 
     override fun getItem(position: Int): Fragment {
         val newsPaper = newsPapers[position]
+
         return ArticlesPageFragment.newInstance(newsPaper.name, newsPaper.children)
+    }
+
+    override fun startUpdate(container: ViewGroup?) {
+        fragmentManager.fragments
+                .filterIsInstance<UpdatableContainer>()
+                .forEach {
+                    (it as Fragment).onCreateView(
+                            LayoutInflater.from(it.context),
+                            container,
+                            null
+                    )
+                }
     }
 
     override fun finishUpdate(container: ViewGroup) {
         super.finishUpdate(container)
-
-        //Cleanup  the temporary list of ids
+        // Cleanup  the temporary list of ids
         temporaryIds = null
     }
 
-    //TODO need to keep reference to previous dataset if updating
     override fun getUniqueIdentifier(position: Int): String = temporaryIds?.getOrNull(position) ?: newsPapers[position].name
 
     override fun getCount(): Int = newsPapers.size
@@ -55,9 +67,9 @@ class ArticlesPagerAdapter(data: List<NewsPaperModel>, private val fragmentManag
     override fun getItemPosition(`object`: Any): Int {
         val updatableFragment = `object` as UpdatableContainer
 
-        //val founded = newsPapers.firstOrNull { newsPaper -> updatableFragment?.getUpdatableId() == newsPaper.getId() } != null
-        // check if newsPaper is not in dataset if is not we need to create the page
-        if (newsPapers.firstOrNull { newspaper -> newspaper.name == updatableFragment.getUpdatableId() } == null) return POSITION_NONE
+        // check if newsPaper is not in dataset
+        // if is not we need to create the page so we return [POSITION_NONE]
+        if (newsPapers.firstOrNull { (name) -> name == updatableFragment.getUpdatableId() } == null) return POSITION_NONE
 
         // check if we already have an instance of the fragment
         val founded = fragmentManager.fragments
@@ -76,14 +88,15 @@ class ArticlesPagerAdapter(data: List<NewsPaperModel>, private val fragmentManag
             newsPapers = LinkedList(newData)
 
             update(newData)
-        }
-        else {
+
+        } else {
             /**
              * make an copy of the old news papers unique ids
              * it's required to handle auto update of page
              * when new newspapers are added dynamically
              */
-            temporaryIds = newsPapers.map { newsPaper -> newsPaper.name }
+            newsPapers.map { (name) -> name }
+                    .also { ids -> temporaryIds = ids }
 
             newsPapers = LinkedList(newData)
 

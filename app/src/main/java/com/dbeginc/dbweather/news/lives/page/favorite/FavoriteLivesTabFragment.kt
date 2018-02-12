@@ -17,16 +17,17 @@ package com.dbeginc.dbweather.news.lives.page.favorite
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentFavoriteLivesTabLayoutBinding
+import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.news.lives.page.favorite.adapter.FavoriteLiveAdapter
 import com.dbeginc.dbweather.utils.holder.ConstantHolder
-import com.dbeginc.dbweather.utils.utility.Injector
 import com.dbeginc.dbweather.utils.utility.getList
 import com.dbeginc.dbweather.utils.utility.putList
 import com.dbeginc.dbweather.utils.utility.snack
@@ -40,7 +41,7 @@ import javax.inject.Inject
  *
  * Favorite Lives Page Fragment
  */
-class FavoriteLivesTabFragment : BaseFragment(), FavoriteLivesView {
+class FavoriteLivesTabFragment : Fragment(), FavoriteLivesView, WithDependencies, SwipeRefreshLayout.OnRefreshListener {
     @Inject lateinit var presenter: FavoriteLivesPresenter
     private lateinit var adapter: FavoriteLiveAdapter
     private lateinit var binding: FragmentFavoriteLivesTabLayoutBinding
@@ -48,10 +49,7 @@ class FavoriteLivesTabFragment : BaseFragment(), FavoriteLivesView {
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
 
-        Injector.injectFavoriteLivesPageDep(this)
-
         adapter = if (savedState == null) FavoriteLiveAdapter(emptyList()) else FavoriteLiveAdapter(savedState.getList(ConstantHolder.LIVES_DATA))
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -79,23 +77,18 @@ class FavoriteLivesTabFragment : BaseFragment(), FavoriteLivesView {
 
     /******************** Favorite Lives Tab View Part *********************/
     override fun setupView() {
-
-        binding.favoriteLivesLayout.setOnRefreshListener { presenter.loadFavoriteLives() }
+        binding.favoriteLivesLayout.setOnRefreshListener(this::onRefresh)
 
         binding.favoriteLivesList.adapter = adapter
 
         binding.favoriteLivesList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-        presenter.loadFavoriteLives()
+        presenter.loadFavoriteLives(this)
     }
 
-    override fun cleanState() {
-        presenter.unBind()
-    }
+    override fun cleanState() = presenter.unBind()
 
-    override fun displayFavoriteLives(lives: List<LiveModel>) {
-        adapter.updateData(lives)
-    }
+    override fun displayFavoriteLives(lives: List<LiveModel>) = adapter.updateData(lives)
 
     override fun showLoading() {
         binding.favoriteLivesLayout.isRefreshing = true
@@ -105,6 +98,7 @@ class FavoriteLivesTabFragment : BaseFragment(), FavoriteLivesView {
         binding.favoriteLivesLayout.isRefreshing = false
     }
 
-    override fun showError(error: String) = binding.favoriteLivesLayout.snack(error)
+    override fun showMessage(message: String) = binding.favoriteLivesLayout.snack(message)
 
+    override fun onRefresh() = presenter.loadFavoriteLives(this)
 }

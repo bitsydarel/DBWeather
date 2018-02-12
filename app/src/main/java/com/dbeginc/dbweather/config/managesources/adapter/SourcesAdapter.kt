@@ -24,12 +24,8 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.config.managesources.adapter.contract.SourcePresenter
 import com.dbeginc.dbweather.config.managesources.adapter.presenter.SourcePresenterImpl
 import com.dbeginc.dbweather.config.managesources.adapter.view.SourceViewHolder
-import com.dbeginc.dbweatherdomain.usecases.news.SubscribeToSource
-import com.dbeginc.dbweatherdomain.usecases.news.UnSubscribeToSource
+import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.viewmodels.SourceModel
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.coroutines.experimental.bg
 import java.util.*
 
 /**
@@ -38,15 +34,14 @@ import java.util.*
  * Sources Adapter
  */
 class SourcesAdapter(sources: List<SourceModel>,
-                     private val subscribeToSource: SubscribeToSource,
-                     private val unSubscribeToSource: UnSubscribeToSource) : RecyclerView.Adapter<SourceViewHolder>() {
+                     private val model: NewsRepository) : RecyclerView.Adapter<SourceViewHolder>() {
 
     private var container: RecyclerView? = null
     private val presenters: LinkedList<SourcePresenter>
 
     init {
         presenters = LinkedList(
-                sources.map { source -> SourcePresenterImpl(source, subscribeToSource, unSubscribeToSource) }
+                sources.map { source -> SourcePresenterImpl(source, model) }
                         .sortedBy { presenter -> presenter.getData().name }
         )
     }
@@ -72,19 +67,20 @@ class SourcesAdapter(sources: List<SourceModel>,
 
         presenter.bind(holder)
 
-        presenter.loadSource()
+        presenter.loadSource(holder)
     }
 
     fun update(newData: List<SourceModel>) {
-        async(UI) {
-            val result = bg { DiffUtil.calculateDiff(SourceDiffUtil(presenters, newData.sortedBy { source -> source.name })) }.await()
+        val result = DiffUtil.calculateDiff(SourceDiffUtil(presenters, newData.sortedBy { source -> source.name }))
 
-            container?.post {
-                presenters.clear()
-                newData.mapTo(presenters) { source -> SourcePresenterImpl(source, subscribeToSource, unSubscribeToSource) }
-                presenters.sortBy { presenter -> presenter.getData().name }
-                result.dispatchUpdatesTo(this@SourcesAdapter)
-            }
+        container?.post {
+            presenters.clear()
+
+            newData.mapTo(presenters) { source -> SourcePresenterImpl(source, model) }
+
+            presenters.sortBy { presenter -> presenter.getData().name }
+
+            result.dispatchUpdatesTo(this@SourcesAdapter)
         }
     }
 
