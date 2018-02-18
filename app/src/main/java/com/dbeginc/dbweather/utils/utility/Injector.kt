@@ -37,7 +37,6 @@ import dagger.android.support.DaggerApplication
 object Injector {
 
     fun init(application: DaggerApplication) {
-
         application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, p1: Bundle?) {
                 if (activity is WithDependencies) {
@@ -75,7 +74,6 @@ object Injector {
         fragment.childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentViewCreated(fm: FragmentManager?, f: Fragment?, v: View?, savedInstanceState: Bundle?) {
                 if (f is WithDependencies) AndroidSupportInjection.inject(f)
-
                 if (f is WithChildDependencies) injectFragmentsChildDependencies(f)
             }
         }, true)

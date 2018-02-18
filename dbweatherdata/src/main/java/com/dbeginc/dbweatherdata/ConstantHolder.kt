@@ -22,7 +22,7 @@ import android.support.annotation.RestrictTo
  *
  * Constant Holder class
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 object ConstantHolder {
     const val TAG = "dbweather"
     const val WEATHER_TABLE = "weather"
@@ -31,7 +31,6 @@ object ConstantHolder {
     const val LIVE_TABLE = "live"
     const val FAVORITE_LIVE_TABLE = "favorite_live"
     const val LIVE_SOURCE_REFERENCE = "live_source"
-    const val NEWS_CACHE_NAME = "news_network_cache"
-    const val WEATHER_CACHE_NAME = "weather_network_cache"
-    const val CACHE_SIZE: Long = 50 * 1024 * 1024
+    const val NETWORK_CACHE_NAME = "network_network_cache"
+    const val CACHE_SIZE: Long = 100 * 1024 * 1024
 }

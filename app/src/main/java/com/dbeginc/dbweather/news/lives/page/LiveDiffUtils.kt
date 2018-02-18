@@ -23,7 +23,7 @@ import com.dbeginc.dbweathernews.viewmodels.LiveModel
  *
  * Live Stream Difference Calculator
  */
-class LiveDiffUtils(private val old: List<LiveModel>, private val new: List<LiveModel>) : DiffUtil.Callback() {
+class LiveDiffUtils(private val old: Array<LiveModel>, private val new: Array<LiveModel>) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = old.size
 

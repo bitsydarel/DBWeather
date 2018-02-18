@@ -54,8 +54,6 @@ fun View.hide() {
     visibility = View.INVISIBLE
 }
 
-fun View.isVisible() : Boolean = visibility == View.VISIBLE
-
 fun View.isNotVisible(): Boolean = visibility == View.INVISIBLE || visibility == View.GONE
 
 fun View.toast(message: String, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -84,15 +82,6 @@ fun setImage(imageView: ImageView, url: String?) {
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
                 .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
                 .apply(RequestOptions.centerCropTransform())
-                .into(imageView)
-    }
-}
-
-@BindingAdapter("setGifImage")
-fun setGifImage(imageView: ImageView, gifImage: Int) {
-    if (gifImage > 0) {
-        Glide.with(imageView)
-                .load(gifImage)
                 .into(imageView)
     }
 }

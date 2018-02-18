@@ -26,16 +26,14 @@ import com.dbeginc.dbweather.news.lives.page.LiveDiffUtils
 import com.dbeginc.dbweather.utils.utility.Navigator
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
-import java.util.*
 
 /**
  * Created by darel on 20.10.17.
  *
  * Favorite Live Adapter
  */
-class FavoriteLiveAdapter(data: List<LiveModel>) : RecyclerView.Adapter<FavoriteLiveAdapter.FavoriteLiveViewHolder>(){
+class FavoriteLiveAdapter(private var favorites: Array<LiveModel> = emptyArray()) : RecyclerView.Adapter<FavoriteLiveAdapter.FavoriteLiveViewHolder>() {
     private var container: RecyclerView? = null
-    private val favorites = LinkedList(data.sorted())
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -58,18 +56,17 @@ class FavoriteLiveAdapter(data: List<LiveModel>) : RecyclerView.Adapter<Favorite
 
     override fun getItemCount(): Int = favorites.size
 
-    fun getData(): List<LiveModel> = favorites
+    fun getData(): Array<LiveModel> = favorites
 
+    @Synchronized
     fun updateData(newData: List<LiveModel>) {
-        val result = DiffUtil.calculateDiff(LiveDiffUtils(favorites, newData.sorted()))
+        val sorted = newData.toTypedArray().sortedArray()
 
-        favorites.clear()
+        val result = DiffUtil.calculateDiff(LiveDiffUtils(favorites, sorted))
 
-        favorites.addAll(newData)
+        favorites = sorted
 
-        favorites.sort()
-
-        container?.post { result.dispatchUpdatesTo(this@FavoriteLiveAdapter) }
+        result.dispatchUpdatesTo(this@FavoriteLiveAdapter)
     }
 
     inner class FavoriteLiveViewHolder(private val binding: LiveItemBinding) : RecyclerView.ViewHolder(binding.root) {

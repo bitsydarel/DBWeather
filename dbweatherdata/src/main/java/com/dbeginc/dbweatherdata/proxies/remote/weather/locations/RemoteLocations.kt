@@ -18,13 +18,12 @@ package com.dbeginc.dbweatherdata.proxies.remote.weather.locations
 import android.support.annotation.RestrictTo
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
-
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Locations
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 @Root(name="geonames", strict=false)
 data class RemoteLocations(
         @field:ElementList(entry="geoname", inline=true, type=RemoteLocation::class, required=false, empty=false) var locations: MutableList<RemoteLocation> = mutableListOf()

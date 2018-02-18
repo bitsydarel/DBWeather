@@ -22,7 +22,7 @@ import com.androidnetworking.interceptors.HttpLoggingInterceptor
 import com.dbeginc.dbweatherdata.BuildConfig
 import com.dbeginc.dbweatherdata.ConstantHolder
 import com.dbeginc.dbweatherdata.ConstantHolder.CACHE_SIZE
-import com.dbeginc.dbweatherdata.ConstantHolder.NEWS_CACHE_NAME
+import com.dbeginc.dbweatherdata.ConstantHolder.NETWORK_CACHE_NAME
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.GoogleTranslate
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.Translator
 import com.dbeginc.dbweatherdata.proxies.remote.news.*
@@ -55,7 +55,7 @@ class NewsRestAdapter private constructor(private val liveApi: DatabaseReference
                     .writeTimeout(35, TimeUnit.SECONDS)
                     .readTimeout(55, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
-                    .cache(Cache(File(context.cacheDir, NEWS_CACHE_NAME), CACHE_SIZE))
+                    .cache(Cache(File(context.cacheDir, NETWORK_CACHE_NAME), CACHE_SIZE))
 
             AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BASIC)
             AndroidNetworking.initialize(context, client.build())

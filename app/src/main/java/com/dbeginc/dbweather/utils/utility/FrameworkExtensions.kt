@@ -82,3 +82,5 @@ fun FloatingActionMenu.availableLocations(): List<String> {
 }
 
 fun LocationWeatherModel.fullName() = name.plus(", ").plus(countryCode)
+
+fun <T : Parcelable> Bundle.getArray(key: String): Array<T> = getParcelableArray(key) as Array<T>

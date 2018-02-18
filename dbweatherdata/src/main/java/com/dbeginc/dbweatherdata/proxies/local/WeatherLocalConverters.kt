@@ -21,10 +21,8 @@ import com.dbeginc.dbweatherdata.proxies.local.weather.LocalAlert
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalDailyData
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalHourlyData
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalMinutelyData
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import java.lang.reflect.Type
-
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * Created by darel on 16.09.17.
@@ -36,89 +34,33 @@ class WeatherLocalConverters {
 
     @TypeConverter
     fun jsonStringToMinutelyData(json: String): List<LocalMinutelyData>? {
-        return if (json.isNotEmpty()) {
-            val listOfMinutelyData: Type = Types.newParameterizedType(List::class.java, LocalMinutelyData::class.java)
-
-            Moshi.Builder()
-                    .build()
-                    .adapter<List<LocalMinutelyData>>(listOfMinutelyData)
-                    .fromJson(json)!!
-
-        } else null
+        return if (json.isNotEmpty()) Gson().fromJson(json, object : TypeToken<List<LocalMinutelyData>>() {}.type)
+        else null
     }
 
     @TypeConverter
-    fun minutelyDataToJson(list: List<LocalMinutelyData>?): String {
-        return if (list != null) {
-            val listOfMinutelyData = Types.newParameterizedType(List::class.java, LocalMinutelyData::class.java)
-
-            Moshi.Builder()
-                    .build()
-                    .adapter<List<LocalMinutelyData>>(listOfMinutelyData)
-                    .toJson(list)
-        } else ""
-    }
+    fun minutelyDataToJson(list: List<LocalMinutelyData>?): String = if (list != null) Gson().toJson(list) else ""
 
     @TypeConverter
-    fun jsonStringToHourlyData(json: String): List<LocalHourlyData> {
-        val listOfHourlyData = Types.newParameterizedType(List::class.java, LocalHourlyData::class.java)
-
-        return Moshi.Builder()
-                .build()
-                .adapter<List<LocalHourlyData>>(listOfHourlyData)
-                .fromJson(json)!!
-    }
+    fun jsonStringToHourlyData(json: String): List<LocalHourlyData> =
+            Gson().fromJson(json, object : TypeToken<List<LocalHourlyData>>() {}.type)
 
     @TypeConverter
-    fun hourlyDataToJson(list: List<LocalHourlyData>): String {
-        val listOfHourlyData = Types.newParameterizedType(List::class.java, LocalHourlyData::class.java)
-
-        return Moshi.Builder()
-                .build()
-                .adapter<List<LocalHourlyData>>(listOfHourlyData)
-                .toJson(list)
-    }
+    fun hourlyDataToJson(list: List<LocalHourlyData>): String = Gson().toJson(list)
 
     @TypeConverter
-    fun jsonStringToDailyData(json: String): List<LocalDailyData> {
-        val listOfDailyData = Types.newParameterizedType(List::class.java, LocalDailyData::class.java)
-
-        return Moshi.Builder()
-                .build()
-                .adapter<List<LocalDailyData>>(listOfDailyData)
-                .fromJson(json)!!
-    }
+    fun jsonStringToDailyData(json: String): List<LocalDailyData> =
+            Gson().fromJson(json, object : TypeToken<List<LocalDailyData>>() {}.type)
 
     @TypeConverter
-    fun dailyDataToJson(list: List<LocalDailyData>): String {
-        val listOfDailyData = Types.newParameterizedType(List::class.java, LocalDailyData::class.java)
-
-        return Moshi.Builder()
-                .build()
-                .adapter<List<LocalDailyData>>(listOfDailyData)
-                .toJson(list)
-    }
+    fun dailyDataToJson(dailyData: List<LocalDailyData>): String = Gson().toJson(dailyData)
 
     @TypeConverter
     fun jsonStringToAlerts(json: String): List<LocalAlert>? {
-        return if (json.isNotEmpty()) {
-            val listOfAlerts = Types.newParameterizedType(List::class.java, LocalAlert::class.java)
-
-            Moshi.Builder()
-                    .build()
-                    .adapter<List<LocalAlert>>(listOfAlerts)
-                    .fromJson(json)
-        } else null
+        return if (json.isNotEmpty()) Gson().fromJson(json, object : TypeToken<List<LocalAlert>>() {}.type)
+        else null
     }
 
     @TypeConverter
-    fun alertsToJson(alerts: List<LocalAlert>?): String {
-        return if (alerts != null) {
-            val listOfAlerts = Types.newParameterizedType(List::class.java, LocalAlert::class.java)
-            Moshi.Builder()
-                    .build()
-                    .adapter<List<LocalAlert>>(listOfAlerts)
-                    .toJson(alerts)
-        } else ""
-    }
+    fun alertsToJson(alerts: List<LocalAlert>?): String = if (alerts != null) Gson().toJson(alerts) else ""
 }

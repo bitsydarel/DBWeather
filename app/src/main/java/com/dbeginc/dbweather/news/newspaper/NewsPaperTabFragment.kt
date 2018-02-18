@@ -30,7 +30,7 @@ import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentNewspapersTabBinding
 import com.dbeginc.dbweather.di.WithChildDependencies
 import com.dbeginc.dbweather.di.WithDependencies
-import com.dbeginc.dbweather.news.newspaper.adapter.ArticlesPagerAdapter2
+import com.dbeginc.dbweather.news.newspaper.adapter.ArticlesPagerAdapter
 import com.dbeginc.dbweather.utils.views.animations.ZoomOutSlideTransformer
 import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweathernews.newspapers.NewsPapersViewModel
@@ -48,7 +48,7 @@ class NewsPaperTabFragment : BaseFragment(), NewsPapersView, WithDependencies, W
     private lateinit var binding: FragmentNewspapersTabBinding
     private lateinit var viewModel: NewsPapersViewModel
     private val defaultAuthor by lazy { getString(R.string.default_author_name) }
-    private val pageAdapter by lazy { ArticlesPagerAdapter2(listOf(), childFragmentManager) }
+    private val pageAdapter by lazy { ArticlesPagerAdapter(childFragmentManager) }
     private var stateSubscription: Disposable? = null
     override val state: BehaviorSubject<RequestState> = BehaviorSubject.create()
 

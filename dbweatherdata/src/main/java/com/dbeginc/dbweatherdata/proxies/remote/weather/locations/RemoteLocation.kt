@@ -24,7 +24,7 @@ import org.simpleframework.xml.Root
  *
  * RemoteLocation
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 @Root(name = "geoname", strict=false)
 data class RemoteLocation(@field:Element(name="name", type=String::class) var name: String = "",
                           @field:Element(name="lat", type=Double::class) var latitude: Double = 0.0,

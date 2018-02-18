@@ -16,21 +16,21 @@
 package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Currently Weather
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteCurrently(@Json(name= "time") val time: Long, @Json(name= "summary") val summary: String, @Json(name= "icon") val icon: String,
-                           @Json(name= "temperature") val temperature: Double, @Json(name= "apparentTemperature") val apparentTemperature: Double?,
-                           @Json(name= "precipIntensity") val precipIntensity: Double, @Json(name= "precipIntensityError") val precipIntensityError: Double?,
-                           @Json(name= "precipProbability") val precipProbability: Double, @Json(name= "precipType") val precipType: String?,
-                           @Json(name= "nearestStormDistance") val nearestStormDistance: Long?, @Json(name= "nearestStormBearing") val nearestStormBearing: Long?,
-                           @Json(name = "humidity") val humidity: Double, @Json(name = "windSpeed") val windSpeed: Double,
-                           @Json(name = "cloudCover") val cloudCover: Double, @Json(name = "windBearing") val windBearing: Long?,
-                           @Json(name = "visibility") val visibility: Double, @Json(name = "dewPoint") val dewPoint: Double?,
-                           @Json(name = "pressure") val pressure: Double
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteCurrently(@SerializedName("time") val time: Long, @SerializedName("summary") val summary: String, @SerializedName("icon") val icon: String,
+                           @SerializedName("temperature") val temperature: Double, @SerializedName("apparentTemperature") val apparentTemperature: Double?,
+                           @SerializedName("precipIntensity") val precipIntensity: Double, @SerializedName("precipIntensityError") val precipIntensityError: Double?,
+                           @SerializedName("precipProbability") val precipProbability: Double, @SerializedName("precipType") val precipType: String?,
+                           @SerializedName("nearestStormDistance") val nearestStormDistance: Long?, @SerializedName("nearestStormBearing") val nearestStormBearing: Long?,
+                           @SerializedName("humidity") val humidity: Double, @SerializedName("windSpeed") val windSpeed: Double,
+                           @SerializedName("cloudCover") val cloudCover: Double, @SerializedName("windBearing") val windBearing: Long?,
+                           @SerializedName("visibility") val visibility: Double, @SerializedName("dewPoint") val dewPoint: Double?,
+                           @SerializedName("pressure") val pressure: Double
 )

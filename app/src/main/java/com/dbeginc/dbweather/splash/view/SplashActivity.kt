@@ -34,12 +34,12 @@ import javax.inject.Inject
  * Welcome screen and initializer
  */
 class SplashActivity : DaggerAppCompatActivity(), SplashView, WithDependencies {
-    @Inject
-    lateinit var presenter: SplashPresenter
+    private val defaultSources by lazy { resources.getStringArray(R.array.default_sources) }
     @Inject
     lateinit var applicationPreferences: ApplicationPreferences
     private lateinit var binding: ActivitySplashBinding
-    private val defaultSources by lazy { resources.getStringArray(R.array.default_sources) }
+    @Inject
+    lateinit var presenter: SplashPresenter
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)

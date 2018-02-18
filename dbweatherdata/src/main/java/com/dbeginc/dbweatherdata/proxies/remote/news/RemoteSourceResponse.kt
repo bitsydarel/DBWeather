@@ -17,7 +17,6 @@ package com.dbeginc.dbweatherdata.proxies.remote.news
 
 import android.support.annotation.RestrictTo
 import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 
 /**
  * Created by darel on 04.10.17.
@@ -25,6 +24,6 @@ import com.squareup.moshi.Json
  * Remote Source Request Response
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-data class RemoteSourceResponse(@SerializedName("status") @Json(name = "status") val status: String,
-                                @SerializedName("sources") @Json(name = "sources") val sources: List<RemoteSource>
+data class RemoteSourceResponse(@SerializedName("status") val status: String,
+                                @SerializedName("sources") val sources: List<RemoteSource>
 )

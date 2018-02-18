@@ -17,90 +17,89 @@ package com.dbeginc.dbweather.news.newspaper.adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.support.v4.util.ArrayMap
+import android.support.v4.view.PagerAdapter
 import com.dbeginc.dbweather.news.newspaper.adapter.page.ArticlesPageFragment
-import com.dbeginc.dbweathercommon.utils.CustomPagerAdapter
+import com.dbeginc.dbweathercommon.utils.SmartFragmentStatePagerAdapter
 import com.dbeginc.dbweathercommon.utils.UpdatableContainer
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
-import java.util.*
 
-/*
- * Create by Darel Bitsy
+/**
+ * Created by darel on 12.02.18.
  *
- * Articles Adapter
+ *
  */
-class ArticlesPagerAdapter(data: List<NewsPaperModel>, private val fragmentManager: FragmentManager) : CustomPagerAdapter(fragmentManager) {
-    private var newsPapers: LinkedList<NewsPaperModel> = LinkedList(data)
-    private var temporaryIds: List<String>? = null
+class ArticlesPagerAdapter(fragmentManager: FragmentManager) : SmartFragmentStatePagerAdapter<ArticlesPageFragment>(fragmentManager) {
+    private val newsPapers: ArrayMap<Int, NewsPaperModel> = ArrayMap()
+    private var temporaryIds: ArrayMap<Int, NewsPaperModel>? = null
 
     override fun getItem(position: Int): Fragment {
-        val newsPaper = newsPapers[position]
+        val newsPaper = newsPapers.getValue(position)
 
         return ArticlesPageFragment.newInstance(newsPaper.name, newsPaper.children)
     }
 
-    override fun startUpdate(container: ViewGroup?) {
-        fragmentManager.fragments
-                .filterIsInstance<UpdatableContainer>()
-                .forEach {
-                    (it as Fragment).onCreateView(
-                            LayoutInflater.from(it.context),
-                            container,
-                            null
-                    )
-                }
+    override fun getItemPosition(`object`: Any?): Int {
+        val updatableFragment = `object` as UpdatableContainer
+
+        // find the page index with the following news source name
+        val pagePosition = newsPapers.findKey(updatableFragment.getUpdatableId())
+
+        /**
+         * if the page position is null that mean page was not present in the previous list
+         * so we need to create a new fragment for it
+         * if page position from the new list is the same as the one on the old list
+         * no new to create new one
+         * if none of the condition are met, we need to create new fragment at that position
+         */
+        val shouldBeRecreated = when {
+            pagePosition == null -> PagerAdapter.POSITION_NONE
+            newsPapers[pagePosition] == temporaryIds?.get(pagePosition) -> PagerAdapter.POSITION_UNCHANGED
+            else -> PagerAdapter.POSITION_NONE
+        }
+
+        if (shouldBeRecreated == PagerAdapter.POSITION_UNCHANGED) updatableFragment.update(newsPapers[pagePosition])
+
+        return shouldBeRecreated
     }
 
-    override fun finishUpdate(container: ViewGroup) {
-        super.finishUpdate(container)
-        // Cleanup  the temporary list of ids
-        temporaryIds = null
-    }
-
-    override fun getUniqueIdentifier(position: Int): String = temporaryIds?.getOrNull(position) ?: newsPapers[position].name
+    override fun getPageTitle(position: Int): CharSequence = newsPapers.getValue(position).name
 
     override fun getCount(): Int = newsPapers.size
 
-    override fun getPageTitle(position: Int): CharSequence = newsPapers[position].name
-
-    override fun getItemPosition(`object`: Any): Int {
-        val updatableFragment = `object` as UpdatableContainer
-
-        // check if newsPaper is not in dataset
-        // if is not we need to create the page so we return [POSITION_NONE]
-        if (newsPapers.firstOrNull { (name) -> name == updatableFragment.getUpdatableId() } == null) return POSITION_NONE
-
-        // check if we already have an instance of the fragment
-        val founded = fragmentManager.fragments
-                .filterIsInstance(UpdatableContainer::class.java)
-                .firstOrNull { page -> page.getUpdatableId() == updatableFragment.getUpdatableId() } != null
-
-        return if (founded) POSITION_UNCHANGED else POSITION_NONE
-    }
-
-    fun getData(): List<NewsPaperModel> = newsPapers
-
     @Synchronized
     fun refresh(newData: List<NewsPaperModel>) {
+        // if dataset is empty and the new dataset is the same as the current one
+        // we just update the dataset
+        if (newsPapers.isNotEmpty() and (newsPapers.size == newData.size)) {
+            newData.sortedBy { (name) -> name }
+                    .forEachIndexed { index, newsPaperModel ->
+                        newsPapers[index] = newsPaperModel
+                    }
 
-        if (newsPapers.isNotEmpty().and(newsPapers.size == newData.size)) {
-            newsPapers = LinkedList(newData)
-
-            update(newData)
+            // we update visible fragments with new data
+            newsPapers.forEach { (position, data) -> getRegisteredFragment(position)?.update(data) }
 
         } else {
-            /**
-             * make an copy of the old news papers unique ids
-             * it's required to handle auto update of page
-             * when new newspapers are added dynamically
-             */
-            newsPapers.map { (name) -> name }
-                    .also { ids -> temporaryIds = ids }
+            // create copy of current dataset
+            temporaryIds = ArrayMap(newsPapers)
 
-            newsPapers = LinkedList(newData)
+            // update the dataset with new one
+            newData.sortedBy { (name) -> name }
+                    .forEachIndexed { index, newsPaperModel ->
+                        newsPapers[index] = newsPaperModel
+                    }
 
+            // notify viewPagers that dataset size changed
             notifyDataSetChanged()
         }
     }
+
+    private fun Map<Int, NewsPaperModel>.findKey(arg: String): Int? {
+        val founded = filter { it.value.name == arg }
+
+        return if (founded.isEmpty()) null
+        else founded.toList()[0].first
+    }
+
 }

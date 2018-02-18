@@ -22,5 +22,5 @@ import android.support.annotation.RestrictTo
  *
  * Remote Minutely Weather Info
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 data class RemoteMinutely(val summary: String, val icon: String, val data: List<RemoteMinutelyData>)

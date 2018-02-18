@@ -23,7 +23,7 @@ import com.dbeginc.dbweathernews.viewmodels.ArticleModel
  *
  * Article Difference Calculator
  */
-class ArticleDiffUtils(private val old: List<ArticleModel>, private val new: List<ArticleModel>) : DiffUtil.Callback() {
+class ArticleDiffUtils(private val old: Array<ArticleModel>, private val new: Array<ArticleModel>) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = old.size
 

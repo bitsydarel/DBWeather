@@ -15,6 +15,7 @@
 
 package com.dbeginc.dbweatherdata.proxies.mappers
 
+import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.proxies.local.weather.*
 import com.dbeginc.dbweatherdata.proxies.remote.weather.*
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
@@ -25,21 +26,26 @@ import com.dbeginc.dbweatherdomain.entities.weather.*
  *
  * Type Converter for Data Model to domain Model
  */
-
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteLocation.toDomain() : Location = Location(name, latitude, longitude, countryCode, countryName)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun toUnknownLocation(latitude: Double, longitude: Double) : Location = Location("Unknown", latitude = latitude, longitude = longitude, countryCode = "", countryName = "")
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteAlert.toDomain() : Alert = Alert(time, title, description, uri, expires, regions, severity)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteCurrently.toDomain() : Currently {
     return Currently(time, summary, icon, temperature, apparentTemperature, precipIntensity, precipIntensityError, precipProbability,
             precipType, nearestStormDistance, nearestStormBearing, humidity, windSpeed, cloudCover, windBearing, visibility, dewPoint, pressure
     )
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteDaily.toDomain() : Daily = Daily(summary, icon, data.map { dailyData -> dailyData.toDomain() })
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteDailyData.toDomain(): DailyData {
     return DailyData(time, summary, icon, temperatureHigh, temperatureHighTime,
             temperatureLow, temperatureLowTime, apparentTemperatureHigh, apparentTemperatureHighTime,
@@ -50,14 +56,19 @@ fun RemoteDailyData.toDomain(): DailyData {
     )
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteFlags.toDomain() : Flags = Flags(sources, units)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteHourly.toDomain() : Hourly = Hourly(summary, icon, data.map { hourlyData -> hourlyData.toDomain() })
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteMinutely.toDomain() : Minutely = Minutely(summary, icon, data.map { minutelyData -> minutelyData.toDomain() })
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteMinutelyData.toDomain() : MinutelyData =MinutelyData(time, precipIntensity, precipProbability)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteWeather.toDomain() : Weather {
     return Weather(location = location?.toDomain() ?: toUnknownLocation(latitude, longitude),
             latitude = latitude, longitude = longitude,
@@ -66,15 +77,18 @@ fun RemoteWeather.toDomain() : Weather {
     )
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalAlert.toDomain() : Alert = Alert(time, title, description, uri, expires, regions, severity)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalCurrently.toDomainWeather() : Currently = Currently(time, summary, icon, temperature, apparentTemperature, precipIntensity, precipIntensityError, precipProbability,
         precipType, nearestStormDistance, nearestStormBearing, humidity, windSpeed, cloudCover, windBearing, visibility, dewPoint, pressure
 )
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalDaily.toDomain() : Daily = Daily(summary, icon, data.map { dailyData -> dailyData.toDomain() })
 
-
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalDailyData.toDomain() : DailyData {
     return DailyData(time, summary, icon, temperatureHigh, temperatureHighTime,
             temperatureLow, temperatureLowTime, apparentTemperatureHigh, apparentTemperatureHighTime,
@@ -85,22 +99,29 @@ fun LocalDailyData.toDomain() : DailyData {
     )
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalFlags.toDomain() : Flags = Flags(sources, units)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalHourly.toDomain() : Hourly = Hourly(summary, icon, data.map { hourlyData -> hourlyData.toDomain() })
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalHourlyData.toDomain() : HourlyData {
     return HourlyData(time, summary, icon, temperature, apparentTemperature, dewPoint, humidity, pressure,
             windSpeed, windGust, windBearing, cloudCover, precipIntensity, precipProbability, precipType, uvIndex, ozone
     )
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalLocation.toDomain() : Location = Location(name=locationName, latitude= locationLatitude, longitude= locationLongitude, countryCode=countryCode, countryName=countryName)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalMinutely.toDomain() : Minutely = Minutely(summary, icon, data.map { minutelyData -> minutelyData.toDomain() })
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalMinutelyData.toDomain() : MinutelyData  = MinutelyData(time, precipIntensity, precipProbability)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalWeather.toDomain() : Weather {
     return Weather(location.toDomain(), latitude, longitude, timezone,
             currently.toDomainWeather(), minutely?.toDomain(), hourly.toDomain(),

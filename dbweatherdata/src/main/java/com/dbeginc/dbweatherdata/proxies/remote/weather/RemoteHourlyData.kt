@@ -17,23 +17,23 @@ package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdomain.entities.weather.HourlyData
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Hourly Weather Data
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteHourlyData(@Json(name= "time") val time: Long, @Json(name= "summary") val summary: String,
-                            @Json(name= "icon") val icon: String, @Json(name= "temperature") val temperature: Double,
-                            @Json(name= "apparentTemperature") val apparentTemperature: Double, @Json(name= "dewPoint") val dewPoint: Double,
-                            @Json(name= "humidity") val humidity: Double, @Json(name= "pressure") val pressure: Double,
-                            @Json(name= "windSpeed") val windSpeed: Double, @Json(name= "windGust") val windGust: Double?,
-                            @Json(name= "windBearing") val windBearing: Long?, @Json(name= "cloudCover") val cloudCover: Double,
-                            @Json(name= "precipIntensity") val precipIntensity: Double, @Json(name= "precipProbability") val precipProbability: Double,
-                            @Json(name= "precipType") val precipType: String?, @Json(name= "uvIndex") val uvIndex: Long,
-                            @Json(name= "ozone") val ozone: Double) {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteHourlyData(@SerializedName("time") val time: Long, @SerializedName("summary") val summary: String,
+                            @SerializedName("icon") val icon: String, @SerializedName("temperature") val temperature: Double,
+                            @SerializedName("apparentTemperature") val apparentTemperature: Double, @SerializedName("dewPoint") val dewPoint: Double,
+                            @SerializedName("humidity") val humidity: Double, @SerializedName("pressure") val pressure: Double,
+                            @SerializedName("windSpeed") val windSpeed: Double, @SerializedName("windGust") val windGust: Double?,
+                            @SerializedName("windBearing") val windBearing: Long?, @SerializedName("cloudCover") val cloudCover: Double,
+                            @SerializedName("precipIntensity") val precipIntensity: Double, @SerializedName("precipProbability") val precipProbability: Double,
+                            @SerializedName("precipType") val precipType: String?, @SerializedName("uvIndex") val uvIndex: Long,
+                            @SerializedName("ozone") val ozone: Double) {
 
     fun toDomain() : HourlyData {
         return HourlyData(time, summary, icon, temperature, apparentTemperature, dewPoint, humidity, pressure,

@@ -28,8 +28,7 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.ArticlesFeatureBinding
 import com.dbeginc.dbweather.news.newspaper.adapter.page.adapter.ArticleAdapter
 import com.dbeginc.dbweather.utils.holder.ConstantHolder.ARTICLES_DATA
-import com.dbeginc.dbweather.utils.utility.getList
-import com.dbeginc.dbweather.utils.utility.putList
+import com.dbeginc.dbweather.utils.utility.getArray
 import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweathercommon.utils.UpdatableContainer
 import com.dbeginc.dbweathernews.articles.contract.ArticlesPresenter
@@ -53,7 +52,7 @@ class ArticlesPageFragment : Fragment(), ArticlesView, UpdatableContainer {
             val fragment = ArticlesPageFragment()
 
             fragment.arguments = Bundle().apply {
-                putList(ARTICLES_DATA, articles)
+                putParcelableArray(ARTICLES_DATA, articles.toTypedArray())
                 putString(SOURCE_ID, sourceId)
             }
 
@@ -71,18 +70,18 @@ class ArticlesPageFragment : Fragment(), ArticlesView, UpdatableContainer {
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
 
-        val articles: List<ArticleModel>
+        val articles: Array<ArticleModel>
 
         if(savedState == null) {
-            articles = arguments!!.getList(ARTICLES_DATA)
-            pageId = arguments!!.getString(SOURCE_ID)
+            articles = arguments.getArray(ARTICLES_DATA)
+            pageId = arguments.getString(SOURCE_ID)
 
         } else {
-            articles = savedState.getList(ARTICLES_DATA)
+            articles = savedState.getArray(ARTICLES_DATA)
             pageId = savedState.getString(SOURCE_ID)
         }
 
-        presenter = ArticlesPresenterImpl(articles)
+        presenter = ArticlesPresenterImpl(articles.asList())
 
         adapter = ArticleAdapter(articles, sizeProvider)
     }
@@ -107,8 +106,7 @@ class ArticlesPageFragment : Fragment(), ArticlesView, UpdatableContainer {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
-        outState.putList(ARTICLES_DATA, adapter.getData())
+        outState.putParcelableArray(ARTICLES_DATA, adapter.getData())
 
         outState.putString(SOURCE_ID, pageId)
     }

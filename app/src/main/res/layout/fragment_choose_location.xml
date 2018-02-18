@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="@string/searchLocationLabel"
             android:layout_marginTop="8dp"
-            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:gravity="center_horizontal|center_vertical"
             app:layout_constraintTop_toBottomOf="@id/chooseLocationLoading"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -63,7 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:queryHint="@string/city_name"
-                style="@style/Base.Widget.AppCompat.SearchView.ActionBar"
+                android:theme="@style/WeatherSearchView"
+                style="@style/WeatherSearchView"
                 app:iconifiedByDefault="false"/>
 
         </android.support.v7.widget.CardView>
@@ -72,8 +73,8 @@
             android:id="@+id/chooseLocationList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="24dp"
-            tools:listitem="@layout/choose_location_list_item"
+            android:layout_marginTop="24dp"
+            tools:listitem="@layout/location_item"
             app:layout_constraintTop_toBottomOf="@id/chooseLocationSearchCV"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -83,7 +84,7 @@
             android:id="@+id/chooseLocationAnimation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:lottie_fileName="map_animation.json"
+            app:lottie_fileName="world.json"
             app:lottie_loop="true"
             app:lottie_autoPlay="true"
             app:layout_constraintTop_toBottomOf="@id/chooseLocationSearchCV"

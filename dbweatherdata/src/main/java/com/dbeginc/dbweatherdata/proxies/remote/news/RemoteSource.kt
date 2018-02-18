@@ -17,7 +17,6 @@ package com.dbeginc.dbweatherdata.proxies.remote.news
 
 import android.support.annotation.RestrictTo
 import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 
 /**
  * Created by darel on 04.10.17.
@@ -25,11 +24,11 @@ import com.squareup.moshi.Json
  * Remote Source
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-data class RemoteSource(@SerializedName("id") @Json(name = "id") val id: String,
-                        @SerializedName("name") @Json(name = "name") val name: String,
-                        @SerializedName("description") @Json(name = "description") val description: String,
-                        @SerializedName("url") @Json(name = "url") val url: String,
-                        @SerializedName("category") @Json(name = "category") val category: String,
-                        @SerializedName("language") @Json(name = "language") val language: String,
-                        @SerializedName("country") @Json(name = "country") val country: String
+data class RemoteSource(@SerializedName("id") val id: String,
+                        @SerializedName("name") val name: String,
+                        @SerializedName("description") val description: String,
+                        @SerializedName("url") val url: String,
+                        @SerializedName("category") val category: String,
+                        @SerializedName("language") val language: String,
+                        @SerializedName("country") val country: String
 )

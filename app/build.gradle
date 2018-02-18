@@ -12,7 +12,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
 
-    dependencies { classpath 'io.fabric.tools:gradle:1.24.4' }
+    dependencies { classpath 'io.fabric.tools:gradle:1.+' }
 }
 
 kotlin {
@@ -29,14 +29,14 @@ android {
         applicationId "com.dbeginc.dbweather"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        multiDexEnabled = true
-        versionCode 4
-        versionName "1.3"
+        versionCode 5
+        versionName "1.4"
+        multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        renderscriptTargetApi 18
-        renderscriptSupportModeEnabled true
+        renderscriptTargetApi 17
+        renderscriptSupportModeEnabled false
 
         buildTypes.each {
             it.buildConfigField('String', 'YOUTUBE_API_KEY', YoutubeApiKey)
@@ -49,6 +49,7 @@ android {
         //locations for the rules and output
         lintConfig file("${rootDir}/config/lint/lint-config.xml")
         htmlOutput file("${buildDir}/reports/lint/lint.html")
+        abortOnError false
     }
 
     compileOptions {
@@ -67,6 +68,10 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            lintOptions {
+                abortOnError false
+            }
         }
     }
     //Show all the result of unitTest
@@ -94,12 +99,12 @@ android {
     dexOptions { preDexLibraries = false }
 
     sourceSets {
-        test.java { srcDirs += 'src/test/kotlin' }
+        test.java { srcDirs += new File(buildDir, 'src/test/kotlin') }
 
-        androidTest.java { srcDirs += 'src/androidTest/kotlin' }
+        androidTest.java { srcDirs += new File(buildDir, 'src/androidTest/kotlin') }
 
         main {
-            java { srcDirs += 'src/main/kotlin' }
+            java { srcDirs += new File(buildDir, 'src/main/kotlin') }
         }
     }
 }
@@ -119,13 +124,8 @@ dependencies {
     implementation project(":dbweathernews")
     implementation project(":dbweatherweather")
 
-    androidTestImplementation(androidSupportLibs.espresso) {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-
     //GOOGLE
     implementation androidSupportLibs.constain_layout
-    implementation androidSupportLibs.multidex
     implementation androidSupportLibs.appcompat_v7
     implementation androidSupportLibs.design
     implementation androidSupportLibs.recyclerview
@@ -134,25 +134,20 @@ dependencies {
     implementation androidSupportLibs.support_v4
     implementation androidSupportLibs.customtabs
     implementation androidSupportLibs.cardview_v7
-    implementation apache.commons_lang3
     // Android Arch Lifecycle
     implementation architectureComponentLibs.lifecycle_extensions
 
-    //Dagger
+    // Dagger
     implementation daggerLibs.dagger
     implementation daggerLibs.dagger_android
     implementation daggerLibs.dagger_android_support
 
     compileOnly rxLibs.rxJava
-    compileOnly kotlinLibs.kotlin_test_junit
 
     //SQUARE
-    implementation otherLibs.threetenabp
+    compileOnly otherLibs.threetenabp
 
-    //OTHER
-    implementation "org.jetbrains.anko:anko-coroutines:0.10.3"
-
-    implementation('com.crashlytics.sdk.android:crashlytics:2.7.0@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
         transitive = true
     }
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
@@ -169,13 +164,19 @@ dependencies {
         transitive = false
     }
 
-    implementation otherLibs.evernote_android_job
+    // We be added in next release
+    //implementation otherLibs.evernote_android_job
     implementation otherLibs.lottie
     implementation otherLibs.bottom_bar
     implementation otherLibs.fab
     implementation otherLibs.viewAnimator
-    testImplementation otherLibs.junit
-    testImplementation otherLibs.mockito
+
+    androidTestImplementation(androidSupportLibs.espresso) {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    testImplementation testingLibs.junit
+    testImplementation testingLibs.mockito
 
     kapt daggerLibs.dagger
     kapt daggerLibs.dagger_processor

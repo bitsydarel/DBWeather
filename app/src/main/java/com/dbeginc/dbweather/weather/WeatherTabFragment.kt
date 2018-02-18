@@ -64,8 +64,8 @@ class WeatherTabFragment : BaseFragment(), WeatherView, WithDependencies, Search
     private lateinit var binding: FragmentWeatherTabBinding
     private lateinit var locationChangeEvent: LocationObserver
     private lateinit var viewModel: WeatherViewModel
-    private val dailyWeatherAdapter = DayAdapter(emptyList())
-    private val hourlyWeatherAdapter = HourAdapter(emptyList())
+    private val dailyWeatherAdapter = DayAdapter()
+    private val hourlyWeatherAdapter = HourAdapter()
     override val state: BehaviorSubject<RequestState> = BehaviorSubject.create()
     private val mColors = SparseIntArray().apply {
         put(R.drawable.clear_day, R.color.clear_day_background)
@@ -88,11 +88,15 @@ class WeatherTabFragment : BaseFragment(), WeatherView, WithDependencies, Search
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.getWeather().observe(this,
+        viewModel.getDefaultWeather().observe(this,
                 android.arch.lifecycle.Observer {
-                    displayCurrentWeather(it!!)
-                    displayDailyWeather(it.daily)
-                    displayHourlyWeather(it.hourly)
+                    displayDefaultWeather(it!!)
+                }
+        )
+
+        viewModel.getCustomWeather().observe(this,
+                android.arch.lifecycle.Observer {
+                    displayCustomWeather(it!!)
                 }
         )
 
@@ -135,8 +139,6 @@ class WeatherTabFragment : BaseFragment(), WeatherView, WithDependencies, Search
                     "",
                     ""
             )
-
-            viewModel.presenter.onDefaultLocationChanged(this, location)
 
             viewModel.loadWeather(state, location)
         }
@@ -213,7 +215,7 @@ class WeatherTabFragment : BaseFragment(), WeatherView, WithDependencies, Search
         }
     }
 
-    private fun displayCurrentWeather(weather: WeatherModel) {
+    private fun displayDefaultWeather(weather: WeatherModel) {
         binding.weather = weather
 
         if (weather.alerts != null) showWeatherAlerts(weather.alerts!!)
@@ -222,9 +224,29 @@ class WeatherTabFragment : BaseFragment(), WeatherView, WithDependencies, Search
 
         onWeatherStateChanged(weather.current.icon)
 
-        if (preferences.isCurrentLocationDefault()) defineDefaultCoordinates(weather.location)
-        else viewModel.loadUserCities()
+        displayHourlyWeather(weather.hourly)
 
+        displayDailyWeather(weather.daily)
+
+        defineDefaultCoordinates(weather.location)
+    }
+
+    private fun displayCustomWeather(weather: WeatherModel) {
+        binding.weather = weather
+
+        if (weather.alerts != null) showWeatherAlerts(weather.alerts!!)
+
+        binding.weatherTabLayout.setBackgroundResource(mColors[weather.current.icon])
+
+        onWeatherStateChanged(weather.current.icon)
+
+        displayHourlyWeather(weather.hourly)
+
+        displayDailyWeather(weather.daily)
+
+        defineCustomLocationCoordinates(weather.location)
+
+        viewModel.loadUserCities()
     }
 
     private fun displayDailyWeather(daily: List<DayWeatherModel>) = dailyWeatherAdapter.updateData(daily)
@@ -278,6 +300,8 @@ class WeatherTabFragment : BaseFragment(), WeatherView, WithDependencies, Search
 
     /******************************************************************************************************************/
     fun onVoiceQuery(query: String?) {
+        binding.searchLocationView.setQuery(query, false)
+
         activity.contentResolver
                 .query(Uri.parse(ConstantHolder.SEARCH_QUERY_URI.format(query)),
                         null,

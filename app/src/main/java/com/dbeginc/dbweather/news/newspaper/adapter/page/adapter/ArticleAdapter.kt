@@ -38,10 +38,8 @@ import java.util.*
  *
  * Article Adapter
  */
-class ArticleAdapter(data: List<ArticleModel>, private val sizeProvider: ViewPreloadSizeProvider<ArticleModel>) : RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>(), ListPreloader.PreloadModelProvider<ArticleModel> {
+class ArticleAdapter(private var articles: Array<ArticleModel>, private val sizeProvider: ViewPreloadSizeProvider<ArticleModel>) : RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>(), ListPreloader.PreloadModelProvider<ArticleModel> {
     private var container: RecyclerView? = null
-
-    private var articles: LinkedList<ArticleModel> = LinkedList(data.sorted())
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -83,11 +81,11 @@ class ArticleAdapter(data: List<ArticleModel>, private val sizeProvider: ViewPre
         * Returning an typedArray and new instance so the data is immutable
         * (nobody will modify it during the calculation)
         */
-        val sorted = newData.sorted()
+        val sorted = newData.toTypedArray().sortedArray()
 
         val result = DiffUtil.calculateDiff(ArticleDiffUtils(articles, sorted))
 
-        articles = LinkedList(sorted)
+        articles = sorted
 
         result.dispatchUpdatesTo(this@ArticleAdapter)
     }
@@ -114,6 +112,6 @@ class ArticleAdapter(data: List<ArticleModel>, private val sizeProvider: ViewPre
         private fun goToArticleDetail() = Navigator.goToArticleDetail(binding)
     }
 
-    fun getData(): List<ArticleModel> = articles
+    fun getData(): Array<ArticleModel> = articles
 
 }

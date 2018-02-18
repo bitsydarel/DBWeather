@@ -18,7 +18,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation kotlinLibs.jdk8_stdlib
+    implementation kotlinLibs.jdk7_stdlib
     api rxLibs.rxJava
 }
 

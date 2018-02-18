@@ -57,23 +57,28 @@ class WeatherViewModel @Inject constructor(private val model: WeatherRepository)
     // RX Stream that notify request stream if user want to retry
     private val retryRequest = PublishSubject.create<Unit>()
     // Rx Behavior relay that subscribe to request and notify view of new data
-    private val weatherResponseListener = BehaviorRelay.create<WeatherModel>()
+    private val defaultWeatherResponseListener = BehaviorRelay.create<WeatherModel>()
+    private val customWeatherResponseListener = BehaviorRelay.create<WeatherModel>()
     private val locationsResponseListener = BehaviorRelay.create<List<LocationWeatherModel>>()
     // Observable data
-    private val _weatherModel: MutableLiveData<WeatherModel> = MutableLiveData()
+    private val _defaultWeatherModel: MutableLiveData<WeatherModel> = MutableLiveData()
+    private val _customWeatherModel: MutableLiveData<WeatherModel> = MutableLiveData()
     private val _listOfLocations: MutableLiveData<List<LocationWeatherModel>> = MutableLiveData()
     // View Presenter
     val presenter = WeatherViewPresenter()
 
     init {
         // We subscribe to the relay on creation
-        weatherResponseListener.subscribe(_weatherModel::postValue).addTo(subscriptions)
+        defaultWeatherResponseListener.subscribe(_defaultWeatherModel::postValue).addTo(subscriptions)
+        customWeatherResponseListener.subscribe(_customWeatherModel::postValue).addTo(subscriptions)
         locationsResponseListener.subscribe(_listOfLocations::postValue).addTo(subscriptions)
     }
 
     // public getter for observable data, it's as LiveData not Mutable because we only want
     // the view model to post new data
-    fun getWeather(): LiveData<WeatherModel> = _weatherModel
+    fun getDefaultWeather(): LiveData<WeatherModel> = _defaultWeatherModel
+
+    fun getCustomWeather(): LiveData<WeatherModel> = _customWeatherModel
 
     fun getUserLocations(): LiveData<List<LocationWeatherModel>> = _listOfLocations
 
@@ -89,7 +94,7 @@ class WeatherViewModel @Inject constructor(private val model: WeatherRepository)
                 .observeOn(ThreadProvider.computation)
                 .map { weather -> weather.toViewModel() }
                 .observeOn(ThreadProvider.ui)
-                .subscribe(weatherResponseListener)
+                .subscribe(customWeatherResponseListener)
                 .addTo(subscriptions)
     }
 
@@ -105,7 +110,7 @@ class WeatherViewModel @Inject constructor(private val model: WeatherRepository)
                 .map { weather -> weather.toViewModel() }
                 .retryWhen { upstream -> upstream.flatMap { retryRequest.toFlowable(BackpressureStrategy.LATEST) } }
                 .observeOn(ThreadProvider.ui)
-                .subscribe(weatherResponseListener)
+                .subscribe(defaultWeatherResponseListener)
                 .addTo(subscriptions)
     }
 

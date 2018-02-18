@@ -16,7 +16,6 @@
 package com.dbeginc.dbweather.config.managesources
 
 import android.app.SearchManager
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -51,8 +50,6 @@ import javax.inject.Inject
  * Manage Sources Activity
  */
 class ManageSourcesActivity : BaseActivity(), SourcesManagerView, WithDependencies {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
     @Inject
     lateinit var model: NewsRepository
     private lateinit var viewModel: SourcesManagerViewModel

@@ -17,17 +17,17 @@ package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Weather Info
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteWeather(@Transient var location: RemoteLocation?, @Json(name = "locationLatitude") val latitude: Double, @Json(name = "locationLongitude") val longitude: Double,
-                         @Json(name = "timezone") val timezone: String, @Json(name = "currently") val currently: RemoteCurrently,
-                         @Json(name = "minutely") val minutely: RemoteMinutely?, @Json(name = "hourly") val hourly: RemoteHourly,
-                         @Json(name = "daily") val daily: RemoteDaily, @Json(name = "alerts") val alerts: List<RemoteAlert>?,
-                         @Json(name = "flags") val flags: RemoteFlags
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteWeather(@Transient var location: RemoteLocation?, @SerializedName("latitude") val latitude: Double, @SerializedName("longitude") val longitude: Double,
+                         @SerializedName("timezone") val timezone: String, @SerializedName("currently") val currently: RemoteCurrently,
+                         @SerializedName("minutely") val minutely: RemoteMinutely?, @SerializedName("hourly") val hourly: RemoteHourly,
+                         @SerializedName("daily") val daily: RemoteDaily, @SerializedName("alerts") val alerts: List<RemoteAlert>?,
+                         @SerializedName("flags") val flags: RemoteFlags
 )

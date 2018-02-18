@@ -36,7 +36,7 @@ interface LocalWeatherDao {
     /**
      * Get Weather From database
      * @param location name
-     * Returning single not flowable because flowable will hang on if no value in database
+     * Returning flowable because flowable will hang on if no value in database
      * {link https://medium.com/google-developers/room-rxjava-acb0cd4f3757}
      * @return [Single] of [LocalWeather]
      */

@@ -22,6 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatDelegate
+import android.widget.Toast
 import com.dbeginc.dbweather.adapter.MainPagerAdapter
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityMainBinding
@@ -97,12 +98,10 @@ class MainActivity : BaseActivity(), OnTabSelectListener, WithChildDependencies 
 
         when (tabToShow) {
             R.id.tab_news -> color = ResourcesCompat.getColor(resources, R.color.newsTabPrimaryDark, theme)
-
             R.id.tab_config -> color = ResourcesCompat.getColor(resources, R.color.configTabPrimaryDark, theme)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.changeStatusBarColor(color)
-
     }
 
     private fun goToWeatherScreen() {
@@ -129,6 +128,6 @@ class MainActivity : BaseActivity(), OnTabSelectListener, WithChildDependencies 
         DBWeatherApp.LAST_SCREEN = R.id.tab_config.toLong()
     }
 
-    private fun showNetworkNotAvailable() = binding.mainLayout.toast(getString(R.string.network_unavailable_message))
+    private fun showNetworkNotAvailable() = binding.mainLayout.toast(getString(R.string.network_unavailable_message), duration = Toast.LENGTH_LONG)
 
 }

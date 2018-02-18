@@ -25,11 +25,11 @@ public class ProxyDrawable extends Drawable {
     
     private Drawable mProxy;
 
-    public ProxyDrawable(Drawable target) {
+    ProxyDrawable(Drawable target) {
         mProxy = target;
     }
-    
-    public Drawable getProxy() {
+
+    Drawable getProxy() {
         return mProxy;
     }
     

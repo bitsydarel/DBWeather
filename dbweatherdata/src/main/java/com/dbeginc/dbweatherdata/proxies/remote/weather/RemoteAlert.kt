@@ -16,16 +16,16 @@
 package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Weather Alert
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteAlert(@Json(name= "time") val time: Long, @Json(name= "title") val title: String,
-                       @Json(name= "description") val description: String, @Json(name= "uri") val uri: String,
-                       @Json(name= "expires") val expires: Long, @Json(name= "regions") val regions: List<String>,
-                       @Json(name= "severity") val severity: String
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteAlert(@SerializedName("time") val time: Long, @SerializedName("title") val title: String,
+                       @SerializedName("description") val description: String, @SerializedName("uri") val uri: String,
+                       @SerializedName("expires") val expires: Long, @SerializedName("regions") val regions: List<String>,
+                       @SerializedName("severity") val severity: String
 )

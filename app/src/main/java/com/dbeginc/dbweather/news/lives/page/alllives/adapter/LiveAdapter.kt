@@ -27,26 +27,19 @@ import com.dbeginc.dbweather.news.lives.page.alllives.adapter.presenter.LivePres
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.view.LiveViewHolder
 import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.viewmodels.LiveModel
-import java.util.*
 
 /**
  * Created by darel on 18.10.17.
  *
  * Live adapter
  */
-class LiveAdapter(data: List<LiveModel>, private val model: NewsRepository) : RecyclerView.Adapter<LiveViewHolder>() {
+class LiveAdapter(private val model: NewsRepository) : RecyclerView.Adapter<LiveViewHolder>() {
     private var container: RecyclerView? = null
-    private var presenters: LinkedList<LivePresenter>
-
-    init {
-        // mapping data to presenter
-        presenters = LinkedList(data.map { live -> LivePresenterImpl(live, model) })
-
-        presenters.sortBy { live -> live.getData().name }
-    }
+    private var presenters: Array<LivePresenter> = emptyArray()
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
         super.onAttachedToRecyclerView(recyclerView)
+
         container = recyclerView
     }
 
@@ -75,16 +68,16 @@ class LiveAdapter(data: List<LiveModel>, private val model: NewsRepository) : Re
         presenter.loadLive(holder)
     }
 
+    @Synchronized
     fun updateData(newData: List<LiveModel>) {
-        synchronized(this) {
-            val oldList = presenters.map { presenter -> presenter.getData() }.sorted()
-            val newList = newData.sorted()
+        val oldList = presenters.map { presenter -> presenter.getData() }.toTypedArray()
 
-            val result = DiffUtil.calculateDiff(LiveDiffUtils(oldList, newList))
+        val newList = newData.toTypedArray().sortedArray()
 
-            presenters = LinkedList(newList.map { live -> LivePresenterImpl(live, model) })
+        val result = DiffUtil.calculateDiff(LiveDiffUtils(oldList, newList))
 
-            container?.post { result.dispatchUpdatesTo(this@LiveAdapter) }
-        }
+        presenters = newList.map { live -> LivePresenterImpl(live, model) }.toTypedArray()
+
+        result.dispatchUpdatesTo(this@LiveAdapter)
     }
 }

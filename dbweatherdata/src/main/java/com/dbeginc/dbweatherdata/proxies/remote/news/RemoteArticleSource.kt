@@ -16,12 +16,12 @@
 package com.dbeginc.dbweatherdata.proxies.remote.news
 
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 17.11.17.
  *
  * Remote Article Source
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteArticleSource(@Json(name="id") val id: String?, @Json(name="name") val name: String)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteArticleSource(@SerializedName("id") val id: String?, @SerializedName("name") val name: String)

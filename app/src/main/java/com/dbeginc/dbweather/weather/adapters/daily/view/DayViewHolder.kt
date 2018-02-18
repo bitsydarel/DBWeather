@@ -36,8 +36,7 @@ class DayViewHolder(val binding: DailyListItemBinding) : RecyclerView.ViewHolder
     }
 
     override fun showDetail() {
-        binding.dayLayout.toast("Opened Detail for day ${binding.day?.dayName}")
-//        Navigator.goToDayDetailScreen(binding)
+        // binding.dayLayout.toast("Opened Detail for day ${binding.day?.dayName}")
     }
 
     override fun setupActionListener(presenter: DayPresenter) {

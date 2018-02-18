@@ -16,12 +16,12 @@
 package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Minutely Data
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteMinutelyData(@Json(name= "time") val time: Long, @Json(name= "precipIntensity") val precipIntensity: Double, @Json(name= "precipProbability") val precipProbability: Double)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteMinutelyData(@SerializedName("time") val time: Long, @SerializedName("precipIntensity") val precipIntensity: Double, @SerializedName("precipProbability") val precipProbability: Double)

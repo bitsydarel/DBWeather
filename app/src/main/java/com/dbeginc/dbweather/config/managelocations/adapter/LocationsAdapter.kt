@@ -23,16 +23,12 @@ import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.LocationItemBinding
 import com.dbeginc.dbweatherweather.viewmodels.LocationWeatherModel
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.coroutines.experimental.bg
-
 /**
  * Created by darel on 26.10.17.
  *
  * Manage Locations Adapter
  */
-class LocationsAdapter(val locations: MutableList<LocationWeatherModel>) : RecyclerView.Adapter<LocationsAdapter.LocationViewHolder>() {
+class LocationsAdapter(var locations: MutableList<LocationWeatherModel>) : RecyclerView.Adapter<LocationsAdapter.LocationViewHolder>() {
     private var container: RecyclerView? = null
 
     init {
@@ -56,17 +52,15 @@ class LocationsAdapter(val locations: MutableList<LocationWeatherModel>) : Recyc
         holder?.bindLocation(locations[position])
     }
 
+    @Synchronized
     fun update(newData: List<LocationWeatherModel>) {
-        async(UI) {
-            val result = bg { DiffUtil.calculateDiff(LocationDiffUtil(locations, newData.sorted())) }.await()
+        val result = DiffUtil.calculateDiff(LocationDiffUtil(locations, newData.sorted()))
 
-            container?.post {
-                locations.clear()
-                locations.addAll(newData)
-                locations.sort()
-                result.dispatchUpdatesTo(this@LocationsAdapter)
-            }
-        }
+        locations = ArrayList(newData)
+
+        locations.sort()
+
+        result.dispatchUpdatesTo(this@LocationsAdapter)
     }
 
     fun remove(position: Int): LocationWeatherModel {

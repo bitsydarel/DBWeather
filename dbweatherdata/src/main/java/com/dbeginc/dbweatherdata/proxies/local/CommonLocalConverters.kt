@@ -17,33 +17,25 @@ package com.dbeginc.dbweatherdata.proxies.local
 
 import android.arch.persistence.room.TypeConverter
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * Created by darel on 04.10.17.
  *
  * Common Local Converters
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 class CommonLocalConverters {
     @TypeConverter
     fun jsonStringToListOfString(json: String): List<String> {
-        val listOfHourlyData = Types.newParameterizedType(List::class.java, String::class.java)
+        val converter = Gson()
 
-        return Moshi.Builder()
-                .build()
-                .adapter<List<String>>(listOfHourlyData)
-                .fromJson(json)!!
+        val type = object : TypeToken<List<String>>() {}.type
+
+        return converter.fromJson(json, type)
     }
 
     @TypeConverter
-    fun listOfStringToJson(list: List<String>): String {
-        val listOfStrings = Types.newParameterizedType(List::class.java, String::class.java)
-
-        return Moshi.Builder()
-                .build()
-                .adapter<List<String>>(listOfStrings)
-                .toJson(list)
-    }
+    fun listOfStringToJson(list: List<String>): String = Gson().toJson(list)
 }

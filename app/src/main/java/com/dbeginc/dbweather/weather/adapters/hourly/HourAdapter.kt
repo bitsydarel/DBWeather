@@ -29,16 +29,17 @@ import com.dbeginc.dbweatherweather.viewmodels.HourWeatherModel
  * Hourly Weather Data RecyclerView Adapter
  */
 
-class HourAdapter(data: List<HourWeatherModel>) : RecyclerView.Adapter<HourAdapter.HourViewHolder>() {
+class HourAdapter : RecyclerView.Adapter<HourAdapter.HourViewHolder>() {
     private var container: RecyclerView? = null
-    private var hours: Array<HourWeatherModel> = data.toTypedArray()
-
-    init {
-        hours.sort()
-    }
+    private var hours: Array<HourWeatherModel> = emptyArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourViewHolder {
-        return HourViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.hourly_list_item, parent, false))
+        return HourViewHolder(DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.hourly_list_item,
+                parent,
+                false
+        ))
     }
 
     override fun onBindViewHolder(holder: HourViewHolder, position: Int) {
@@ -52,18 +53,15 @@ class HourAdapter(data: List<HourWeatherModel>) : RecyclerView.Adapter<HourAdapt
         this.container = recyclerView
     }
 
+    @Synchronized
     fun updateData(newData: List<HourWeatherModel>) {
-        synchronized(this) {
-            val sortedData = newData.sorted().toTypedArray()
+        val sortedData = newData.sorted().toTypedArray()
 
-            val diffResult = DiffUtil.calculateDiff(HourDiffCallback(hours, sortedData))
+        val diffResult = DiffUtil.calculateDiff(HourDiffCallback(hours, sortedData))
 
-            hours = sortedData
+        hours = sortedData
 
-            diffResult.dispatchUpdatesTo(this)
-
-            container?.postInvalidate()
-        }
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class HourViewHolder(private val itemBinding: HourlyListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {

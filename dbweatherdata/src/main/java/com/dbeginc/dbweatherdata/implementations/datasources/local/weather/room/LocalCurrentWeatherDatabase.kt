@@ -31,13 +31,13 @@ import com.dbeginc.dbweatherdata.proxies.local.weather.LocalWeather
  * Local Weather Database For Current Emplacement
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Database(entities = arrayOf(LocalWeather::class), version = 1)
+@Database(entities = [(LocalWeather::class)], version = 1)
 @TypeConverters(WeatherLocalConverters::class, CommonLocalConverters::class)
 abstract class LocalCurrentWeatherDatabase : RoomDatabase() {
     abstract fun weatherDao(): LocalWeatherDao
 
     companion object {
-        private val CURRENT_WEATHER_DB_NAME = "current_weather"
+        private const val CURRENT_WEATHER_DB_NAME = "current_weather"
 
         fun createDb(appContext: Context) : LocalCurrentWeatherDatabase {
             return Room.databaseBuilder(appContext, LocalCurrentWeatherDatabase::class.java, CURRENT_WEATHER_DB_NAME)

@@ -33,9 +33,10 @@ import javax.inject.Inject
 open class BaseFragment : DaggerFragment() {
     @Inject
     lateinit var preferences: ApplicationPreferences
-    @Inject lateinit var appContext: Context
     @Inject
     lateinit var factory: ViewModelProvider.Factory
+    @Inject
+    lateinit var appContext: Context
 
     protected fun askLocationPermIfNeeded(): Boolean {
         if (ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

@@ -16,27 +16,27 @@
 package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Weather Daily Data
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteDailyData(@Json(name= "time") val time: Long, @Json(name= "summary") val summary: String,
-                           @Json(name= "icon") val icon: String, @Json(name= "temperatureHigh") val temperatureHigh: Double,
-                           @Json(name= "temperatureHighTime") val temperatureHighTime: Long, @Json(name= "temperatureLow") val temperatureLow: Double,
-                           @Json(name= "temperatureLowTime") val temperatureLowTime: Long, @Json(name= "apparentTemperatureHigh") val apparentTemperatureHigh: Double,
-                           @Json(name= "apparentTemperatureHighTime") val apparentTemperatureHighTime: Long, @Json(name= "apparentTemperatureLow") val apparentTemperatureLow: Double,
-                           @Json(name="apparentTemperatureLowTime") val apparentTemperatureLowTime: Long, @Json(name= "dewPoint") val dewPoint: Double,
-                           @Json(name= "humidity") val humidity: Double, @Json(name= "pressure") val pressure: Double,
-                           @Json(name= "windSpeed") val windSpeed: Double, @Json(name= "windGust") val windGust: Double,
-                           @Json(name= "windGustTime") val windGustTime: Long, @Json(name= "windBearing") val windBearing: Long,
-                           @Json(name= "cloudCover") val cloudCover: Double, @Json(name= "moonPhase") val moonPhase: Double,
-                           @Json(name= "visibility") val visibility: Double, @Json(name= "uvIndex") val uvIndex: Long,
-                           @Json(name= "uvIndexTime") val uvIndexTime: Long, @Json(name= "sunsetTime") val sunsetTime: Long,
-                           @Json(name= "sunriseTime") val sunriseTime: Long, @Json(name= "precipIntensity") val precipIntensity: Double,
-                           @Json(name= "precipIntensityMax") val precipIntensityMax: Double, @Json(name= "precipProbability") val precipProbability: Double,
-                           @Json(name= "precipType") val precipType: String?
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteDailyData(@SerializedName("time") val time: Long, @SerializedName("summary") val summary: String,
+                           @SerializedName("icon") val icon: String, @SerializedName("temperatureHigh") val temperatureHigh: Double,
+                           @SerializedName("temperatureHighTime") val temperatureHighTime: Long, @SerializedName("temperatureLow") val temperatureLow: Double,
+                           @SerializedName("temperatureLowTime") val temperatureLowTime: Long, @SerializedName("apparentTemperatureHigh") val apparentTemperatureHigh: Double,
+                           @SerializedName("apparentTemperatureHighTime") val apparentTemperatureHighTime: Long, @SerializedName("apparentTemperatureLow") val apparentTemperatureLow: Double,
+                           @SerializedName("apparentTemperatureLowTime") val apparentTemperatureLowTime: Long, @SerializedName("dewPoint") val dewPoint: Double,
+                           @SerializedName("humidity") val humidity: Double, @SerializedName("pressure") val pressure: Double,
+                           @SerializedName("windSpeed") val windSpeed: Double, @SerializedName("windGust") val windGust: Double,
+                           @SerializedName("windGustTime") val windGustTime: Long, @SerializedName("windBearing") val windBearing: Long,
+                           @SerializedName("cloudCover") val cloudCover: Double, @SerializedName("moonPhase") val moonPhase: Double,
+                           @SerializedName("visibility") val visibility: Double, @SerializedName("uvIndex") val uvIndex: Long,
+                           @SerializedName("uvIndexTime") val uvIndexTime: Long, @SerializedName("sunsetTime") val sunsetTime: Long,
+                           @SerializedName("sunriseTime") val sunriseTime: Long, @SerializedName("precipIntensity") val precipIntensity: Double,
+                           @SerializedName("precipIntensityMax") val precipIntensityMax: Double, @SerializedName("precipProbability") val precipProbability: Double,
+                           @SerializedName("precipType") val precipType: String?
 )

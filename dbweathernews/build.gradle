@@ -33,6 +33,10 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            lintOptions {
+                abortOnError false
+            }
         }
     }
 
@@ -57,16 +61,12 @@ dependencies {
 
     implementation androidSupportLibs.appcompat_v7
     implementation kotlinLibs.jdk7_stdlib
-    implementation kotlinLibs.reflect
-    implementation otherLibs.threetenabp
-
+//    implementation kotlinLibs.reflect
     implementation architectureComponentLibs.lifecycle_extensions
 
-    implementation "com.jakewharton.rxrelay2:rxrelay:2.0.0"
+    androidTestImplementation androidSupportLibs.android_test_runner
 
-    testImplementation otherLibs.junit
+    testImplementation testingLibs.junit
 
     compileOnly 'javax.inject:javax.inject:1'
-
-    androidTestImplementation androidSupportLibs.android_test_runner
 }

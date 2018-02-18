@@ -28,7 +28,7 @@
             android:id="@+id/gpsLocationFinderAnimation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:lottie_fileName="find_locations.json"
+            app:lottie_fileName="radar_scanning.json"
             app:lottie_loop="true"
             app:lottie_autoPlay="true"
             app:layout_constraintTop_toTopOf="parent"

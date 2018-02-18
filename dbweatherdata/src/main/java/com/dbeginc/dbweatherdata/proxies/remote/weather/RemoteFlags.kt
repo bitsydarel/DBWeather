@@ -16,12 +16,12 @@
 package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by darel on 16.09.17.
  *
  * Remote Weather Flags
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class RemoteFlags(@Json(name = "sources") val sources: List<String>, @Json(name = "units") val units: String)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class RemoteFlags(@SerializedName("sources") val sources: List<String>, @SerializedName("units") val units: String)

@@ -31,13 +31,10 @@ import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.LivesFeatureBinding
 import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.news.lives.page.alllives.adapter.LiveAdapter
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.LIVES_DATA
-import com.dbeginc.dbweather.utils.utility.getList
 import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
 import com.dbeginc.dbweathernews.lives.LivesViewModel
 import com.dbeginc.dbweathernews.lives.contract.LivesView
-import com.dbeginc.dbweathernews.viewmodels.LiveModel
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
@@ -51,9 +48,9 @@ class AllLivesTabPageFragment : BaseFragment(), LivesView, WithDependencies, Swi
     @Inject
     lateinit var model: NewsRepository
     private lateinit var viewModel: LivesViewModel
-    private lateinit var adapter: LiveAdapter
     private lateinit var binding: LivesFeatureBinding
     private var stateSubscription: Disposable? = null
+    private val adapter by lazy { LiveAdapter(model) }
     override val state: BehaviorSubject<RequestState> = BehaviorSubject.create()
 
     override fun onAttach(context: Context?) {
@@ -62,17 +59,11 @@ class AllLivesTabPageFragment : BaseFragment(), LivesView, WithDependencies, Swi
         viewModel = ViewModelProviders.of(activity, factory)[LivesViewModel::class.java]
     }
 
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
-
-        adapter = if (savedState == null) LiveAdapter(emptyList(), model) else LiveAdapter(savedState.getList(LIVES_DATA), model)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.getLives().observe(this, android.arch.lifecycle.Observer {
-            displayLives(it!!)
+            adapter.updateData(it!!)
         })
     }
 
@@ -97,7 +88,6 @@ class AllLivesTabPageFragment : BaseFragment(), LivesView, WithDependencies, Swi
 
     override fun onDestroyView() {
         super.onDestroyView()
-
         stateSubscription?.dispose()
     }
 
@@ -127,7 +117,5 @@ class AllLivesTabPageFragment : BaseFragment(), LivesView, WithDependencies, Swi
     }
 
     override fun onRefresh() = viewModel.loadAllLives(state)
-
-    private fun displayLives(lives: List<LiveModel>) = adapter.updateData(lives)
 
 }

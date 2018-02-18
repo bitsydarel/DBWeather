@@ -25,7 +25,7 @@ import io.reactivex.schedulers.Schedulers
  *
  * Thread Provider
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 object ThreadProvider {
     val io: Scheduler = Schedulers.io()
     val computation: Scheduler = Schedulers.computation()

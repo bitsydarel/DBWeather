@@ -27,7 +27,6 @@ import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.*
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import java.io.File
@@ -49,7 +48,7 @@ class GlideConfiguration : AppGlideModule() {
     override fun applyOptions(context: Context?, builder: GlideBuilder?) {
         super.applyOptions(context, builder)
 
-        builder!!.setDiskCache(InternalCacheDiskCacheFactory(context, DBWEATHER_IMAGE_CACHE, CACHE_SIZE))
+        builder!!.setDiskCache(InternalCacheDiskCacheFactory(context, "dbweather_image_cache", 250 * 1024 * 1024))
                 .setDefaultRequestOptions(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                 .setDefaultRequestOptions(RequestOptions.formatOf(DecodeFormat.PREFER_ARGB_8888))
     }
@@ -65,7 +64,7 @@ class GlideConfiguration : AppGlideModule() {
                                 .writeTimeout(35, TimeUnit.SECONDS)
                                 .readTimeout(55, TimeUnit.SECONDS)
                                 .retryOnConnectionFailure(true)
-                                .cache(Cache(File(context?.cacheDir, DBWEATHER_NETWORK_CACHE), com.dbeginc.dbweatherdata.ConstantHolder.CACHE_SIZE))
+                                .cache(Cache(File(context?.cacheDir, "dbweather_network_cache"), 250 * 1024 * 1024))
                                 .build()
                 )
         )

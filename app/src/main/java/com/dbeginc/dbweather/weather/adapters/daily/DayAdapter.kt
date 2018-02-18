@@ -31,9 +31,9 @@ import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
  *
  * Day Adapter
  */
-class DayAdapter(days: List<DayWeatherModel>) : RecyclerView.Adapter<DayViewHolder>() {
+class DayAdapter : RecyclerView.Adapter<DayViewHolder>() {
     private var container: RecyclerView? = null
-    private var presenters: Array<DayPresenter> = days.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
+    private var presenters: Array<DayPresenter> = emptyArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -61,17 +61,14 @@ class DayAdapter(days: List<DayWeatherModel>) : RecyclerView.Adapter<DayViewHold
         container = recyclerView
     }
 
+    @Synchronized
     fun updateData(newData: List<DayWeatherModel>) {
-        synchronized(this) {
-            val sortedData: Array<DayPresenter> = newData.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
+        val sortedData: Array<DayPresenter> = newData.map { day -> DayPresenterImpl(day) }.sorted().toTypedArray()
 
-            val diffResult = DiffUtil.calculateDiff(DayDiffCallback(presenters, sortedData), true)
+        val diffResult = DiffUtil.calculateDiff(DayDiffCallback(presenters, sortedData), true)
 
-            presenters = sortedData
+        presenters = sortedData
 
-            diffResult.dispatchUpdatesTo(this)
-
-            container?.postInvalidate()
-        }
+        diffResult.dispatchUpdatesTo(this)
     }
 }

@@ -18,19 +18,21 @@ package com.dbeginc.dbweatherdata.implementations.datasources.remote.weather.ret
 import android.content.Context
 import android.support.annotation.RestrictTo
 import android.support.annotation.VisibleForTesting
+import com.androidnetworking.AndroidNetworking
+import com.androidnetworking.interceptors.HttpLoggingInterceptor
 import com.dbeginc.dbweatherdata.BuildConfig
 import com.dbeginc.dbweatherdata.ConstantHolder.CACHE_SIZE
-import com.dbeginc.dbweatherdata.ConstantHolder.WEATHER_CACHE_NAME
+import com.dbeginc.dbweatherdata.ConstantHolder.NETWORK_CACHE_NAME
 import com.dbeginc.dbweatherdata.proxies.remote.weather.RemoteWeather
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocations
+import com.rx2androidnetworking.Rx2AndroidNetworking
 import io.reactivex.Single
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.jetbrains.annotations.TestOnly
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import java.io.File
 import java.util.*
@@ -44,12 +46,10 @@ import java.util.concurrent.TimeUnit
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 class WeatherRestAdapter @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE) constructor(client: OkHttpClient) {
     private val deviceLanguage by lazy { Locale.getDefault().language }
-    private val weatherApi: WeatherApi
     private val locationApi: LocationApi
 
     companion object {
         private const val RESULT_STYLE = "MEDIUM"
-        private const val WEATHER_URL = "https://api.darksky.net/"
         private const val GEO_NAMES_API_URL = "http://api.geonames.org/"
 
         private val weatherSupportedLanguage = listOf("ar","az","be","bs","ca","cs","de","el","en","es",
@@ -63,7 +63,10 @@ class WeatherRestAdapter @VisibleForTesting(otherwise = VisibleForTesting.PACKAG
                     .writeTimeout(35, TimeUnit.SECONDS)
                     .readTimeout(55, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
-                    .cache(Cache(File(context.cacheDir, WEATHER_CACHE_NAME), CACHE_SIZE))
+                    .cache(Cache(File(context.cacheDir, NETWORK_CACHE_NAME), CACHE_SIZE))
+
+            AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BASIC)
+            AndroidNetworking.initialize(context, client.build())
 
             return WeatherRestAdapter(client.build())
         }
@@ -77,14 +80,6 @@ class WeatherRestAdapter @VisibleForTesting(otherwise = VisibleForTesting.PACKAG
     init {
         val rxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create()
 
-        weatherApi = Retrofit.Builder()
-                .baseUrl(WEATHER_URL)
-                .addConverterFactory(MoshiConverterFactory.create())
-                .addCallAdapterFactory(rxJava2CallAdapterFactory)
-                .client(client)
-                .build()
-                .create(WeatherApi::class.java)
-
         locationApi = Retrofit.Builder()
                 .baseUrl(GEO_NAMES_API_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -95,10 +90,16 @@ class WeatherRestAdapter @VisibleForTesting(otherwise = VisibleForTesting.PACKAG
     }
 
     fun getWeather(latitude: Double, longitude: Double): Single<RemoteWeather> {
-        val coordinates = latitude.toString().plus(",").plus(longitude.toString())
         val language = if (weatherSupportedLanguage.contains(deviceLanguage)) deviceLanguage else Locale.ENGLISH.language
 
-        return weatherApi.getWeather(BuildConfig.WEATHER_API_KEY, coordinates, language, "auto")
+        return Rx2AndroidNetworking.get("https://api.darksky.net/forecast/{apiKey}/{latitude},{longitude}")
+                .addPathParameter("apiKey", BuildConfig.WEATHER_API_KEY)
+                .addPathParameter("latitude", latitude.toString())
+                .addPathParameter("longitude", longitude.toString())
+                .addQueryParameter("lang", language)
+                .addQueryParameter("units", "auto")
+                .build()
+                .getObjectSingle(RemoteWeather::class.java)
                 .flatMap { weather ->
                     getLocationByCoordinate(weather.latitude, weather.longitude)
                             .map { location ->

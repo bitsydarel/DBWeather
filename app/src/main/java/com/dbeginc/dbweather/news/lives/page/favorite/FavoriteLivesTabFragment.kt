@@ -28,8 +28,7 @@ import com.dbeginc.dbweather.databinding.FragmentFavoriteLivesTabLayoutBinding
 import com.dbeginc.dbweather.di.WithDependencies
 import com.dbeginc.dbweather.news.lives.page.favorite.adapter.FavoriteLiveAdapter
 import com.dbeginc.dbweather.utils.holder.ConstantHolder
-import com.dbeginc.dbweather.utils.utility.getList
-import com.dbeginc.dbweather.utils.utility.putList
+import com.dbeginc.dbweather.utils.utility.getArray
 import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweathernews.favoritelives.contract.FavoriteLivesPresenter
 import com.dbeginc.dbweathernews.favoritelives.contract.FavoriteLivesView
@@ -49,12 +48,14 @@ class FavoriteLivesTabFragment : Fragment(), FavoriteLivesView, WithDependencies
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
 
-        adapter = if (savedState == null) FavoriteLiveAdapter(emptyList()) else FavoriteLiveAdapter(savedState.getList(ConstantHolder.LIVES_DATA))
+        adapter = if (savedState == null) FavoriteLiveAdapter()
+        else FavoriteLiveAdapter(savedState.getArray(ConstantHolder.LIVES_DATA))
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putList(ConstantHolder.LIVES_DATA, adapter.getData())
+        outState.putParcelableArray(ConstantHolder.LIVES_DATA, adapter.getData())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

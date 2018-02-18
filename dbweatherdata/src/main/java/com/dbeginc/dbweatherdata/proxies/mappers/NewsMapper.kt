@@ -15,6 +15,7 @@
 
 package com.dbeginc.dbweatherdata.proxies.mappers
 
+import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalArticle
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalLive
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalSource
@@ -28,10 +29,14 @@ import com.dbeginc.dbweatherdomain.entities.news.Source
  *
  * Mapper of data proxies to domain entities
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalArticle.toDomain() = Article(sourceId=sourceId, author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalSource.toDomain() = Source(id=id, name=name, description=description, url=url, category=category, language=language, country=country, subscribed=subscribed)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun LocalLive.toDomain() = Live(name=name, url=url)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 fun RemoteArticle.toDomain() = Article(author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt, sourceId=source.name)

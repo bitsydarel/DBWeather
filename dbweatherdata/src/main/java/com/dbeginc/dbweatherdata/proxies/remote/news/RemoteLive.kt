@@ -22,5 +22,5 @@ import android.support.annotation.RestrictTo
  *
  * Remote Live
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 data class RemoteLive(val name: String, val url: String)
