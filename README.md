@@ -8,25 +8,29 @@ Android multimedia application with weather forecasts, a news feed in every lang
 ### Weather
 
 Provides localized and detailed Weather reports based on the user's location:
+
 <img src="weather.png" alt="Weather Feature" width="270" height="480"/>
 
 ### News Feed
 
 Provides a feed to current world events and other important news:
-<img src="articles.png" alt="News Feed Feature" width="270" height="480"/>
-<img src="articles2.png" width="270" height="480"/>
 
-<img src="articlesdetail.png" alt="News Feed Detail Feature" width="270" height="480"/>
+<p float="left">
+  <img title="News Feed Feature" alt="News Feed Feature" src="articles.png" hspace="8" width="270" height="480" />
+  <img title="News Detail Feature" alt="News Detail Feature" src="articlesdetail.png" hspace="8" width="270" height="480" /> 
+  <img title="News Feed Feature" alt="News Feed Feature" src="articles2.png" hspace="8" width="270" height="480" />
+</p>
 
 ### Live TV:
 
 Browse and View Live News Channels via Youtube Live:
 
-<img src="lives.png" alt="Live TV Feature" width="270" height="480"/>
+<p float="left">
+  <img title="Live TV Feature" alt="Live TV Feature" src="lives.png" hspace="50" width="270" height="480" />
+  <img title="Live TV Detail Feature" alt="Live TV Detail Feature" src="livedetail.png" hspace="50" width="270" height="480" /> 
+</p>
 
-<img src="livedetail.png" alt="Live TV Detail Feature" width="270" height="480"/>
-
-<img src="livedetailfullscreen.png" alt="Live TV Detail FullScreen Feature" width="270" height="480"/>
+<img src="livedetailfullscreen.png" alt="Live TV Detail FullScreen Feature" width="960" height="480"/>
 
 ## Project Structure:
 
@@ -70,6 +74,9 @@ DBWeather uses a wide array of industry standard APIs in places where it makes s
 - Retrofit 2 + OKHttp for Network IO
 - RxJava 2 for concurrency and event logic
 
+## Download app at
+https://play.google.com/store/apps/details?id=com.dbeginc.dbweather
+
 ## Contact Info
 
 https://twitter.com/darel_bitsy
@@ -77,3 +84,4 @@ https://twitter.com/darel_bitsy
 https://www.facebook.com/darel.bitsy
 
 https://github.com/bitsydarel
+
