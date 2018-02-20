@@ -8,18 +8,25 @@ Android multimedia application with weather forecasts, a news feed in every lang
 ### Weather
 
 Provides localized and detailed Weather reports based on the user's location:
-
-![Weather Feature](insert screenshot)
+<img src="weather.png" alt="Weather Feature" width="270" height="480"/>
 
 ### News Feed
 
 Provides a feed to current world events and other important news:
-![News Feature](insert screenshot)
+<img src="articles.png" alt="News Feed Feature" width="270" height="480"/>
+<img src="articles2.png" width="270" height="480"/>
+
+<img src="articlesdetail.png" alt="News Feed Detail Feature" width="270" height="480"/>
 
 ### Live TV:
 
 Browse and View Live News Channels via Youtube Live:
-![Weather Feature](insert screenshot)
+
+<img src="lives.png" alt="Live TV Feature" width="270" height="480"/>
+
+<img src="livedetail.png" alt="Live TV Detail Feature" width="270" height="480"/>
+
+<img src="livedetailfullscreen.png" alt="Live TV Detail FullScreen Feature" width="270" height="480"/>
 
 ## Project Structure:
 
