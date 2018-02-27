@@ -40,6 +40,7 @@ android {
 
         buildTypes.each {
             it.buildConfigField('String', 'YOUTUBE_API_KEY', YoutubeApiKey)
+            it.buildConfigField('String', 'MobileAds', MobileAds)
         }
     }
 

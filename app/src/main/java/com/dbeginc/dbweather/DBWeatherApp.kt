@@ -59,7 +59,7 @@ class DBWeatherApp : DaggerApplication(), HasActivityInjector {
 
         FirebaseApp.initializeApp(this)
 
-        MobileAds.initialize(this, "ca-app-pub-3786486250382359~1426079826")
+        MobileAds.initialize(this, BuildConfig.MobileAds)
 
         RxJavaPlugins.setErrorHandler { LogDispatcher.logError(it) }
 
