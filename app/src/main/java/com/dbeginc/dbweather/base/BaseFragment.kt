@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,30 +16,30 @@
 package com.dbeginc.dbweather.base
 
 import android.arch.lifecycle.ViewModelProvider
-import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import com.dbeginc.dbweather.utils.helper.ApplicationPreferences
-import com.dbeginc.dbweather.utils.holder.ConstantHolder.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+import com.dbeginc.dbweather.utils.preferences.ApplicationPreferences
+import com.dbeginc.dbweather.utils.utility.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 /**
  * Created by darel on 29.05.17.
+ *
  * Base Fragment
  */
-
 open class BaseFragment : DaggerFragment() {
     @Inject
     lateinit var preferences: ApplicationPreferences
     @Inject
     lateinit var factory: ViewModelProvider.Factory
-    @Inject
-    lateinit var appContext: Context
 
     protected fun askLocationPermIfNeeded(): Boolean {
-        if (ContextCompat.checkSelfPermission(appContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                        context!!,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(
                     activity!!,

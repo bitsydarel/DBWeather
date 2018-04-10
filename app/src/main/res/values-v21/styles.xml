@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~  Copyright (C) 2017 Darel Bitsy
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
   ~
-  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~  http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~  Unless required by applicable law or agreed to in writing, software
   ~  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,77 +16,22 @@
 
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/appColorPrimary</item>
-        <item name="colorPrimaryDark">@color/appColorPrimaryDark</item>
-        <item name="colorAccent">@color/appColorSecondary</item>
-        <item name="android:colorControlNormal">@color/appColorPrimaryLight</item>
-        <item name="android:colorControlHighlight">@color/appColorSecondaryLight</item>
-        <item name="android:colorButtonNormal">@color/appColorPrimaryLight</item>
-        <item name="colorSwitchThumbNormal">@color/appColorPrimaryLight</item>
-        <item name="android:textColorPrimary">@color/appColorPrimaryTextColor</item>
-        <item name="android:textColorHighlight">@color/appColorSecondaryLight</item>
-        <item name="android:textColorSecondary">@color/appColorSecondaryTextColor</item>
-        <!-- ***************** Default component style ***************** -->
-        <item name="imageButtonStyle">@style/Widget.AppCompat.ImageButton</item>
-        <item name="android:searchViewStyle">@style/Widget.AppCompat.SearchView</item>
-        <item name="android:switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
-        <item name="checkboxStyle">@style/Widget.AppCompat.CompoundButton.CheckBox</item>
-        <item name="radioButtonStyle">@style/Widget.AppCompat.CompoundButton.RadioButton</item>
-        <item name="android:toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
-        <item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
-        <item name="progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>
-        <item name="android:progressBarStyleHorizontal">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
-        <item name="dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
-        <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>"
-        <!-- **************** Window Style **************** -->
-        <item name="android:windowBackground">@color/appColorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorSecondary</item>
+        <item name="colorControlHighlight">@color/colorSecondaryLight</item>
+        <item name="colorSwitchThumbNormal">@color/colorSecondaryLight</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryTextColor</item>
+        <item name="android:textColorHighlight">@color/colorSecondaryLight</item>
+        <item name="android:textColorSecondary">@color/colorSecondaryTextColor</item>
+        <item name="android:windowBackground">@android:color/background_light</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
-
-    <style name="AppTheme.Main" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/mainColorPrimary</item>
-        <item name="colorPrimaryDark">@color/mainColorPrimaryDark</item>
-        <item name="colorAccent">@color/mainColorSecondary</item>
-        <item name="colorControlNormal">@color/mainColorSecondaryLight</item>
-        <item name="colorControlHighlight">@color/mainColorSecondaryLight</item>
-        <item name="colorButtonNormal">@color/mainColorPrimaryLight</item>
-        <item name="colorSwitchThumbNormal">@color/mainColorPrimaryLight</item>
-        <item name="android:textColorPrimary">@color/mainColorPrimaryTextColor</item>
-        <item name="android:textColorHighlight">@color/mainColorSecondaryLight</item>
-        <item name="android:textColorSecondary">@color/mainColorSecondaryTextColor</item>
-        <item name="android:searchViewStyle">@style/Widget.AppCompat.Light.SearchView</item>
-        <item name="android:switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
-        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>
-        <item name="android:dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
-        <item name="android:windowBackground">@color/appColorPrimaryLight</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
-    <!-- ****************************  Article Detail Screen Theme **************************** -->
-    <style name="AppTheme.ArticleDetail" parent="AppTheme">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/ArticleDetailColorPrimary</item>
-        <item name="colorPrimaryDark">@color/ArticleDetailColorPrimaryDark</item>
-        <item name="colorAccent">@color/ArticleDetailColorSecondary</item>
-        <item name="colorControlNormal">@color/ArticleDetailColorPrimaryLight</item>
-        <item name="colorControlHighlight">@color/ArticleDetailColorSecondaryLight</item>
-        <item name="colorButtonNormal">@color/ArticleDetailColorPrimaryLight</item>
-        <item name="colorSwitchThumbNormal">@color/ArticleDetailColorPrimaryLight</item>
-        <item name="android:textColorPrimary">@color/ArticleDetailColorPrimaryTextColor</item>
-        <item name="android:textColorHighlight">@color/ArticleDetailColorPrimaryTextColor</item>
-        <item name="android:textColorSecondary">@color/ArticleDetailColorSecondaryTextColor</item>
-        <item name="android:windowBackground">@color/ArticleDetailColorPrimary</item>
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
-    <style name="WeatherSearchView" parent="Widget.AppCompat.SearchView">
-        <item name="android:textColorPrimary">@color/appColorPrimaryTextColor</item>
-        <item name="android:textColorSecondary">@color/appColorSecondaryTextColor</item>
-        <item name="android:textColorHighlight">@color/mainColorSecondaryLight</item>
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 </resources>

@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,10 +19,10 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.persistence.room.Room
 import android.database.sqlite.SQLiteConstraintException
 import android.support.test.InstrumentationRegistry
-import com.dbeginc.dbweatherdata.implementations.datasources.local.news.room.LocalNewsDatabase
+import com.dbeginc.dbweatherdata.implementations.datasources.local.news.RoomNewsDatabase
+import com.dbeginc.dbweatherdata.proxies.local.lives.LocalYoutubeLive
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalArticle
-import com.dbeginc.dbweatherdata.proxies.local.news.LocalLive
-import com.dbeginc.dbweatherdata.proxies.local.news.LocalSource
+import com.dbeginc.dbweatherdata.proxies.local.news.LocalNewsPaper
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -39,7 +39,7 @@ import kotlin.test.assertFailsWith
  */
 class LocalNewsDaoTest {
     @Rule @JvmField val instantTaskExecutorRule = InstantTaskExecutorRule()
-    private lateinit var db: LocalNewsDatabase
+    private lateinit var db: RoomNewsDatabase
 
     @Before
     fun setup() {
@@ -48,7 +48,7 @@ class LocalNewsDaoTest {
         RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
 
-        db = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(), LocalNewsDatabase::class.java).allowMainThreadQueries().build()
+        db = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(), RoomNewsDatabase::class.java).allowMainThreadQueries().build()
     }
 
     @After
@@ -56,8 +56,8 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_articles_get_inserted_articles_and_get_specific_article() {
-        val androidSource = LocalSource("android-source", "Android Source", "News About android", "https://developer.android.com", "Development", "en", "us", false)
-        val iosSource = LocalSource("ios-source", "Ios Source", "News About ios", "https://developer.apple.com/", "Development", "en", "us", false)
+        val androidSource = LocalNewsPaper("android-source", "Android NewsPaper", "News About android", "https://developer.android.com", "Development", "en", "us", false)
+        val iosSource = LocalNewsPaper("ios-source", "Ios NewsPaper", "News About ios", "https://developer.apple.com/", "Development", "en", "us", false)
 
         val androidArticle1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", "", null, androidSource.id)
         val androidArticle2 = LocalArticle("D Bitsy", "Android spaceship", "short desc", "androidUrl2", "", "2017-10-03T15:27:02Z", androidSource.id)
@@ -95,13 +95,13 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_sources_and_get_inserted_sources() {
-        val androidSource = LocalSource("android-source", "Android Source", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
-        val iosSource = androidSource.copy(id="ios-source",name="Ios Source", description="Ios Stuff", url="https://developer.apple.com/")
+        val androidSource = LocalNewsPaper("android-source", "Android NewsPaper", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
+        val iosSource = androidSource.copy(id = "ios-source", name = "Ios NewsPaper", description = "Ios Stuff", url = "https://developer.apple.com/")
 
         db.newsDao().putSources(listOf(androidSource, iosSource))
 
         db.newsDao()
-                .getSources()
+                .getNewsPapers()
                 .test()
                 .assertValue { sources -> sources == listOf(androidSource, iosSource) }
 
@@ -114,22 +114,22 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_sources_and_get_subscribed_sources() {
-        val androidSource = LocalSource("android-source", "Android Source", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
-        val iosSource = androidSource.copy(id="ios-source",name="Ios Source", description="Ios Stuff", url="https://developer.apple.com")
-        val windowsSource = androidSource.copy(id="windows-source",name="Windows Source", description="Windows Stuff", url="https://developer.microsoft.com")
+        val androidSource = LocalNewsPaper("android-source", "Android NewsPaper", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
+        val iosSource = androidSource.copy(id = "ios-source", name = "Ios NewsPaper", description = "Ios Stuff", url = "https://developer.apple.com")
+        val windowsSource = androidSource.copy(id = "windows-source", name = "Windows NewsPaper", description = "Windows Stuff", url = "https://developer.microsoft.com")
 
         db.newsDao().putSources(listOf(androidSource, iosSource, windowsSource))
 
         androidSource.subscribed = true
 
-        db.newsDao().updateSource(androidSource)
+        db.newsDao().updateNewsPaper(androidSource)
 
         windowsSource.subscribed = true
 
-        db.newsDao().updateSource(windowsSource)
+        db.newsDao().updateNewsPaper(windowsSource)
 
         db.newsDao()
-                .getSubscribedSources()
+                .getSubscribedNewsPapers()
                 .test()
                 .assertValue { sources ->
                     sources.size == 2 && sources.contains(androidSource)
@@ -139,7 +139,7 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_lives_and_get_lives() {
-        val france24 = LocalLive(name="France 24", url="hL0sEdVJs3U")
+        val france24 = LocalYoutubeLive(name = "France 24", url = "hL0sEdVJs3U")
     }
 
 }

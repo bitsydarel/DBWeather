@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,22 @@ ext.versions = [
         minSdk               : 17,
         targetSdk            : 26,
         compileSdk           : 26,
-
-        buildTools           : '26.0.3',
-        androidSupportLibrary : '26.1.0',
-        androidPluginVersion : '3.0.1',
+        versionCode          : 6,
+        versionName          : "1.6",
+        buildTools           : '27.0.3',
+        androidSupportLibrary : '27.1.0',
+        androidPluginVersion : '3.1.1',
         architectureComponentPersistence : "1.0.0",
         architectureComponentLifecycle : "1.1.0",
 
-        kotlin_version : '1.2.21',
-        kotlinCoroutines : '0.19.3',
+        kotlin_version : '1.2.31',
+        kotlinCoroutines : '0.22.5',
 
         rxJava : '2.1.9',
         rxAndroid: '2.0.2-SNAPSHOT',
 
         googleLibraries : '11.6.0',
-
+        exoplayer : '2.7.3',
         dagger : '2.14.1',
         okhttp : '3.10.0-SNAPSHOT',
         android_networking : '1.0.1',
@@ -41,7 +42,6 @@ ext.versions = [
         appache_commons_lang3 : 3.6,
         lottie : '2.2.5',
         bottom_bar : '2.3.1',
-        fab_menu : '1.6.4',
         glide : '4.3.1',
         junit : 4.12,
         mockito : '2.13.0',
@@ -62,16 +62,19 @@ ext.kotlinLibs = [
         stdlib : "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin_version",
         reflect : "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin_version",
         coroutines : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinCoroutines",
+        coroutinesAndroid : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinCoroutines",
         kotlin_test_junit : "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin_version"
 ]
 
 ext.rxLibs = [
         rxJava : "io.reactivex.rxjava2:rxjava:$versions.rxJava",
-        rxAndroid : "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid"
+        rxAndroid : "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid",
+        rxRelay : "com.jakewharton.rxrelay2:rxrelay:2.0.0"
 ]
 
 ext.androidSupportLibs = [
         appcompat_v7 : "com.android.support:appcompat-v7:$versions.androidSupportLibrary",
+        annotations : "com.android.support:support-annotations:$versions.androidSupportLibrary",
         android_test_runner : "com.android.support.test:runner:$versions.android_test_runner",
         customtabs : "com.android.support:customtabs:$versions.androidSupportLibrary",
         cardview_v7 : "com.android.support:cardview-v7:$versions.androidSupportLibrary",
@@ -83,12 +86,21 @@ ext.androidSupportLibs = [
         support_v13 : "com.android.support:support-v13:$versions.androidSupportLibrary",
         support_core_utils : "com.android.support:support-core-utils:$versions.androidSupportLibrary",
         support_v4 : "com.android.support:support-v4:$versions.androidSupportLibrary",
-        multidex: "com.android.support:multidex:$versions.multidex",
+        multidex : "com.android.support:multidex:$versions.multidex",
+]
+
+ext.exoplayerLibs = [
+        exoplayer : "com.google.android.exoplayer:exoplayer:$versions.exoplayer",
+        core : "com.google.android.exoplayer:exoplayer-core:$versions.exoplayer",
+        ui : "com.google.android.exoplayer:exoplayer-ui:$versions.exoplayer",
+        okhttp : "com.google.android.exoplayer:extension-okhttp:$versions.exoplayer",
+        rtmp : "com.google.android.exoplayer:extension-rtmp:$versions.exoplayer"
 ]
 
 ext.googleLibs = [
         firebase_ads : "com.google.firebase:firebase-ads:$versions.googleLibraries",
         firebase_database : "com.google.firebase:firebase-database:$versions.googleLibraries",
+        firebase_storage : "com.google.firebase:firebase-storage:$versions.googleLibraries",
         play_services_location : "com.google.android.gms:play-services-location:$versions.googleLibraries",
         api_services_translate : "com.google.apis:google-api-services-translate:$versions.google_api_services_translate",
         http_client_android : "com.google.http-client:google-http-client-android:$versions.google_http_client_android"
@@ -148,6 +160,7 @@ ext.otherLibs = [
         evernote_android_job: "com.evernote:android-job:$versions.evernote_android_job",
         lottie : "com.airbnb.android:lottie:$versions.lottie",
         bottom_bar: "com.roughike:bottom-bar:$versions.bottom_bar",
-        fab : "com.github.clans:fab:$versions.fab_menu",
+        fab : "com.github.clans:fab:1.6.4",
+        fab_menu: "com.github.wangjiegulu:rfab:2.0.0",
         viewAnimator: "com.github.florent37:viewanimator:$versions.viewAnimator"
 ]

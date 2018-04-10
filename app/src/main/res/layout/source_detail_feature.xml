@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~  Copyright (C) 2017 Darel Bitsy
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
   ~
-  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~  http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~  Unless required by applicable law or agreed to in writing, software
   ~  distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,142 +14,21 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="Source"
-            type="com.dbeginc.dbweathernews.viewmodels.SourceModel" />
+            type="com.dbeginc.dbweathernews.viewmodels.NewsPaperModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/sourceDetailLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.dbeginc.dbweather.config.managesources.sourcedetail.SourceDetailActivity">
+        tools:context=".newspaperdetail.SourceDetailActivity">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/sourceDetailAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:theme="?attr/actionBarStyle">
 
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/sourceDetailCTL"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                <ImageView
-                    android:id="@+id/sourceDetailLanguage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/source_language"
-                    app:setImageUrl="@{@string/imageFlag(Source.country)}"
-                    app:layout_collapseMode="parallax"
-                    app:layout_collapseParallaxMultiplier="0.7" />
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/sourceDetailToolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_gravity="top"
-                    android:theme="?attr/toolbarStyle"
-                    app:layout_collapseMode="pin"
-                    app:layout_scrollFlags="scroll|enterAlways"
-                    app:navigationIcon="@drawable/ic_arrow_black"
-                    app:popupTheme="?attr/popupTheme"
-                    app:title="@{Source.id}"
-                    app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
-                    tools:targetApi="lollipop" />
-
-            </android.support.design.widget.CollapsingToolbarLayout>
-        </android.support.design.widget.AppBarLayout>
-
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/articleDetailContentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/sourceDetailContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp">
-
-                <ProgressBar
-                    android:id="@+id/sourceDetailUpdateAnimation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent" />
-
-                <TextView
-                    android:id="@+id/sourceDetailNameLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/name"
-                    android:gravity="start"
-                    style="@style/TextAppearance.AppCompat.Headline"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailUpdateAnimation"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@+id/sourceDetailCategoryLabel"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside" />
-
-                <TextView
-                    android:id="@+id/sourceDetailName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@{Source.name}"
-                    tools:text="BBC Sport"
-                    style="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailNameLabel"
-                    app:layout_constraintLeft_toLeftOf="@id/sourceDetailNameLabel" />
-
-                <TextView
-                    android:id="@+id/sourceDetailCategoryLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/category"
-                    android:gravity="start"
-                    style="@style/TextAppearance.AppCompat.Headline"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailUpdateAnimation"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/sourceDetailNameLabel" />
-
-                <TextView
-                    android:id="@+id/sourceDetailCategory"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@{Source.category}"
-                    tools:text="Sport"
-                    style="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailCategoryLabel"
-                    app:layout_constraintLeft_toLeftOf="@id/sourceDetailCategoryLabel"
-                    app:layout_constraintRight_toRightOf="parent" />
-
-                <TextView
-                    android:id="@+id/sourceDetailDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@{Source.description}"
-                    tools:text="BBC IS one the beggest stuff ever"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailName"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-            </android.support.constraint.ConstraintLayout>
-        </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

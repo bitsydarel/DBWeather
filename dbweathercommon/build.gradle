@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,20 +16,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
-}
-
 android {
     compileSdkVersion versions.compileSdk
 
     defaultConfig {
         minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdj
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion versions.targetSdk
+        versionCode versions.versionCode
+        versionName versions.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -48,20 +42,13 @@ android {
 }
 
 dependencies {
-    implementation kotlinLibs.stdlib
-    implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.2') {
-        transitive = false
-    }
-    compileOnly('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
-        transitive = true
-    }
+    api project(":dbweatherdomain")
 
-    api rxLibs.rxAndroid
+    api architectureComponentLibs.lifecycle_extensions
     api otherLibs.threetenabp
-    api "com.jakewharton.rxrelay2:rxrelay:2.0.0"
 
-    compileOnly androidSupportLibs.appcompat_v7
-    compileOnly 'javax.inject:javax.inject:1'
+    implementation androidSupportLibs.annotations
+    api 'javax.inject:javax.inject:1'
 
     testImplementation testingLibs.junit
 }

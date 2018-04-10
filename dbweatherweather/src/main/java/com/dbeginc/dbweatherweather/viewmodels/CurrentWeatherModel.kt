@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,29 +15,23 @@
 
 package com.dbeginc.dbweatherweather.viewmodels
 
-import android.os.Parcel
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
 /**
  * Created by darel on 18.09.17.
  *
  * Current Weather View Model
  */
-@Parcelize
-data class CurrentWeatherModel(val location: String, val temperature: Int, val apparentTemperature: Int,
-                               val icon: Int, val summary: String, val time: Long,
-                               val windSpeed: String, val humidity: String, val cloudCover: String,
-                               val precipitationProbability: String,
-                               val sunrise: String, val sunset: String, val temperatureUnit: String) : Parcelable {
-
-    /*companion object CREATOR : Parcelable.Creator<CurrentWeatherModel> {
-        override fun createFromParcel(parcel: Parcel): CurrentWeatherModel {
-            return CurrentWeatherModel(parcel)
-        }
-
-        override fun newArray(size: Int): Array<CurrentWeatherModel?> {
-            return arrayOfNulls(size)
-        }
-    }*/
-}
+data class CurrentWeatherModel(
+        val location: String,
+        val temperature: Int,
+        val apparentTemperature: Int,
+        val icon: Int,
+        val summary: String,
+        val time: Long,
+        val windSpeed: String,
+        val humidity: String,
+        val cloudCover: String,
+        val precipitationProbability: String,
+        val sunrise: String,
+        val sunset: String,
+        val temperatureUnit: String
+)

@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,11 +43,11 @@ class NewsMapperKtTest {
         val articleWith2Hours = Article("","", "", "", "", currentTime.minusHours(2).toInstant().toString(), "").toTestModel("Darel", currentTime)
         val articleWith1day = Article("","", "", "", "", currentTime.minusDays(1).toInstant().toString(), "").toTestModel("Darel", currentTime)
 
-        assertTrue("expected value containing m but got ${articleWith5Minute.publishedAt}", articleWith5Minute.publishedAt!!.contains("m"))
+        assertTrue("expected value containing m but got ${articleWith5Minute.publishedAt}", articleWith5Minute.publishedAt.contains("m"))
 
-        assertTrue("expected value containing h but got ${articleWith2Hours.publishedAt}", articleWith2Hours.publishedAt!!.contains("h"))
+        assertTrue("expected value containing h but got ${articleWith2Hours.publishedAt}", articleWith2Hours.publishedAt.contains("h"))
 
-        assertTrue("expected value containing d but got ${articleWith1day.publishedAt}", articleWith1day.publishedAt!!.contains("d"))
+        assertTrue("expected value containing d but got ${articleWith1day.publishedAt}", articleWith1day.publishedAt.contains("d"))
 
     }
 
@@ -141,7 +141,8 @@ class NewsMapperKtTest {
                 else -> "${duration.minutes()}m"
             }
         }
-        return ArticleModel(author=author ?: unknownAuthor, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishTime, sourceId=sourceId)
+        return ArticleModel(author = author
+                ?: unknownAuthor, title = title, description = description, url = url, imageUrl = imageUrl, publishedAt = publishTime, sourceId = sourceId)
     }
 
     private fun Duration.days() : Int = if (isNegative) toDays().unaryMinus().toInt() else toDays().toInt()

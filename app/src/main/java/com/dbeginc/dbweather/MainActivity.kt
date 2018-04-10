@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,21 +20,20 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.res.ResourcesCompat
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatDelegate
+import android.view.MenuItem
 import android.widget.Toast
-import com.dbeginc.dbweather.adapter.MainPagerAdapter
+import com.dbeginc.dbweather.R.id.main_content
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityMainBinding
-import com.dbeginc.dbweather.di.WithChildDependencies
-import com.dbeginc.dbweather.utils.utility.changeStatusBarColor
-import com.dbeginc.dbweather.utils.utility.toast
-import com.dbeginc.dbweather.weather.WeatherTabFragment
-import com.roughike.bottombar.OnTabSelectListener
+import com.dbeginc.dbweather.utils.services.DBWeatherCustomTabManager
+import com.dbeginc.dbweather.utils.utility.*
 
-class MainActivity : BaseActivity(), OnTabSelectListener, WithChildDependencies {
+
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var adapter: MainPagerAdapter
 
     companion object {
         init {
@@ -49,85 +48,80 @@ class MainActivity : BaseActivity(), OnTabSelectListener, WithChildDependencies 
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        adapter = MainPagerAdapter(supportFragmentManager)
+        binding.mainNavView.setNavigationItemSelectedListener(this)
 
-        binding.mainNavigationBar.setDefaultTab(R.id.tab_weather)
-
-        binding.mainNavigationBar.setOnTabSelectListener(this, false)
-
-        binding.mainNavigationBar.selectTabWithId(DBWeatherApp.LAST_SCREEN.toInt())
-
-        binding.tabContent.adapter = adapter
+        if (savedState == null) goToWeatherScreen(container = this, layoutId = main_content)
 
         if (!isNetworkAvailable()) showNetworkNotAvailable()
 
-        if (applicationPreferences.isFirstLaunchOfApplication()) applicationPreferences.changeFirstLaunchStatus()
+        if (preferences.isFirstLaunchOfApplication())
+            preferences.changeFirstLaunchStatus()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        DBWeatherCustomTabManager.initialize(applicationContext)
     }
 
     override fun onNewIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
-            supportFragmentManager.fragments.forEach {
-                (it as? WeatherTabFragment)?.onVoiceQuery(
-                        intent.getStringExtra(SearchManager.QUERY)
-                )
+            val currentFragment = supportFragmentManager.findFragmentById(main_content)
+
+            (currentFragment as? WithSearchableData)?.let {
+                val query = intent.getStringExtra(SearchManager.QUERY)
+                currentFragment.onSearchQuery(query = query)
             }
         }
     }
 
+    override fun onBackPressed() {
+        if (binding.mainLayout.isDrawerOpen(GravityCompat.START)) binding.mainLayout.closeDrawer(GravityCompat.START)
+        else super.onBackPressed()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        applicationPreferences.changeDefaultLocationStatus(true)
+        preferences.changeDefaultLocationStatus(true)
     }
 
-    override fun onTabSelected(tabId: Int) {
-        changeVisibleTab(tabId)
-        changeTabColor(tabId)
-    }
-
-    /************************** Main View Custom Part **************************/
-    private fun changeVisibleTab(tabToShow: Int) {
-        when (tabToShow) {
-            R.id.tab_weather -> goToWeatherScreen()
-            R.id.tab_news -> goToNewsScreen()
-            R.id.tab_config -> goToConfigurationScreen()
-        }
-    }
-
-    private fun changeTabColor(tabToShow: Int) {
-        var color = ResourcesCompat.getColor(resources, R.color.weatherTabPrimaryDark, theme)
-
-        when (tabToShow) {
-            R.id.tab_news -> color = ResourcesCompat.getColor(resources, R.color.newsTabPrimaryDark, theme)
-            R.id.tab_config -> color = ResourcesCompat.getColor(resources, R.color.configTabPrimaryDark, theme)
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.changeStatusBarColor(color)
-    }
-
-    private fun goToWeatherScreen() {
-        binding.tabContent.post {
-            binding.tabContent.setCurrentItem(0, true)
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.weather_feature -> {
+                goToWeatherScreen(container = this, layoutId = main_content)
+            }
+            R.id.news_papers_feature -> goToNewsPapersScreen(
+                    container = this,
+                    layoutId = main_content
+            )
+            R.id.youtube_lives_feature -> goToYoutubeLivesScreen(
+                    container = this,
+                    layoutId = main_content
+            )
+            R.id.ip_tv_feature -> goToIpTvPlaylistsScreen(
+                    container = this,
+                    layoutId = main_content
+            )
+            R.id.favoriteYoutubeLives -> goToFavoriteYoutubeLivesScreen(
+                    container = this,
+                    layoutId = main_content
+            )
+            R.id.manage_locations -> goToManageLocationsScreen(container = this, layoutId = main_content)
+            R.id.manage_sources -> goToManageNewsPapersScreen(
+                    container = this,
+                    layoutId = main_content
+            )
         }
 
-        DBWeatherApp.LAST_SCREEN = R.id.tab_weather.toLong()
+        binding.mainLayout.closeDrawer(GravityCompat.START, true)
+
+        return true
     }
 
-    private fun goToNewsScreen() {
-        binding.tabContent.post {
-            binding.tabContent.setCurrentItem(1, true)
-        }
+    fun openNavigationDrawer() = binding.mainLayout.openDrawer(GravityCompat.START)
 
-        DBWeatherApp.LAST_SCREEN = R.id.tab_news.toLong()
-    }
-
-    private fun goToConfigurationScreen() {
-        binding.tabContent.post {
-            binding.tabContent.setCurrentItem(2, true)
-        }
-
-        DBWeatherApp.LAST_SCREEN = R.id.tab_config.toLong()
-    }
-
-    private fun showNetworkNotAvailable() = binding.mainLayout.toast(getString(R.string.network_unavailable_message), duration = Toast.LENGTH_LONG)
-
+    private fun showNetworkNotAvailable() = binding.mainLayout.toast(
+            resId = R.string.network_unavailable_message,
+            duration = Toast.LENGTH_LONG
+    )
 }

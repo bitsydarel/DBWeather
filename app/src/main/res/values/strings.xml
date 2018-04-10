@@ -1,10 +1,10 @@
 <!--
   ~  Copyright (C) 2017 Darel Bitsy
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
   ~
-  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~  http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~  Unless required by applicable law or agreed to in writing, software
   ~  distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,7 @@
     <string name="hourly_time" translatable="false"> %1$s</string>
     <string name="hourly_temperature_value" translatable="false">%1$d°</string>
     <!--*********************************************************************************************-->
+    <string name="error_could_not_load_articles">Could not load %1$s articles</string>
     <string-array name="default_sources">
         <item>hacker-news</item>
         <item>bbc-news</item>
@@ -75,9 +76,9 @@
     <string name="weather_notification">Weather notification</string>
     <string name="manages_locations">Manages locations</string>
     <string name="translate_newspapers">Translate newspapers</string>
-    <string name="manages_sources">Manages news sources</string>
+    <string name="manages_newspapers">Manages Newspapers</string>
     <string name="configuration_changed">change successfully saved</string>
-    <string name="location_removed">Location successfully removed</string>
+    <string name="location_removed">Location removed</string>
     <string name="about_app">About the app</string>
     <string name="send_to">Share To</string>
     <string name="add_location_search_hint">Enter location name</string>
@@ -86,7 +87,7 @@
     <string name="dayTemps">%1$d°/%2$d°</string>
     <!-- *********************************************************************************-->
     <!-- *************************Introduction layout ****************************-->
-    <string name="location_permission_request">Please grant location permission to get the most accurate forecasts!</string>
+    <string name="location_permission_request">Please grant location permission to get the most accurate forecasts</string>
     <string name="news_powered_by" translatable="false">Powered By newsapi.org</string>
     <string name="waiting_page_desc">Downloading the articles\nThe app will automatically be launched\nThe connection may be slow</string>
     <string name="successfully_saved_configuration" translatable="false">Successfully Saved Configuration</string>
@@ -95,7 +96,7 @@
     <string name="weather_error_message">Error while retrieving weather information</string>
     <string name="weather_alert_channel_desc">This is forecast alerts</string>
     <string name="news_error_message">Error while loading news</string>
-    <string name="sources_error_message">Error while loading sources</string>
+    <string name="newspapers_error_message">Error while loading newsPapers</string>
     <string name="lives_error_message">Error while loading live TV\'s</string>
     <string name="retry">Retry</string>
     <string name="degree_image_content_description" translatable="false">Degree Image</string>
@@ -105,12 +106,12 @@
     <string name="notification_alert_city">From %s</string>
     <string name="rain_desc">The temperature outside is %1$d°\n\n It\'s raining so don\'t get sick. DBWeather Team Love you :)</string>
     <!-- ************************* Tab titles ****************************-->
-    <string name="weather_tab_title">Weather</string>
+    <string name="weather_label">Weather</string>
     <string name="news_tab_title">News</string>
-    <string name="news_papers_tab_title">Newspapers</string>
+    <string name="news_papers_label">Newspapers</string>
     <string name="lives_tv_tab_title">Live TV</string>
-    <string name="lives_tab_title">Live</string>
-    <string name="favorites_tab_title">Favorites</string>
+    <string name="youtube_live_label">Youtube Live TV</string>
+    <string name="favorites_youtube_lives">Favorites Youtube Live TV</string>
     <string name="config_tab_title">Settings</string>
     <!-- *********************************************************************************-->
     <string name="display_add">Display and Add</string>
@@ -123,11 +124,11 @@
     <string name="deniedLocationButtonLabel">No Thanks</string>
     <string name="weather_powered_by" translatable="false">Powered by Dark Sky</string>
     <string name="made_by" translatable="false">Made by Darel Bitsy</string>
-    <string name="searchLocationLabel">Enter location name</string>
-    <string name="no_locations_found">No userLocationSelected found\nPlease add userLocationSelected in the weather tab</string>
+    <string name="search_location">Search location</string>
+    <string name="no_locations_found">No locations found\nPlease add location</string>
     <string name="subscribe_to_news">Subscribe to sourcesJson</string>
     <string name="connection_issue">Issue while downloading the articles, retrying…</string>
-    <string name="current_location_title">Current Location</string>
+    <string name="current_location">Current Location</string>
     <string name="report_bug">Report bugs</string>
     <string name="rate_on_play_store">Rate on Play Store</string>
     <string name="version" translatable="false">Version %1$d</string>
@@ -147,12 +148,10 @@
     <string name="city_name">City name</string>
     <string name="articleImage">Article Image</string>
     <string name="articleAuthor">Author: %1$s</string>
-    <string name="articlePublishTime">%1$s ago</string>
-    <string name="default_author_name">Unknow</string>
+    <string name="default_author_name">Unknown</string>
     <string name="parentExpanded">parent expanded icon</string>
     <string name="parentIcon">parent icon</string>
     <string name="live_thumbnail">Live Thumbnail</string>
-    <string name="live_favorite_icon">Live Favorite Icon</string>
     <string name="bookmark_live_menu_title">Bookmark</string>
     <string name="humidity_icon">Humidity Icon</string>
     <string name="wind_icon">Wind Icon</string>
@@ -164,12 +163,12 @@
     <string name="setting_icon">Setting Icon</string>
     <string name="configuration_icon">Configuration Icon</string>
     <string name="location_icon">Location Icon</string>
-    <string name="find_source">Find Source</string>
-    <string name="enter_source_name">Enter source name</string>
+    <string name="find_newspaper">Find NewsPaper</string>
+    <string name="enter_source_name">Enter newsPaper name</string>
     <string name="location_flag">Location Flag</string>
     <string name="share_with">Share with</string>
     <string name="share_article_text">Check out this news! Sent from DBWeather App\n</string>
-    <string name="share_live_text">Check out this online tv! Sent from DBWeather App\n www.youtube.com/watch?v=%1$s</string>
+    <string name="share_live_text">Check out this online Youtube TV\nSent from DBWeather App\nwww.youtube.com/watch?v=%1$s</string>
     <string name="open_with">Open with</string>
     <string name="open_full_screen">Expand</string>
     <string name="share">Share</string>
@@ -177,4 +176,24 @@
     <string name="category">Category</string>
     <string name="availability">Availability</string>
     <string name="name">Name</string>
+    <string name="ip_live_tv">IP Live TV</string>
+    <string name="favorite_button">Favorite button</string>
+    <string name="could_not_load_your_locations">Could not load your locations</string>
+    <string name="published_at_days_ago">%1$dd ago</string>
+    <string name="published_at_hours_ago">%1$dh ago</string>
+    <string name="published_at_minutes_ago">%1$dm ago</string>
+    <string name="published_at_seconds_ago">%1$ds ago</string>
+    <string name="refresh">Refresh</string>
+    <string name="sort_youtube_lives">Sort youtube lives</string>
+    <string name="search_youtube_lives">Search youtube lives</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter">Enter</string>
+    <string name="iptv_playlists">IpTv Playlists</string>
+    <string name="search_playlist">Search playlist</string>
+    <string name="could_not_load_iptv_playlists">Could not load IpTv playlists</string>
+    <string name="iptv_logo">IpTv Logo</string>
+    <string name="channel_of">Channel of %1$s</string>
+    <string name="could_not_load_channels">could not load channels</string>
 </resources>

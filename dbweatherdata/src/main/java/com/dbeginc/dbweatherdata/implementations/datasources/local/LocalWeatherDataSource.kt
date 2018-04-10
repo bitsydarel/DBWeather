@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,26 +21,23 @@ import com.dbeginc.dbweatherdomain.entities.weather.Location
 import com.dbeginc.dbweatherdomain.entities.weather.Weather
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 
 /**
  * Created by darel on 15.09.17.
  *
  * Local Weather Data Provider
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 interface LocalWeatherDataSource {
     fun getWeather(request: WeatherRequest<String>): Flowable<Weather>
 
     fun getWeatherForLocation(locationName: String): Flowable<Weather>
 
-    fun getLocations(name: String): Maybe<List<Location>>
-
-    fun getUserLocations() : Maybe<List<Location>>
+    fun getUserLocations(): Flowable<List<Location>>
 
     fun updateWeather(weather: Weather) : Completable
 
     fun updateWeatherLocation(weather: Weather) : Completable
 
-    fun deleteWeatherForLocation(weather: Weather) : Completable
+    fun deleteWeatherForLocation(locationName: String): Completable
 }

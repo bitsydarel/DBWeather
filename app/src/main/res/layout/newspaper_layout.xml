@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="NewsPaper"
+            type="com.dbeginc.dbweathernews.viewmodels.NewsPaperModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/newsPaperLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/newsPaperName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{NewsPaper.name}"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintEnd_toStartOf="@+id/newsPaperLocation"
+            app:layout_constraintHorizontal_weight="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Four four two" />
+
+        <ImageView
+            android:id="@+id/newsPaperLocation"
+            android:layout_width="40dp"
+            android:layout_height="32dp"
+            android:contentDescription="@{NewsPaper.country}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="0.1"
+            app:layout_constraintStart_toEndOf="@id/newsPaperName"
+            app:layout_constraintTop_toTopOf="parent"
+            app:setImageUrl="@{@string/imageFlag(NewsPaper.country)}"
+            tools:src="@drawable/ic_current_location" />
+
+        <TextView
+            android:id="@+id/newsPaperDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@{NewsPaper.description}"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/newsPaperLocation"
+            tools:text="The latest UK and international business, finance, economic and political news, comment and analysis from the Financial Times on FT.com.
+The latest UK and international business, finance, economic and political news, comment and analysis from the Financial Times on FT" />
+
+        <TextView
+            android:id="@+id/newsPaperCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@{NewsPaper.category}"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/sourceSubscribed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/newsPaperDescription"
+            tools:text="Sport" />
+
+        <ImageButton
+            android:id="@+id/sourceSubscribed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/followButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/newsPaperCategory"
+            app:layout_constraintTop_toBottomOf="@id/newsPaperDescription"
+            tools:src="@drawable/ic_follow_icon_red" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

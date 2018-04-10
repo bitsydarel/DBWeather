@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +16,24 @@
 package com.dbeginc.dbweathernews.viewmodels
 
 import android.os.Parcelable
-import android.support.annotation.DrawableRes
 import com.dbeginc.dbweathercommon.utils.UpdatableModel
 import kotlinx.android.parcel.Parcelize
 
 /**
- * Created by darel on 08.10.17.
+ * Created by darel on 27.10.17.
  *
- * Parent Group
+ * NewsPaper Model
  */
 @Parcelize
-data class NewsPaperModel(var name: String, @DrawableRes val logo: Int=0, val children: List<ArticleModel> = mutableListOf()) : Parcelable, UpdatableModel {
-    override fun getId() = name
+data class NewsPaperModel(
+        @JvmField val id: String,
+        val name: String,
+        val description: String,
+        val url: String,
+        val category: String,
+        val language: String,
+        val country: String,
+        var subscribed: Boolean
+) : Parcelable, UpdatableModel {
+    override fun getId(): String = id
 }

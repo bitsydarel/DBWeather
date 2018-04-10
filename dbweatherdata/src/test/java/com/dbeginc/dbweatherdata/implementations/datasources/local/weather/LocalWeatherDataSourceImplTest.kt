@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +17,11 @@ package com.dbeginc.dbweatherdata.implementations.datasources.local.weather
 
 import com.dbeginc.dbweatherdata.getWeatherJVM
 import com.dbeginc.dbweatherdata.implementations.datasources.local.LocalWeatherDataSource
-import com.dbeginc.dbweatherdata.implementations.datasources.local.weather.room.LocalCurrentWeatherDatabase
-import com.dbeginc.dbweatherdata.implementations.datasources.local.weather.room.LocalLocationWeatherDatabase
-import com.dbeginc.dbweatherdata.implementations.datasources.local.weather.room.LocalWeatherDao
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalLocation
 import com.dbeginc.dbweatherdata.proxies.local.weather.LocalWeather
 import com.dbeginc.dbweatherdata.proxies.mappers.toDomain
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
-import io.reactivex.Maybe
+import io.reactivex.Flowable
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
@@ -37,7 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner
 /**
  * Created by darel on 02.10.17.
  *
- * Local Unit Test Of Weather Data Source
+ * Local Unit Test Of Weather Data NewsPaper
  */
 @RunWith(MockitoJUnitRunner::class)
 class LocalWeatherDataSourceImplTest {
@@ -54,7 +51,7 @@ class LocalWeatherDataSourceImplTest {
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
         RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
 
-        localWeatherDataSource = LocalWeatherDataSourceImpl.create(currentDB, locationDB)
+        localWeatherDataSource = RoomWeatherDataSource.create(currentDB, locationDB)
         weather = getWeatherJVM()
 
         Mockito.`when`(currentDB.weatherDao()).thenReturn(weatherDao)
@@ -63,7 +60,7 @@ class LocalWeatherDataSourceImplTest {
 
     @Test
     fun getWeather() {
-        Mockito.`when`(currentDB.weatherDao().getWeatherByLocation(weather.location.locationName)).thenReturn(Maybe.just(weather))
+        Mockito.`when`(currentDB.weatherDao().getWeatherByLocation(weather.location.locationName)).thenReturn(Flowable.just(weather))
 
         localWeatherDataSource.getWeather(WeatherRequest(weather.latitude, weather.longitude, weather.location.locationName))
                 .test()
@@ -72,7 +69,7 @@ class LocalWeatherDataSourceImplTest {
 
     @Test
     fun getWeatherForLocation() {
-        Mockito.`when`(locationDB.weatherDao().getWeatherByLocation(weather.location.locationName)).thenReturn(Maybe.just(weather))
+        Mockito.`when`(locationDB.weatherDao().getWeatherByLocation(weather.location.locationName)).thenReturn(Flowable.just(weather))
 
         localWeatherDataSource.getWeatherForLocation(weather.location.locationName)
                 .test()
@@ -80,17 +77,8 @@ class LocalWeatherDataSourceImplTest {
     }
 
     @Test
-    fun getLocations() {
-        Mockito.`when`(locationDB.weatherDao().getLocations(weather.location.locationName)).thenReturn(Maybe.just(listOf(weather.location)))
-
-        localWeatherDataSource.getLocations(weather.location.locationName)
-                .test()
-                .assertValue(listOf(weather.location.toDomain()))
-    }
-
-    @Test
     fun getUserLocations() {
-        Mockito.`when`(locationDB.weatherDao().getUserLocations()).thenReturn(Maybe.just(listOf(weather.location, paris)))
+        Mockito.`when`(locationDB.weatherDao().getUserLocations()).thenReturn(Flowable.just(listOf(weather.location, paris)))
 
         localWeatherDataSource.getUserLocations()
                 .test()
@@ -127,13 +115,13 @@ class LocalWeatherDataSourceImplTest {
 
     @Test
     fun deleteWeatherForLocation() {
-        localWeatherDataSource.deleteWeatherForLocation(weather.toDomain())
+        localWeatherDataSource.deleteWeatherForLocation(weather.location.locationName)
                 .test()
                 .assertComplete()
 
         Mockito.verify(locationDB, Mockito.times(1)).weatherDao()
         Mockito.verify(locationDB, Mockito.times(1)).weatherDao()
-        Mockito.verify(weatherDao, Mockito.times(1)).deleteWeather(weather)
+        Mockito.verify(weatherDao, Mockito.times(1)).deleteWeather(weather.location.locationName)
     }
 
 }

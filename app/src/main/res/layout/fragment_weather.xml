@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="Weather"
+            type="com.dbeginc.dbweatherweather.viewmodels.WeatherModel" />
+
+        <variable
+            name="Current"
+            type="com.dbeginc.dbweatherweather.viewmodels.CurrentWeatherModel" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/weatherLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".weather.WeatherFragment">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/weather_appbar"
+            style="@style/Widget.Design.AppBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            android:transitionName="@string/app_bar_transition_name">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/weatherToolbar"
+                style="@style/Widget.AppCompat.Toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:navigationIcon="@drawable/ic_menu"
+                app:title="@{Weather.current.location}" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/weatherLayoutNSV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/weatherLayoutContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.gms.ads.AdView
+                    android:id="@+id/ad_v_main"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    ads:adSize="SMART_BANNER"
+                    ads:adUnitId="@string/weather_screen_ads"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_height="50dp" />
+
+                <TextView
+                    android:id="@+id/locationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.location}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ad_v_main"
+                    app:layout_constraintVertical_chainStyle="spread"
+                    tools:text="Ternopil, Ukraine" />
+
+                <TextView
+                    android:id="@+id/timeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textIsSelectable="true"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/locationLabel"
+                    app:setUpdateTime="@{Current.time}"
+                    tools:text="Today, at 15 AM" />
+
+                <ImageView
+                    android:id="@+id/iconImageView"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="@string/weather_icon_content_description"
+                    android:scaleType="fitXY"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/timeLabel"
+                    app:setImage="@{Current.icon}"
+                    tools:src="@drawable/clear_day" />
+
+                <TextView
+                    android:id="@+id/temperatureLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text='@{Current.temperature + "°"}'
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.455"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iconImageView"
+                    tools:text="15°" />
+
+                <TextView
+                    android:id="@+id/temperatureUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{Current.temperatureUnit}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                    app:layout_constraintBottom_toBottomOf="@id/temperatureLabel"
+                    app:layout_constraintStart_toEndOf="@id/temperatureLabel"
+                    app:layout_constraintTop_toTopOf="@id/temperatureLabel"
+                    tools:text="C" />
+
+                <TextView
+                    android:id="@+id/summaryLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{Current.summary}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/temperatureLabel"
+                    tools:text="@string/default_weather_summary" />
+
+                <ImageView
+                    android:id="@+id/humidityIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/humidity_icon"
+                    app:layout_constraintEnd_toStartOf="@+id/windSpeedIcon"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/summaryLabel"
+                    app:srcCompat="@drawable/ic_humidity" />
+
+                <TextView
+                    android:id="@+id/humidityValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.humidity}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/humidityIcon"
+                    app:layout_constraintStart_toStartOf="@id/humidityIcon"
+                    app:layout_constraintTop_toBottomOf="@id/humidityIcon"
+                    tools:text="87%" />
+
+                <ImageView
+                    android:id="@+id/windSpeedIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/wind_icon"
+                    app:layout_constraintEnd_toStartOf="@+id/cloudCoverIcon"
+                    app:layout_constraintStart_toEndOf="@id/humidityIcon"
+                    app:layout_constraintTop_toBottomOf="@id/summaryLabel"
+                    app:srcCompat="@drawable/ic_wind_speed" />
+
+                <TextView
+                    android:id="@+id/windSpeedValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.windSpeed}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/windSpeedIcon"
+                    app:layout_constraintStart_toStartOf="@id/windSpeedIcon"
+                    app:layout_constraintTop_toBottomOf="@id/windSpeedIcon"
+                    tools:text="5 mps" />
+
+                <ImageView
+                    android:id="@+id/cloudCoverIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/cloud_cover_icon"
+                    app:layout_constraintEnd_toStartOf="@+id/precipIcon"
+                    app:layout_constraintStart_toEndOf="@id/windSpeedIcon"
+                    app:layout_constraintTop_toBottomOf="@id/summaryLabel"
+                    app:srcCompat="@drawable/ic_cloud_cover" />
+
+                <TextView
+                    android:id="@+id/cloudCoverValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.cloudCover}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/cloudCoverIcon"
+                    app:layout_constraintStart_toStartOf="@id/cloudCoverIcon"
+                    app:layout_constraintTop_toBottomOf="@id/cloudCoverIcon"
+                    tools:text="87%" />
+
+                <ImageView
+                    android:id="@+id/precipIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/precip_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/cloudCoverIcon"
+                    app:layout_constraintTop_toBottomOf="@id/summaryLabel"
+                    app:srcCompat="@drawable/ic_precipitation" />
+
+                <TextView
+                    android:id="@+id/precipValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.precipitationProbability}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/precipIcon"
+                    app:layout_constraintStart_toStartOf="@id/precipIcon"
+                    app:layout_constraintTop_toBottomOf="@id/precipIcon"
+                    tools:text="87%" />
+
+                <ImageView
+                    android:id="@+id/sunriseIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="@string/sunrise_icon"
+                    app:layout_constraintEnd_toStartOf="@id/windSpeedValue"
+                    app:layout_constraintStart_toEndOf="@id/humidityValue"
+                    app:layout_constraintTop_toBottomOf="@id/humidityValue"
+                    app:srcCompat="@drawable/sunrise_icon" />
+
+                <TextView
+                    android:id="@+id/sunriseValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.sunrise}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/sunriseIcon"
+                    app:layout_constraintStart_toStartOf="@id/sunriseIcon"
+                    app:layout_constraintTop_toBottomOf="@id/sunriseIcon"
+                    tools:text="5:15 AM" />
+
+                <ImageView
+                    android:id="@+id/apparentTemperatureIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="@string/apparent_temperature_icon"
+                    app:layout_constraintEnd_toStartOf="@id/cloudCoverValue"
+                    app:layout_constraintStart_toEndOf="@id/windSpeedValue"
+                    app:layout_constraintTop_toBottomOf="@id/windSpeedValue"
+                    app:srcCompat="@drawable/ic_thermometer" />
+
+                <TextView
+                    android:id="@+id/apparentTemperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@{@string/apparentTemperatureValue(Current.apparentTemperature)}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/apparentTemperatureIcon"
+                    app:layout_constraintStart_toStartOf="@id/apparentTemperatureIcon"
+                    app:layout_constraintTop_toBottomOf="@id/apparentTemperatureIcon"
+                    tools:text="15°" />
+
+                <TextView
+                    android:id="@+id/apparentTemperatureUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{Current.temperatureUnit}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintBottom_toBottomOf="@id/apparentTemperature"
+                    app:layout_constraintStart_toEndOf="@id/apparentTemperature"
+                    app:layout_constraintTop_toTopOf="@id/apparentTemperature"
+                    tools:text="C" />
+
+                <ImageView
+                    android:id="@+id/sunsetIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="@string/sunset_icon"
+                    app:layout_constraintEnd_toStartOf="@id/precipValue"
+                    app:layout_constraintStart_toEndOf="@id/cloudCoverValue"
+                    app:layout_constraintTop_toBottomOf="@id/cloudCoverValue"
+                    app:srcCompat="@drawable/sunset_icon" />
+
+                <TextView
+                    android:id="@+id/sunsetValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{Current.sunset}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintEnd_toEndOf="@id/sunsetIcon"
+                    app:layout_constraintStart_toStartOf="@id/sunsetIcon"
+                    app:layout_constraintTop_toBottomOf="@id/sunsetIcon"
+                    tools:text="6:15 PM" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/hourlyRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sunsetValue"
+                    tools:listitem="@layout/hour_layout"
+                    tools:orientation="horizontal" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/dailyWeatherRCV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hourlyRecyclerView"
+                    tools:listitem="@layout/day_layout"
+                    tools:orientation="vertical" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/floatingLocationsMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_gravity="bottom|end"
+            app:menu_colorNormal="@android:color/white"
+            app:menu_colorPressed="?attr/colorControlHighlight"
+            app:menu_colorRipple="?attr/colorControlHighlight"
+            app:menu_fab_size="mini"
+            app:menu_icon="@drawable/ic_add_location"
+            app:menu_labels_colorNormal="@android:color/white"
+            app:menu_labels_colorPressed="?attr/colorControlHighlight"
+            app:menu_labels_colorRipple="?attr/colorControlHighlight"
+            app:menu_labels_ellipsize="end"
+            app:menu_labels_singleLine="true"
+            app:menu_labels_textColor="@color/colorPrimaryTextColor">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/current_location_menu_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@android:color/white"
+                app:fab_colorPressed="?attr/colorControlHighlight"
+                app:fab_colorRipple="?attr/colorControlHighlight"
+                app:fab_label="@string/current_location"
+                app:pressedTranslationZ="4dp" />
+        </com.github.clans.fab.FloatingActionMenu>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

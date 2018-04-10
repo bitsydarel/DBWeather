@@ -17,7 +17,7 @@
 #-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
-# hide the original source file name.
+# hide the original newsPaper file name.
 #-renamesourcefileattribute SourceFile
 -optimizationpasses 5
 -dontwarn kotlin.reflect.jvm.internal.**

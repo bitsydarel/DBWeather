@@ -1,0 +1,25 @@
+#EXTM3U url-tvg="http://www.teleguide.info/download/new3/jtv.zip" m3uautoload=1 cache=500 deinterlace=1 tvg-shift=0
+#EXTINF:0 group-title="Streams",Russia Today
+https://secure-streams.akamaized.net/rt/index2500.m3u8
+#EXTINF:0,Russia Today Doc
+https://secure-streams.akamaized.net/rt-doc/index2500.m3u8
+#EXTINF:0,Russia Today (Arabic)
+https://secure-streams.akamaized.net/rt-arab/index2500.m3u8
+#EXTINF:0,RBK
+http://online-video.rbc.ru/online/rbctv.m3u8
+#EXTINF:0 tvg-id="brodilo",Brodilo TV
+http://brodilo.tv/channel.php
+
+#EXTINF:0 group-title="Youtube Live",Sky News
+http://youtu.be/XOacA3RYrXk
+#EXTINF:0 group-title="Youtube Live",Sky News 720p
+https://www.youtube.com/watch?v=XOacA3RYrXk,720
+
+#EXTINF:0 group-title="Videos",Youtube
+https://www.youtube.com/watch?v=iNJdPyoqt8U
+#EXTINF:0,MKV
+http://jell.yfish.us/media/jellyfish-3-mbps-hd-h264.mkv
+#EXTINF:0,MP4
+http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4
+#EXTINF:0,Music
+http://vodcasts.eu/media/malandra.mp3

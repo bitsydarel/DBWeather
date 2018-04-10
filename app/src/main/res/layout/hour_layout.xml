@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="Hour"
+            type="com.dbeginc.dbweatherweather.viewmodels.HourWeatherModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/hourlyLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/hourlyTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{Hour.hourlyTime}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside"
+            tools:text="2:00 PM" />
+
+        <ImageView
+            android:id="@+id/hourlyImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:contentDescription="@string/hourly_image_icon"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@+id/hourlyTemperatureValue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hourlyTime"
+            app:setImage="@{Hour.icon}"
+            tools:src="@drawable/clear_day" />
+
+        <TextView
+            android:id="@+id/hourlyTemperatureValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text='@{Hour.temperature + "°"}'
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/hourlyTime"
+            app:layout_constraintTop_toBottomOf="@id/hourlyImage"
+            tools:text="15°" />
+
+        <TextView
+            android:id="@+id/hourlyTemperatureValueUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{Hour.temperatureUnit}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/hourlyTemperatureValue"
+            app:layout_constraintStart_toEndOf="@id/hourlyTemperatureValue"
+            app:layout_constraintTop_toTopOf="@id/hourlyTemperatureValue"
+            tools:text="C" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

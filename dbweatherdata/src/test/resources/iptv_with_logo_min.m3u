@@ -1,0 +1,21 @@
+﻿#EXTM3U
+#EXTINF:-1 tvg-name="TF1" tvg-logo="http://logo.ndasat.com/iptv/images/67591_207.png" group-title="{BOUQUET_NAME}",TF1
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/295.ts
+#EXTINF:-1 tvg-name="France2" tvg-logo="http://logo.ndasat.com/iptv/images/93072_209.png" group-title="{BOUQUET_NAME}",France2
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/278.ts
+#EXTINF:-1 tvg-name="France3" tvg-logo="http://logo.ndasat.com/iptv/images/35718_210.png" group-title="{BOUQUET_NAME}",France3
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/279.ts
+#EXTINF:-1 tvg-name="France4" tvg-logo="http://logo.ndasat.com/iptv/images/8566_219.png" group-title="{BOUQUET_NAME}",France4
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/280.ts
+#EXTINF:-1 tvg-name="France5" tvg-logo="http://logo.ndasat.com/iptv/images/98940_211.png" group-title="{BOUQUET_NAME}",France5
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/281.ts
+#EXTINF:-1 tvg-name="France O" tvg-logo="http://logo.ndasat.com/iptv/images/65925_212.png" group-title="{BOUQUET_NAME}",France O
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/304.ts
+#EXTINF:-1 tvg-name="M6" tvg-logo="http://logo.ndasat.com/iptv/images/72675_208.png" group-title="{BOUQUET_NAME}",M6
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/291.ts
+
+
+#EXTINF:-1 tvg-name="C8" tvg-logo="http://logo.ndasat.com/iptv/images/25751_c8.png" group-title="{BOUQUET_NAME}",C8
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/301.ts
+#EXTINF:-1 tvg-name="W9" tvg-logo="http://logo.ndasat.com/iptv/images/57540_220.png" group-title="{BOUQUET_NAME}",W9
+http://iptv.ndasat.com:88/live/322138912680254/322138912680254/294.ts

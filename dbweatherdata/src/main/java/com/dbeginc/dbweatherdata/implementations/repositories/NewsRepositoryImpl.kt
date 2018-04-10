@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,208 +17,159 @@ package com.dbeginc.dbweatherdata.implementations.repositories
 
 import android.content.Context
 import android.util.Log
-import com.dbeginc.dbweatherdata.ConstantHolder
-import com.dbeginc.dbweatherdata.ThreadProvider
+import com.dbeginc.dbweatherdata.BuildConfig
+import com.dbeginc.dbweatherdata.CrashlyticsLogger
+import com.dbeginc.dbweatherdata.RxThreadProvider
+import com.dbeginc.dbweatherdata.TAG
 import com.dbeginc.dbweatherdata.implementations.datasources.local.LocalNewsDataSource
-import com.dbeginc.dbweatherdata.implementations.datasources.local.news.LocalNewsDataSourceImpl
+import com.dbeginc.dbweatherdata.implementations.datasources.local.news.RoomNewsDataSource
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.RemoteNewsDataSource
-import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.RemoteNewsDataSourceImpl
+import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.HttpApiNewsDataSource
+import com.dbeginc.dbweatherdomain.Logger
+import com.dbeginc.dbweatherdomain.ThreadProvider
 import com.dbeginc.dbweatherdomain.entities.news.Article
-import com.dbeginc.dbweatherdomain.entities.news.Live
-import com.dbeginc.dbweatherdomain.entities.news.Source
+import com.dbeginc.dbweatherdomain.entities.news.NewsPaper
 import com.dbeginc.dbweatherdomain.entities.requests.news.ArticleRequest
-import com.dbeginc.dbweatherdomain.entities.requests.news.LiveRequest
-import com.dbeginc.dbweatherdomain.entities.requests.news.NewsRequest
-import com.dbeginc.dbweatherdomain.entities.requests.news.SourceRequest
-import com.dbeginc.dbweatherdomain.repositories.news.NewsRepository
+import com.dbeginc.dbweatherdomain.entities.requests.news.ArticlesRequest
+import com.dbeginc.dbweatherdomain.entities.requests.news.NewsPaperRequest
+import com.dbeginc.dbweatherdomain.repositories.NewsRepository
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Consumer
 import io.reactivex.observers.DisposableCompletableObserver
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by darel on 06.10.17.
  *
  * News Repository Implementation
  */
-class NewsRepositoryImpl private constructor(private val thread: ThreadProvider,
-                                             private val local: LocalNewsDataSource,
-                                             private val remote: RemoteNewsDataSource) : NewsRepository, Consumer<Throwable> {
-
+class NewsRepositoryImpl private constructor(private val threads: ThreadProvider,
+                                             private val logger: Logger,
+                                             private val localSource: LocalNewsDataSource,
+                                             private val remoteSource: RemoteNewsDataSource) : NewsRepository {
     companion object {
+        @JvmStatic
         fun create(context: Context): NewsRepository {
             return NewsRepositoryImpl(
-                    ThreadProvider,
-                    LocalNewsDataSourceImpl.create(context),
-                    RemoteNewsDataSourceImpl.create(context)
+                    threads = RxThreadProvider,
+                    logger = CrashlyticsLogger,
+                    localSource = RoomNewsDataSource.create(context),
+                    remoteSource = HttpApiNewsDataSource.create(context)
             )
         }
     }
 
     private val subscriptions = CompositeDisposable()
 
-    override fun getArticles(request: NewsRequest<Unit>): Flowable<List<Article>> {
-        return local.getArticles(request)
-                .subscribeOn(thread.computation)
+    override fun getArticles(request: ArticlesRequest<String>): Flowable<List<Article>> {
+        return localSource.getArticles(request)
+                .subscribeOn(threads.CP)
                 .doOnSubscribe {
-                    remote.getArticles(request.sources)
-                            .subscribeOn(thread.io)
-                            .subscribe(
-                                    { articles -> subscriptions.addArticles(articles) },
-                                    this::accept
-                            )
+                    remoteSource.getArticles(request)
+                            .subscribeOn(threads.IO)
+                            .subscribe(this::addArticles, logger::logError)
                 }
-                .observeOn(thread.ui)
     }
 
-    override fun getTranslatedArticles(request: NewsRequest<Unit>): Flowable<List<Article>> {
-        return local.getArticles(request)
-                .subscribeOn(thread.computation)
+    override fun getTranslatedArticles(request: ArticlesRequest<String>): Flowable<List<Article>> {
+        return localSource.getArticles(request)
+                .subscribeOn(threads.CP)
                 .doOnSubscribe {
-                    remote.getTranslatedArticles(request.sources)
-                            .subscribeOn(thread.io)
-                            .subscribe(
-                                    { articles -> subscriptions.addArticles(articles) },
-                                    this::accept
-                            )
+                    remoteSource.getTranslatedArticles(request)
+                            .subscribeOn(threads.IO)
+                            .subscribe(this::addArticles, logger::logError)
                 }
-                .observeOn(thread.ui)
     }
 
-    override fun getArticle(request: ArticleRequest<Unit>): Single<Article> {
-        return local.getArticle(request)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
+    override fun getArticle(request: ArticleRequest<Unit>): Flowable<Article> {
+        return localSource.getArticle(request)
+                .subscribeOn(threads.CP)
     }
 
-    override fun getAllSources(): Flowable<List<Source>> {
-        return local.getSources()
-                .subscribeOn(thread.computation)
+    override fun getAllNewsPapers(): Flowable<List<NewsPaper>> {
+        return localSource.getNewsPapers()
+                .subscribeOn(threads.CP)
                 .doOnSubscribe {
-                    remote.getSources().subscribeOn(thread.io)
-                            .zipWith(
-                                    local.getSources().subscribeOn(thread.computation),
-                                    BiFunction<List<Source>, List<Source>, List<Source>> { remoteResponse, localResponse ->
-                                        remoteResponse.zip(localResponse, { right, left -> right.apply { subscribed = left.subscribed } })
-                                    }
-                            )
-                            .subscribe({ sources -> subscriptions.addSources(sources) }, this::accept)
-                }.observeOn(thread.ui)
+                    remoteSource.getNewsPapers()
+                            .subscribeOn(threads.IO)
+                            .flatMap { remoteResponse ->
+                                localSource
+                                        .getNewsPapers()
+                                        .subscribeOn(threads.CP)
+                                        .timeout(5, TimeUnit.SECONDS)
+                                        .onErrorReturn { remoteResponse }
+                                        .first(remoteResponse)
+                                        .map { localResponse ->
+                                            localResponse.forEach { localNews ->
+                                                remoteResponse.find { it.name == localNews.name }?.subscribed = localNews.subscribed
+                                            }
+                                            return@map remoteResponse
+                                        }
+                            }
+                            .subscribe(this::addNewsPapers, logger::logError)
+                }
     }
 
-    override fun getSubscribedSources(): Flowable<List<Source>> {
-        return local.getSubscribedSources()
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
-                .toFlowable()
+    override fun getSubscribedNewsPapers(): Flowable<List<NewsPaper>> {
+        return localSource.getSubscribedNewsPapers()
+                .subscribeOn(threads.CP)
     }
 
-    override fun subscribeToSource(request: SourceRequest<Source>): Completable {
-        return local.updateSource(request.arg)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
+    override fun subscribeToNewsPaper(request: NewsPaperRequest<NewsPaper>): Completable {
+        return localSource.updateNewsPaper(request.arg)
+                .subscribeOn(threads.CP)
     }
 
-    override fun unSubscribeToSource(request: SourceRequest<Source>): Completable {
-        return local.updateSource(request.arg)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
+    override fun unSubscribeToNewsPaper(request: NewsPaperRequest<NewsPaper>): Completable {
+        return localSource.updateNewsPaper(request.arg)
+                .subscribeOn(threads.CP)
     }
 
-    override fun getSource(request: SourceRequest<Unit>): Single<Source> {
-        return local.getSource(request.sourceId)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.io)
-    }
-
-    override fun getAllLives(): Flowable<List<Live>> {
-        return local.getAllLives()
-                .subscribeOn(thread.computation)
-                .doOnSubscribe {
-                    remote.getAllLives().subscribeOn(thread.io)
-                            .subscribe(
-                                    { lives -> subscriptions.addLives(lives) },
-                                    this::accept
-                            )
-                }.observeOn(thread.ui)
-    }
-
-    override fun getLives(names: List<String>): Flowable<List<Live>> {
-        return local.getLives(names)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
-                .toFlowable()
-    }
-
-    override fun getFavoriteLives(): Flowable<List<String>> {
-        return local.getFavoriteLives()
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
-                .toFlowable()
-    }
-
-    override fun getLive(name: String): Single<Live> {
-        return local.getLive(name)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
-    }
-
-    override fun addLiveToFavorites(request: LiveRequest<Unit>): Completable {
-        return local.addLiveToFavorite(request)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
-    }
-
-    override fun removeLiveFromFavorites(request: LiveRequest<Unit>): Completable {
-        return local.removeLiveFromFavorite(request)
-                .subscribeOn(thread.computation)
-                .observeOn(thread.ui)
+    override fun getNewsPaper(request: NewsPaperRequest<Unit>): Flowable<NewsPaper> {
+        return localSource.getNewsPaper(request.sourceId)
+                .subscribeOn(threads.CP)
     }
 
     override fun defineDefaultSubscribedSources(sourcesId: List<String>): Completable {
-        return remote.getSources()
-                .subscribeOn(thread.io)
-                .map { sources -> sources.map { source -> source.apply { if (sourcesId.contains(source.id)) subscribed = true } } }
-                .flatMapCompletable { sources -> local.defineDefaultSubscribedSources(sources).subscribeOn(thread.computation) }
-                .observeOn(thread.ui)
-    }
-
-    override fun accept(error: Throwable?) {
-        Log.e(ConstantHolder.TAG, "Error: ${NewsRepository::class.java.simpleName}", error)
+        return remoteSource.getNewsPapers()
+                .subscribeOn(threads.IO)
+                .map { sources ->
+                    sources.map { source ->
+                        source.apply { if (sourcesId.contains(source.id)) subscribed = true }
+                    }
+                }
+                .flatMapCompletable { sources ->
+                    localSource.defineDefaultSubscribedNewsPapers(sources)
+                            .subscribeOn(threads.CP)
+                }
     }
 
     override fun clean() = subscriptions.clear()
 
-    private fun CompositeDisposable.addSources(sources: List<Source>) {
-        add(local.putSources(sources)
-                .subscribeOn(thread.computation)
-                .subscribeWith(TaskObserver())
+    private fun addNewsPapers(newsPapers: List<NewsPaper>) {
+        subscriptions.add(
+                localSource.putNewsPapers(newsPapers)
+                        .subscribeOn(threads.CP)
+                        .subscribeWith(TaskObserver())
         )
     }
 
-    private fun CompositeDisposable.addArticles(articles: List<Article>) {
-        add(local.putArticles(articles)
-                .subscribeOn(thread.computation)
-                .subscribeWith(TaskObserver())
-        )
-    }
-
-    private fun CompositeDisposable.addLives(lives: List<Live>) {
-        add(local.putLives(lives).subscribeOn(thread.computation)
-                .subscribeWith(TaskObserver())
+    private fun addArticles(articles: List<Article>) {
+        subscriptions.add(
+                localSource.putArticles(articles)
+                        .subscribeOn(threads.CP)
+                        .subscribeWith(TaskObserver())
         )
     }
 
     private inner class TaskObserver : DisposableCompletableObserver() {
         override fun onComplete() {
-            Log.i(ConstantHolder.TAG, "Update of data done in ${NewsRepository::class.java.simpleName}")
+            if (BuildConfig.DEBUG) {
+                Log.i(TAG, "Update of data done in ${NewsRepository::class.java.simpleName}")
+            }
         }
 
-        override fun onError(e: Throwable) {
-            Log.e(ConstantHolder.TAG, "Error: ${NewsRepository::class.java.simpleName}", e)
-        }
+        override fun onError(e: Throwable) = logger.logError(e)
     }
 }

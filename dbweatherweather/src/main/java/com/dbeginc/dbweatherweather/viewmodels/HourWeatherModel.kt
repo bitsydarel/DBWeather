@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,17 +15,20 @@
 
 package com.dbeginc.dbweatherweather.viewmodels
 
-import android.os.Parcelable
 import com.dbeginc.dbweathercommon.utils.toDate
-import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by darel on 19.09.17.
  *
  * Hourly Weather View Model
  */
-@Parcelize
-data class HourWeatherModel(val hourlyTime: String, val time: Long, val icon: Int, val temperature: Int, val temperatureUnit: String) : Parcelable, Comparable<HourWeatherModel> {
+data class HourWeatherModel(
+        val hourlyTime: String,
+        val time: Long,
+        val icon: Int,
+        val temperature: Int,
+        val temperatureUnit: String
+) : Comparable<HourWeatherModel> {
 
     override fun compareTo(other: HourWeatherModel): Int = time.toDate().compareTo(other.time.toDate())
 

@@ -29,8 +29,8 @@ android {
         applicationId "com.dbeginc.dbweather"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 5
-        versionName "1.4"
+        versionCode versions.versionCode
+        versionName versions.versionName
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -45,12 +45,7 @@ android {
     }
 
     lintOptions {
-        //lint rules
-        apply from: "${rootDir}/config/lint.gradle", to: it
-        //locations for the rules and output
-        lintConfig file("${rootDir}/config/lint/lint-config.xml")
         htmlOutput file("${buildDir}/reports/lint/lint.html")
-        abortOnError false
     }
 
     compileOptions {
@@ -60,14 +55,17 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled = true
-            minifyEnabled false
+            multiDexEnabled true
             shrinkResources false
+            minifyEnabled false
+            testCoverageEnabled = true
         }
 
         release {
+            multiDexEnabled false
             minifyEnabled true
             shrinkResources true
+            testCoverageEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             lintOptions {
@@ -97,17 +95,6 @@ android {
 
     testOptions { unitTests.returnDefaultValues = true }
 
-    dexOptions { preDexLibraries = false }
-
-    sourceSets {
-        test.java { srcDirs += new File(buildDir, 'src/test/kotlin') }
-
-        androidTest.java { srcDirs += new File(buildDir, 'src/androidTest/kotlin') }
-
-        main {
-            java { srcDirs += new File(buildDir, 'src/main/kotlin') }
-        }
-    }
 }
 
 androidExtensions {
@@ -121,8 +108,8 @@ kapt {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(":dbweatherdata")
-    implementation project(":dbweatherdomain")
     implementation project(":dbweathernews")
+    implementation project(":dbweatherlives")
     implementation project(":dbweatherweather")
 
     //GOOGLE
@@ -137,20 +124,24 @@ dependencies {
     implementation androidSupportLibs.cardview_v7
     // Android Arch Lifecycle
     implementation architectureComponentLibs.lifecycle_extensions
+    // Exoplayer
+    implementation exoplayerLibs.exoplayer
+//    implementation exoplayerLibs.core
+//    implementation exoplayerLibs.ui
+    implementation exoplayerLibs.okhttp
+    implementation exoplayerLibs.rtmp
 
     // Dagger
     implementation daggerLibs.dagger
     implementation daggerLibs.dagger_android
     implementation daggerLibs.dagger_android_support
 
-    compileOnly rxLibs.rxJava
-
     //SQUARE
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compileOnly otherLibs.threetenabp
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
-        transitive = true
-    }
+    implementation kotlinLibs.coroutines
+    implementation kotlinLibs.coroutinesAndroid
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
 
     // Google libs
@@ -160,7 +151,7 @@ dependencies {
     implementation glideLibs.glide
     implementation glideLibs.annotations
     implementation glideLibs.okhttp3_integration
-    implementation  (glideLibs.recyclerview_integration) {
+    implementation(glideLibs.recyclerview_integration) {
         // Excludes the support library because it's already included by Glide.
         transitive = false
     }
@@ -170,7 +161,9 @@ dependencies {
     implementation otherLibs.lottie
     implementation otherLibs.bottom_bar
     implementation otherLibs.fab
+    implementation otherLibs.fab_menu
     implementation otherLibs.viewAnimator
+    debugImplementation androidSupportLibs.multidex
 
     androidTestImplementation(androidSupportLibs.espresso) {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -189,21 +182,16 @@ dependencies {
     kapt glideLibs.compiler
 }
 
-configurations {
-    implementation.exclude group: "org.apache.httpcomponents", module: "httpclient"
-    implementation.exclude group: "xpp3", module: "xpp3"
-}
-
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -211,11 +199,3 @@ apply plugin: 'com.google.gms.google-services'
  *  See the License for the specific language governing permissions and
  *  limitations under the License
  */
-
-////code quality tools
-apply from: "${rootDir}/config/codequality-findbugs.gradle"
-apply from: "${rootDir}/config/codequality-pmd.gradle"
-apply from: "${rootDir}/config/codequality-checkstyle.gradle"
-
-////code coverage
-apply from: "${rootDir}/config/codecoverage.gradle"

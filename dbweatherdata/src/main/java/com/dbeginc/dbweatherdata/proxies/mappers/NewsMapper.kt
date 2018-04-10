@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,28 +15,80 @@
 
 package com.dbeginc.dbweatherdata.proxies.mappers
 
-import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.proxies.local.news.LocalArticle
-import com.dbeginc.dbweatherdata.proxies.local.news.LocalLive
-import com.dbeginc.dbweatherdata.proxies.local.news.LocalSource
+import com.dbeginc.dbweatherdata.proxies.local.news.LocalNewsPaper
 import com.dbeginc.dbweatherdata.proxies.remote.news.RemoteArticle
+import com.dbeginc.dbweatherdata.proxies.remote.news.RemoteSource
 import com.dbeginc.dbweatherdomain.entities.news.Article
-import com.dbeginc.dbweatherdomain.entities.news.Live
-import com.dbeginc.dbweatherdomain.entities.news.Source
+import com.dbeginc.dbweatherdomain.entities.news.NewsPaper
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Created by darel on 04.10.17.
  *
  * Mapper of data proxies to domain entities
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-fun LocalArticle.toDomain() = Article(sourceId=sourceId, author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt)
+internal fun LocalArticle.toDomain() = Article(
+        sourceId = newsPaperId,
+        author = author,
+        title = title,
+        description = description,
+        url = url,
+        imageUrl = urlToImage,
+        publishedAt = publishedAt
+)
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-fun LocalSource.toDomain() = Source(id=id, name=name, description=description, url=url, category=category, language=language, country=country, subscribed=subscribed)
+internal fun LocalNewsPaper.toDomain() = NewsPaper(
+        id = id,
+        name = name,
+        description = description,
+        url = url,
+        category = category,
+        language = language,
+        country = country,
+        subscribed = subscribed
+)
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-fun LocalLive.toDomain() = Live(name=name, url=url)
+internal fun RemoteArticle.toDomain(): Article {
+    return Article(
+            author = author,
+            title = title,
+            description = description,
+            url = url,
+            imageUrl = urlToImage,
+            publishedAt = if (publishedAt == null) 0 else ZonedDateTime.parse(publishedAt).toInstant().toEpochMilli(),
+            sourceId = source.name ?: source.id!!
+    )
+}
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-fun RemoteArticle.toDomain() = Article(author=author, title=title, description=description, url=url, urlToImage=urlToImage, publishedAt=publishedAt, sourceId=source.name)
+internal fun Article.toProxy(): LocalArticle = LocalArticle(
+        newsPaperId = sourceId,
+        author = author,
+        title = title,
+        description = description,
+        url = url,
+        urlToImage = imageUrl,
+        publishedAt = publishedAt
+)
+
+internal fun RemoteSource.toDomain() = NewsPaper(
+        id = id,
+        name = name,
+        description = description,
+        url = url,
+        category = category,
+        language = language,
+        country = country,
+        subscribed = false
+)
+
+internal fun NewsPaper.toProxy(): LocalNewsPaper = LocalNewsPaper(
+        id = id,
+        name = name,
+        description = description,
+        url = url,
+        category = category,
+        language = language,
+        country = country,
+        subscribed = subscribed
+)

@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,6 @@
 
 package com.dbeginc.dbweatherdata.proxies.local.weather
 
-import android.arch.persistence.room.ColumnInfo
 import android.support.annotation.RestrictTo
 
 /**
@@ -23,10 +22,24 @@ import android.support.annotation.RestrictTo
  *
  * Local Currently Object
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-data class LocalCurrently(@ColumnInfo val time: Long, @ColumnInfo val summary: String, @ColumnInfo val icon: String, @ColumnInfo val temperature: Double,
-                          @ColumnInfo val apparentTemperature: Double?, @ColumnInfo val precipIntensity: Double, @ColumnInfo val precipIntensityError: Double?, @ColumnInfo val precipProbability: Double,
-                          @ColumnInfo val precipType: String?, @ColumnInfo val nearestStormDistance: Long?, @ColumnInfo val nearestStormBearing: Long?, @ColumnInfo val humidity: Double,
-                          @ColumnInfo val windSpeed: Double, @ColumnInfo val cloudCover: Double, @ColumnInfo val windBearing: Long?, @ColumnInfo val visibility: Double,
-                          @ColumnInfo val dewPoint: Double?, @ColumnInfo val pressure: Double
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+data class LocalCurrently(
+        val time: Long,
+        val summary: String,
+        val icon: String,
+        val temperature: Double,
+        val apparentTemperature: Double?,
+        val precipIntensity: Double,
+        val precipIntensityError: Double?,
+        val precipProbability: Double,
+        val precipType: String?,
+        val nearestStormDistance: Long?,
+        val nearestStormBearing: Long?,
+        val humidity: Double,
+        val windSpeed: Double,
+        val cloudCover: Double,
+        val windBearing: Long?,
+        val visibility: Double,
+        val dewPoint: Double?,
+        val pressure: Double
 )

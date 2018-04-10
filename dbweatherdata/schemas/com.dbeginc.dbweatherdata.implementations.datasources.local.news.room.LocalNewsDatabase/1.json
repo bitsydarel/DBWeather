@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "315e6f4a706ae53a94df9deb32db740a",
+    "identityHash": "9118bd9a4b7008b0e98a83691bc303e8",
     "entities": [
       {
         "tableName": "articles",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`source_id` TEXT NOT NULL, `author` TEXT, `title` TEXT NOT NULL, `description` TEXT, `url` TEXT NOT NULL, `url_to_image` TEXT, `published_dat` TEXT, PRIMARY KEY(`url`), FOREIGN KEY(`source_id`) REFERENCES `sources`(`name`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`newspaper_id` TEXT NOT NULL, `author` TEXT, `title` TEXT NOT NULL, `description` TEXT, `url` TEXT NOT NULL, `url_to_image` TEXT, `published_dat` INTEGER NOT NULL, PRIMARY KEY(`url`))",
         "fields": [
           {
-            "fieldPath": "sourceId",
-            "columnName": "source_id",
+            "fieldPath": "newsPaperId",
+            "columnName": "newspaper_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -47,8 +47,8 @@
           {
             "fieldPath": "publishedAt",
             "columnName": "published_dat",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -58,22 +58,10 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "sources",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "source_id"
-            ],
-            "referencedColumns": [
-              "name"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
-        "tableName": "sources",
+        "tableName": "newspapers",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `url` TEXT NOT NULL, `category` TEXT NOT NULL, `language` TEXT NOT NULL, `country` TEXT NOT NULL, `subscribed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -131,16 +119,7 @@
           ],
           "autoGenerate": false
         },
-        "indices": [
-          {
-            "name": "index_sources_name",
-            "unique": true,
-            "columnNames": [
-              "name"
-            ],
-            "createSql": "CREATE UNIQUE INDEX `index_sources_name` ON `${TABLE_NAME}` (`name`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": []
       },
       {
@@ -171,7 +150,7 @@
       },
       {
         "tableName": "favorite_live",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `live_id` TEXT NOT NULL, PRIMARY KEY(`name`), FOREIGN KEY(`live_id`) REFERENCES `live`(`name`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `live_id` TEXT NOT NULL, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -193,24 +172,12 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "live",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "live_id"
-            ],
-            "referencedColumns": [
-              "name"
-            ]
-          }
-        ]
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"315e6f4a706ae53a94df9deb32db740a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9118bd9a4b7008b0e98a83691bc303e8\")"
     ]
   }
 }

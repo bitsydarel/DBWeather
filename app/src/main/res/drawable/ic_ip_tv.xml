@@ -1,0 +1,45 @@
+<!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="24dp"
+    android:height="24dp"
+    android:autoMirrored="true"
+    android:viewportHeight="455.0"
+    android:viewportWidth="455.0"
+    tools:targetApi="kitkat">
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M382.5,160c-17.9,0 -32.5,14.6 -32.5,32.5s14.6,32.5 32.5,32.5s32.5,-14.6 32.5,-32.5S400.4,160 382.5,160zM382.5,210c-9.6,0 -17.5,-7.9 -17.5,-17.5s7.9,-17.5 17.5,-17.5s17.5,7.9 17.5,17.5S392.1,210 382.5,210z" />
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M382.5,240c-17.9,0 -32.5,14.6 -32.5,32.5s14.6,32.5 32.5,32.5s32.5,-14.6 32.5,-32.5S400.4,240 382.5,240zM382.5,290c-9.6,0 -17.5,-7.9 -17.5,-17.5s7.9,-17.5 17.5,-17.5s17.5,7.9 17.5,17.5S392.1,290 382.5,290z" />
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M407.5,400h-50c-4.1,0 -7.5,3.4 -7.5,7.5s3.4,7.5 7.5,7.5h50c4.1,0 7.5,-3.4 7.5,-7.5S411.6,400 407.5,400z" />
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M407.5,370h-50c-4.1,0 -7.5,3.4 -7.5,7.5s3.4,7.5 7.5,7.5h50c4.1,0 7.5,-3.4 7.5,-7.5S411.6,370 407.5,370z" />
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M407.5,340h-50c-4.1,0 -7.5,3.4 -7.5,7.5s3.4,7.5 7.5,7.5h50c4.1,0 7.5,-3.4 7.5,-7.5S411.6,340 407.5,340z" />
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M427.5,120H209.2l51.7,-95.1c6,-0.9 10.7,-6.1 10.7,-12.4c0,-6.9 -5.6,-12.5 -12.5,-12.5s-12.5,5.6 -12.5,12.5c0,1.9 0.4,3.6 1.1,5.2L192.1,120h-31.1L105.4,17.7c0.7,-1.6 1.1,-3.3 1.1,-5.2c0,-6.9 -5.6,-12.5 -12.5,-12.5s-12.5,5.6 -12.5,12.5c0,6.3 4.6,11.5 10.7,12.4L143.9,120H27.5C12.3,120 0,132.3 0,147.5v280C0,442.7 12.3,455 27.5,455h400c15.2,0 27.5,-12.3 27.5,-27.5v-280C455,132.3 442.7,120 427.5,120zM440,427.5c0,6.9 -5.6,12.5 -12.5,12.5h-400c-6.9,0 -12.5,-5.6 -12.5,-12.5v-280c0,-6.9 5.6,-12.5 12.5,-12.5h129c0,0 0,0 0,0c0,0 0,-0 0,-0h39.9c0,0 0,0 0,0c0,0 0,-0 0,-0H427.5c6.9,0 12.5,5.6 12.5,12.5V427.5z" />
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M295.3,186.3C273.3,169.8 231.2,160 182.5,160s-90.8,9.8 -112.8,26.3c-16.6,12.4 -27.3,42.3 -29.4,81.9c-2.2,41.4 5.9,95.7 28.8,116.9C92.9,407.1 143.3,415 182.5,415s89.6,-7.9 113.4,-29.9c8.9,-8.3 16.1,-21.9 21.3,-40.6c1.1,-4 -1.2,-8.1 -5.2,-9.2c-4,-1.1 -8.1,1.2 -9.2,5.2c-4.4,15.7 -10.2,27.3 -17,33.6C268.7,389.8 228.2,400 182.5,400s-86.2,-10.2 -103.2,-25.9c-16,-14.9 -26.3,-60.1 -24,-105.1c1.8,-34.6 10.6,-61 23.4,-70.7C97.9,183.9 137.6,175 182.5,175s84.6,8.9 103.8,23.3c18.3,13.7 27.9,63.5 21.9,113.3c-0.5,4.1 2.4,7.8 6.6,8.3c4.1,0.5 7.8,-2.4 8.3,-6.6C328.8,266.5 322.5,206.7 295.3,186.3z" />
+</vector>

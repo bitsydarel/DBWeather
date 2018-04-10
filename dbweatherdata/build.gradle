@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,10 +24,8 @@ android {
     defaultConfig {
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 1
-        versionName "1.0"
-
-        multiDexEnabled true
+        versionCode versions.versionCode
+        versionName versions.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -45,22 +43,6 @@ android {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation":
                                      "$projectDir/schemas".toString()]
-            }
-        }
-    }
-
-    // used by Room, to test migrations
-    sourceSets {
-        sourceSets {
-            test.java { srcDirs += 'src/test/kotlin' }
-
-            androidTest {
-                java { srcDirs += 'src/androidTest/kotlin' }
-                assets { srcDirs += files("$projectDir/schemas".toString()) }
-            }
-
-            main {
-                java { srcDirs += 'src/main/kotlin' }
             }
         }
     }
@@ -87,23 +69,23 @@ android {
 dependencies {
     api project(":dbweatherdomain")
 
+    api('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
+        transitive = true
+    }
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation kotlinLibs.stdlib
-
     implementation apache.commons_text
 
     /************* Translate dependencies ***********/
     implementation googleLibs.api_services_translate
     implementation googleLibs.http_client_android
-
     implementation rxLibs.rxAndroid
-
     implementation architectureComponentLibs.roomRuntime
     implementation architectureComponentLibs.roomRxJava
-
     implementation googleLibs.firebase_database
-
+    implementation googleLibs.firebase_storage
     /***************** Network *****************/
     implementation (networkLibs.android_networking, {
         exclude group: 'com.android.support'
@@ -112,10 +94,10 @@ dependencies {
     implementation networkLibs.okhttp
     implementation networkLibs.retrofit2
     implementation networkLibs.rxJavaAdapter
-//    implementation networkLibs.jaxbConverter
     implementation(networkLibs.simpleXmlConverter) {
         exclude module: 'stax-api'
     }
+    compileOnly otherLibs.threetenabp
     /********************************************/
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'

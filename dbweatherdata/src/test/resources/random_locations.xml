@@ -1,0 +1,1118 @@
+<!--
+  ~  Copyright (C) 2017 Darel Bitsy
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<geonames style="MEDIUM">
+    <totalResultsCount>434</totalResultsCount>
+    <geoname>
+        <toponymName>Q'ebengga</toponymName>
+        <name>Q'ebengga</name>
+        <lat>61.52722</lat>
+        <lng>-150.51944</lng>
+        <geonameId>8093965</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>H</fcl>
+        <fcode>LK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ulevi</toponymName>
+        <name>Qulevi</name>
+        <lat>42.27305</lat>
+        <lng>41.66667</lng>
+        <geonameId>613639</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>L</fcl>
+        <fcode>PRT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Pegunungan Q</toponymName>
+        <name>Pegunungan Q</name>
+        <lat>-3.75</lat>
+        <lng>140.66667</lng>
+        <geonameId>2082487</geonameId>
+        <countryCode>ID</countryCode>
+        <countryName>Indonesia</countryName>
+        <fcl>T</fcl>
+        <fcode>MTS</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ari</toponymName>
+        <name>Kari</name>
+        <lat>43.0455</lat>
+        <lng>42.18017</lng>
+        <geonameId>614128</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’velaantubani</toponymName>
+        <name>Q’velaantubani</name>
+        <lat>41.85348</lat>
+        <lng>43.86911</lng>
+        <geonameId>614632</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Amt’q’eli</toponymName>
+        <name>Amtqeli</name>
+        <lat>43.03705</lat>
+        <lng>41.32499</lng>
+        <geonameId>615766</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ipiantubani</toponymName>
+        <name>Q’ipiantubani</name>
+        <lat>41.99189</lat>
+        <lng>43.54465</lng>
+        <geonameId>613826</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ghvriats’q’ali</toponymName>
+        <name>Ghvriats’q’ali</name>
+        <lat>41.97417</lat>
+        <lng>43.63537</lng>
+        <geonameId>614303</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q'ech'elt'at</toponymName>
+        <name>Q'ech'elt'at</name>
+        <lat>61.91056</lat>
+        <lng>-151.31528</lng>
+        <geonameId>8104911</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>L</fcl>
+        <fcode>AREA</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q'is Kaq'</toponymName>
+        <name>Q'is Kaq'</name>
+        <lat>61.89806</lat>
+        <lng>-150.07778</lng>
+        <geonameId>8104965</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>L</fcl>
+        <fcode>AREA</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q'aghil Bena</toponymName>
+        <name>Q'aghil Bena</name>
+        <lat>61.34611</lat>
+        <lng>-151.19917</lng>
+        <geonameId>8087232</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>H</fcl>
+        <fcode>LK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q'eyses Kaq'</toponymName>
+        <name>Q'eyses Kaq'</name>
+        <lat>61.53278</lat>
+        <lng>-150.57111</lng>
+        <geonameId>8093973</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>L</fcl>
+        <fcode>AREA</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q'eyses Bena</toponymName>
+        <name>Q'eyses Bena</name>
+        <lat>61.58472</lat>
+        <lng>-150.62278</lng>
+        <geonameId>8093974</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>H</fcl>
+        <fcode>LK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Four-Q Lakes</toponymName>
+        <name>Four-Q Lakes</name>
+        <lat>38.94296</lat>
+        <lng>-120.20241</lng>
+        <geonameId>5350290</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>H</fcl>
+        <fcode>LK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q. Tandavato</toponymName>
+        <name>Q. Tandavato</name>
+        <lat>-23.45083</lat>
+        <lng>35.31389</lng>
+        <geonameId>1026743</geonameId>
+        <countryCode>MZ</countryCode>
+        <countryName>Mozambique</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’inchauri</toponymName>
+        <name>Q’inchauri</name>
+        <lat>41.58452</lat>
+        <lng>42.33281</lng>
+        <geonameId>611880</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ulishk’ari</toponymName>
+        <name>Q’ulishk’ari</name>
+        <lat>42.50535</lat>
+        <lng>41.97089</lng>
+        <geonameId>612573</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Mats’q’valta</toponymName>
+        <name>Mats’q’valta</name>
+        <lat>41.56016</lat>
+        <lng>42.2675</lng>
+        <geonameId>613056</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’orolistavi</toponymName>
+        <name>Q’orolistavi</name>
+        <lat>41.64605</lat>
+        <lng>41.74631</lng>
+        <geonameId>613696</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Bulits’q’u</toponymName>
+        <name>Bulits’q’u</name>
+        <lat>42.33798</lat>
+        <lng>41.85968</lng>
+        <geonameId>874062</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’emi</toponymName>
+        <name>Ts’q’emi</name>
+        <lat>42.25653</lat>
+        <lng>42.1668</lng>
+        <geonameId>611420</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>T’q’elvani</toponymName>
+        <name>T’q’elvani</name>
+        <lat>42.05034</lat>
+        <lng>42.54671</lng>
+        <geonameId>611646</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Sat’q’ebuchavo</toponymName>
+        <name>Sat’q’ebuchavo</name>
+        <lat>42.40069</lat>
+        <lng>42.0625</lng>
+        <geonameId>612077</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’umuri</toponymName>
+        <name>Q’umuri</name>
+        <lat>42.03389</lat>
+        <lng>42.46917</lng>
+        <geonameId>613630</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’orati</toponymName>
+        <name>Q’orati</name>
+        <lat>42.24403</lat>
+        <lng>41.80167</lng>
+        <geonameId>613708</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ela</toponymName>
+        <name>Q’ela</name>
+        <lat>42.02793</lat>
+        <lng>41.93921</lng>
+        <geonameId>614069</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Gauts’q’inari</toponymName>
+        <name>Gauts’q’inari</name>
+        <lat>42.13396</lat>
+        <lng>42.28418</lng>
+        <geonameId>614561</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Tkhilists’q’aro</toponymName>
+        <name>Tkhilists’q’aro</name>
+        <lat>41.87083</lat>
+        <lng>46.01944</lng>
+        <geonameId>872284</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’rishi</toponymName>
+        <name>Ts’q’rishi</name>
+        <lat>42.78228</lat>
+        <lng>41.37144</lng>
+        <geonameId>611380</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>T’q’emlovana</toponymName>
+        <name>Tqemlovana</name>
+        <lat>41.85998</lat>
+        <lng>43.71602</lng>
+        <geonameId>611641</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’udro</toponymName>
+        <name>Q’udro</name>
+        <lat>41.33908</lat>
+        <lng>44.6509</lng>
+        <geonameId>613622</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Nevado Cololo</toponymName>
+        <name>Nevado Cololo</name>
+        <lat>-14.88333</lat>
+        <lng>-69.1</lng>
+        <geonameId>3919816</geonameId>
+        <countryCode>BO</countryCode>
+        <countryName>Bolivia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Sart’q’ela</toponymName>
+        <name>Sart’q’ela</name>
+        <lat>41.95262</lat>
+        <lng>43.64796</lng>
+        <geonameId>612091</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>James Q Newton Park</toponymName>
+        <name>James Q Newton Park</name>
+        <lat>39.51166</lat>
+        <lng>-105.2961</lng>
+        <geonameId>5426434</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>L</fcl>
+        <fcode>PRK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q Pond City Park</toponymName>
+        <name>Q Pond City Park</name>
+        <lat>41.04305</lat>
+        <lng>-93.778</lng>
+        <geonameId>4872314</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>L</fcl>
+        <fcode>PRK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>K’udat’q’e</toponymName>
+        <name>K’udat’q’e</name>
+        <lat>41.99088</lat>
+        <lng>43.80583</lng>
+        <geonameId>613649</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Erists’q’ali</toponymName>
+        <name>Eristsqali</name>
+        <lat>42.71014</lat>
+        <lng>41.94468</lng>
+        <geonameId>824185</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ch’q’onkhumla</toponymName>
+        <name>Ch’q’onkhumla</name>
+        <lat>42.60457</lat>
+        <lng>41.85789</lng>
+        <geonameId>874224</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’orasi</toponymName>
+        <name>Q’orasi</name>
+        <lat>42.85689</lat>
+        <lng>41.14549</lng>
+        <geonameId>865366</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’urgili</toponymName>
+        <name>Ts’q’urgili</name>
+        <lat>43.11336</lat>
+        <lng>41.1093</lng>
+        <geonameId>865418</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ada</toponymName>
+        <name>Q’ada</name>
+        <lat>43.06905</lat>
+        <lng>41.30066</lng>
+        <geonameId>614204</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Chkhorots’q’us Munitsip’alit’et’i</toponymName>
+        <name>Tchkhorotsku Raioni</name>
+        <lat>42.56667</lat>
+        <lng>42.2</lng>
+        <geonameId>615141</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM2</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q. Zaire</toponymName>
+        <name>Q. Zaire</name>
+        <lat>-9.68449</lat>
+        <lng>22.79656</lng>
+        <geonameId>8461797</geonameId>
+        <countryCode>CD</countryCode>
+        <countryName>Democratic Republic of the Congo</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q B One Airport</toponymName>
+        <name>Q B One Airport</name>
+        <lat>43.6013</lat>
+        <lng>-112.24331</lng>
+        <geonameId>5604633</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>S</fcl>
+        <fcode>AIRP</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Estado de Quintana Roo</toponymName>
+        <name>Quintana Roo</name>
+        <lat>19.66667</lat>
+        <lng>-88.25</lng>
+        <geonameId>3520887</geonameId>
+        <countryCode>MX</countryCode>
+        <countryName>Mexico</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM1</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q'atl'uhghulqet' Bena</toponymName>
+        <name>Q'atl'uhghulqet' Bena</name>
+        <lat>61.06028</lat>
+        <lng>-151.31778</lng>
+        <geonameId>8093374</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>H</fcl>
+        <fcode>LK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ach’arists’q’ali</toponymName>
+        <name>Ach’arists’q’ali</name>
+        <lat>41.54375</lat>
+        <lng>41.72749</lng>
+        <geonameId>610816</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’avrok’a</toponymName>
+        <name>Ts’q’avrok’a</name>
+        <lat>41.85278</lat>
+        <lng>41.88917</lng>
+        <geonameId>611421</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>T’q’emak’aravi</toponymName>
+        <name>T’q’emak’aravi</name>
+        <lat>41.79</lat>
+        <lng>41.97611</lng>
+        <geonameId>611645</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Kveda Chkhorots’q’u</toponymName>
+        <name>Kveda Chkhorots’q’u</name>
+        <lat>42.48103</lat>
+        <lng>42.09661</lng>
+        <geonameId>613559</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Mejinists’q’ali</toponymName>
+        <name>Mejinists’q’ali</name>
+        <lat>41.60339</lat>
+        <lng>41.61278</lng>
+        <geonameId>824709</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’azbegis Munitsip’alit’et‘i</toponymName>
+        <name>Q’azbegis Munitsip’alit’et‘i</name>
+        <lat>42.6</lat>
+        <lng>44.55</lng>
+        <geonameId>614086</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM2</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Kulalisi</toponymName>
+        <name>Kulalisi</name>
+        <lat>41.32731</lat>
+        <lng>43.48159</lng>
+        <geonameId>613644</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Kaurma</toponymName>
+        <name>Kaurma</name>
+        <lat>41.32325</lat>
+        <lng>43.58275</lng>
+        <geonameId>614094</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q. Takayev</toponymName>
+        <name>Q. Takayev</name>
+        <lat>40.26636</lat>
+        <lng>68.87395</lng>
+        <geonameId>11242602</geonameId>
+        <countryCode>UZ</countryCode>
+        <countryName>Uzbekistan</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Bahār Marz</toponymName>
+        <name>Bahār Marz</name>
+        <lat>32.3525</lat>
+        <lng>60.11806</lng>
+        <geonameId>1161653</geonameId>
+        <countryCode>IR</countryCode>
+        <countryName>Iran</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q. Cumba</toponymName>
+        <name>Q. Cumba</name>
+        <lat>-24.15306</lat>
+        <lng>35.38306</lng>
+        <geonameId>1101812</geonameId>
+        <countryCode>MZ</countryCode>
+        <countryName>Mozambique</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>T’q’viri</toponymName>
+        <name>T’q’viri</name>
+        <lat>42.16723</lat>
+        <lng>42.24518</lng>
+        <geonameId>611621</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>T’q’iri</toponymName>
+        <name>T’q’iri</name>
+        <lat>42.24584</lat>
+        <lng>42.01625</lng>
+        <geonameId>611625</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ch’q’vishi</toponymName>
+        <name>Ch’q’vishi</name>
+        <lat>42.1246</lat>
+        <lng>42.43554</lng>
+        <geonameId>615127</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ch’q’onagora</toponymName>
+        <name>Ch’q’onagora</name>
+        <lat>42.08717</lat>
+        <lng>42.14217</lng>
+        <geonameId>615131</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ch’itats’q’ari</toponymName>
+        <name>Ch’itats’q’ari</name>
+        <lat>42.47871</lat>
+        <lng>41.85241</lng>
+        <geonameId>615164</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’arishi</toponymName>
+        <name>Q’arishi</name>
+        <lat>42.78767</lat>
+        <lng>42.74554</lng>
+        <geonameId>9981414</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Mta Q’oruldashi</toponymName>
+        <name>Mta Q’oruldashi</name>
+        <lat>42.89788</lat>
+        <lng>43.09261</lng>
+        <geonameId>7530591</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>La Q</toponymName>
+        <name>La Q</name>
+        <lat>18.49787</lat>
+        <lng>-71.84861</lng>
+        <geonameId>11166040</geonameId>
+        <countryCode>DO</countryCode>
+        <countryName>Dominican Republic</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM5</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Akhalts’q’aro</toponymName>
+        <name>Akhalts’q’aro</name>
+        <lat>41.64442</lat>
+        <lng>44.83377</lng>
+        <geonameId>865770</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Gurist’q’e</toponymName>
+        <name>Gurist’q’e</name>
+        <lat>41.98571</lat>
+        <lng>42.35152</lng>
+        <geonameId>614353</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’oushi</toponymName>
+        <name>Ts’q’oushi</name>
+        <lat>42.66309</lat>
+        <lng>41.97692</lng>
+        <geonameId>7530598</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Quirimba</toponymName>
+        <name>Quirimba</name>
+        <lat>-9.29138</lat>
+        <lng>15.76586</lng>
+        <geonameId>2237693</geonameId>
+        <countryCode>AO</countryCode>
+        <countryName>Angola</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Post Falls</toponymName>
+        <name>Post Falls</name>
+        <lat>47.71796</lat>
+        <lng>-116.95159</lng>
+        <geonameId>5604353</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ulists’q’ali</toponymName>
+        <name>Q’ulists’q’ali</name>
+        <lat>42.46031</lat>
+        <lng>41.88737</lng>
+        <geonameId>823991</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>H</fcl>
+        <fcode>STM</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Tskhenists’q’ali</toponymName>
+        <name>Tskhenists’q’ali</name>
+        <lat>42.80015</lat>
+        <lng>41.42219</lng>
+        <geonameId>611406</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Mach’arts’q’ali</toponymName>
+        <name>Mach’arts’q’ali</name>
+        <lat>41.78987</lat>
+        <lng>43.62454</lng>
+        <geonameId>613155</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Don Q</toponymName>
+        <name>Don Q</name>
+        <lat>17.72389</lat>
+        <lng>-95.54278</lng>
+        <geonameId>8945146</geonameId>
+        <countryCode>MX</countryCode>
+        <countryName>Mexico</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Tl'eghes Bena Q'estsiq' Hg'adghilent</toponymName>
+        <name>Tl'eghes Bena Q'estsiq' Hg'adghilent</name>
+        <lat>61.5925</lat>
+        <lng>-150.21111</lng>
+        <geonameId>8094325</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>L</fcl>
+        <fcode>AREA</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Puts’q’uri</toponymName>
+        <name>Puts’q’uri</name>
+        <lat>42.69431</lat>
+        <lng>41.64083</lng>
+        <geonameId>874167</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’urgili</toponymName>
+        <name>Ts’q’urgili</name>
+        <lat>42.79978</lat>
+        <lng>41.23532</lng>
+        <geonameId>611379</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>T’q’aia</toponymName>
+        <name>T’q’aia</name>
+        <lat>42.6154</lat>
+        <lng>41.91912</lng>
+        <geonameId>611647</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Dedoplists’q’aros Munitsip’alit’et’i</toponymName>
+        <name>Dedoplists’q’aros Munitsip’alit’et’i</name>
+        <lat>41.33333</lat>
+        <lng>46.25</lng>
+        <geonameId>611448</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM2</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’varlis Munitsip’alit’et’i</toponymName>
+        <name>Q’varlis Munitsip’alit’et’i</name>
+        <lat>42</lat>
+        <lng>45.83333</lng>
+        <geonameId>613582</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM2</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q. João</toponymName>
+        <name>Q. João</name>
+        <lat>-7.46667</lat>
+        <lng>13.65</lng>
+        <geonameId>2238824</geonameId>
+        <countryCode>AO</countryCode>
+        <countryName>Angola</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>J Q S Gulch</toponymName>
+        <name>J Q S Gulch</name>
+        <lat>39.58553</lat>
+        <lng>-107.9159</lng>
+        <geonameId>5426318</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>T</fcl>
+        <fcode>VAL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ore'q (historical)</toponymName>
+        <name>Ore'q (historical)</name>
+        <lat>41.28655</lat>
+        <lng>-124.06041</lng>
+        <geonameId>5569035</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>P</fcl>
+        <fcode>PPLQ</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Cerro Sunicagua</toponymName>
+        <name>Cerro Sunicagua</name>
+        <lat>-17.88333</lat>
+        <lng>-69</lng>
+        <geonameId>3903919</geonameId>
+        <countryCode>BO</countryCode>
+        <countryName>Bolivia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Nevado de Casiri</toponymName>
+        <name>Nevado de Casiri</name>
+        <lat>-15.9</lat>
+        <lng>-68.5</lng>
+        <geonameId>3921825</geonameId>
+        <countryCode>BO</countryCode>
+        <countryName>Bolivia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Benewah Lake</toponymName>
+        <name>Benewah Lake</name>
+        <lat>47.3436</lat>
+        <lng>-116.68697</lng>
+        <geonameId>5553767</geonameId>
+        <countryCode>US</countryCode>
+        <countryName>United States</countryName>
+        <fcl>H</fcl>
+        <fcode>LK</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Fujikyū Highland</toponymName>
+        <name>Fuji-Q Highland</name>
+        <lat>35.48767</lat>
+        <lng>138.78121</lng>
+        <geonameId>10798344</geonameId>
+        <countryCode>JP</countryCode>
+        <countryName>Japan</countryName>
+        <fcl>L</fcl>
+        <fcode>AMUS</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Mta Ts’q’alts’itela</toponymName>
+        <name>Mta Ts’q’alts’itela</name>
+        <lat>41.83326</lat>
+        <lng>43.04993</lng>
+        <geonameId>611424</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Cerro Phekheñ Khara</toponymName>
+        <name>Cerro Phekheñ Khara</name>
+        <lat>-16.78333</lat>
+        <lng>-68</lng>
+        <geonameId>3908067</geonameId>
+        <countryCode>BO</countryCode>
+        <countryName>Bolivia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Kintsvisi</toponymName>
+        <name>Kintsvisi</name>
+        <lat>41.97155</lat>
+        <lng>43.82003</lng>
+        <geonameId>613827</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Cerro Pacocahua</toponymName>
+        <name>Cerro Pacocahua</name>
+        <lat>-16.97693</lat>
+        <lng>-69.30176</lng>
+        <geonameId>3909082</geonameId>
+        <countryCode>BO</countryCode>
+        <countryName>Bolivia</countryName>
+        <fcl>T</fcl>
+        <fcode>MT</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Tetrits’q’alos Munitsip’alit’et’i</toponymName>
+        <name>Tetrits’q’alos Munitsip’alit’et’i</name>
+        <lat>41.6</lat>
+        <lng>44.5</lng>
+        <geonameId>611676</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>A</fcl>
+        <fcode>ADM2</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>H.Q. Taylor Farm</toponymName>
+        <name>H.Q. Taylor Farm</name>
+        <lat>6.59283</lat>
+        <lng>-10.88742</lng>
+        <geonameId>9817845</geonameId>
+        <countryCode>LR</countryCode>
+        <countryName>Liberia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Chāh Khū</toponymName>
+        <name>Chāh Khū</name>
+        <lat>32.20528</lat>
+        <lng>60.1475</lng>
+        <geonameId>1161553</geonameId>
+        <countryCode>IR</countryCode>
+        <countryName>Iran</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Qaryah-ye Tāj Muḩammad</toponymName>
+        <name>Qaryah-ye Tāj Muḩammad</name>
+        <lat>34.18764</lat>
+        <lng>64.07216</lng>
+        <geonameId>1129294</geonameId>
+        <countryCode>AF</countryCode>
+        <countryName>Afghanistan</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Zeda Ach’q’va</toponymName>
+        <name>Zeda Ach’q’va</name>
+        <lat>41.73722</lat>
+        <lng>41.77333</lng>
+        <geonameId>611067</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Kveda Ach’q’va</toponymName>
+        <name>Kveda Ach’q’va</name>
+        <lat>41.73022</lat>
+        <lng>41.77306</lng>
+        <geonameId>613569</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Chakvists’q’ali</toponymName>
+        <name>Chakvists’q’ali</name>
+        <lat>41.71528</lat>
+        <lng>41.72361</lng>
+        <geonameId>615293</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>H</fcl>
+        <fcode>STM</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Ts’q’lisak’ari</toponymName>
+        <name>Ts’q’lisak’ari</name>
+        <lat>41.72653</lat>
+        <lng>42.22348</lng>
+        <geonameId>7891501</geonameId>
+        <countryCode>GE</countryCode>
+        <countryName>Georgia</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+    <geoname>
+        <toponymName>Q’ansanlaq</toponymName>
+        <name>Q’ansanlaq</name>
+        <lat>15.71932</lat>
+        <lng>-91.28327</lng>
+        <geonameId>11492476</geonameId>
+        <countryCode>GT</countryCode>
+        <countryName>Guatemala</countryName>
+        <fcl>P</fcl>
+        <fcode>PPL</fcode>
+    </geoname>
+</geonames>

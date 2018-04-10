@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,12 +21,12 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.provider.BaseColumns
-import com.dbeginc.dbweather.DBWeatherApp
 import com.dbeginc.dbweather.R
-import com.dbeginc.dbweather.di.WithDependencies
-import com.dbeginc.dbweathercommon.utils.LogDispatcher
-import com.dbeginc.dbweatherdomain.repositories.weather.WeatherRepository
-import com.dbeginc.dbweatherweather.viewmodels.toViewModel
+import com.dbeginc.dbweather.utils.utility.WEATHER_SEARCH_RESULTS
+import com.dbeginc.dbweatherdomain.Logger
+import com.dbeginc.dbweatherdomain.repositories.WeatherRepository
+import com.dbeginc.dbweatherweather.viewmodels.toUi
+import dagger.Lazy
 import dagger.android.DaggerContentProvider
 import javax.inject.Inject
 
@@ -35,9 +35,11 @@ import javax.inject.Inject
  *
  * Location Suggestion provider
  */
-class LocationSuggestionProvider : DaggerContentProvider(), WithDependencies {
+class LocationSuggestionProvider : DaggerContentProvider() {
     @Inject
-    lateinit var model: WeatherRepository
+    lateinit var model: Lazy<WeatherRepository>
+    @Inject
+    lateinit var logger: Logger
 
     override fun query(uri: Uri, projection: Array<String>?,
                        selection: String?, selectionArgs: Array<String>?,
@@ -49,17 +51,16 @@ class LocationSuggestionProvider : DaggerContentProvider(), WithDependencies {
         val matrixCursor = MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2), 3)
 
         if (userQuery != null && userQuery != SearchManager.SUGGEST_URI_PATH_QUERY && userQuery.isNotEmpty()) {
-            model.getLocations(userQuery)
-                    .map { locations -> locations.map { location -> location.toViewModel() } }
-                    .subscribe(
-                            DBWeatherApp.WEATHER_SEARCH_RESULTS::onNext,
-                            { error -> LogDispatcher.logError(error) }
-                    )
+            model.get().getLocations(userQuery)
+                    .map { locations -> locations.map { location -> location.toUi() } }
+                    .subscribe(WEATHER_SEARCH_RESULTS::onNext, logger::logError)
         }
 
-        DBWeatherApp.WEATHER_SEARCH_RESULTS.value?.forEachIndexed { index, location ->
-            matrixCursor.addRow(arrayOf(index, R.drawable.city_location_icon, location.name, location.countryName))
-        }
+        WEATHER_SEARCH_RESULTS
+                .value
+                ?.forEachIndexed { index, location ->
+                    matrixCursor.addRow(arrayOf(index, R.drawable.ic_city_location, location.name, location.countryName))
+                }
 
         return matrixCursor
     }
