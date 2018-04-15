@@ -49,7 +49,7 @@ class IpTvPlayListsViewModel @Inject constructor(private val model: LivesReposit
     fun findPlayList(name: String) {
         model.findPlaylist(name = name)
                 .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
-                .doOnComplete { requestState.postValue(RequestState.COMPLETED) }
+                .doAfterSuccess { requestState.postValue(RequestState.COMPLETED) }
                 .doOnError { requestState.postValue(RequestState.ERROR) }
                 .map { playlists -> playlists.map { playList -> playList.toUi() } }
                 .observeOn(threads.UI)

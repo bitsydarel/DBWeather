@@ -110,6 +110,7 @@ class RoomLivesDataSourceTest {
                 .test()
                 .assertValue { it.isNotEmpty() }
                 .assertValue { it.any { it.name.contains(playlist.name) } }
+                .assertComplete()
 
     }
 

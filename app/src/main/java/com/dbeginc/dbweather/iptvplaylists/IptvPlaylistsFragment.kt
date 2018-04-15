@@ -73,8 +73,8 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
                 override fun onQueryTextSubmit(query: String?): Boolean = true
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText != null && newText.isNotBlank())
-                        viewModel.findPlayList(newText)
+                    if (newText != null && newText.isNotBlank()) viewModel.findPlayList(newText)
+                    else viewModel.loadIpTvPlayLists()
                     return true
                 }
 
