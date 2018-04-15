@@ -17,11 +17,11 @@ package com.dbeginc.dbweather.youtubefavoritelives
 
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseAdapter
 import com.dbeginc.dbweather.databinding.YoutubeLiveLayoutBinding
+import com.dbeginc.dbweather.utils.utility.getInflater
 import com.dbeginc.dbweather.utils.utility.remove
 import com.dbeginc.dbweather.utils.youtubelive.YoutubeLiveDiffUtils
 import com.dbeginc.dbweather.youtubelives.YoutubeLiveActionBridge
@@ -43,7 +43,7 @@ class FavoriteLiveAdapter(private val containerBridge: YoutubeLiveActionBridge) 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteLiveViewHolder {
         return FavoriteLiveViewHolder(
                 DataBindingUtil.inflate(
-                        LayoutInflater.from(parent.context),
+                        parent.getInflater(),
                         R.layout.youtube_live_layout, parent,
                         false
                 ),

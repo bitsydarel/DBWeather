@@ -162,7 +162,7 @@ class NewsPaperDetailFragment : BaseFragment(), MVMPVView {
             activity?.let {
                 goToManageNewsPapersScreen(
                         container = it,
-                        layoutId = R.id.main_content
+                        emplacementId = R.id.main_content
                 )
             }
         }

@@ -17,12 +17,12 @@ package com.dbeginc.dbweather.weather
 
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseAdapter
 import com.dbeginc.dbweather.base.BaseDataDiff
 import com.dbeginc.dbweather.databinding.HourLayoutBinding
+import com.dbeginc.dbweather.utils.utility.getInflater
 import com.dbeginc.dbweatherweather.viewmodels.HourWeatherModel
 
 /**
@@ -34,7 +34,7 @@ class HourAdapter : BaseAdapter<HourWeatherModel, HourAdapter.HourViewHolder>(Ho
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourViewHolder {
         return HourViewHolder(DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
+                parent.getInflater(),
                 R.layout.hour_layout,
                 parent,
                 false

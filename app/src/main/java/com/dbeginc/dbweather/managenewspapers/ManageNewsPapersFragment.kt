@@ -30,7 +30,6 @@ import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentManageNewsPapersBinding
-import com.dbeginc.dbweather.utils.utility.WithSharedElement
 import com.dbeginc.dbweather.utils.utility.goToNewsPaperDetailScreen
 import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweathercommon.view.MVMPVView
@@ -41,7 +40,7 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 /**
  * A ManageNewsPapersFragment [BaseFragment] subclass.
  */
-class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBridge, WithSharedElement, SwipeRefreshLayout.OnRefreshListener {
+class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBridge, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var viewModel: ManageNewsPapersViewModel
     private lateinit var binding: FragmentManageNewsPapersBinding
     private val newsPapersAdapter by lazy { NewsPapersAdapter(managerBridge = this) }
@@ -113,8 +112,6 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
     }
 
     override fun onRefresh() = viewModel.loadSources()
-
-    override fun retrieveSharedElement(): View = binding.manageNewsPapersAppbar
 
     override fun setupView() {
         binding.manageNewsPapersList.adapter = newsPapersAdapter

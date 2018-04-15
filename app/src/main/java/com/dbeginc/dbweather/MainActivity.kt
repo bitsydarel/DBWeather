@@ -87,30 +87,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.weather_feature -> {
-                goToWeatherScreen(container = this, layoutId = main_content)
-            }
-            R.id.news_papers_feature -> goToNewsPapersScreen(
-                    container = this,
-                    layoutId = main_content
-            )
-            R.id.youtube_lives_feature -> goToYoutubeLivesScreen(
-                    container = this,
-                    layoutId = main_content
-            )
-            R.id.ip_tv_feature -> goToIpTvPlaylistsScreen(
-                    container = this,
-                    layoutId = main_content
-            )
-            R.id.favoriteYoutubeLives -> goToFavoriteYoutubeLivesScreen(
-                    container = this,
-                    layoutId = main_content
-            )
-            R.id.manage_locations -> goToManageLocationsScreen(container = this, layoutId = main_content)
-            R.id.manage_sources -> goToManageNewsPapersScreen(
-                    container = this,
-                    layoutId = main_content
-            )
+            R.id.weather_feature -> goToWeatherScreen(container = this, layoutId = main_content)
+            R.id.news_papers_feature -> goToNewsPapersScreen(container = this, layoutId = main_content)
+            R.id.youtube_lives_feature -> goToYoutubeLivesScreen(container = this, layoutId = main_content)
+            R.id.ip_tv_feature -> goToIpTvPlaylistsScreen(container = this, emplacementId = main_content)
+            R.id.favoriteYoutubeLives -> goToFavoriteYoutubeLivesScreen(container = this, emplacementId = main_content)
+            R.id.manage_locations -> goToManageLocationsScreen(container = this, emplacementId = main_content)
+            R.id.manage_sources -> goToManageNewsPapersScreen(container = this, emplacementId = main_content)
         }
 
         binding.mainLayout.closeDrawer(GravityCompat.START, true)

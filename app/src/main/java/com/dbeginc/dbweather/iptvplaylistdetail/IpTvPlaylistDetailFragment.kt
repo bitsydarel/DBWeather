@@ -112,7 +112,7 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
 
         binding.iptvPlaylistDetailToolbar.setNavigationOnClickListener {
             activity?.let {
-                goToIpTvPlaylistsScreen(container = it, layoutId = R.id.main_content)
+                goToIpTvPlaylistsScreen(container = it, emplacementId = R.id.main_content)
             }
         }
 

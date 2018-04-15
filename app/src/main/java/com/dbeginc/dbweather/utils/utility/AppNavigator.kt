@@ -15,14 +15,12 @@
 
 package com.dbeginc.dbweather.utils.utility
 
-import android.app.FragmentTransaction
 import android.content.Intent
 import android.support.transition.Fade
 import android.support.transition.Slide
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewCompat
 import android.view.Gravity
 import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
@@ -49,12 +47,9 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 
 /**
  * Created by darel on 22.03.18.
- *
- * @startuml
- *
+ **
  * Navigator Pattern for DBWeather
  *
- * @enduml
  */
 fun goToSplashScreen(container: FragmentActivity, layoutId: Int) {
     val currentFragment = container.supportFragmentManager.findFragmentById(layoutId)
@@ -138,147 +133,80 @@ fun goToIntroScreen(container: FragmentActivity, layoutId: Int) {
 }
 
 fun goToWeatherScreen(container: FragmentActivity, layoutId: Int) {
-    val enteringScreen = WeatherFragment()
-    enteringScreen.enterTransition = Fade(Fade.IN)
-
-    val exitingScreen = container.supportFragmentManager.findFragmentById(layoutId)
-    exitingScreen?.exitTransition = Fade(Fade.OUT)
-
-    val sharedElement = (exitingScreen as? WithSharedElement)?.retrieveSharedElement()
-
     container.supportFragmentManager
             .beginTransaction()
-            .apply {
-                if (sharedElement != null) addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement))
-                replace(layoutId, enteringScreen, WeatherFragment::class.java.simpleName)
-                setReorderingAllowed(true)
-            }
+            .replace(layoutId, WeatherFragment(), WeatherFragment::class.java.simpleName)
             .commit()
 
 }
 
 fun goToNewsPapersScreen(container: FragmentActivity, layoutId: Int) {
-    val newsPapersFragment = NewsPapersFragment()
-    newsPapersFragment.enterTransition = Fade(Fade.IN)
-
-    val exitingScreen = container.supportFragmentManager.findFragmentById(layoutId)
-    exitingScreen?.exitTransition = Fade(Fade.OUT)
-
-    val sharedElement = (exitingScreen as? WithSharedElement)?.retrieveSharedElement()
-
     container.supportFragmentManager
             .beginTransaction()
-            .apply {
-                if (sharedElement != null) addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement))
-                replace(layoutId, newsPapersFragment, NewsPapersFragment::class.java.simpleName)
-                setReorderingAllowed(true)
-            }
+            .replace(layoutId, NewsPapersFragment(), NewsPapersFragment::class.java.simpleName)
             .commit()
 }
 
 fun goToYoutubeLivesScreen(container: FragmentActivity, layoutId: Int) {
-    val enteringScreen = YoutubeLivesFragment()
-    enteringScreen.enterTransition = Fade(Fade.IN)
-
-    val exitingScreen = container.supportFragmentManager.findFragmentById(layoutId)
-    exitingScreen?.exitTransition = Fade(Fade.OUT)
-
-    val sharedElement = (exitingScreen as? WithSharedElement)?.retrieveSharedElement()
-
     container.supportFragmentManager
             .beginTransaction()
-            .apply {
-                if (sharedElement != null) addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement))
-                replace(layoutId, enteringScreen, YoutubeLivesFragment::class.java.simpleName)
-                setReorderingAllowed(true)
-            }
+            .replace(layoutId, YoutubeLivesFragment(), YoutubeLivesFragment::class.java.simpleName)
             .commit()
 }
 
-fun goToIpTvPlaylistsScreen(container: FragmentActivity, layoutId: Int) {
-    val enteringScreen = IptvPlaylistsFragment()
-
-    val exitingScreen = container.supportFragmentManager
-            .findFragmentById(layoutId)
-
-    if (exitingScreen is IpTvPlaylistDetailFragment) {
-        exitingScreen.exitTransition = Slide(GravityCompat.END)
-        enteringScreen.enterTransition = Slide(GravityCompat.START)
-    } else {
-        exitingScreen.exitTransition = Fade(Fade.OUT)
-        enteringScreen.enterTransition = Fade(Fade.IN)
-    }
-
-    val fragmentTransaction = container.supportFragmentManager.beginTransaction()
-
-    fragmentTransaction.replace(
-            layoutId,
-            enteringScreen,
-            IptvPlaylistsFragment::class.java.simpleName
-    )
-
-    fragmentTransaction.commit()
+fun goToIpTvPlaylistsScreen(container: FragmentActivity, emplacementId: Int) {
+    container.supportFragmentManager
+            .beginTransaction()
+            .replace(
+                    emplacementId,
+                    IptvPlaylistsFragment(),
+                    IptvPlaylistsFragment::class.java.simpleName
+            )
+            .commit()
 }
 
 fun goToIpTvPlaylistScreen(container: FragmentActivity, emplacementId: Int, playlist: IpTvPlayListModel) {
-    val iptvPlaylistDetailFragment = IpTvPlaylistDetailFragment.newInstance(playlistId = playlist.name)
-
-    container.supportFragmentManager.findFragmentById(emplacementId)
-            .exitTransition = Slide(GravityCompat.START)
-
-    iptvPlaylistDetailFragment.enterTransition = Slide(GravityCompat.END)
-
-    val fragmentTransaction = container.supportFragmentManager.beginTransaction()
-
-    fragmentTransaction.replace(
-            emplacementId,
-            iptvPlaylistDetailFragment,
-            IpTvPlaylistDetailFragment::class.java.simpleName
-    )
-
-    fragmentTransaction.commit()
-}
-
-fun goToFavoriteYoutubeLivesScreen(container: FragmentActivity, layoutId: Int) {
-    val youtubeFavoriteLivesFragment = FavoriteYoutubeLivesFragment()
-    val sharedElement = (container.supportFragmentManager.findFragmentById(layoutId) as? WithSharedElement)?.retrieveSharedElement()
-
     container.supportFragmentManager
             .beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .apply {
-                if (sharedElement != null) addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement))
-                replace(layoutId, youtubeFavoriteLivesFragment, FavoriteYoutubeLivesFragment::class.java.simpleName)
-                setReorderingAllowed(true)
-            }
+            .replace(
+                    emplacementId,
+                    IpTvPlaylistDetailFragment.newInstance(playlistId = playlist.name),
+                    IpTvPlaylistDetailFragment::class.java.simpleName
+            )
+            .commit()
+
+}
+
+fun goToFavoriteYoutubeLivesScreen(container: FragmentActivity, emplacementId: Int) {
+    container.supportFragmentManager
+            .beginTransaction()
+            .replace(
+                    emplacementId,
+                    FavoriteYoutubeLivesFragment(),
+                    FavoriteYoutubeLivesFragment::class.java.simpleName
+            )
             .commit()
 }
 
-fun goToManageLocationsScreen(container: FragmentActivity, layoutId: Int) {
-    val manageLocationsFragment = ManageLocationsFragment()
-    val sharedElement = (container.supportFragmentManager.findFragmentById(layoutId) as? WithSharedElement)?.retrieveSharedElement()
-
+fun goToManageLocationsScreen(container: FragmentActivity, emplacementId: Int) {
     container.supportFragmentManager
             .beginTransaction()
-            .apply {
-                if (sharedElement != null) addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement))
-                replace(layoutId, manageLocationsFragment, ManageLocationsFragment::class.java.simpleName)
-                setReorderingAllowed(true)
-            }
+            .replace(
+                    emplacementId,
+                    ManageLocationsFragment(),
+                    ManageLocationsFragment::class.java.simpleName
+            )
             .commit()
 }
 
-fun goToManageNewsPapersScreen(container: FragmentActivity, layoutId: Int) {
-    val manageNewsPapersFragment = ManageNewsPapersFragment()
-    val sharedElement = (container.supportFragmentManager.findFragmentById(layoutId) as? WithSharedElement)?.retrieveSharedElement()
-
+fun goToManageNewsPapersScreen(container: FragmentActivity, emplacementId: Int) {
     container.supportFragmentManager
             .beginTransaction()
-            .apply {
-                if (sharedElement != null) addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement))
-                replace(layoutId, manageNewsPapersFragment, ManageNewsPapersFragment::class.java.simpleName)
-                setReorderingAllowed(true)
-            }
+            .replace(
+                    emplacementId,
+                    ManageNewsPapersFragment(),
+                    ManageNewsPapersFragment::class.java.simpleName
+            )
             .commit()
 }
 

@@ -28,7 +28,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.transition.AutoTransition
+import android.support.transition.Fade
 import android.support.transition.TransitionManager
 import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -59,11 +59,11 @@ import java.util.*
  *
  * Weather Tab Fragment
  */
-class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchView.OnSuggestionListener, Observer<android.location.Location>, WithSharedElement {
+class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchView.OnSuggestionListener, Observer<android.location.Location> {
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var locationChangeEvent: WeatherLocationManager
     private lateinit var viewModel: WeatherViewModel
-    private var userlocations: List<WeatherLocationModel> = emptyList() // Quick fix for duplicate user locations
+    private var userLocations: List<WeatherLocationModel> = emptyList() // Quick fix for duplicate user locations
     private val dailyWeatherAdapter = DayAdapter()
     private val hourlyWeatherAdapter = HourAdapter()
     override val stateObserver = Observer<RequestState> { onStateChanged(state = it!!) }
@@ -174,8 +174,6 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         return true
     }
 
-    override fun retrieveSharedElement(): View = binding.weatherAppbar
-
     /********************************* View Part *********************************/
     override fun setupView() {
         setupLocationsMenu()
@@ -237,7 +235,7 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     }
 
     private fun displayWeather(weather: WeatherModel, isDefault: Boolean) {
-        TransitionManager.beginDelayedTransition(binding.weatherLayout, AutoTransition())
+        TransitionManager.beginDelayedTransition(binding.weatherLayout, Fade())
 
         binding.weather = weather
 
@@ -268,16 +266,16 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     }
 
     private fun displayUserLocations(locations: List<WeatherLocationModel>) {
-        if (userlocations.containsAll(locations)) return
+        if (userLocations.containsAll(locations)) return
         else {
             val positions = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
             launch(UI) {
                 val filterWithIndexed = withContext(context = CommonPool) {
                     // Remove locations already in the locations menu
-                    val toBeAdded = locations.filterNot { userlocations.contains(it) }
+                    val toBeAdded = locations.filterNot { userLocations.contains(it) }
                     // update the data with the new one
-                    userlocations = locations
+                    userLocations = locations
 
                     return@withContext toBeAdded.asSequence()
                             .filterIndexed { index, _ -> index <= 5 }

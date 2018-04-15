@@ -17,12 +17,12 @@ package com.dbeginc.dbweather.weather
 
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseAdapter
 import com.dbeginc.dbweather.base.BaseDataDiff
 import com.dbeginc.dbweather.databinding.DayLayoutBinding
+import com.dbeginc.dbweather.utils.utility.getInflater
 import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 
 /**
@@ -33,9 +33,8 @@ import com.dbeginc.dbweatherweather.viewmodels.DayWeatherModel
 class DayAdapter : BaseAdapter<DayWeatherModel, DayAdapter.DayViewHolder>(DayDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
         return DayViewHolder(DataBindingUtil.inflate(
-                inflater,
+                parent.getInflater(),
                 R.layout.day_layout,
                 parent,
                 false

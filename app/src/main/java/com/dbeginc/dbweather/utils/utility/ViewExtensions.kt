@@ -42,9 +42,10 @@ import java.util.*
 
 /**
  * Created by Darel Bitsy on 26/04/17.
+ *
  * Custom Binder for my layout
+ *
  */
-
 fun View.show() {
     visibility = View.VISIBLE
 }

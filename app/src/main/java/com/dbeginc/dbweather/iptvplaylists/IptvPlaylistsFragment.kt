@@ -22,11 +22,11 @@ import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import android.widget.SearchView
+import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentIptvPlaylistsBinding
@@ -103,7 +103,10 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
     override fun onViewCreated(view: View, savedState: Bundle?) {
         super.onViewCreated(view, savedState)
 
-        (activity as? AppCompatActivity)?.setSupportActionBar(binding.iptvPlaylistsToolbar)
+        (activity as? MainActivity)?.let { container ->
+            container.setSupportActionBar(binding.iptvPlaylistsToolbar)
+            binding.iptvPlaylistsToolbar.setNavigationOnClickListener { container.openNavigationDrawer() }
+        }
 
         setupView()
 

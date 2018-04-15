@@ -31,7 +31,6 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentYoutubeLivesBinding
 import com.dbeginc.dbweather.utils.utility.LOADING_PERIOD
-import com.dbeginc.dbweather.utils.utility.WithSharedElement
 import com.dbeginc.dbweather.utils.utility.goToYoutubeLiveDetailScreen
 import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweathercommon.view.MVMPVView
@@ -44,7 +43,7 @@ import com.dbeginc.dbweatherlives.youtubelives.YoutubeLivesViewModel
  *
  * Lives Page Fragment
  */
-class YoutubeLivesFragment : BaseFragment(), MVMPVView, WithSharedElement, SwipeRefreshLayout.OnRefreshListener, YoutubeLiveActionBridge {
+class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRefreshListener, YoutubeLiveActionBridge {
     private lateinit var viewModel: YoutubeLivesViewModel
     private lateinit var manageYoutubeLivesViewModel: ManageYoutubeLivesViewModel
     private lateinit var binding: FragmentYoutubeLivesBinding
@@ -114,8 +113,6 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, WithSharedElement, Swipe
     }
 
     override fun onRefresh() = getLives()
-
-    override fun retrieveSharedElement(): View = binding.youtubeLivesAppbar
 
     /********************* All Lives Tab Page Part *********************/
     override fun setupView() {

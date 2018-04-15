@@ -30,7 +30,6 @@ import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentNewspapersBinding
-import com.dbeginc.dbweather.utils.utility.WithSharedElement
 import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweathercommon.view.MVMPVView
 import com.dbeginc.dbweathernews.newspapers.NewsPapersViewModel
@@ -41,7 +40,7 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  *
  * Articles Tab Fragment
  */
-class NewsPapersFragment : BaseFragment(), MVMPVView, WithSharedElement {
+class NewsPapersFragment : BaseFragment(), MVMPVView {
     private lateinit var viewModel: NewsPapersViewModel
     private lateinit var binding: FragmentNewspapersBinding
     private val pageAdapter by lazy { ArticlesPagerAdapter(childFragmentManager) }
@@ -82,8 +81,6 @@ class NewsPapersFragment : BaseFragment(), MVMPVView, WithSharedElement {
 
         setupView()
     }
-
-    override fun retrieveSharedElement(): View = binding.newsPapersAppbar
 
     /******************************************** Articles Tab View Part ********************************************/
     override fun setupView() {

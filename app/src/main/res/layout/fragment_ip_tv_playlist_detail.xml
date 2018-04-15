@@ -35,8 +35,7 @@
             style="@style/Widget.Design.AppBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            android:transitionName="@string/app_bar_transition_name">
+            android:theme="@style/ThemeOverlay.AppCompat.Light">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/iptvPlaylistDetailToolbar"

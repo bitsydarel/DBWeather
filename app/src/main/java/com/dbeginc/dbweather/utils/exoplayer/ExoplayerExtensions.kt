@@ -37,7 +37,7 @@ private fun Context.getNetworkClient(): OkHttpClient = OkHttpClient
         .writeTimeout(35, TimeUnit.SECONDS)
         .readTimeout(55, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
-        .cache(Cache(File(cacheDir, "iptv_live_video_cache"), 100 * 1024 * 1024 /*50 MB*/))
+        .cache(Cache(File(cacheDir, "iptv_live_video_cache"), 100 * 1024 * 1024 /*100 MB*/))
         .followSslRedirects(true)
         .build()
 

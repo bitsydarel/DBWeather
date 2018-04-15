@@ -31,7 +31,6 @@ import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentFavoriteYoutubeLivesLayoutBinding
-import com.dbeginc.dbweather.utils.utility.WithSharedElement
 import com.dbeginc.dbweather.utils.utility.goToYoutubeLiveDetailScreen
 import com.dbeginc.dbweather.youtubelives.YoutubeLiveActionBridge
 import com.dbeginc.dbweathercommon.utils.RequestState
@@ -45,7 +44,7 @@ import com.dbeginc.dbweatherlives.viewmodels.YoutubeLiveModel
  *
  * Favorite Lives Page Fragment
  */
-class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActionBridge, WithSharedElement, SwipeRefreshLayout.OnRefreshListener {
+class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActionBridge, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var viewModel: FavoriteYoutubeLivesViewModel
     private lateinit var manageYoutubeLiveViewModel: ManageYoutubeLivesViewModel
     private lateinit var binding: FragmentFavoriteYoutubeLivesLayoutBinding
@@ -94,6 +93,9 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
         }
 
         setupView()
+
+        viewModel.loadFavoritesYoutubeLives()
+
     }
 
     override fun removeFromFavorite(youtubeLive: YoutubeLiveModel) {
@@ -101,7 +103,7 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
     }
 
     override fun addToFavorite(youtubeLive: YoutubeLiveModel) {
-        throw IllegalAccessException("not supported")
+        throw UnsupportedOperationException("Can't add to favorite in favorite screen")
     }
 
     override fun playYoutubeLive(youtubeLive: YoutubeLiveModel) {
@@ -113,8 +115,6 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
         }
     }
 
-    override fun retrieveSharedElement(): View = binding.favoriteYoutubeLivesAppbar
-
     /******************** Favorite Lives Tab View Part *********************/
     override fun setupView() {
         binding.favoriteYoutubeLivesContainer.setOnRefreshListener(this)
@@ -122,8 +122,6 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
         binding.favoriteYoutubeLivesList.adapter = favoriteYoutubeAdapter
 
         binding.favoriteYoutubeLivesList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
-        viewModel.loadFavoritesYoutubeLives()
     }
 
     override fun onStateChanged(state: RequestState) {

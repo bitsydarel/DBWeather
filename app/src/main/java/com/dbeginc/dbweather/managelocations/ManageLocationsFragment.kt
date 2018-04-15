@@ -34,7 +34,6 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentManageLocationsBinding
 import com.dbeginc.dbweather.utils.utility.LOADING_PERIOD
-import com.dbeginc.dbweather.utils.utility.WithSharedElement
 import com.dbeginc.dbweather.utils.utility.hide
 import com.dbeginc.dbweather.utils.utility.show
 import com.dbeginc.dbweathercommon.utils.RequestState
@@ -46,7 +45,7 @@ import com.dbeginc.dbweatherweather.viewmodels.WeatherLocationModel
 /**
  * A ManageLocationsFragment [BaseFragment] subclass.
  */
-class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge, WithSharedElement {
+class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge {
     private lateinit var viewModel: ManageLocationsViewModel
     private lateinit var binding: FragmentManageLocationsBinding
     private val locationsAdapter by lazy { ManageLocationsAdapter() }
@@ -94,8 +93,6 @@ class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge
 
         setupView()
     }
-
-    override fun retrieveSharedElement(): View = binding.manageLocationsAppbar
 
     override fun setupView() {
         binding.manageLocations.adapter = locationsAdapter

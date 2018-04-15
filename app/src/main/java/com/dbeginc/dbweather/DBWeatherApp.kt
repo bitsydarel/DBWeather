@@ -17,6 +17,7 @@ package com.dbeginc.dbweather
 
 import android.os.StrictMode
 import com.crashlytics.android.Crashlytics
+import com.dbeginc.dbweather.di.components.DaggerApplicationComponent
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.jakewharton.threetenabp.AndroidThreeTen
