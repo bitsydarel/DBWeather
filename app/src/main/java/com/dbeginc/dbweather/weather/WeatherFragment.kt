@@ -73,24 +73,24 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         return@lazy DayAdapter()
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
     private val viewModel: WeatherViewModel by lazy {
         return@lazy ViewModelProviders.of(this, factory.get())[WeatherViewModel::class.java]
     }
 
-    private val defaultWeatherObserver: Observer<WeatherModel> = Observer {
-        displayWeather(weather = it!!, isDefault = true)
+    private val defaultWeatherObserver: Observer<WeatherModel> = Observer { weather ->
+        weather?.let { displayWeather(weather = it, isDefault = true) }
     }
 
-    private val customWeatherObserver: Observer<WeatherModel> = Observer {
-        displayWeather(weather = it!!, isDefault = false)
+    private val customWeatherObserver: Observer<WeatherModel> = Observer { weather ->
+        weather?.let { displayWeather(weather = it, isDefault = false) }
     }
 
-    private val userLocationsObserver: Observer<List<WeatherLocationModel>> = Observer {
-        displayUserLocations(locations = it!!)
+    private val userLocationsObserver: Observer<List<WeatherLocationModel>> = Observer { location ->
+        location?.let { displayUserLocations(locations = it) }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -123,7 +123,6 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         searchView.isSubmitButtonEnabled = false
 
         searchView.setOnSuggestionListener(this)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
