@@ -42,7 +42,7 @@ class DayAdapter : BaseAdapter<DayWeatherModel, DayAdapter.DayViewHolder>(DayDif
     }
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
-        holder.bindDay(getItemForPosition(position))
+        holder.bindDay(day = getItemForPosition(position))
     }
 
     inner class DayViewHolder(private val binding: DayLayoutBinding) : RecyclerView.ViewHolder(binding.root) {

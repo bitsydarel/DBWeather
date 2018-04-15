@@ -21,9 +21,9 @@ package com.dbeginc.dbweatherweather.viewmodels
  * Weather Model
  */
 data class WeatherModel(
-        var location: WeatherLocationModel,
-        var current: CurrentWeatherModel,
-        var hourly: List<HourWeatherModel>,
-        var daily: List<DayWeatherModel>,
-        var alerts: List<AlertWeatherModel>?
+        val location: WeatherLocationModel,
+        val current: CurrentWeatherModel,
+        val hourly: List<HourWeatherModel>,
+        val daily: List<DayWeatherModel>,
+        val alerts: List<AlertWeatherModel>?
 )

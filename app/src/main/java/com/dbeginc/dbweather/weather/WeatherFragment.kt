@@ -28,8 +28,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.transition.Fade
-import android.support.transition.TransitionManager
 import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -61,21 +59,38 @@ import java.util.*
  */
 class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchView.OnSuggestionListener, Observer<android.location.Location> {
     private lateinit var binding: FragmentWeatherBinding
-    private lateinit var locationChangeEvent: WeatherLocationManager
-    private lateinit var viewModel: WeatherViewModel
     private var userLocations: List<WeatherLocationModel> = emptyList() // Quick fix for duplicate user locations
-    private val dailyWeatherAdapter = DayAdapter()
-    private val hourlyWeatherAdapter = HourAdapter()
-    override val stateObserver = Observer<RequestState> { onStateChanged(state = it!!) }
-    private val defaultWeatherObserver = Observer<WeatherModel> { displayWeather(weather = it!!, isDefault = true) }
-    private val customWeatherObserver = Observer<WeatherModel> { displayWeather(weather = it!!, isDefault = false) }
-    private val userLocationsObserver = Observer<List<WeatherLocationModel>> { displayUserLocations(locations = it!!) }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private val locationChangeEvent: WeatherLocationManager by lazy {
+        return@lazy WeatherLocationManager(context!!.applicationContext)
+    }
 
-        viewModel = ViewModelProviders.of(this, factory)[WeatherViewModel::class.java]
+    private val hourlyWeatherAdapter: HourAdapter by lazy {
+        return@lazy HourAdapter()
+    }
 
+    private val dailyWeatherAdapter: DayAdapter by lazy {
+        return@lazy DayAdapter()
+    }
+
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
+    }
+
+    private val viewModel: WeatherViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory)[WeatherViewModel::class.java]
+    }
+
+    private val defaultWeatherObserver: Observer<WeatherModel> = Observer {
+        displayWeather(weather = it!!, isDefault = true)
+    }
+
+    private val customWeatherObserver: Observer<WeatherModel> = Observer {
+        displayWeather(weather = it!!, isDefault = false)
+    }
+
+    private val userLocationsObserver: Observer<List<WeatherLocationModel>> = Observer {
+        displayUserLocations(locations = it!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -88,13 +103,6 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         viewModel.getCustomWeather().observe(this, customWeatherObserver)
 
         viewModel.getUserLocations().observe(this, userLocationsObserver)
-
-        if (preferences.isGpsPermissionOn()) {
-            locationChangeEvent = WeatherLocationManager(context!!.applicationContext)
-
-            locationChangeEvent.observe(this, this)
-        }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -144,24 +152,32 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
 
         (activity as? MainActivity)?.let { container ->
             container.setSupportActionBar(binding.weatherToolbar)
-            binding.weatherToolbar.setNavigationOnClickListener { container.openNavigationDrawer() }
+            binding.weatherToolbar.setNavigationOnClickListener {
+                container.openNavigationDrawer()
+            }
         }
 
         setupView()
+
+        viewModel.loadUserCities()
+
+        askForWeather()
+
+        if (preferences.isGpsPermissionOn()) {
+            locationChangeEvent.observe(this, this)
+        }
     }
 
     override fun onChanged(newLocation: Location?) {
-        if (newLocation != null) {
-            val location = WeatherLocationModel(
+        newLocation?.run {
+            preferences.updateDefaultCoordinates(
                     preferences.getDefaultLocation(),
-                    newLocation.latitude,
-                    newLocation.longitude,
-                    "",
-                    ""
+                    latitude,
+                    longitude
             )
-
-            viewModel.loadWeather(location)
         }
+
+        askForWeather()
     }
 
     override fun onSuggestionSelect(position: Int): Boolean {
@@ -176,7 +192,13 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
 
     /********************************* View Part *********************************/
     override fun setupView() {
-        setupLocationsMenu()
+        binding.currentLocationMenuItem.apply {
+            labelText = preferences.getDefaultLocation()
+            setImageResource(R.drawable.ic_current_location)
+            setOnClickListener {
+                viewModel.loadWeather(preferences.findDefaultLocation())
+            }
+        }
 
         binding.hourlyRecyclerView.adapter = hourlyWeatherAdapter
 
@@ -187,10 +209,6 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         binding.dailyWeatherRCV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         binding.dailyWeatherRCV.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-
-        viewModel.loadUserCities()
-
-        askForWeather()
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -235,13 +253,11 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     }
 
     private fun displayWeather(weather: WeatherModel, isDefault: Boolean) {
-        TransitionManager.beginDelayedTransition(binding.weatherLayout, Fade())
-
         binding.weather = weather
 
         binding.current = weather.current
 
-        if (weather.alerts != null) showWeatherAlerts(weather.alerts!!)
+        weather.alerts?.let { validAlerts -> showWeatherAlerts(validAlerts) }
 
         onWeatherStateChanged(weather.current.icon)
 
@@ -253,14 +269,13 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
                 weather.location.name,
                 weather.location.latitude,
                 weather.location.longitude
-        )
-        else preferences.updateCustomCoordinates(
+        ) else preferences.updateCustomCoordinates(
                 weather.location.name,
                 weather.location.latitude,
                 weather.location.longitude
         )
 
-        preferences.updateCurrentLocationType(isDefault)
+        preferences.updateCurrentLocationType(isDefault = isDefault)
 
         viewModel.loadUserCities()
     }
@@ -300,51 +315,47 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         else viewModel.loadWeatherForCity(preferences.findCustomLocation())
     }
 
-    private fun setupLocationsMenu() {
-        binding.currentLocationMenuItem.apply {
-            labelText = preferences.getDefaultLocation()
-            setImageResource(R.drawable.ic_current_location)
-            setOnClickListener { viewModel.loadWeather(preferences.findDefaultLocation()) }
-        }
-    }
-
     private fun showWeatherAlerts(alerts: List<AlertWeatherModel>) {
-        val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
 
-        initChannels(notificationManager)
+        notificationManager?.let {
+            initChannels(notificationManager = it)
 
-        val randomize = Random().nextInt()
-        val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val browserIntent = Intent()
-                .setAction(Intent.ACTION_VIEW)
-                .addCategory(Intent.CATEGORY_BROWSABLE)
+            val randomize = Random().nextInt()
 
-        val cancel = getString(android.R.string.cancel)
+            val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-        val openInBrowser = getString(R.string.open_with)
+            val browserIntent = Intent()
+                    .setAction(Intent.ACTION_VIEW)
+                    .addCategory(Intent.CATEGORY_BROWSABLE)
 
-        for ((_, title, description, uri, _, _, regions) in alerts) {
-            val builder = NotificationCompat.Builder(activity!!, WEATHER_ALERT_CHANNEL_ID)
+            val cancel = getString(android.R.string.cancel)
 
-            browserIntent.data = if (uri.isEmpty()) Uri.EMPTY else Uri.parse(uri)
+            val openInBrowser = getString(R.string.open_with)
 
-            val notificationId = WEATHER_ALERT_ID.xor(randomize)
+            for ((_, title, description, uri, _, _, regions) in alerts) {
+                val builder = NotificationCompat.Builder(activity!!, WEATHER_ALERT_CHANNEL_ID)
 
-            val locations = regions.joinToString()
+                browserIntent.data = if (uri.isEmpty()) Uri.EMPTY else Uri.parse(uri)
 
-            builder.setContentInfo(getString(R.string.notification_alert_city).format(locations))
-                    .setContentTitle(title)
-                    .setContentText(description)
-                    .addAction(R.drawable.ic_close_black, cancel, getDismissIntent(notificationId, context!!))
-                    .addAction(R.drawable.ic_internet, openInBrowser, PendingIntent.getActivity(activity, notificationId, browserIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setSound(notificationSound)
-                    .setStyle(NotificationCompat.BigTextStyle().bigText(description))
-                    .setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                    .setChannelId(WEATHER_ALERT_CHANNEL_ID)
+                val notificationId = WEATHER_ALERT_ID.xor(randomize)
 
-            notificationManager.notify(notificationId, builder.build())
+                val locations = regions.joinToString()
+
+                builder.setContentInfo(getString(R.string.notification_alert_city).format(locations))
+                        .setContentTitle(title)
+                        .setContentText(description)
+                        .addAction(R.drawable.ic_close_black, cancel, getDismissIntent(notificationId, context!!))
+                        .addAction(R.drawable.ic_internet, openInBrowser, PendingIntent.getActivity(activity, notificationId, browserIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSound(notificationSound)
+                        .setStyle(NotificationCompat.BigTextStyle().bigText(description))
+                        .setCategory(NotificationCompat.CATEGORY_ALARM)
+                        .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+                        .setChannelId(WEATHER_ALERT_CHANNEL_ID)
+
+                it.notify(notificationId, builder.build())
+            }
         }
     }
 
