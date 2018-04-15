@@ -46,4 +46,15 @@ class IpTvPlaylistDetailViewModel @Inject constructor(private val model: LivesRe
                 .subscribe(_channels::postValue, logger::logError)
                 .addTo(subscriptions)
     }
+
+    fun findIpTvLive(playlistId: String, possibleLiveName: String) {
+        model.findIpTvLive(playlistId = playlistId, name = possibleLiveName)
+                .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
+                .doOnComplete { requestState.postValue(RequestState.COMPLETED) }
+                .doOnError { requestState.postValue(RequestState.ERROR) }
+                .map { iptvLives -> iptvLives.map { it.toUi() } }
+                .observeOn(threads.UI)
+                .subscribe(_channels::postValue, logger::logError)
+                .addTo(subscriptions)
+    }
 }

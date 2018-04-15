@@ -157,4 +157,6 @@ interface LivesRepository : Cleanable {
 
     fun findPlaylist(name: String): Maybe<List<IpTvPlaylist>>
 
+    fun findIpTvLive(playlistId: String, name: String): Maybe<List<IpTvLive>>
+
 }

@@ -135,6 +135,11 @@ class LivesRepositoryImpl private constructor(private val threads: ThreadProvide
                 .subscribeOn(threads.CP)
     }
 
+    override fun findIpTvLive(playlistId: String, name: String): Maybe<List<IpTvLive>> {
+        return localSource.findIpTvLive(playlistId, name)
+                .subscribeOn(threads.CP)
+    }
+
     override fun clean() = subscriptions.clear()
 
     private fun addYoutubeLives(youtubeLives: List<YoutubeLive>) {

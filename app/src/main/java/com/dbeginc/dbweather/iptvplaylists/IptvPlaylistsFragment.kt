@@ -23,8 +23,8 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.*
-import android.widget.SearchView
 import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
@@ -45,8 +45,8 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
         return@lazy ViewModelProviders.of(this, factory.get())[IpTvPlayListsViewModel::class.java]
     }
 
-    private val playListsAdapter by lazy {
-        IpTvPlayListAdapter(onItemClick = this::onPlayListSelected)
+    private val playListsAdapter: IpTvPlayListAdapter by lazy {
+        return@lazy IpTvPlayListAdapter(onItemClick = this::onPlayListSelected)
     }
 
     private val ipTvPlayListsObserver = Observer<List<IpTvPlayListModel>> {
@@ -62,19 +62,24 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
 
         inflater.inflate(R.menu.iptv_playlists_menu, menu)
 
-        val searchView = menu.findItem(R.id.action_search)?.actionView as? SearchView
+        val searchView = menu.findItem(R.id.action_find_playlist)?.actionView as? android.support.v7.widget.SearchView
 
-        searchView?.queryHint = getString(R.string.search_playlist)
+        searchView?.let {
+            it.queryHint = getString(R.string.search_playlist)
 
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = true
+            it.isSubmitButtonEnabled = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null && newText.isNotBlank()) viewModel.findPlayList(newText)
-                return true
-            }
+            it.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = true
 
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText != null && newText.isNotBlank())
+                        viewModel.findPlayList(newText)
+                    return true
+                }
+
+            })
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
