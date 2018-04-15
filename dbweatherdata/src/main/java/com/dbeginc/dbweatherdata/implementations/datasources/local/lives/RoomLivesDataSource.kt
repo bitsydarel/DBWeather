@@ -16,6 +16,8 @@
 package com.dbeginc.dbweatherdata.implementations.datasources.local.lives
 
 import android.content.Context
+import android.support.annotation.RestrictTo
+import android.support.annotation.VisibleForTesting
 import com.dbeginc.dbweatherdata.implementations.datasources.local.LocalLivesDataSource
 import com.dbeginc.dbweatherdata.proxies.local.lives.LocalFavoriteLive
 import com.dbeginc.dbweatherdata.proxies.local.lives.LocalIpTvPlaylist
@@ -35,6 +37,13 @@ class RoomLivesDataSource private constructor(private val db: RoomLivesDatabase)
         @JvmStatic
         fun create(context: Context): RoomLivesDataSource {
             return RoomLivesDataSource(RoomLivesDatabase.createDb(context))
+        }
+
+        @RestrictTo(RestrictTo.Scope.TESTS)
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        @JvmStatic
+        fun createForTest(testDatabase: RoomLivesDatabase): RoomLivesDataSource {
+            return RoomLivesDataSource(db = testDatabase)
         }
     }
 

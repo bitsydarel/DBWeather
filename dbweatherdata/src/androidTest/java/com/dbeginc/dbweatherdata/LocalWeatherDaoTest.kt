@@ -51,7 +51,7 @@ class LocalWeatherDaoTest {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
 
         db = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(), LocalCurrentWeatherDatabase::class.java).allowMainThreadQueries().build()
-        weather = getWeatherAndroid()
+//        weather = getWeatherAndroid()
         fullWeather = getFullWeatherAndroid()
     }
 
@@ -125,16 +125,12 @@ class LocalWeatherDaoTest {
                 .assertValue(fullWeather)
 
         // delete one weather location
-        db.weatherDao().deleteWeather(weather)
+        db.weatherDao().deleteWeather(weather.location.locationName)
 
         // check that weather and location has been successfully deleted
         db.weatherDao().getWeatherByLocation(weather.location.locationName)
                 .test()
                 .assertComplete()
-
-        db.weatherDao().getLocations(fullWeather.location.locationName)
-                .test()
-                .assertValueAt(0, { locations -> locations.contains(fullWeather.location) })
 
         // checking if other location still in the db
         db.weatherDao().getWeatherByLocation(fullWeather.location.locationName)
@@ -142,16 +138,6 @@ class LocalWeatherDaoTest {
                 .assertValue(fullWeather)
     }
 
-    @Test
-    fun should_get_location_for_specific_weather() {
-        db.weatherDao().putWeather(weather)
-        db.weatherDao().putWeather(fullWeather)
-
-        db.weatherDao()
-                .getLocations(weather.location.locationName)
-                .test()
-                .assertValue(listOf(weather.location))
-    }
 
     @Test
     fun should_get_user_locations() {

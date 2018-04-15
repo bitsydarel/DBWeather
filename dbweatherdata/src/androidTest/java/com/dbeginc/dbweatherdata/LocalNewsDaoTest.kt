@@ -30,6 +30,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.*
 import kotlin.test.assertFailsWith
 
 /**
@@ -56,22 +57,67 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_articles_get_inserted_articles_and_get_specific_article() {
-        val androidSource = LocalNewsPaper("android-source", "Android NewsPaper", "News About android", "https://developer.android.com", "Development", "en", "us", false)
-        val iosSource = LocalNewsPaper("ios-source", "Ios NewsPaper", "News About ios", "https://developer.apple.com/", "Development", "en", "us", false)
+        val androidSource = LocalNewsPaper(
+                id = "android-source",
+                name = "Android NewsPaper",
+                description = "News About android",
+                url = "https://developer.android.com",
+                category = "Development",
+                language = "en",
+                country = "us",
+                subscribed = false
+        )
 
-        val androidArticle1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", "", null, androidSource.id)
-        val androidArticle2 = LocalArticle("D Bitsy", "Android spaceship", "short desc", "androidUrl2", "", "2017-10-03T15:27:02Z", androidSource.id)
-        val iosArticle1 = LocalArticle("Darel Bitsy", "IOS spaceship", "", "iosUrl1", "", "2017-10-03T15:27:02Z", iosSource.id)
+        val iosSource = LocalNewsPaper(
+                id = "ios-source",
+                name = "Ios NewsPaper",
+                description = "News About ios",
+                url = "https://developer.apple.com/",
+                category = "Development",
+                language = "en",
+                country = "us",
+                subscribed = false
+        )
+
+        val androidArticle1 = LocalArticle(
+                newsPaperId = androidSource.id,
+                title = "Android spaceship",
+                description = "no description",
+                url = "androidUrl1",
+                author = "",
+                urlToImage = null,
+                publishedAt = Date().time
+        )
+
+        val androidArticle2 = LocalArticle(
+                newsPaperId = androidSource.name,
+                title = "Android spaceship",
+                description = "short desc",
+                url = "androidUrl2",
+                urlToImage = "",
+                author = "D Bitsy",
+                publishedAt = Date().time
+        )
+
+        val iosArticle1 = LocalArticle(
+                newsPaperId = iosSource.id,
+                title = "Darel Bitsy",
+                description = "IOS spaceship",
+                url = "",
+                urlToImage = "iosUrl1",
+                author = "",
+                publishedAt = Date().time
+        )
 
         /**
          * Before getting a articles we need to have the corresponding article source in the database
          */
-        db.newsDao().putSources(listOf(androidSource, iosSource))
+        db.newsDao().putNewsPapers(listOf(androidSource, iosSource))
 
         db.newsDao().putArticles(listOf(androidArticle1, iosArticle1, androidArticle2))
 
         db.newsDao()
-                .getArticles(listOf(androidSource.id))
+                .getArticles(newsPaperId = androidSource.id, newsPaperName = androidSource.name)
                 .test()
                 .assertValue { articles -> articles.size == 2 }
 
@@ -86,7 +132,15 @@ class LocalNewsDaoTest {
     fun should_not_insert_article_if_source_not_in_Db() {
         val sourceId = "android-source"
 
-        val article1 = LocalArticle("Darel Bitsy", "Android spaceship", "no description", "androidUrl1", "", null, sourceId)
+        val article1 = LocalArticle(
+                newsPaperId = sourceId,
+                author = "Darel Bitsy",
+                title = "Android spaceship",
+                description = "no description",
+                url = "androidUrl1",
+                urlToImage = "",
+                publishedAt = 0
+        )
 
         assertFailsWith(SQLiteConstraintException::class) {
             db.newsDao().putArticles(listOf(article1))
@@ -95,10 +149,24 @@ class LocalNewsDaoTest {
 
     @Test
     fun should_insert_sources_and_get_inserted_sources() {
-        val androidSource = LocalNewsPaper("android-source", "Android NewsPaper", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
-        val iosSource = androidSource.copy(id = "ios-source", name = "Ios NewsPaper", description = "Ios Stuff", url = "https://developer.apple.com/")
+        val androidSource = LocalNewsPaper(
+                id = "android-source",
+                name = "Android NewsPaper",
+                description = "Android stuff",
+                url = "https://developer.android.com",
+                category = "Development",
+                language = "en",
+                country = "us",
+                subscribed = false
+        )
+        val iosSource = androidSource.copy(
+                id = "ios-source",
+                name = "Ios NewsPaper",
+                description = "Ios Stuff",
+                url = "https://developer.apple.com/"
+        )
 
-        db.newsDao().putSources(listOf(androidSource, iosSource))
+        db.newsDao().putNewsPapers(listOf(androidSource, iosSource))
 
         db.newsDao()
                 .getNewsPapers()
@@ -106,19 +174,38 @@ class LocalNewsDaoTest {
                 .assertValue { sources -> sources == listOf(androidSource, iosSource) }
 
         db.newsDao()
-                .getSource(androidSource.id)
+                .getNewsPaper(name = androidSource.name)
                 .test()
                 .assertValue { source -> source == androidSource }
-
     }
 
     @Test
     fun should_insert_sources_and_get_subscribed_sources() {
-        val androidSource = LocalNewsPaper("android-source", "Android NewsPaper", "Android stuff", "https://developer.android.com", "Development", "en", "us", false)
-        val iosSource = androidSource.copy(id = "ios-source", name = "Ios NewsPaper", description = "Ios Stuff", url = "https://developer.apple.com")
-        val windowsSource = androidSource.copy(id = "windows-source", name = "Windows NewsPaper", description = "Windows Stuff", url = "https://developer.microsoft.com")
+        val androidSource = LocalNewsPaper(
+                id = "android-source",
+                name = "Android NewsPaper",
+                description = "Android stuff",
+                url = "https://developer.android.com",
+                category = "Development",
+                language = "en",
+                country = "us",
+                subscribed = false
+        )
+        val iosSource = androidSource.copy(
+                id = "ios-source",
+                name = "Ios NewsPaper",
+                description = "Ios Stuff",
+                url = "https://developer.apple.com"
+        )
 
-        db.newsDao().putSources(listOf(androidSource, iosSource, windowsSource))
+        val windowsSource = androidSource.copy(
+                id = "windows-source",
+                name = "Windows NewsPaper",
+                description = "Windows Stuff",
+                url = "https://developer.microsoft.com"
+        )
+
+        db.newsDao().putNewsPapers(listOf(androidSource, iosSource, windowsSource))
 
         androidSource.subscribed = true
 
