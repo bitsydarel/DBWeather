@@ -112,4 +112,9 @@ class RoomLivesDataSource private constructor(private val db: RoomLivesDatabase)
                 .map { it.map { it.toDomain() } }
     }
 
+    override fun findIpTvLive(playlistId: String, name: String): Maybe<List<IpTvLive>> {
+        return db.livesDao().findIpTvLiveWithChannelName(playlistId, name)
+                .map { it.map { it.toDomain() } }
+    }
+
 }

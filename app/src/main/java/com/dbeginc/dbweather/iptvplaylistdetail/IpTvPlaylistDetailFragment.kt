@@ -23,9 +23,8 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.widget.SearchView
+import android.view.*
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentIpTvPlaylistDetailBinding
@@ -75,7 +74,9 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
 
-        playlistId = if (savedState == null) arguments!!.getString(IPTV_PLAYLIST_KEY) else savedState.getString(IPTV_PLAYLIST_KEY)
+        playlistId = if (savedState == null) arguments!!.getString(IPTV_PLAYLIST_KEY)
+        else savedState.getString(IPTV_PLAYLIST_KEY)
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -92,8 +93,30 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.iptv_playlists_menu, menu)
+
+        val searchView = menu.findItem(R.id.action_find_iptv)?.actionView as? SearchView
+
+        searchView?.queryHint = getString(R.string.search_iptv_live)
+
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null && query.isNotBlank())
+                    viewModel.findIpTvLive(playlistId = playlistId, possibleLiveName = query)
+                return true
+            }
+
+        })
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
 
         binding = DataBindingUtil.inflate(
                 inflater,

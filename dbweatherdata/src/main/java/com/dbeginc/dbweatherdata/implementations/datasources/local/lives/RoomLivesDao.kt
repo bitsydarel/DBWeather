@@ -75,4 +75,7 @@ interface RoomLivesDao {
     @Query("SELECT * FROM $IPTV_PLAYLIST_TABLE WHERE name LIKE :name")
     fun findIpPlayLists(name: String): Maybe<List<LocalIpTvPlaylistWithChannels>>
 
+    @Query("SELECT * FROM $IPTV_LIVE_TABLE WHERE playlist_id LIKE :playlistId AND channel_name LIKE :name")
+    fun findIpTvLiveWithChannelName(playlistId: String, name: String): Maybe<List<LocalIpTvLive>>
+
 }

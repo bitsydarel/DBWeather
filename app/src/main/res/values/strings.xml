@@ -196,4 +196,5 @@
     <string name="iptv_logo">IpTv Logo</string>
     <string name="channel_of">Channel of %1$s</string>
     <string name="could_not_load_channels">could not load channels</string>
+    <string name="search_iptv_live">Search IpTv Live</string>
 </resources>
