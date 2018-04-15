@@ -19,10 +19,10 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.util.ArrayMap
 import android.support.v4.view.PagerAdapter
-import android.view.ViewGroup
 import com.dbeginc.dbweather.articles.ArticlesFragment
 import com.dbeginc.dbweathercommon.utils.SmartFragmentStatePagerAdapter
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
+import java.lang.ref.WeakReference
 
 /**
  * Created by darel on 12.02.18.
@@ -31,7 +31,7 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  */
 class ArticlesPagerAdapter(fragmentManager: FragmentManager) : SmartFragmentStatePagerAdapter<ArticlesFragment>(fragmentManager) {
     private val newsPapers: ArrayMap<Int, NewsPaperModel> = ArrayMap()
-    private var temporaryIds: ArrayMap<Int, NewsPaperModel>? = null
+    private var temporaryIds: WeakReference<ArrayMap<Int, NewsPaperModel>?> = WeakReference(null)
 
     override fun getItem(position: Int): Fragment {
         val newsPaper = newsPapers.getValue(position)
@@ -57,7 +57,7 @@ class ArticlesPagerAdapter(fragmentManager: FragmentManager) : SmartFragmentStat
          */
         return when {
             pagePosition == null -> PagerAdapter.POSITION_NONE
-            newsPapers[pagePosition] == temporaryIds?.get(pagePosition) -> PagerAdapter.POSITION_UNCHANGED
+            newsPapers[pagePosition] == temporaryIds.get()?.get(pagePosition) -> PagerAdapter.POSITION_UNCHANGED
             else -> PagerAdapter.POSITION_NONE
         }
     }
@@ -66,16 +66,9 @@ class ArticlesPagerAdapter(fragmentManager: FragmentManager) : SmartFragmentStat
 
     override fun getCount(): Int = newsPapers.size
 
-    override fun finishUpdate(container: ViewGroup) {
-        super.finishUpdate(container)
-
-        temporaryIds = null
-    }
-
-    @Synchronized
     fun refresh(newData: List<NewsPaperModel>) {
         // create copy of current dataset
-        temporaryIds = ArrayMap(newsPapers)
+        temporaryIds = WeakReference(ArrayMap(newsPapers))
 
         // update the dataset with new one
         newData.forEachIndexed { index, newsPaperModel ->

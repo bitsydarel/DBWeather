@@ -25,12 +25,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
+import android.support.v4.view.GravityCompat
 import android.support.v4.view.animation.LinearOutSlowInInterpolator
-import android.view.Gravity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityArticleDetailBinding
-import com.dbeginc.dbweather.utils.services.DBWeatherCustomTabManager
+import com.dbeginc.dbweather.utils.services.DBWeatherExternalContentManager
 import com.dbeginc.dbweather.utils.utility.ARTICLE_KEY
 import com.dbeginc.dbweather.utils.utility.getColorPrimaryDark
 import com.dbeginc.dbweather.utils.utility.snack
@@ -40,11 +40,18 @@ import com.dbeginc.dbweathernews.articledetail.ArticleDetailViewModel
 import com.dbeginc.dbweathernews.viewmodels.ArticleModel
 
 class ArticleDetailActivity : BaseActivity(), MVMPVView {
-    private lateinit var viewModel: ArticleDetailViewModel
     private lateinit var binding: ActivityArticleDetailBinding
     private lateinit var customTabsIntent: CustomTabsIntent
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
-    private val articleObserver = Observer<ArticleModel> {
+
+    private val viewModel: ArticleDetailViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[ArticleDetailViewModel::class.java]
+    }
+
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
+    }
+
+    private val articleObserver: Observer<ArticleModel> = Observer {
         binding.article = it
 
         binding.executePendingBindings()
@@ -54,20 +61,19 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
         super.onCreate(savedState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val slide = android.transition.Slide(Gravity.TOP)
+            val slideFromEndOfScreen = android.transition.Slide(GravityCompat.END)
 
-            slide.interpolator = LinearOutSlowInInterpolator()
+            slideFromEndOfScreen.interpolator = LinearOutSlowInInterpolator()
 
-            window.enterTransition = slide
+            window.enterTransition = slideFromEndOfScreen
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_article_detail)
 
-        binding.article = if (savedState == null) intent.getParcelableExtra(ARTICLE_KEY) else savedState.getParcelable(ARTICLE_KEY)
+        binding.article = if (savedState == null) intent.getParcelableExtra(ARTICLE_KEY)
+        else savedState.getParcelable(ARTICLE_KEY)
 
-        viewModel = ViewModelProviders.of(this, factory)[ArticleDetailViewModel::class.java]
-
-        customTabsIntent = CustomTabsIntent.Builder(DBWeatherCustomTabManager.retrieveSession())
+        customTabsIntent = CustomTabsIntent.Builder(DBWeatherExternalContentManager.retrieveSession())
                 .setToolbarColor(getColorPrimaryDark())
                 .enableUrlBarHiding()
                 .setShowTitle(true)
@@ -77,7 +83,7 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
                 .setCloseButtonIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_arrow))
                 .build()
 
-        DBWeatherCustomTabManager.prepareBrowserForUrl(binding.article!!.url)
+        DBWeatherExternalContentManager.prepareBrowserForUrl(binding.article!!.url)
 
         viewModel.getRequestState().observe(this, stateObserver)
 
@@ -86,7 +92,6 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
         setSupportActionBar(binding.articleDetailToolbar)
 
         setupView()
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -101,8 +106,12 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
 
         binding.openFullArticle.setOnClickListener { openFullArticle() }
 
-        viewModel.loadArticleDetail(articleSourceId = binding.article!!.sourceId, articleUrl = binding.article!!.url)
-
+        binding.article?.let { validArticle ->
+            viewModel.loadArticleDetail(
+                    articleSourceId = validArticle.sourceId,
+                    articleUrl = validArticle.url
+            )
+        }
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -114,7 +123,7 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
     }
 
     private fun openFullArticle() {
-        val isAvailable: Boolean = DBWeatherCustomTabManager.retrieveSession() != null
+        val isAvailable: Boolean = DBWeatherExternalContentManager.retrieveSession() != null
         val articleUrl = Uri.parse(binding.article?.url)
 
         if (isAvailable) customTabsIntent.launchUrl(this, articleUrl)
@@ -145,5 +154,4 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
     private fun requestFailed() {
         binding.articleDetailLayout.snack(message = "Could not load the artice detail")
     }
-
 }

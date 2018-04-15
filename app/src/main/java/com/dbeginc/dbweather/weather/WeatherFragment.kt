@@ -78,7 +78,7 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     }
 
     private val viewModel: WeatherViewModel by lazy {
-        return@lazy ViewModelProviders.of(this, factory)[WeatherViewModel::class.java]
+        return@lazy ViewModelProviders.of(this, factory.get())[WeatherViewModel::class.java]
     }
 
     private val defaultWeatherObserver: Observer<WeatherModel> = Observer {
@@ -163,15 +163,15 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
 
         askForWeather()
 
-        if (preferences.isGpsPermissionOn()) {
+        if (preferences.get().isGpsPermissionOn()) {
             locationChangeEvent.observe(this, this)
         }
     }
 
     override fun onChanged(newLocation: Location?) {
         newLocation?.run {
-            preferences.updateDefaultCoordinates(
-                    preferences.getDefaultLocation(),
+            preferences.get().updateDefaultCoordinates(
+                    preferences.get().getDefaultLocation(),
                     latitude,
                     longitude
             )
@@ -193,10 +193,10 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     /********************************* View Part *********************************/
     override fun setupView() {
         binding.currentLocationMenuItem.apply {
-            labelText = preferences.getDefaultLocation()
+            labelText = preferences.get().getDefaultLocation()
             setImageResource(R.drawable.ic_current_location)
             setOnClickListener {
-                viewModel.loadWeather(preferences.findDefaultLocation())
+                viewModel.loadWeather(preferences.get().findDefaultLocation())
             }
         }
 
@@ -265,17 +265,17 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
 
         hourlyWeatherAdapter.updateData(weather.hourly)
 
-        if (isDefault) preferences.updateDefaultCoordinates(
+        if (isDefault) preferences.get().updateDefaultCoordinates(
                 weather.location.name,
                 weather.location.latitude,
                 weather.location.longitude
-        ) else preferences.updateCustomCoordinates(
+        ) else preferences.get().updateCustomCoordinates(
                 weather.location.name,
                 weather.location.latitude,
                 weather.location.longitude
         )
 
-        preferences.updateCurrentLocationType(isDefault = isDefault)
+        preferences.get().updateCurrentLocationType(isDefault = isDefault)
 
         viewModel.loadUserCities()
     }
@@ -311,8 +311,8 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     }
 
     private fun askForWeather() {
-        if (preferences.isCurrentLocationDefault()) viewModel.loadWeather(preferences.findDefaultLocation())
-        else viewModel.loadWeatherForCity(preferences.findCustomLocation())
+        if (preferences.get().isCurrentLocationDefault()) viewModel.loadWeather(preferences.get().findDefaultLocation())
+        else viewModel.loadWeatherForCity(preferences.get().findCustomLocation())
     }
 
     private fun showWeatherAlerts(alerts: List<AlertWeatherModel>) {

@@ -19,16 +19,13 @@ ext.versions = [
         versionCode          : 6,
         versionName          : "1.6",
         buildTools           : '27.0.3',
-        androidSupportLibrary : '27.1.0',
+        androidSupportLibrary : '27.1.1',
         androidPluginVersion : '3.1.1',
         architectureComponentPersistence : "1.0.0",
         architectureComponentLifecycle : "1.1.0",
 
         kotlin_version : '1.2.31',
         kotlinCoroutines : '0.22.5',
-
-        rxJava : '2.1.9',
-        rxAndroid: '2.0.2-SNAPSHOT',
 
         googleLibraries : '11.6.0',
         exoplayer : '2.7.3',
@@ -46,7 +43,6 @@ ext.versions = [
         junit : 4.12,
         mockito : '2.13.0',
         crashlytics : '2.7.0@aar',
-        constraint_layout : '1.1.0-beta3',
         multidex : '1.0.2',
         espresso : '3.0.1',
         android_test_runner : "1.0.1",
@@ -67,8 +63,8 @@ ext.kotlinLibs = [
 ]
 
 ext.rxLibs = [
-        rxJava : "io.reactivex.rxjava2:rxjava:$versions.rxJava",
-        rxAndroid : "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid",
+        rxJava : "io.reactivex.rxjava2:rxjava:2.1.9",
+        rxAndroid : "io.reactivex.rxjava2:rxandroid:2.0.2-SNAPSHOT",
         rxRelay : "com.jakewharton.rxrelay2:rxrelay:2.0.0"
 ]
 
@@ -78,7 +74,7 @@ ext.androidSupportLibs = [
         android_test_runner : "com.android.support.test:runner:$versions.android_test_runner",
         customtabs : "com.android.support:customtabs:$versions.androidSupportLibrary",
         cardview_v7 : "com.android.support:cardview-v7:$versions.androidSupportLibrary",
-        constain_layout : "com.android.support.constraint:constraint-layout:$versions.constraint_layout",
+        constain_layout : "com.android.support.constraint:constraint-layout:1.1.0",
         design : "com.android.support:design:$versions.androidSupportLibrary",
         databinding : "com.android.databinding:compiler:$versions.androidPluginVersion",
         espresso: "com.android.support.test.espresso:espresso-core:$versions.espresso",

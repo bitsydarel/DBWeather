@@ -34,7 +34,11 @@ class LaunchActivity : BaseActivity() {
 
         setContentView(R.layout.activity_launch)
 
-        if (savedState == null) goToSplashScreen(container = this, layoutId = R.id.launchContent)
+        if (savedState == null)
+            goToSplashScreen(
+                    container = this,
+                    layoutId = R.id.launchContent
+            )
 
     }
 

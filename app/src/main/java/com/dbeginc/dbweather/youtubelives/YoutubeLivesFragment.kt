@@ -17,7 +17,6 @@ package com.dbeginc.dbweather.youtubelives
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
@@ -44,22 +43,26 @@ import com.dbeginc.dbweatherlives.youtubelives.YoutubeLivesViewModel
  * Lives Page Fragment
  */
 class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRefreshListener, YoutubeLiveActionBridge {
-    private lateinit var viewModel: YoutubeLivesViewModel
-    private lateinit var manageYoutubeLivesViewModel: ManageYoutubeLivesViewModel
     private lateinit var binding: FragmentYoutubeLivesBinding
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
-    private val adapter by lazy { YoutubeLiveAdapter(containerBridge = this) }
-    private val youtubeLivesObserver = Observer<List<YoutubeLiveModel>> {
-        adapter.updateData(newData = it!!)
+
+    private val viewModel: YoutubeLivesViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[YoutubeLivesViewModel::class.java]
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private val manageYoutubeLivesViewModel: ManageYoutubeLivesViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[ManageYoutubeLivesViewModel::class.java]
+    }
 
-        viewModel = ViewModelProviders.of(this, factory)[YoutubeLivesViewModel::class.java]
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
+    }
 
-        manageYoutubeLivesViewModel = ViewModelProviders.of(this, factory)[ManageYoutubeLivesViewModel::class.java]
+    private val adapter by lazy {
+        return@lazy YoutubeLiveAdapter(containerBridge = this)
+    }
 
+    private val youtubeLivesObserver = Observer<List<YoutubeLiveModel>> {
+        adapter.updateData(newData = it!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -151,7 +154,7 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRef
     }
 
     private fun getLives() {
-        val preferredOrder = preferences.getYoutubeLivesPreferredOrder()
+        val preferredOrder = preferences.get().getYoutubeLivesPreferredOrder()
 
         viewModel.loadAllYoutubeLives(sortingOrder = preferredOrder)
     }

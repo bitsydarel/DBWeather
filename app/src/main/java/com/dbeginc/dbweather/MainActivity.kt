@@ -28,7 +28,7 @@ import android.widget.Toast
 import com.dbeginc.dbweather.R.id.main_content
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityMainBinding
-import com.dbeginc.dbweather.utils.services.DBWeatherCustomTabManager
+import com.dbeginc.dbweather.utils.services.DBWeatherExternalContentManager
 import com.dbeginc.dbweather.utils.utility.*
 
 
@@ -54,14 +54,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         if (!isNetworkAvailable()) showNetworkNotAvailable()
 
-        if (preferences.isFirstLaunchOfApplication())
-            preferences.changeFirstLaunchStatus()
+        if (preferences.get().isFirstLaunchOfApplication())
+            preferences.get().changeFirstLaunchStatus()
     }
 
     override fun onStart() {
         super.onStart()
 
-        DBWeatherCustomTabManager.initialize(applicationContext)
+        DBWeatherExternalContentManager.initialize(applicationContext)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -82,7 +82,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onDestroy() {
         super.onDestroy()
-        preferences.changeDefaultLocationStatus(true)
+        preferences.get().changeDefaultLocationStatus(true)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

@@ -18,7 +18,6 @@ package com.dbeginc.dbweather.iptvplaylists
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -41,7 +40,10 @@ import com.dbeginc.dbweatherlives.viewmodels.IpTvPlayListModel
  */
 class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
     private lateinit var binding: FragmentIptvPlaylistsBinding
-    private lateinit var viewModel: IpTvPlayListsViewModel
+
+    private val viewModel: IpTvPlayListsViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[IpTvPlayListsViewModel::class.java]
+    }
 
     private val playListsAdapter by lazy {
         IpTvPlayListAdapter(onItemClick = this::onPlayListSelected)
@@ -73,11 +75,6 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
             }
 
         })
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        viewModel = ViewModelProviders.of(this, factory)[IpTvPlayListsViewModel::class.java]
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

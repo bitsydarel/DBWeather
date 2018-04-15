@@ -47,11 +47,11 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
     private lateinit var binding: FragmentFavoriteYoutubeLivesLayoutBinding
 
     private val manageYoutubeLiveViewModel: ManageYoutubeLivesViewModel by lazy {
-        return@lazy ViewModelProviders.of(this, factory)[ManageYoutubeLivesViewModel::class.java]
+        return@lazy ViewModelProviders.of(this, factory.get())[ManageYoutubeLivesViewModel::class.java]
     }
 
     private val viewModel: FavoriteYoutubeLivesViewModel by lazy {
-        return@lazy ViewModelProviders.of(this, factory)[FavoriteYoutubeLivesViewModel::class.java]
+        return@lazy ViewModelProviders.of(this, factory.get())[FavoriteYoutubeLivesViewModel::class.java]
     }
 
     private val favoriteYoutubeAdapter by lazy {

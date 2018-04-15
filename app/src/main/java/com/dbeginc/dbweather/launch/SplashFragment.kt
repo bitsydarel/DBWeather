@@ -59,7 +59,7 @@ class SplashFragment : BaseFragment() {
 
             override fun onFinish() {
                 activity?.let {
-                    if (preferences.isFirstLaunchOfApplication()) goToIntroScreen(container = it, layoutId = R.id.launchContent)
+                    if (preferences.get().isFirstLaunchOfApplication()) goToIntroScreen(container = it, layoutId = R.id.launchContent)
                     else goToMainScreen(currentScreen = it)
                 }
             }

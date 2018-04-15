@@ -32,9 +32,9 @@ import javax.inject.Inject
 @SuppressLint("Registered")
 open class BaseActivity : DaggerAppCompatActivity() {
     @Inject
-    lateinit var preferences: ApplicationPreferences
+    lateinit var preferences: dagger.Lazy<ApplicationPreferences>
     @Inject
-    lateinit var factory: ViewModelProvider.Factory
+    lateinit var factory: dagger.Lazy<ViewModelProvider.Factory>
 
     protected fun isNetworkAvailable(): Boolean {
         val manager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

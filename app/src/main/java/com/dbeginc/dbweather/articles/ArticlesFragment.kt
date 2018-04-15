@@ -17,7 +17,6 @@ package com.dbeginc.dbweather.articles
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -71,17 +70,26 @@ class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRe
     lateinit var newsPaperId: String
     private lateinit var newsPaperName: String
     private lateinit var binding: FragmentArticlesBinding
-    private lateinit var viewModel: ArticlesViewModel
-    private val preloader by lazy { RecyclerViewPreloader(this, articlesAdapter, sizeProvider, PRELOAD_AHEAD_ITEMS) }
     private val sizeProvider = ViewPreloadSizeProvider<String>()
-    private val articlesAdapter: ArticleAdapter by lazy { ArticleAdapter(containerBridge = this, sizeProvider = sizeProvider) }
-    private val articlesObserver = Observer<List<ArticleModel>> { articlesAdapter.updateData(newData = it!!) }
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private val viewModel: ArticlesViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[ArticlesViewModel::class.java]
+    }
 
-        viewModel = ViewModelProviders.of(this, factory)[ArticlesViewModel::class.java]
+    private val preloader by lazy {
+        RecyclerViewPreloader(this, articlesAdapter, sizeProvider, PRELOAD_AHEAD_ITEMS)
+    }
+
+    private val articlesAdapter: ArticleAdapter by lazy {
+        ArticleAdapter(containerBridge = this, sizeProvider = sizeProvider)
+    }
+
+    private val articlesObserver: Observer<List<ArticleModel>> = Observer {
+        articlesAdapter.updateData(newData = it!!)
+    }
+
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

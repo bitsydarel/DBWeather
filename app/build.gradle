@@ -101,10 +101,6 @@ androidExtensions {
     experimental = true
 }
 
-kapt {
-    generateStubs = true
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(":dbweatherdata")
@@ -126,8 +122,6 @@ dependencies {
     implementation architectureComponentLibs.lifecycle_extensions
     // Exoplayer
     implementation exoplayerLibs.exoplayer
-//    implementation exoplayerLibs.core
-//    implementation exoplayerLibs.ui
     implementation exoplayerLibs.okhttp
     implementation exoplayerLibs.rtmp
 
@@ -137,7 +131,7 @@ dependencies {
     implementation daggerLibs.dagger_android_support
 
     //SQUARE
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation androidSupportLibs.constain_layout
     compileOnly otherLibs.threetenabp
 
     implementation kotlinLibs.coroutines

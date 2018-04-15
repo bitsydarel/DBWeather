@@ -56,7 +56,7 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
     }
 
     private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this, factory)[IpTvPlaylistDetailViewModel::class.java]
+        ViewModelProviders.of(this, factory.get())[IpTvPlaylistDetailViewModel::class.java]
     }
 
     companion object {

@@ -18,7 +18,6 @@ package com.dbeginc.dbweather.managelocations
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
@@ -46,22 +45,29 @@ import com.dbeginc.dbweatherweather.viewmodels.WeatherLocationModel
  * A ManageLocationsFragment [BaseFragment] subclass.
  */
 class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge {
-    private lateinit var viewModel: ManageLocationsViewModel
     private lateinit var binding: FragmentManageLocationsBinding
-    private val locationsAdapter by lazy { ManageLocationsAdapter() }
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
-    private val swipeToDeleteLocations by lazy { ItemTouchHelper(SwipeToDeleteLocations(this)) }
+
+    private val viewModel: ManageLocationsViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[ManageLocationsViewModel::class.java]
+    }
+
+    private val locationsAdapter: ManageLocationsAdapter by lazy {
+        return@lazy ManageLocationsAdapter()
+    }
+
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
+    }
+
+    private val swipeToDeleteLocations: ItemTouchHelper by lazy {
+        return@lazy ItemTouchHelper(SwipeToDeleteLocations(this))
+    }
+
     private val userListsObserver = Observer<List<WeatherLocationModel>> {
         if (it == null || it.isEmpty()) {
             binding.manageLocations.hide()
             binding.emptyList.show()
         } else locationsAdapter.updateData(newData = it)
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        viewModel = ViewModelProviders.of(this, factory)[ManageLocationsViewModel::class.java]
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

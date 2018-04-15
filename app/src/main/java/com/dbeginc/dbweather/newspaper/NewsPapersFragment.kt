@@ -17,7 +17,6 @@ package com.dbeginc.dbweather.newspaper
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
@@ -41,16 +40,22 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  * Articles Tab Fragment
  */
 class NewsPapersFragment : BaseFragment(), MVMPVView {
-    private lateinit var viewModel: NewsPapersViewModel
     private lateinit var binding: FragmentNewspapersBinding
-    private val pageAdapter by lazy { ArticlesPagerAdapter(childFragmentManager) }
-    private val sourcesObserver = Observer<List<NewsPaperModel>> { pageAdapter.refresh(it!!) }
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private val viewModel: NewsPapersViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[NewsPapersViewModel::class.java]
+    }
 
-        viewModel = ViewModelProviders.of(this, factory)[NewsPapersViewModel::class.java]
+    private val pageAdapter by lazy {
+        ArticlesPagerAdapter(childFragmentManager)
+    }
+
+    private val sourcesObserver: Observer<List<NewsPaperModel>> = Observer {
+        pageAdapter.refresh(it!!)
+    }
+
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -59,6 +64,7 @@ class NewsPapersFragment : BaseFragment(), MVMPVView {
         viewModel.getRequestState().observe(this, stateObserver)
 
         viewModel.getNewsPapers().observe(this, sourcesObserver)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -121,7 +127,7 @@ class NewsPapersFragment : BaseFragment(), MVMPVView {
     }
 
     private fun getNewsPapers() {
-        val currentSortingPreferences = preferences.getNewsPaperPreferredOrder()
+        val currentSortingPreferences = preferences.get().getNewsPaperPreferredOrder()
 
         viewModel.loadNewspaperSources(sortBy = currentSortingPreferences)
     }

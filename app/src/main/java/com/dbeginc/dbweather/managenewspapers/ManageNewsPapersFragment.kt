@@ -18,7 +18,6 @@ package com.dbeginc.dbweather.managenewspapers
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -41,16 +40,22 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  * A ManageNewsPapersFragment [BaseFragment] subclass.
  */
 class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBridge, SwipeRefreshLayout.OnRefreshListener {
-    private lateinit var viewModel: ManageNewsPapersViewModel
     private lateinit var binding: FragmentManageNewsPapersBinding
-    private val newsPapersAdapter by lazy { NewsPapersAdapter(managerBridge = this) }
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
-    private val newsPapersObserver = Observer<List<NewsPaperModel>> { newsPapersAdapter.updateData(newData = it!!) }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private val viewModel: ManageNewsPapersViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[ManageNewsPapersViewModel::class.java]
+    }
 
-        viewModel = ViewModelProviders.of(this, factory)[ManageNewsPapersViewModel::class.java]
+    private val newsPapersAdapter: NewsPapersAdapter by lazy {
+        return@lazy NewsPapersAdapter(managerBridge = this)
+    }
+
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
+    }
+
+    private val newsPapersObserver: Observer<List<NewsPaperModel>> = Observer {
+        newsPapersAdapter.updateData(newData = it!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
