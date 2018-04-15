@@ -15,8 +15,8 @@
 
 package com.dbeginc.dbweather.di.modules.weather
 
-import com.dbeginc.dbweather.launch.GpsLocationFinderFragment
-import com.dbeginc.dbweather.launch.chooselocation.ChooseLocationsFragment
+import com.dbeginc.dbweather.chooselocations.ChooseLocationsFragment
+import com.dbeginc.dbweather.findlocationwithgps.GpsLocationFinderFragment
 import com.dbeginc.dbweather.managelocations.ManageLocationsFragment
 import com.dbeginc.dbweather.weather.WeatherFragment
 import dagger.Module

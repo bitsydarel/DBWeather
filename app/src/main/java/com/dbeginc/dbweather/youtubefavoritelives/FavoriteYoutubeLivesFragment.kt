@@ -17,7 +17,6 @@ package com.dbeginc.dbweather.youtubefavoritelives
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
@@ -45,21 +44,26 @@ import com.dbeginc.dbweatherlives.viewmodels.YoutubeLiveModel
  * Favorite Lives Page Fragment
  */
 class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActionBridge, SwipeRefreshLayout.OnRefreshListener {
-    private lateinit var viewModel: FavoriteYoutubeLivesViewModel
-    private lateinit var manageYoutubeLiveViewModel: ManageYoutubeLivesViewModel
     private lateinit var binding: FragmentFavoriteYoutubeLivesLayoutBinding
-    private val favoriteYoutubeAdapter by lazy { FavoriteLiveAdapter(containerBridge = this) }
-    override val stateObserver: Observer<RequestState> = Observer { onStateChanged(state = it!!) }
-    private val favoritesObserver = Observer<List<YoutubeLiveModel>> {
-        favoriteYoutubeAdapter.updateData(newData = it!!)
+
+    private val manageYoutubeLiveViewModel: ManageYoutubeLivesViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory)[ManageYoutubeLivesViewModel::class.java]
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private val viewModel: FavoriteYoutubeLivesViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory)[FavoriteYoutubeLivesViewModel::class.java]
+    }
 
-        viewModel = ViewModelProviders.of(this, factory)[FavoriteYoutubeLivesViewModel::class.java]
+    private val favoriteYoutubeAdapter by lazy {
+        return@lazy FavoriteLiveAdapter(containerBridge = this)
+    }
 
-        manageYoutubeLiveViewModel = ViewModelProviders.of(this, factory)[ManageYoutubeLivesViewModel::class.java]
+    override val stateObserver: Observer<RequestState> = Observer {
+        onStateChanged(state = it!!)
+    }
+
+    private val favoritesObserver: Observer<List<YoutubeLiveModel>> = Observer {
+        favoriteYoutubeAdapter.updateData(newData = it!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

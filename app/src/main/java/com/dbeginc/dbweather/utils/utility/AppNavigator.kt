@@ -25,13 +25,13 @@ import android.view.Gravity
 import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.articledetail.ArticleDetailActivity
+import com.dbeginc.dbweather.chooselocations.ChooseLocationsFragment
+import com.dbeginc.dbweather.findlocationwithgps.GpsLocationFinderFragment
 import com.dbeginc.dbweather.iptvlivedetail.IpTvLiveActivity
 import com.dbeginc.dbweather.iptvplaylistdetail.IpTvPlaylistDetailFragment
 import com.dbeginc.dbweather.iptvplaylists.IptvPlaylistsFragment
-import com.dbeginc.dbweather.launch.GpsLocationFinderFragment
 import com.dbeginc.dbweather.launch.IntroFragment
 import com.dbeginc.dbweather.launch.SplashFragment
-import com.dbeginc.dbweather.launch.chooselocation.ChooseLocationsFragment
 import com.dbeginc.dbweather.managelocations.ManageLocationsFragment
 import com.dbeginc.dbweather.managenewspapers.ManageNewsPapersFragment
 import com.dbeginc.dbweather.newspaper.NewsPapersFragment
