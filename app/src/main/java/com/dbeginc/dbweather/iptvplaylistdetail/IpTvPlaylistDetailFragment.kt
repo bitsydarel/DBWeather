@@ -21,6 +21,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -28,7 +29,9 @@ import android.view.*
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseFragment
 import com.dbeginc.dbweather.databinding.FragmentIpTvPlaylistDetailBinding
-import com.dbeginc.dbweather.utils.utility.*
+import com.dbeginc.dbweather.utils.utility.IPTV_PLAYLIST_KEY
+import com.dbeginc.dbweather.utils.utility.goToIpTvLiveScreen
+import com.dbeginc.dbweather.utils.utility.goToIpTvPlaylistsScreen
 import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweathercommon.view.MVMPVView
 import com.dbeginc.dbweatherlives.iptvplaylistdetail.IpTvPlaylistDetailViewModel
@@ -38,23 +41,23 @@ import com.dbeginc.dbweatherlives.viewmodels.IpTvLiveModel
  * IpTvPlaylistDetailFragment [BaseFragment] subclass.
  * Display list channels from a specific playlist
  */
-class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
+class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentIpTvPlaylistDetailBinding
     private lateinit var playlistId: String
 
-    private val ipTvLivesAdapter by lazy {
+    private val ipTvLivesAdapter: IpTvLivesAdapter by lazy {
         IpTvLivesAdapter(onItemClick = this::onIpTvLiveSelected)
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
-    private val iptvLivesObserver: Observer<List<IpTvLiveModel>> = Observer {
-        ipTvLivesAdapter.updateData(newData = it!!)
+    private val iptvLivesObserver: Observer<List<IpTvLiveModel>> = Observer { iptvLives ->
+        iptvLives?.let { ipTvLivesAdapter.updateData(newData = it) }
     }
 
-    private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
+    private val viewModel: IpTvPlaylistDetailViewModel by lazy {
         ViewModelProviders.of(this, factory.get())[IpTvPlaylistDetailViewModel::class.java]
     }
 
@@ -96,9 +99,9 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        inflater.inflate(R.menu.iptv_playlists_menu, menu)
+        inflater.inflate(R.menu.iptv_playlist_detail_menu, menu)
 
-        val searchView = menu.findItem(R.id.action_find_iptv)?.actionView as? SearchView
+        val searchView = menu.findItem(R.id.action_find_iptv)?.actionView as? android.support.v7.widget.SearchView
 
         searchView?.queryHint = getString(R.string.search_iptv_live)
 
@@ -108,6 +111,7 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
             override fun onQueryTextChange(query: String?): Boolean {
                 if (query != null && query.isNotBlank())
                     viewModel.findIpTvLive(playlistId = playlistId, possibleLiveName = query)
+                else viewModel.loadIpTvLives(playlistId = playlistId)
                 return true
             }
 
@@ -149,19 +153,25 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView {
 
         binding.iptvLives.adapter = ipTvLivesAdapter
 
-        viewModel.loadIpTvLives(playlistId = playlistId)
+        binding.iptvLivesContainer.setOnRefreshListener(this)
+
+        onRefresh()
     }
 
     override fun onStateChanged(state: RequestState) {
         when (state) {
-            RequestState.LOADING -> binding.iptvLiveLoading.show()
-            RequestState.COMPLETED -> binding.iptvLiveLoading.hide()
+            RequestState.LOADING -> binding.iptvLivesContainer.isRefreshing = true
+            RequestState.COMPLETED -> binding.iptvLivesContainer.isRefreshing = false
             RequestState.ERROR -> onRequestFailed()
         }
     }
 
+    override fun onRefresh() {
+        viewModel.loadIpTvLives(playlistId = playlistId)
+    }
+
     private fun onRequestFailed() {
-        binding.iptvLiveLoading.hide()
+        binding.iptvLivesContainer.isRefreshing = false
 
         Snackbar.make(binding.iptvPlaylistDetail, R.string.could_not_load_channels, Snackbar.LENGTH_LONG)
                 .setAction(R.string.retry) { viewModel.loadIpTvLives(playlistId = playlistId) }

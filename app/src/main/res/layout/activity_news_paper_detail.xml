@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~  Copyright (C) 2017 Darel Bitsy
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -28,28 +28,36 @@
         android:id="@+id/newsPaperDetailLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.dbeginc.dbweather.newspaperdetail.NewsPaperDetailFragment">
+        tools:context=".newspaperdetail.NewsPaperDetailActivity">
+
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/newsPaperDetailAppBar"
             style="@style/Widget.Design.AppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+            android:layout_height="320dp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Light">
 
             <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/newsPaperDetailCollapsingTL"
+                android:id="@+id/newsPaperDetailCollapsingToolbar"
+                style="@style/Widget.Design.CollapsingToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:expandedTitleGravity="bottom"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:title="@{NewsPaper.name}"
+                app:toolbarId="@id/newsPaperDetailToolbar">
 
                 <ImageView
                     android:id="@+id/newsPaperDetailLanguage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/source_language"
+                    android:contentDescription="@string/newspaper_country"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="0.7"
                     app:setImageUrl="@{@string/imageFlag(NewsPaper.country)}" />
@@ -59,97 +67,98 @@
                     style="@style/Widget.AppCompat.Toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:layout_gravity="top"
                     app:layout_collapseMode="pin"
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:navigationIcon="@drawable/ic_arrow"
-                    app:popupTheme="?attr/popupTheme"
-                    app:title="@{NewsPaper.id}"
-                    app:titleTextAppearance="@style/TextAppearance.AppCompat.Title" />
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    tools:targetApi="lollipop" />
 
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
-            android:id="@+id/articleDetailContentContainer"
+            android:id="@+id/newsPaperDetailContentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/sourceDetailContent"
+                android:id="@+id/newsPaperDetailContent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp">
+                android:layout_height="wrap_content"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp">
 
                 <TextView
-                    android:id="@+id/sourceDetailNameLabel"
-                    android:layout_width="0dp"
+                    android:id="@+id/newsPaperDetailNameLabel"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name"
                     android:textAlignment="textStart"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    app:layout_constraintBottom_toTopOf="@+id/sourceDetailName"
-                    app:layout_constraintEnd_toStartOf="@+id/sourceDetailCategoryLabel"
+                    android:textIsSelectable="false"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toStartOf="@+id/newsPaperDetailCategoryLabel"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/sourceDetailName"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    android:id="@+id/newsPaperDetailName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@{NewsPaper.name}"
                     android:textAlignment="textStart"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintBottom_toTopOf="@id/sourceDetailDescription"
-                    app:layout_constraintEnd_toStartOf="@+id/sourceDetailCategory"
-                    app:layout_constraintStart_toStartOf="@id/sourceDetailNameLabel"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailNameLabel"
+                    android:textIsSelectable="true"
+                    app:layout_constraintEnd_toStartOf="@id/newsPaperDetailCategory"
+                    app:layout_constraintStart_toStartOf="@id/newsPaperDetailNameLabel"
+                    app:layout_constraintTop_toBottomOf="@id/newsPaperDetailNameLabel"
                     tools:text="BBC Sport" />
 
                 <TextView
-                    android:id="@+id/sourceDetailCategoryLabel"
-                    android:layout_width="0dp"
+                    android:id="@+id/newsPaperDetailCategoryLabel"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/category"
                     android:textAlignment="textEnd"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    app:layout_constraintBottom_toTopOf="@+id/sourceDetailCategory"
+                    android:textIsSelectable="false"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/sourceDetailNameLabel"
+                    app:layout_constraintStart_toEndOf="@id/newsPaperDetailNameLabel"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/sourceDetailCategory"
+                    android:id="@+id/newsPaperDetailCategory"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@{NewsPaper.category}"
                     android:textAlignment="textEnd"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintBottom_toTopOf="@id/sourceDetailDescription"
+                    android:textIsSelectable="true"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/sourceDetailName"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailCategoryLabel"
+                    app:layout_constraintStart_toEndOf="@id/newsPaperDetailName"
+                    app:layout_constraintTop_toBottomOf="@id/newsPaperDetailCategoryLabel"
                     tools:text="Sport" />
 
                 <TextView
-                    android:id="@+id/sourceDetailDescription"
+                    android:id="@+id/newsPaperDetailDescription"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@{NewsPaper.description}"
-                    android:textAlignment="center"
+                    android:textAlignment="textStart"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constrainedHeight="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sourceDetailName"
-                    tools:text="BBC IS one the beggest stuff ever" />
+                    app:layout_constraintTop_toBottomOf="@id/newsPaperDetailName"
+                    tools:text="BBC Sport is random description.\nThey always put some cool or weird sport news" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v4.widget.NestedScrollView>
-
     </android.support.design.widget.CoordinatorLayout>
 </layout>

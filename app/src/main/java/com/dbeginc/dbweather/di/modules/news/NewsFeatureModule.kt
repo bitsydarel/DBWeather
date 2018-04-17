@@ -19,6 +19,7 @@ import com.dbeginc.dbweather.articledetail.ArticleDetailActivity
 import com.dbeginc.dbweather.articles.ArticlesFragment
 import com.dbeginc.dbweather.managenewspapers.ManageNewsPapersFragment
 import com.dbeginc.dbweather.newspaper.NewsPapersFragment
+import com.dbeginc.dbweather.newspaperdetail.NewsPaperDetailActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -36,4 +37,7 @@ abstract class NewsFeatureModule {
 
     @ContributesAndroidInjector
     abstract fun contributeManageNewsPapersFragment(): ManageNewsPapersFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeNewsPaperDetailActivity(): NewsPaperDetailActivity
 }

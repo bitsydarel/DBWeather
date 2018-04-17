@@ -21,118 +21,20 @@
     <color name="colorPrimaryTextColor">#A8000000</color>
     <color name="colorSecondary">#ff1744</color>
     <color name="colorSecondaryLight">#ff616f</color>
-    <color name="colorSecondaryDark">#c4001d</color>
     <color name="colorSecondaryTextColor">#C4000000</color>
     <!--*******************************************-->
-    <color name="transparentWhite">#80ffffff</color>
-    <color name="tabWidgetColor">#4285F4</color>
-    <color name="topInactiveTabColor">#50000000</color>
-    <color name="inactiveNavigationTabColor">#89ffffff</color>
-    <color name="activeNavigationTabColor">#FFFFFF</color>
-    <color name="locationIntroPageColor">#03A9F4</color>
-    <color name="grantLocationButtonColor">#FF1744</color>
-    <color name="grantAccountButtonColor">#28C76D</color>
-    <color name="clear_day_background">#1B87C9</color>
-    <color name="snow_background">#4dd0e1</color>
-    <color name="wind_background">#455a64</color>
-    <color name="rain_background">#607d8b</color>
-    <color name="fog_background">#c5cae9</color>
-    <color name="black_overlay">#66000000</color>
 
     <!-- **************************** Splash Colors **************************** -->
-    <color name="splashColorPrimary">#00b0ff</color>
-    <color name="splashColorPrimaryDark">#0081cb</color>
-    <color name="splashColorSecondary">#18ffff</color>
-    <color name="splashColorSecondaryLight">#76ffff</color>
-    <color name="splashTextColor">#ffffff</color>
     <!-- **************************** Intro Colors **************************** -->
-    <color name="introColorPrimary">#bdbdbd</color>
-    <color name="introColorPrimaryDark">#8d8d8d</color>
-    <color name="introColorPrimaryLight">#efefef</color>
-    <color name="introColorSecondary">#ff1744</color>
-    <color name="introColorSecondaryDark">#c4001d</color>
-    <color name="introColorSecondaryLight">#ff616f</color>
-    <color name="introTextColor">#000000</color>
     <!-- **************************** Main Colors **************************** -->
-    <color name="mainColorPrimary">#eeeeee</color>
-    <color name="mainColorPrimaryLight">#ffffff</color>
-    <color name="mainColorPrimaryDark">#bcbcbc</color>
-    <color name="mainColorPrimaryTextColor">#000000</color>
-    <color name="mainColorSecondary">#2979ff</color>
-    <color name="mainColorSecondaryLight">#75a7ff</color>
-    <color name="mainColorSecondaryDark">#004ecb</color>
-    <color name="mainColorSecondaryTextColor">#000000</color>
     <!-- **************************** Weather Tab Colors **************************** -->
-    <color name="weatherTabPrimary">#536dfe</color>
-    <color name="weatherTabPrimaryLight">#8f9bff</color>
-    <color name="weatherTabPrimaryDark">#0043ca</color>
-    <color name="weatherTabTextColor">#ffffff</color>
     <!-- **************************** News Tab Colors **************************** -->
-    <color name="newsTabPrimary">#fafafa</color>
-    <color name="newsTabPrimaryLight">#ffffff</color>
-    <color name="newsTabPrimaryDark">#c7c7c7</color>
-    <color name="newsTabPrimaryTextColor">#000000</color>
-    <color name="newsTabSecondary">#ff1744</color>
-    <color name="newsTabSecondaryLight">#ff616f</color>
-    <color name="newsTabSecondaryDark">#c4001d</color>
-    <color name="newsTabSecondaryTextColor">#000000</color>
     <!-- **************************** YoutubeLive Detail Colors **************************** -->
-    <color name="LiveDetailColorPrimary">#212121</color>
-    <color name="LiveDetailColorPrimaryLight">#484848</color>
-    <color name="LiveDetailColorPrimaryDark">#000000</color>
-    <color name="LiveDetailColorPrimaryTextColor">#ffffff</color>
-    <color name="LiveDetailColorSecondary">#d81b60</color>
-    <color name="LiveDetailColorSecondaryLight">#ff5c8d</color>
-    <color name="LiveDetailColorSecondaryDark">#a00037</color>
-    <color name="LiveDetailColorSecondaryTextColor">#ffffff</color>
     <!-- **************************** Article Detail Colors **************************** -->
-    <color name="ArticleDetailColorPrimary">#212121</color>
-    <color name="ArticleDetailColorPrimaryLight">#484848</color>
-    <color name="ArticleDetailColorPrimaryDark">#000000</color>
-    <color name="ArticleDetailColorPrimaryTextColor">#ffffff</color>
-    <color name="ArticleDetailColorSecondary">#d81b60</color>
-    <color name="ArticleDetailColorSecondaryLight">#ff5c8d</color>
-    <color name="ArticleDetailColorSecondaryDark">#a00037</color>
-    <color name="ArticleDetailColorSecondaryTextColor">#ffffff</color>
     <!-- **************************** Config Detail Colors **************************** -->
-    <color name="configTabPrimary">#6a1b9a</color>
-    <color name="configTabPrimaryLight">#9c4dcc</color>
-    <color name="configTabPrimaryDark">#38006b</color>
-    <color name="configTabPrimaryTextColor">#ffffff</color>
-    <color name="configTabSecondary">#18ffff</color>
-    <color name="configTabSecondaryLight">#76ffff</color>
-    <color name="configTabSecondaryDark">#00cbcc</color>
-    <color name="configTabSecondaryTextColor">#000000</color>
     <!-- **************************** Manage Locations Colors **************************** -->
-    <color name="manageLocationsPrimary">#e3f2fd</color>
-    <color name="manageLocationsPrimaryLight">#ffffff</color>
-    <color name="manageLocationsPrimaryDark">#b1bfca</color>
-    <color name="manageLocationsPrimaryTextColor">#000000</color>
-    <color name="manageLocationsSecondary">#3d5afe</color>
-    <color name="manageLocationsSecondaryLight">#8187ff</color>
-    <color name="manageLocationsSecondaryDark">#0031ca</color>
-    <color name="manageLocationsSecondaryTextColor">#ffffff</color>
     <!-- **************************** Manage Sources Colors **************************** -->
-    <color name="manageSourcesPrimary">#9e9e9e</color>
-    <color name="manageSourcesPrimaryLight">#cfcfcf</color>
-    <color name="manageSourcesPrimaryDark">#707070</color>
-    <color name="manageSourcesPrimaryTextColor">#000000</color>
-    <color name="manageSourcesSecondary">#f50057</color>
-    <color name="manageSourcesSecondaryLight">#ff5983</color>
-    <color name="manageSourcesSecondaryDark">#bb002f</color>
-    <color name="manageSourcesSecondaryTextColor">#000000</color>
     <!-- **************************** Notification Colors **************************** -->
-    <color name="notificationPrimary">#304ffe</color>
     <color name="notificationPrimaryLight">#7a7cff</color>
-    <color name="notificationPrimaryDark">#0026ca</color>
-    <color name="notificationPrimaryTextColor">#ffffff</color>
-    <color name="notificationSecondary">#ffff00</color>
-    <color name="notificationSecondaryLight">#ffff5a</color>
-    <color name="notificationSecondaryDark">#c7cc00</color>
-    <color name="notificationSecondaryTextColor">#000000</color>
     <!-- *************************NewsPaperurce Detail Colors **************************** -->
-    <color name="category_business">#3d5afe</color>
-    <color name="category_entertainment">#ff9100</color>
-    <color name="category_gaming">#212121</color>
-    <color name="category_general">#ffea00</color>
 </resources>

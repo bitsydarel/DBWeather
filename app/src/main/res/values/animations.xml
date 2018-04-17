@@ -16,6 +16,4 @@
 <resources>
     <string name="splash_animation">splash_animation.json</string>
     <string name="intro_animation">location.json</string>
-    <string name="article_image_transition_name">article_image_</string>
-    <string name="app_bar_transition_name">app_bar_transition</string>
 </resources>

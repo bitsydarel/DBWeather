@@ -18,7 +18,9 @@ package com.dbeginc.dbweatherdata.implementations.datasources.local.lives
 import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.dbeginc.dbweatherdata.generateFakeLocalIptvLive
 import com.dbeginc.dbweatherdata.generateFakeLocalIptvPlaylist
+import com.dbeginc.dbweatherdata.proxies.local.lives.LocalIpTvPlaylist
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -109,12 +111,30 @@ class RoomLivesDataSourceTest {
         roomLivesDataSource.findPlaylist(name = playlist.name.first().toString())
                 .test()
                 .assertValue { it.isNotEmpty() }
-                .assertValue { it.any { it.name.contains(playlist.name) } }
+                .assertValue { it.any { it.name == playlist.name } }
+                .assertNoErrors()
                 .assertComplete()
 
     }
 
     @Test
     fun findIpTvLive() {
+        val fakePlaylistId = "Darel's playlist"
+
+        val fakeIptvLive = generateFakeLocalIptvLive(playlistId = fakePlaylistId, howMuch = 1000)
+
+        database.livesDao().putIpTvPlaylist(playlist = LocalIpTvPlaylist(name = fakePlaylistId))
+
+        database.livesDao().putAllIpTvLives(channels = fakeIptvLive)
+
+        val (_, channelName, _, _) = fakeIptvLive.first()
+
+        roomLivesDataSource.findIpTvLive(playlistId = fakePlaylistId, name = channelName.first().toString())
+                .test()
+                .assertValue { it.isNotEmpty() }
+                .assertValue { it.any { it.channelName == channelName } }
+                .assertNoErrors()
+                .assertComplete()
+
     }
 }

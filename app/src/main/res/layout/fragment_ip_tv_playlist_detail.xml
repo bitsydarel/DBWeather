@@ -18,7 +18,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="PlaylistId"
             type="String" />
@@ -50,21 +49,18 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <ProgressBar
-            android:id="@+id/iptvLiveLoading"
-            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminateOnly="true"
-            android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/iptvLives"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/iptvLivesContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/iptv_live_layout" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/iptvLives"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/iptv_live_layout" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

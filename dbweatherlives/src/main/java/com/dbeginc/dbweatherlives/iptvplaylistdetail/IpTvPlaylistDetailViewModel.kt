@@ -50,7 +50,7 @@ class IpTvPlaylistDetailViewModel @Inject constructor(private val model: LivesRe
     fun findIpTvLive(playlistId: String, possibleLiveName: String) {
         model.findIpTvLive(playlistId = playlistId, name = possibleLiveName)
                 .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
-                .doOnComplete { requestState.postValue(RequestState.COMPLETED) }
+                .doAfterSuccess { requestState.postValue(RequestState.COMPLETED) }
                 .doOnError { requestState.postValue(RequestState.ERROR) }
                 .map { iptvLives -> iptvLives.map { it.toUi() } }
                 .observeOn(threads.UI)

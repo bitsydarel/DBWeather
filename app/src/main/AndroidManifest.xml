@@ -98,6 +98,7 @@
             android:name=".iptvlivedetail.IpTvLiveActivity"
             android:label=""
             android:screenOrientation="landscape" />
+        <activity android:name=".newspaperdetail.NewsPaperDetailActivity"></activity>
     </application>
 
 </manifest>
