@@ -252,6 +252,16 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     }
 
     private fun displayWeather(weather: WeatherModel, isDefault: Boolean) {
+        if (isDefault) preferences.get().updateDefaultCoordinates(
+                weather.location.name,
+                weather.location.latitude,
+                weather.location.longitude
+        ) else preferences.get().updateCustomCoordinates(
+                weather.location.name,
+                weather.location.latitude,
+                weather.location.longitude
+        )
+
         binding.weather = weather
 
         binding.current = weather.current
@@ -263,16 +273,6 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         dailyWeatherAdapter.updateData(weather.daily)
 
         hourlyWeatherAdapter.updateData(weather.hourly)
-
-        if (isDefault) preferences.get().updateDefaultCoordinates(
-                weather.location.name,
-                weather.location.latitude,
-                weather.location.longitude
-        ) else preferences.get().updateCustomCoordinates(
-                weather.location.name,
-                weather.location.latitude,
-                weather.location.longitude
-        )
 
         preferences.get().updateCurrentLocationType(isDefault = isDefault)
 

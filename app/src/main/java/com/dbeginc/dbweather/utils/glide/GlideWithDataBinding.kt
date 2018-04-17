@@ -50,7 +50,7 @@ fun setSourceFlag(imageView: ImageView, flag: String?) {
     if (flag != null && flag.isNotEmpty()) {
         Glide.with(imageView)
                 .load(GlideUrl(flag, DBWEATHER_REQUEST_HEADER))
-                .apply(RequestOptions.skipMemoryCacheOf(false))
+                .apply(RequestOptions.skipMemoryCacheOf(true))
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.AUTOMATIC))
                 .apply(RequestOptions.errorOf(R.drawable.no_image_icon))
                 .apply(RequestOptions.centerInsideTransform())
