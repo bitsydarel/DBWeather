@@ -19,13 +19,13 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityIpTvLiveBinding
 import com.dbeginc.dbweather.utils.exoplayer.defaultBandwidthMeter
 import com.dbeginc.dbweather.utils.exoplayer.getPreferedDataSourceFactoryForUrl
 import com.dbeginc.dbweather.utils.utility.IPTV_LIVE_DATA
-import com.dbeginc.dbweather.utils.utility.snack
 import com.dbeginc.dbweatherdomain.Logger
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -46,7 +46,13 @@ class IpTvLiveActivity : BaseActivity() {
     private val playerListener = object : Player.DefaultEventListener() {
         override fun onPlayerError(playerError: ExoPlaybackException) {
             logger.get().logError(error = playerError)
-            binding.iptvLiveDetailLayout.snack(message = playerError.unexpectedException.localizedMessage)
+
+            Snackbar.make(binding.iptvLiveDetailLayout, playerError.cause?.localizedMessage
+                    ?: "Could not load the stream", Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry) {
+                        binding.ipTvLive?.run { buildMediaSource(Uri.parse(url), buildDataSourceFactory()) }
+                    }
+                    .show()
         }
     }
 
@@ -61,19 +67,21 @@ class IpTvLiveActivity : BaseActivity() {
         binding.executePendingBindings()
 
         setSupportActionBar(binding.iptvLiveDetailToolbar)
-
-        binding.iptvLiveDetailToolbar.setNavigationOnClickListener {
-            supportFinishAfterTransition()
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
+
         outState?.putParcelable(IPTV_LIVE_DATA, binding.ipTvLive)
     }
 
     override fun onStart() {
         super.onStart()
+
+        binding.iptvLiveDetailToolbar.setNavigationOnClickListener {
+            supportFinishAfterTransition()
+        }
+
         if (Util.SDK_INT > Build.VERSION_CODES.M)
             initializePlayer()
     }
