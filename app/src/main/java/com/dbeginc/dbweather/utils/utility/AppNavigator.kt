@@ -35,6 +35,7 @@ import com.dbeginc.dbweather.launch.SplashFragment
 import com.dbeginc.dbweather.managelocations.ManageLocationsFragment
 import com.dbeginc.dbweather.managenewspapers.ManageNewsPapersFragment
 import com.dbeginc.dbweather.newspaper.NewsPapersFragment
+import com.dbeginc.dbweather.newspaperdetail.NewsPaperDetailActivity
 import com.dbeginc.dbweather.weather.WeatherFragment
 import com.dbeginc.dbweather.youtubefavoritelives.FavoriteYoutubeLivesFragment
 import com.dbeginc.dbweather.youtubelivedetail.YoutubeLiveDetailActivity
@@ -234,6 +235,10 @@ fun goToArticleDetailScreen(container: FragmentActivity, article: ArticleModel) 
     container.startActivity(articleDetailScreenIntent)
 }
 
-fun goToNewsPaperDetailScreen(container: FragmentActivity, layoutId: Int, newsPaper: NewsPaperModel) {
+fun goToNewsPaperDetailScreen(container: FragmentActivity, newsPaper: NewsPaperModel) {
+    val newsPaperDetailScreenIntent = Intent(container, NewsPaperDetailActivity::class.java)
 
+    newsPaperDetailScreenIntent.putExtra(NEWSPAPER_KEY, newsPaper)
+
+    container.startActivity(newsPaperDetailScreenIntent)
 }
