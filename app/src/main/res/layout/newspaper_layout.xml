@@ -52,7 +52,7 @@
             app:layout_constraintHorizontal_weight="0.1"
             app:layout_constraintStart_toEndOf="@id/newsPaperName"
             app:layout_constraintTop_toTopOf="parent"
-            app:setImageUrl="@{@string/imageFlag(NewsPaper.country)}"
+            app:sourceFlag="@{@string/imageFlag(NewsPaper.country)}"
             tools:src="@drawable/ic_current_location" />
 
         <TextView
@@ -60,12 +60,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
             android:text="@{NewsPaper.description}"
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textIsSelectable="true"
+            android:ellipsize="end"
+            android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/newsPaperLocation"

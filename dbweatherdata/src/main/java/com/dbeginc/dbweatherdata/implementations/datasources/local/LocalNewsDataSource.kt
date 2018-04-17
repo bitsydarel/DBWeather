@@ -22,6 +22,7 @@ import com.dbeginc.dbweatherdomain.entities.requests.news.ArticleRequest
 import com.dbeginc.dbweatherdomain.entities.requests.news.ArticlesRequest
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 
 /**
  * Created by darel on 04.10.17.
@@ -41,6 +42,8 @@ interface LocalNewsDataSource {
     fun getSubscribedNewsPapers(): Flowable<List<NewsPaper>>
 
     fun getNewsPaper(name: String): Flowable<NewsPaper>
+
+    fun findNewspaper(name: String): Maybe<List<NewsPaper>>
 
     fun updateNewsPaper(newsPaper: NewsPaper): Completable
 

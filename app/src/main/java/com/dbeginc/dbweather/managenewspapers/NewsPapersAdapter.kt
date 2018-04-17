@@ -16,11 +16,11 @@
 package com.dbeginc.dbweather.managenewspapers
 
 import android.databinding.DataBindingUtil
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseAdapter
 import com.dbeginc.dbweather.base.BaseDataDiff
+import com.dbeginc.dbweather.utils.utility.getInflater
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 
 /**
@@ -32,7 +32,7 @@ class NewsPapersAdapter(private val managerBridge: NewsPapersManagerBridge) : Ba
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsPaperViewHolder {
         return NewsPaperViewHolder(DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
+                parent.getInflater(),
                 R.layout.newspaper_layout,
                 parent,
                 false
@@ -40,9 +40,7 @@ class NewsPapersAdapter(private val managerBridge: NewsPapersManagerBridge) : Ba
     }
 
     override fun onBindViewHolder(holder: NewsPaperViewHolder, position: Int) {
-        val newsPaper = getItemForPosition(position)
-
-        holder.bindNewsPaper(newsPaper)
+        holder.bindNewsPaper(newsPaper = getItemForPosition(position))
     }
 
     class NewsPapersDiff : BaseDataDiff<NewsPaperModel>() {

@@ -28,7 +28,7 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 class NewsPaperViewHolder(private val binding: NewspaperLayoutBinding, managerBridge: NewsPapersManagerBridge) : RecyclerView.ViewHolder(binding.root) {
 
     init {
-        binding.newsPaperLayout.setOnClickListener {
+        binding.root.setOnClickListener {
             binding.newsPaper?.let {
                 managerBridge.goToNewsPaperDetail(newsPaper = it)
             }

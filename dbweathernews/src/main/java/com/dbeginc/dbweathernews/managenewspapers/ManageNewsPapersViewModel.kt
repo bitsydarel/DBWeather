@@ -22,7 +22,6 @@ import com.dbeginc.dbweathercommon.utils.RequestState
 import com.dbeginc.dbweathercommon.utils.addTo
 import com.dbeginc.dbweatherdomain.Logger
 import com.dbeginc.dbweatherdomain.ThreadProvider
-import com.dbeginc.dbweatherdomain.entities.news.NewsPaper
 import com.dbeginc.dbweatherdomain.entities.requests.news.NewsPaperRequest
 import com.dbeginc.dbweatherdomain.repositories.NewsRepository
 import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
@@ -56,25 +55,23 @@ class ManageNewsPapersViewModel @Inject constructor(private val model: NewsRepos
     // the view model to post new data
     fun getNewsPapers(): LiveData<List<NewsPaperModel>> = _newsPapers
 
-    fun loadSources() {
+    fun loadNewspapers() {
         model.getAllNewsPapers()
                 .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
                 .doAfterNext { requestState.postValue(RequestState.COMPLETED) }
                 .doOnError { requestState.postValue(RequestState.ERROR) }
-                .map { sources -> sources.map { source -> source.toUi() } }
+                .map { newspapers -> newspapers.map { newsPaper -> newsPaper.toUi() } }
                 .observeOn(threads.UI)
                 .subscribe(_newsPapers::postValue, logger::logError)
                 .addTo(subscriptions)
     }
 
-    fun findSource(query: String) {
-        model.getAllNewsPapers()
+    fun findNewspaper(query: String) {
+        model.findNewspaper(possibleName = query)
                 .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
-                .doAfterNext { requestState.postValue(RequestState.COMPLETED) }
+                .doAfterSuccess { requestState.postValue(RequestState.COMPLETED) }
                 .doOnError { requestState.postValue(RequestState.ERROR) }
-                .map { newsPapers -> newsPapers.findSimilar(query) }
-                .map { sequenceOfNewsPapers -> sequenceOfNewsPapers.map { it.toUi() } }
-                .map { sequenceOfNewsPapers -> sequenceOfNewsPapers.toList() }
+                .map { newspapers -> newspapers.map { newsPaper -> newsPaper.toUi() } }
                 .observeOn(threads.UI)
                 .subscribe(_newsPapers::postValue, logger::logError)
                 .addTo(subscriptions)
@@ -102,12 +99,6 @@ class ManageNewsPapersViewModel @Inject constructor(private val model: NewsRepos
                             logger.logError(error = it)
                         }
                 ).addTo(subscriptions)
-    }
-
-    private fun List<NewsPaper>.findSimilar(query: String): Sequence<NewsPaper> {
-        return asSequence().filter { it ->
-            it.name.toLowerCase().contains(query.toLowerCase())
-        }
     }
 
 }

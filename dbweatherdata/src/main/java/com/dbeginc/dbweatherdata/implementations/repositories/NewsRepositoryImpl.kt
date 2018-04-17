@@ -35,6 +35,7 @@ import com.dbeginc.dbweatherdomain.entities.requests.news.NewsPaperRequest
 import com.dbeginc.dbweatherdomain.repositories.NewsRepository
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableCompletableObserver
 import java.util.concurrent.TimeUnit
@@ -128,6 +129,11 @@ class NewsRepositoryImpl private constructor(private val threads: ThreadProvider
 
     override fun getNewsPaper(request: NewsPaperRequest<Unit>): Flowable<NewsPaper> {
         return localSource.getNewsPaper(request.sourceId)
+                .subscribeOn(threads.CP)
+    }
+
+    override fun findNewspaper(possibleName: String): Maybe<List<NewsPaper>> {
+        return localSource.findNewspaper(name = possibleName)
                 .subscribeOn(threads.CP)
     }
 

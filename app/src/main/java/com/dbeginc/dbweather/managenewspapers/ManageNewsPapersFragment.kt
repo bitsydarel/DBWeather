@@ -22,6 +22,7 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
@@ -81,11 +82,9 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
                 override fun onQueryTextSubmit(query: String?): Boolean = false
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    return if (newText != null && newText.isNotBlank()) {
-                        viewModel.findSource(query = newText)
-                        true
-
-                    } else false
+                    if (newText != null && newText.isNotBlank()) viewModel.findNewspaper(query = newText)
+                    else viewModel.loadNewspapers()
+                    return true
                 }
             })
         }
@@ -116,16 +115,18 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
         setupView()
     }
 
-    override fun onRefresh() = viewModel.loadSources()
+    override fun onRefresh() = viewModel.loadNewspapers()
 
     override fun setupView() {
         binding.manageNewsPapersList.adapter = newsPapersAdapter
 
         binding.manageNewsPapersList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
+        binding.manageNewsPapersList.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+
         binding.manageNewsPapersContainer.setOnRefreshListener(this)
 
-        viewModel.loadSources()
+        viewModel.loadNewspapers()
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -148,7 +149,6 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
         activity?.let {
             goToNewsPaperDetailScreen(
                     container = it,
-                    layoutId = R.id.main_content,
                     newsPaper = newsPaper
             )
         }
@@ -162,7 +162,7 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
         hideLoadingAnimation()
 
         Snackbar.make(binding.manageNewsPapersLayout, R.string.newspapers_error_message, Snackbar.LENGTH_LONG)
-                .setAction(R.string.retry) { viewModel.loadSources() }
+                .setAction(R.string.retry) { viewModel.loadNewspapers() }
                 .show()
 
     }

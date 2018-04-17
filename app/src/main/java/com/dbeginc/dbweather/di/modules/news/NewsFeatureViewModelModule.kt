@@ -20,6 +20,7 @@ import com.dbeginc.dbweather.di.ViewModelKey
 import com.dbeginc.dbweathernews.articledetail.ArticleDetailViewModel
 import com.dbeginc.dbweathernews.articles.ArticlesViewModel
 import com.dbeginc.dbweathernews.managenewspapers.ManageNewsPapersViewModel
+import com.dbeginc.dbweathernews.newspaperdetail.NewsPaperDetailViewModel
 import com.dbeginc.dbweathernews.newspapers.NewsPapersViewModel
 import dagger.Binds
 import dagger.Module
@@ -31,6 +32,11 @@ abstract class NewsFeatureViewModelModule {
     @IntoMap
     @ViewModelKey(NewsPapersViewModel::class)
     abstract fun bindNewsPapersViewModel(newsPapersViewModel: NewsPapersViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(NewsPaperDetailViewModel::class)
+    abstract fun bindNewsPaperDetailViewModel(newsPaperDetailViewModel: NewsPaperDetailViewModel): ViewModel
 
     @Binds
     @IntoMap

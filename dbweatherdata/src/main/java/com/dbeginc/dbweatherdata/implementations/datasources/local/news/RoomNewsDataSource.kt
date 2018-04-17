@@ -26,6 +26,7 @@ import com.dbeginc.dbweatherdomain.entities.requests.news.ArticleRequest
 import com.dbeginc.dbweatherdomain.entities.requests.news.ArticlesRequest
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 
 /**
  * Created by darel on 04.10.17.
@@ -77,6 +78,9 @@ class RoomNewsDataSource private constructor(private val db: RoomNewsDatabase) :
 
     override fun getNewsPaper(name: String): Flowable<NewsPaper> =
             db.newsDao().getNewsPaper(name).map { source -> source.toDomain() }
+
+    override fun findNewspaper(name: String): Maybe<List<NewsPaper>> =
+            db.newsDao().findNewsPaperByName(name).map { newsPapers -> newsPapers.map { it.toDomain() } }
 
     override fun updateNewsPaper(newsPaper: NewsPaper): Completable =
             Completable.fromAction { db.newsDao().updateNewsPaper(newsPaper.toProxy()) }
