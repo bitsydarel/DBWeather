@@ -22,6 +22,7 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -43,37 +44,28 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
 class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBridge, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentManageNewsPapersBinding
 
-    private val viewModel: ManageNewsPapersViewModel by lazy {
-        return@lazy ViewModelProviders.of(this, factory.get())[ManageNewsPapersViewModel::class.java]
-    }
-
     private val newsPapersAdapter: NewsPapersAdapter by lazy {
         return@lazy NewsPapersAdapter(managerBridge = this)
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    private val viewModel: ManageNewsPapersViewModel by lazy {
+        return@lazy ViewModelProviders.of(this, factory.get())[ManageNewsPapersViewModel::class.java]
     }
 
-    private val newsPapersObserver: Observer<List<NewsPaperModel>> = Observer {
-        newsPapersAdapter.updateData(newData = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModel.getRequestState().observe(this, stateObserver)
-
-        viewModel.getNewsPapers().observe(this, newsPapersObserver)
-
+    private val newsPapersObserver: Observer<List<NewsPaperModel>> = Observer { newsPapers ->
+        newsPapers?.let { newsPapersAdapter.updateData(newData = it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        inflater.inflate(R.menu.manage_sources_menu, menu)
+        inflater.inflate(R.menu.manage_newspapers_menu, menu)
 
-        val searchView = menu.findItem(R.id.findNewsPaperSearch).actionView as? SearchView
+        val searchView = menu.findItem(R.id.findNewsPaperSearch).actionView as? android.support.v7.widget.SearchView
 
         searchView?.let {
             it.isSubmitButtonEnabled = false
@@ -83,7 +75,7 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     if (newText != null && newText.isNotBlank()) viewModel.findNewspaper(query = newText)
-                    else viewModel.loadNewspapers()
+                    else onRefresh()
                     return true
                 }
             })
@@ -101,18 +93,32 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
                 container,
                 false
         )
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? MainActivity)?.let { container ->
-            container.setSupportActionBar(binding.manageNewsPapersToolbar)
-            binding.manageNewsPapersToolbar.setNavigationOnClickListener { container.openNavigationDrawer() }
-        }
+        (activity as? AppCompatActivity)?.setSupportActionBar(binding.manageNewsPapersToolbar)
 
         setupView()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        (activity as? MainActivity)?.let { container ->
+            binding.manageNewsPapersToolbar.setNavigationOnClickListener {
+                container.openNavigationDrawer()
+            }
+        }
+
+        viewModel.getRequestState().observe(this, stateObserver)
+
+        viewModel.getNewsPapers().observe(this, newsPapersObserver)
+
+        onRefresh()
     }
 
     override fun onRefresh() = viewModel.loadNewspapers()
@@ -125,8 +131,6 @@ class ManageNewsPapersFragment : BaseFragment(), MVMPVView, NewsPapersManagerBri
         binding.manageNewsPapersList.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         binding.manageNewsPapersContainer.setOnRefreshListener(this)
-
-        viewModel.loadNewspapers()
     }
 
     override fun onStateChanged(state: RequestState) {

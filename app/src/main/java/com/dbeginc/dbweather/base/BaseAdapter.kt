@@ -37,4 +37,6 @@ abstract class BaseAdapter<T, V : RecyclerView.ViewHolder>(differenceCalculator:
 
     fun remoteItemAt(position: Int) = adapterHelper.submitList(adapterHelper.currentList.drop(position))
 
+    fun getData(): List<T> = adapterHelper.currentList
+
 }

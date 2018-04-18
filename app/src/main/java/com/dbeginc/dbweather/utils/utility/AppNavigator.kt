@@ -23,8 +23,8 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.view.GravityCompat
 import android.view.Gravity
 import com.dbeginc.dbweather.MainActivity
-import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.articledetail.ArticleDetailActivity
+import com.dbeginc.dbweather.choosedefaultnewspapers.ChooseNewsPapersFragment
 import com.dbeginc.dbweather.chooselocations.ChooseLocationsFragment
 import com.dbeginc.dbweather.findlocationwithgps.GpsLocationFinderFragment
 import com.dbeginc.dbweather.iptvlivedetail.IpTvLiveActivity
@@ -53,59 +53,81 @@ import com.dbeginc.dbweathernews.viewmodels.NewsPaperModel
  *
  */
 fun goToSplashScreen(container: FragmentActivity, layoutId: Int) {
-    val currentFragment = container.supportFragmentManager.findFragmentById(layoutId)
+    val currentScreen = container.supportFragmentManager.findFragmentById(layoutId)
 
-    currentFragment?.exitTransition = Slide(Gravity.TOP)
+    currentScreen?.exitTransition = Slide(Gravity.TOP)
 
     val splashFragment = SplashFragment()
 
     splashFragment.enterTransition = Slide(Gravity.BOTTOM)
 
-    val fragmentTransaction = container.supportFragmentManager.beginTransaction()
-
-    fragmentTransaction.replace(
-            R.id.launchContent,
-            splashFragment,
-            SplashFragment::class.java.simpleName
-    )
-
-    fragmentTransaction.commit()
+    container.supportFragmentManager
+            .beginTransaction()
+            .replace(
+                    layoutId,
+                    splashFragment,
+                    SplashFragment::class.java.simpleName
+            ).commit()
 }
 
 fun goToChooseLocationScreen(container: FragmentActivity, layoutId: Int) {
-    val currentFragment = container.supportFragmentManager.findFragmentById(layoutId)
+    val currentScreen = container.supportFragmentManager.findFragmentById(layoutId)
 
-    currentFragment?.exitTransition = Slide(GravityCompat.END)
+    currentScreen?.exitTransition = Slide(GravityCompat.END)
 
     val chooseLocationsFragment = ChooseLocationsFragment()
 
     chooseLocationsFragment.enterTransition = Slide(GravityCompat.START)
 
-    val fragmentTransaction = container.supportFragmentManager.beginTransaction()
+    container.supportFragmentManager
+            .beginTransaction()
+            .replace(
+                    layoutId,
+                    chooseLocationsFragment,
+                    ChooseLocationsFragment::class.java.simpleName
+            ).commit()
 
-    fragmentTransaction.replace(R.id.launchContent, chooseLocationsFragment, ChooseLocationsFragment::class.java.simpleName)
-
-    fragmentTransaction.commit()
 }
 
 fun goToGpsLocationFinder(container: FragmentActivity, layoutId: Int) {
-    val currentFragment = container.supportFragmentManager.findFragmentById(layoutId)
+    val currentScreen = container.supportFragmentManager.findFragmentById(layoutId)
 
-    currentFragment?.exitTransition = Slide(GravityCompat.START)
+    currentScreen?.exitTransition = Slide(GravityCompat.START)
 
-    val gpsLocationFinderFragment = GpsLocationFinderFragment()
+    val gpsLocationFinderScreen = GpsLocationFinderFragment()
 
-    gpsLocationFinderFragment.enterTransition = Slide(GravityCompat.END)
+    gpsLocationFinderScreen.enterTransition = Slide(GravityCompat.END)
 
-    val fragmentTransaction = container.supportFragmentManager.beginTransaction()
+    container.supportFragmentManager
+            .beginTransaction()
+            .replace(
+                    layoutId,
+                    gpsLocationFinderScreen,
+                    GpsLocationFinderFragment::class.java.simpleName
+            ).commit()
+}
 
-    fragmentTransaction.replace(R.id.launchContent, gpsLocationFinderFragment, GpsLocationFinderFragment::class.java.simpleName)
+fun goToChooseDefaultNewsPapers(container: FragmentActivity, layoutId: Int) {
+    val currentScreen = container.supportFragmentManager.findFragmentById(layoutId)
 
-    fragmentTransaction.commit()
+    currentScreen?.exitTransition = Fade(Fade.OUT)
+
+    val chooseNewsPapersScreen = ChooseNewsPapersFragment()
+
+    chooseNewsPapersScreen.enterTransition = Fade(Fade.IN)
+
+    container.supportFragmentManager
+            .beginTransaction()
+            .replace(
+                    layoutId,
+                    chooseNewsPapersScreen,
+                    ChooseNewsPapersFragment::class.java.simpleName
+            )
+            .commit()
+
 }
 
 fun goToMainScreen(currentScreen: FragmentActivity) {
-
     val goToMainScreen = Intent(currentScreen, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
@@ -216,7 +238,7 @@ fun goToIpTvLiveScreen(container: FragmentActivity, iptvLive: IpTvLiveModel) {
 
     ipTvLiveScreen.putExtra(IPTV_LIVE_DATA, iptvLive)
 
-    container.startActivity(ipTvLiveScreen)
+    ActivityCompat.startActivity(container, ipTvLiveScreen, null)
 }
 
 fun goToYoutubeLiveDetailScreen(container: FragmentActivity, youtubeLive: YoutubeLiveModel) {
@@ -224,7 +246,7 @@ fun goToYoutubeLiveDetailScreen(container: FragmentActivity, youtubeLive: Youtub
 
     youtubeDetailScreenIntent.putExtra(YOUTUBE_LIVE_KEY, youtubeLive)
 
-    container.startActivity(youtubeDetailScreenIntent)
+    ActivityCompat.startActivity(container, youtubeDetailScreenIntent, null)
 }
 
 fun goToArticleDetailScreen(container: FragmentActivity, article: ArticleModel) {
@@ -232,7 +254,7 @@ fun goToArticleDetailScreen(container: FragmentActivity, article: ArticleModel) 
 
     articleDetailScreenIntent.putExtra(ARTICLE_KEY, article)
 
-    container.startActivity(articleDetailScreenIntent)
+    ActivityCompat.startActivity(container, articleDetailScreenIntent, null)
 }
 
 fun goToNewsPaperDetailScreen(container: FragmentActivity, newsPaper: NewsPaperModel) {
@@ -240,5 +262,5 @@ fun goToNewsPaperDetailScreen(container: FragmentActivity, newsPaper: NewsPaperM
 
     newsPaperDetailScreenIntent.putExtra(NEWSPAPER_KEY, newsPaper)
 
-    container.startActivity(newsPaperDetailScreenIntent)
+    ActivityCompat.startActivity(container, newsPaperDetailScreenIntent, null)
 }

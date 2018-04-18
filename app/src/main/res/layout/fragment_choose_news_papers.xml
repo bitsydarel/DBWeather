@@ -13,16 +13,52 @@
   ~  limitations under the License
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".choosedefaultnewspapers.ChooseNewsPapersFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/chooseNewsPapersLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:context=".choosedefaultnewspapers.ChooseNewsPapersFragment">
 
-</FrameLayout>
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/chooseNewsPapersAppbar"
+            style="@style/Widget.Design.AppBarLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/chooseNewsPapersToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@drawable/ic_close"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/subscribe_to_news" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/chooseNewsPapersContainer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chooseNewsPapersAppbar">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/chooseNewsPapersList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/newspaper_layout" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
