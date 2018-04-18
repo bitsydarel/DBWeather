@@ -64,14 +64,16 @@
             android:id="@+id/hourlyTemperatureValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:text='@{Hour.temperature + "°"}'
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/hourlyTime"
             app:layout_constraintTop_toBottomOf="@id/hourlyImage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/hourlyTemperatureValueUnit"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="15°" />
 
         <TextView
@@ -80,10 +82,10 @@
             android:layout_height="wrap_content"
             android:text="@{Hour.temperatureUnit}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@id/hourlyTemperatureValue"
             app:layout_constraintStart_toEndOf="@id/hourlyTemperatureValue"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/hourlyTemperatureValue"
             tools:text="C" />
 

@@ -61,7 +61,7 @@ class WeatherRepositoryImpl private constructor(private val local: LocalWeatherD
 
     override fun getWeather(request: WeatherRequest<String>): Flowable<Weather> {
         // Remote request to api
-        val remoteRequest = remote.getWeather(WeatherRequest(request.latitude, request.longitude, Unit))
+        val remoteRequest = remote.getWeather(WeatherRequest("", request.latitude, request.longitude, Unit))
                 .subscribeOn(thread.IO)
 
         // If requested location is empty
@@ -76,10 +76,10 @@ class WeatherRepositoryImpl private constructor(private val local: LocalWeatherD
     }
 
     override fun getWeatherForLocation(request: WeatherRequest<String>): Flowable<Weather> {
-        return local.getWeatherForLocation(request.arg)
+        return local.getWeatherForLocation(locationName = request.city, countryCode = request.arg)
                 .subscribeOn(thread.CP)
                 .doOnSubscribe {
-                    remote.getWeather(WeatherRequest(request.latitude, request.longitude, Unit))
+                    remote.getWeather(WeatherRequest("", request.latitude, request.longitude, Unit))
                             .subscribeOn(thread.IO)
                             .subscribe(this::addWeatherForLocation, logger::logError)
                 }

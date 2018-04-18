@@ -62,7 +62,7 @@ class WeatherViewModel @Inject constructor(private val model: WeatherRepository,
     fun getUserLocations(): LiveData<List<WeatherLocationModel>> = _listOfLocations
 
     fun loadWeatherForCity(location: WeatherLocationModel) {
-        model.getWeatherForLocation(WeatherRequest(arg = location.name, latitude = location.latitude, longitude = location.longitude))
+        model.getWeatherForLocation(WeatherRequest(city = location.name, arg = location.countryCode, latitude = location.latitude, longitude = location.longitude))
                 .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
                 .doAfterNext { requestState.postValue(RequestState.COMPLETED) }
                 .doOnError { requestState.postValue(RequestState.ERROR) }
@@ -73,7 +73,7 @@ class WeatherViewModel @Inject constructor(private val model: WeatherRepository,
     }
 
     fun loadWeather(location: WeatherLocationModel) {
-        model.getWeather(WeatherRequest(arg = location.name, latitude = location.latitude, longitude = location.longitude))
+        model.getWeather(WeatherRequest(city = location.name, arg = location.countryCode, latitude = location.latitude, longitude = location.longitude))
                 .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
                 .doAfterNext { requestState.postValue(RequestState.COMPLETED) }
                 .doOnError { requestState.postValue(RequestState.ERROR) }

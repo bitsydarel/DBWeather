@@ -67,7 +67,7 @@
     <string name="use_gps_location">Use Gps Location</string>
     <string name="powered_by_dark_sky">Powered by Dark Sky</string>
     <string name="made_by_darel_bitsy">Made by Darel Bitsy</string>
-    <string name="city_name">City name</string>
+    <string name="enter_city_name">Enter city name</string>
     <string name="articleImage">Article Image</string>
     <string name="live_thumbnail">Live Thumbnail</string>
     <string name="humidity_icon">Humidity Icon</string>
@@ -111,4 +111,6 @@
     <string name="could_not_load_channels">could not load channels</string>
     <string name="search_iptv_live">Search IpTv Live</string>
     <string name="newspaper_language">NewsPaper language</string>
+    <string name="done">Done</string>
+    <string name="please_subscribe_to_3_newspapers">Please subscribe to at least 3 newspapers</string>
 </resources>

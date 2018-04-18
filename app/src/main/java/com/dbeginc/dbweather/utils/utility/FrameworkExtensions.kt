@@ -87,23 +87,20 @@ fun SharedPreferences.Editor.putDouble(key: String, value: Double): SharedPrefer
 fun SharedPreferences.getDouble(key: String): Double =
         java.lang.Double.longBitsToDouble(getLong(key, 0))
 
-fun ApplicationPreferences.findDefaultLocation(): WeatherLocationModel {
-    return WeatherLocationModel(
-            getDefaultLocation(),
-            getDefaultLatitude(),
-            getDefaultLongitude(),
-            "",
-            ""
-    )
-}
+fun ApplicationPreferences.findDefaultLocation(): WeatherLocationModel = WeatherLocationModel(
+        name = getDefaultCity(),
+        countryCode = getDefaultCountryCode(),
+        countryName = "",
+        latitude = getDefaultLatitude(),
+        longitude = getDefaultLongitude()
+)
 
-fun ApplicationPreferences.findCustomLocation(): WeatherLocationModel {
-    val location = getCustomLocation().split(",")
-    val latitude = getCustomLatitude()
-    val longitude = getCustomLongitude()
-
-    return if (location.isEmpty() || location.size < 3) WeatherLocationModel("", latitude, longitude, "", "")
-    else WeatherLocationModel(name = location[0], countryCode = location[2], countryName = location[1], latitude = latitude, longitude = longitude)
-}
+fun ApplicationPreferences.findCustomLocation(): WeatherLocationModel = WeatherLocationModel(
+        name = getCustomCity(),
+        countryCode = getCustomCountryCode(),
+        countryName = "",
+        latitude = getCustomLatitude(),
+        longitude = getCustomLongitude()
+)
 
 fun WeatherLocationModel.fullName() = name.plus(", ").plus(countryCode)

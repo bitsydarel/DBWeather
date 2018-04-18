@@ -94,11 +94,11 @@
 
         <activity android:name=".articledetail.ArticleDetailActivity" />
         <activity android:name=".youtubelivedetail.YoutubeLiveDetailActivity" />
+        <activity android:name=".newspaperdetail.NewsPaperDetailActivity" />
         <activity
             android:name=".iptvlivedetail.IpTvLiveActivity"
             android:label=""
             android:screenOrientation="landscape" />
-        <activity android:name=".newspaperdetail.NewsPaperDetailActivity"></activity>
     </application>
 
 </manifest>

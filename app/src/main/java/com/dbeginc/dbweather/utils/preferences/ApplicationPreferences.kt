@@ -27,31 +27,37 @@ import com.dbeginc.dbweathernews.newspapers.NewsPapersViewModel
  */
 class ApplicationPreferences(private val sharedPreferences: SharedPreferences) {
 
-    fun getDefaultLatitude(): Double = sharedPreferences.getDouble(LATITUDE)
+    fun getDefaultLatitude(): Double = sharedPreferences.getDouble(CURRENT_LATITUDE)
 
-    fun getDefaultLongitude(): Double = sharedPreferences.getDouble(LONGITUDE)
+    fun getDefaultLongitude(): Double = sharedPreferences.getDouble(CURRENT_LONGITUDE)
 
-    fun getDefaultLocation(): String = sharedPreferences.getString(CURRENT_LOCATION, "")
+    fun getDefaultCity(): String = sharedPreferences.getString(CURRENT_CITY, "")
 
-    fun getCustomLatitude(): Double = sharedPreferences.getDouble(USER_LATITUDE)
+    fun getDefaultCountryCode(): String = sharedPreferences.getString(CURRENT_COUNTRY_CODE, "")
 
-    fun getCustomLongitude(): Double = sharedPreferences.getDouble(USER_LONGITUDE)
+    fun getCustomLatitude(): Double = sharedPreferences.getDouble(CUSTOM_LATITUDE)
 
-    fun getCustomLocation(): String = sharedPreferences.getString(USER_LOCATION, "")
+    fun getCustomLongitude(): Double = sharedPreferences.getDouble(CUSTOM_LONGITUDE)
 
-    fun updateDefaultCoordinates(location: String, latitude: Double, longitude: Double) {
+    fun getCustomCity(): String = sharedPreferences.getString(CUSTOM_CITY, "")
+
+    fun getCustomCountryCode(): String = sharedPreferences.getString(CUSTOM_COUNTRY_CODE, "")
+
+    fun updateDefaultCoordinates(city: String, countryCode: String, latitude: Double, longitude: Double) {
         sharedPreferences.edit()
-                .putString(CURRENT_LOCATION, location)
-                .putDouble(LATITUDE, latitude)
-                .putDouble(LONGITUDE, longitude)
+                .putString(CURRENT_CITY, city)
+                .putString(CURRENT_COUNTRY_CODE, countryCode)
+                .putDouble(CURRENT_LATITUDE, latitude)
+                .putDouble(CURRENT_LONGITUDE, longitude)
                 .apply()
     }
 
-    fun updateCustomCoordinates(location: String, latitude: Double, longitude: Double) {
+    fun updateCustomCoordinates(city: String, countryCode: String, latitude: Double, longitude: Double) {
         sharedPreferences.edit()
-                .putString(USER_LONGITUDE, location)
-                .putDouble(USER_LATITUDE, latitude)
-                .putDouble(USER_LONGITUDE, longitude)
+                .putString(CUSTOM_CITY, city)
+                .putString(CUSTOM_COUNTRY_CODE, countryCode)
+                .putDouble(CUSTOM_LATITUDE, latitude)
+                .putDouble(CUSTOM_LONGITUDE, longitude)
                 .apply()
     }
 

@@ -31,7 +31,7 @@ import io.reactivex.Flowable
 interface LocalWeatherDataSource {
     fun getWeather(request: WeatherRequest<String>): Flowable<Weather>
 
-    fun getWeatherForLocation(locationName: String): Flowable<Weather>
+    fun getWeatherForLocation(locationName: String, countryCode: String): Flowable<Weather>
 
     fun getUserLocations(): Flowable<List<Location>>
 

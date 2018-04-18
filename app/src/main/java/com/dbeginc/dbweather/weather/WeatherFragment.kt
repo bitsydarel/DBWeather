@@ -29,6 +29,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.NotificationCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -93,18 +94,6 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         location?.let { displayUserLocations(locations = it) }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModel.getRequestState().observe(this, stateObserver)
-
-        viewModel.getDefaultWeather().observe(this, defaultWeatherObserver)
-
-        viewModel.getCustomWeather().observe(this, customWeatherObserver)
-
-        viewModel.getUserLocations().observe(this, userLocationsObserver)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -112,17 +101,19 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
 
         val findLocation = menu.findItem(R.id.action_search_location)
 
-        val searchView: SearchView = findLocation.actionView as SearchView
+        val searchView: SearchView? = findLocation.actionView as? android.support.v7.widget.SearchView
 
-        val searchManager = context?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchManager = context?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
 
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        searchView?.apply {
+            setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
 
-        searchView.setIconifiedByDefault(true)
+            setIconifiedByDefault(true)
 
-        searchView.isSubmitButtonEnabled = false
+            isSubmitButtonEnabled = false
 
-        searchView.setOnSuggestionListener(this)
+            setOnSuggestionListener(this@WeatherFragment)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -149,34 +140,49 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? AppCompatActivity)?.setSupportActionBar(binding.weatherToolbar)
+
+        setupView()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
         (activity as? MainActivity)?.let { container ->
-            container.setSupportActionBar(binding.weatherToolbar)
             binding.weatherToolbar.setNavigationOnClickListener {
                 container.openNavigationDrawer()
             }
         }
 
-        setupView()
+        viewModel.getRequestState().observe(this, stateObserver)
+
+        viewModel.getDefaultWeather().observe(this, defaultWeatherObserver)
+
+        viewModel.getCustomWeather().observe(this, customWeatherObserver)
+
+        viewModel.getUserLocations().observe(this, userLocationsObserver)
+
+        if (preferences.get().isGpsPermissionOn()) {
+            locationChangeEvent.observe(this, this)
+        }
 
         viewModel.loadUserCities()
 
         askForWeather()
 
-        if (preferences.get().isGpsPermissionOn()) {
-            locationChangeEvent.observe(this, this)
-        }
     }
 
     override fun onChanged(newLocation: Location?) {
         newLocation?.run {
             preferences.get().updateDefaultCoordinates(
-                    preferences.get().getDefaultLocation(),
-                    latitude,
-                    longitude
+                    city = preferences.get().getDefaultCity(),
+                    countryCode = preferences.get().getDefaultCountryCode(),
+                    latitude = latitude,
+                    longitude = longitude
             )
-        }
 
-        askForWeather()
+            askForWeather()
+        }
     }
 
     override fun onSuggestionSelect(position: Int): Boolean {
@@ -192,7 +198,7 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
     /********************************* View Part *********************************/
     override fun setupView() {
         binding.currentLocationMenuItem.apply {
-            labelText = preferences.get().getDefaultLocation()
+            labelText = preferences.get().getDefaultCity()
             setImageResource(R.drawable.ic_current_location)
             setOnClickListener {
                 viewModel.loadWeather(preferences.get().findDefaultLocation())
@@ -208,6 +214,7 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
         binding.dailyWeatherRCV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         binding.dailyWeatherRCV.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -253,13 +260,15 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
 
     private fun displayWeather(weather: WeatherModel, isDefault: Boolean) {
         if (isDefault) preferences.get().updateDefaultCoordinates(
-                weather.location.name,
-                weather.location.latitude,
-                weather.location.longitude
+                city = weather.location.name,
+                countryCode = weather.location.countryCode,
+                latitude = weather.location.latitude,
+                longitude = weather.location.longitude
         ) else preferences.get().updateCustomCoordinates(
-                weather.location.name,
-                weather.location.latitude,
-                weather.location.longitude
+                city = weather.location.name,
+                countryCode = weather.location.countryCode,
+                latitude = weather.location.latitude,
+                longitude = weather.location.longitude
         )
 
         binding.weather = weather
@@ -344,7 +353,7 @@ class WeatherFragment : BaseFragment(), MVMPVView, WithSearchableData, SearchVie
                 builder.setContentInfo(getString(R.string.notification_alert_city).format(locations))
                         .setContentTitle(title)
                         .setContentText(description)
-                        .addAction(R.drawable.ic_close_black, cancel, getDismissIntent(notificationId, context!!))
+                        .addAction(R.drawable.ic_close, cancel, getDismissIntent(notificationId, context!!))
                         .addAction(R.drawable.ic_internet, openInBrowser, PendingIntent.getActivity(activity, notificationId, browserIntent, PendingIntent.FLAG_UPDATE_CURRENT))
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setSound(notificationSound)

@@ -51,12 +51,14 @@ RoomWeatherDataSource private constructor(private val currentDatabase: LocalCurr
     }
 
     override fun getWeather(request: WeatherRequest<String>): Flowable<Weather> {
-        return currentDatabase.weatherDao().getWeatherByLocation(request.arg)
+        return currentDatabase.weatherDao()
+                .getWeatherByLocation(location = request.city, country = request.arg)
                 .map { proxy -> proxy.toDomain() }
     }
 
-    override fun getWeatherForLocation(locationName: String): Flowable<Weather> {
-        return locationDatabase.weatherDao().getWeatherByLocation(locationName)
+    override fun getWeatherForLocation(locationName: String, countryCode: String): Flowable<Weather> {
+        return locationDatabase.weatherDao()
+                .getWeatherByLocation(location = locationName, country = countryCode)
                 .map { proxy -> proxy.toDomain() }
     }
 
