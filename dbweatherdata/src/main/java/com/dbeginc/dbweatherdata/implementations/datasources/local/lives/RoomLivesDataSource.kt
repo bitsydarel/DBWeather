@@ -47,7 +47,14 @@ class RoomLivesDataSource private constructor(private val db: RoomLivesDatabase)
         }
     }
 
-    override fun getAllYoutubeLives(): Flowable<List<YoutubeLive>> = db.livesDao().getAllYoutubeLives().map { lives -> lives.map { live -> live.toDomain() } }
+    override fun getAllYoutubeLives(): Flowable<List<YoutubeLive>> = db.livesDao()
+            .getAllYoutubeLives()
+            .map { lives -> lives.map { live -> live.toDomain() } }
+
+    override fun findYoutubeLive(name: String): Maybe<List<YoutubeLive>> {
+        return db.livesDao().findYoutubeLiveByName(name)
+                .map { lives -> lives.map { live -> live.toDomain() } }
+    }
 
     override fun getYoutubeLives(names: List<String>): Flowable<List<YoutubeLive>> = db.livesDao().getYoutubeLives(names).map { lives -> lives.map { live -> live.toDomain() } }
 

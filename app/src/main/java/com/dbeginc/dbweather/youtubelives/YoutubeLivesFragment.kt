@@ -24,6 +24,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.*
 import com.dbeginc.dbweather.MainActivity
 import com.dbeginc.dbweather.R
@@ -53,16 +54,16 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRef
         return@lazy ViewModelProviders.of(this, factory.get())[ManageYoutubeLivesViewModel::class.java]
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
-    }
-
-    private val adapter by lazy {
+    private val youtubeLiveAdapter : YoutubeLiveAdapter by lazy {
         return@lazy YoutubeLiveAdapter(containerBridge = this)
     }
 
-    private val youtubeLivesObserver = Observer<List<YoutubeLiveModel>> {
-        adapter.updateData(newData = it!!)
+    override val stateObserver: Observer<RequestState> = Observer {
+        state -> state?.let { onStateChanged(state = it) }
+    }
+
+    private val youtubeLivesObserver : Observer<List<YoutubeLiveModel>> = Observer {
+        youtubeLives -> youtubeLives?.let { youtubeLiveAdapter.updateData(newData = it) }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -74,21 +75,30 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRef
 
         manageYoutubeLivesViewModel.getRequestState().observe(this, stateObserver)
 
+        getAllLives()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
         inflater.inflate(R.menu.youtube_lives_menu, menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.action_sort_youtube_lives -> return true //TODO Implement
-            R.id.action_search_youtube_lives -> return true //ToDO implement
+        val searchView = menu.findItem(R.id.action_search_youtube_lives).actionView as? android.support.v7.widget.SearchView
+
+        searchView?.let {
+            it.isSubmitButtonEnabled = false
+
+            it.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText != null && newText.isNotBlank()) viewModel.findYoutubeLive(query = newText)
+                    else getAllLives()
+                    return true
+                }
+            })
         }
-
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -115,19 +125,18 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRef
         setupView()
     }
 
-    override fun onRefresh() = getLives()
+    override fun onRefresh() = getAllLives()
 
     /********************* All Lives Tab Page Part *********************/
     override fun setupView() {
         binding.youtubeLivesListContainer.setOnRefreshListener(this)
 
-        binding.youtubeLivesList.adapter = adapter
+        binding.youtubeLivesList.adapter = youtubeLiveAdapter
 
         binding.youtubeLivesList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         binding.youtubeLivesList.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        getLives()
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -153,7 +162,7 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRef
         }
     }
 
-    private fun getLives() {
+    private fun getAllLives() {
         val preferredOrder = preferences.get().getYoutubeLivesPreferredOrder()
 
         viewModel.loadAllYoutubeLives(sortingOrder = preferredOrder)
@@ -166,7 +175,7 @@ class YoutubeLivesFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout.OnRef
     private fun onYoutubeLivesRequestFailed() {
         Snackbar.make(binding.youtubeLivesLayout, R.string.lives_error_message, Snackbar.LENGTH_LONG)
                 .setActionTextColor(Color.RED)
-                .setAction(R.string.retry, { getLives() })
+                .setAction(R.string.retry, { getAllLives() })
     }
 
 }

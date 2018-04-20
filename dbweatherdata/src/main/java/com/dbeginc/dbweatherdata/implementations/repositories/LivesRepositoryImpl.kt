@@ -69,6 +69,11 @@ class LivesRepositoryImpl private constructor(private val threads: ThreadProvide
                 }
     }
 
+    override fun findYoutubeLive(possibleName: String): Maybe<List<YoutubeLive>> {
+        return localSource.findYoutubeLive(name = possibleName)
+                .subscribeOn(threads.CP)
+    }
+
     override fun getYoutubeLives(names: List<String>): Flowable<List<YoutubeLive>> {
         return localSource.getYoutubeLives(names)
                 .subscribeOn(threads.CP)

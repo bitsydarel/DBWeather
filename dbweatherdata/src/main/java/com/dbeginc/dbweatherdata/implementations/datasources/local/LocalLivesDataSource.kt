@@ -29,6 +29,8 @@ import io.reactivex.Maybe
 interface LocalLivesDataSource {
     fun getAllYoutubeLives(): Flowable<List<YoutubeLive>>
 
+    fun findYoutubeLive(name: String): Maybe<List<YoutubeLive>>
+
     fun getYoutubeLives(names: List<String>): Flowable<List<YoutubeLive>>
 
     fun getFavoriteYoutubeLives(): Flowable<List<String>>

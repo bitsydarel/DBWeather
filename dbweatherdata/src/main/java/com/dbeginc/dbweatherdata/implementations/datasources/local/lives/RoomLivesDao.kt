@@ -31,6 +31,9 @@ interface RoomLivesDao {
     @Query("SELECT * FROM $YOUTUBE_LIVE_TABLE")
     fun getAllYoutubeLives(): Flowable<List<LocalYoutubeLive>>
 
+    @Query("SELECT * FROM $YOUTUBE_LIVE_TABLE WHERE name LIKE :name || '%'")
+    fun findYoutubeLiveByName(name: String): Maybe<List<LocalYoutubeLive>>
+
     @Query("SELECT * FROM $YOUTUBE_LIVE_TABLE WHERE name IN (:names)")
     fun getYoutubeLives(names: List<String>): Flowable<List<LocalYoutubeLive>>
 
