@@ -46,24 +46,30 @@ class NewsPapersFragment : BaseFragment(), MVMPVView {
         return@lazy ViewModelProviders.of(this, factory.get())[NewsPapersViewModel::class.java]
     }
 
-    private val pageAdapter by lazy {
-        ArticlesPagerAdapter(childFragmentManager)
+    private val pageAdapter: ArticlesPagerAdapter by lazy {
+        return@lazy ArticlesPagerAdapter(childFragmentManager)
     }
 
-    private val sourcesObserver: Observer<List<NewsPaperModel>> = Observer {
-        pageAdapter.refresh(it!!)
+    private val sourcesObserver: Observer<List<NewsPaperModel>> = Observer { newspapers ->
+        newspapers?.let { pageAdapter.refresh(it) }
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        (activity as? MainActivity)?.let { container ->
+            binding.newsPapersToolbar.setNavigationOnClickListener { container.openNavigationDrawer() }
+        }
+
         viewModel.getRequestState().observe(this, stateObserver)
 
         viewModel.getNewsPapers().observe(this, sourcesObserver)
+
+        getNewsPapers()
 
     }
 
@@ -80,10 +86,7 @@ class NewsPapersFragment : BaseFragment(), MVMPVView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? MainActivity)?.let { container ->
-            container.setSupportActionBar(binding.newsPapersToolbar)
-            binding.newsPapersToolbar.setNavigationOnClickListener { container.openNavigationDrawer() }
-        }
+        (activity as? MainActivity)?.setSupportActionBar(binding.newsPapersToolbar)
 
         setupView()
     }
@@ -106,8 +109,6 @@ class NewsPapersFragment : BaseFragment(), MVMPVView {
 
         binding.newsPaperIds.setupWithViewPager(binding.newsPapersArticles, true)
 
-        getNewsPapers()
-
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -121,9 +122,7 @@ class NewsPapersFragment : BaseFragment(), MVMPVView {
     private fun onRequestNewsPapersFailed() {
         Snackbar.make(binding.newsPapersLayout, R.string.news_error_message, Snackbar.LENGTH_LONG)
                 .setActionTextColor(Color.RED)
-                .setAction(R.string.retry) {
-                    getNewsPapers()
-                }
+                .setAction(R.string.retry) { getNewsPapers() }
     }
 
     private fun getNewsPapers() {

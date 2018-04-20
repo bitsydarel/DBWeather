@@ -79,9 +79,16 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
                 .setShowTitle(true)
                 .setInstantAppsEnabled(false)
                 .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
-                .setExitAnimations(this, R.anim.slide_in_left, R.anim.slide_out_right)
                 .setCloseButtonIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_arrow))
                 .build()
+
+        setSupportActionBar(binding.articleDetailToolbar)
+
+        setupView()
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         DBWeatherExternalContentManager.prepareBrowserForUrl(binding.article!!.url)
 
@@ -89,9 +96,12 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
 
         viewModel.getArticleDetail().observe(this, articleObserver)
 
-        setSupportActionBar(binding.articleDetailToolbar)
-
-        setupView()
+        binding.article?.let { validArticle ->
+            viewModel.loadArticleDetail(
+                    articleSourceId = validArticle.sourceId,
+                    articleUrl = validArticle.url
+            )
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -105,13 +115,6 @@ class ArticleDetailActivity : BaseActivity(), MVMPVView {
         binding.shareArticleFab.setOnClickListener { shareArticle() }
 
         binding.openFullArticle.setOnClickListener { openFullArticle() }
-
-        binding.article?.let { validArticle ->
-            viewModel.loadArticleDetail(
-                    articleSourceId = validArticle.sourceId,
-                    articleUrl = validArticle.url
-            )
-        }
     }
 
     override fun onStateChanged(state: RequestState) {

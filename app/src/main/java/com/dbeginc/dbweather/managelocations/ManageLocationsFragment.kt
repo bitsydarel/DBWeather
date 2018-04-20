@@ -23,6 +23,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.BaseTransientBottomBar
 import android.support.design.widget.Snackbar
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -44,7 +46,7 @@ import com.dbeginc.dbweatherweather.viewmodels.WeatherLocationModel
 /**
  * A ManageLocationsFragment [BaseFragment] subclass.
  */
-class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge {
+class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentManageLocationsBinding
 
     private val viewModel: ManageLocationsViewModel by lazy {
@@ -55,28 +57,21 @@ class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge
         return@lazy ManageLocationsAdapter()
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
-    }
-
     private val swipeToDeleteLocations: ItemTouchHelper by lazy {
         return@lazy ItemTouchHelper(SwipeToDeleteLocations(this))
     }
 
-    private val userListsObserver = Observer<List<WeatherLocationModel>> {
-        if (it == null || it.isEmpty()) {
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
+    }
+
+    private val userListsObserver: Observer<List<WeatherLocationModel>> = Observer { locations ->
+        locations?.let {
+            if (it.isEmpty()) {
             binding.manageLocations.hide()
             binding.emptyList.show()
         } else locationsAdapter.updateData(newData = it)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModel.getRequestState().observe(this, stateObserver)
-
-        viewModel.getLocations().observe(this, userListsObserver)
-
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,12 +87,25 @@ class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? MainActivity)?.let { container ->
-            container.setSupportActionBar(binding.manageLocationsToolbar)
-            binding.manageLocationsToolbar.setNavigationOnClickListener { container.openNavigationDrawer() }
-        }
+        (activity as? AppCompatActivity)?.setSupportActionBar(binding.manageLocationsToolbar)
 
         setupView()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        (activity as? MainActivity)?.let { container ->
+            binding.manageLocationsToolbar.setNavigationOnClickListener {
+                container.openNavigationDrawer()
+            }
+        }
+
+        viewModel.getRequestState().observe(this, stateObserver)
+
+        viewModel.getLocations().observe(this, userListsObserver)
+
+        onRefresh()
     }
 
     override fun setupView() {
@@ -107,6 +115,7 @@ class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge
 
         swipeToDeleteLocations.attachToRecyclerView(binding.manageLocations)
 
+        binding.manageLocationsContainer.setOnRefreshListener(this)
     }
 
     override fun onStateChanged(state: RequestState) {
@@ -125,11 +134,13 @@ class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge
                         if (event == BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT) {
                             locationsAdapter.remoteItemAt(position)
                             viewModel.deleteLocation(location)
-                        } else locationsAdapter.cancelItemDeletion(position)
+                        }
                     }
                 })
                 .show()
     }
+
+    override fun onRefresh() = viewModel.loadUserLocations()
 
     private fun hideLoadingStatus() {
         binding.manageLocationsContainer.isRefreshing = false
@@ -142,6 +153,7 @@ class ManageLocationsFragment : BaseFragment(), MVMPVView, LocationManagerBridge
                 .setAction(R.string.retry) { viewModel.loadUserLocations() }
                 .setActionTextColor(Color.RED)
                 .show()
+
     }
 
 }

@@ -49,12 +49,12 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
         return@lazy IpTvPlayListAdapter(onItemClick = this::onPlayListSelected)
     }
 
-    private val ipTvPlayListsObserver = Observer<List<IpTvPlayListModel>> {
-        playListsAdapter.updateData(newData = it!!)
+    private val ipTvPlayListsObserver = Observer<List<IpTvPlayListModel>> { iptvPlaylists ->
+        iptvPlaylists?.let { playListsAdapter.updateData(newData = it) }
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -82,12 +82,6 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.getIpTvPlayLists().observe(this, ipTvPlayListsObserver)
-        viewModel.getRequestState().observe(this, stateObserver)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -111,7 +105,12 @@ class IptvPlaylistsFragment : BaseFragment(), MVMPVView {
         }
 
         setupView()
+    }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel.getIpTvPlayLists().observe(this, ipTvPlayListsObserver)
+        viewModel.getRequestState().observe(this, stateObserver)
         viewModel.loadIpTvPlayLists()
     }
 

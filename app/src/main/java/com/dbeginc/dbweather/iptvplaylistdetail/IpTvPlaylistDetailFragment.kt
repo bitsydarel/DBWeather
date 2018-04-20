@@ -46,7 +46,7 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout
     private lateinit var playlistId: String
 
     private val ipTvLivesAdapter: IpTvLivesAdapter by lazy {
-        IpTvLivesAdapter(onItemClick = this::onIpTvLiveSelected)
+        return@lazy IpTvLivesAdapter(onItemClick = this::onIpTvLiveSelected)
     }
 
     override val stateObserver: Observer<RequestState> = Observer { state ->
@@ -58,7 +58,7 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout
     }
 
     private val viewModel: IpTvPlaylistDetailViewModel by lazy {
-        ViewModelProviders.of(this, factory.get())[IpTvPlaylistDetailViewModel::class.java]
+        return@lazy ViewModelProviders.of(this, factory.get())[IpTvPlaylistDetailViewModel::class.java]
     }
 
     companion object {
@@ -94,6 +94,7 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout
 
         viewModel.getIpTvLives().observe(this, iptvLivesObserver)
 
+        onRefresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -103,19 +104,21 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout
 
         val searchView = menu.findItem(R.id.action_find_iptv)?.actionView as? android.support.v7.widget.SearchView
 
-        searchView?.queryHint = getString(R.string.search_iptv_live)
+        searchView?.let {
+            it.queryHint = getString(R.string.search_iptv_live)
 
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = true
+            it.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = true
 
-            override fun onQueryTextChange(query: String?): Boolean {
-                if (query != null && query.isNotBlank())
-                    viewModel.findIpTvLive(playlistId = playlistId, possibleLiveName = query)
-                else viewModel.loadIpTvLives(playlistId = playlistId)
-                return true
-            }
+                override fun onQueryTextChange(query: String?): Boolean {
+                    if (query != null && query.isNotBlank())
+                        viewModel.findIpTvLive(playlistId = playlistId, possibleLiveName = query)
+                    else viewModel.loadIpTvLives(playlistId = playlistId)
+                    return true
+                }
 
-        })
+            })
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -154,8 +157,6 @@ class IpTvPlaylistDetailFragment : BaseFragment(), MVMPVView, SwipeRefreshLayout
         binding.iptvLives.adapter = ipTvLivesAdapter
 
         binding.iptvLivesContainer.setOnRefreshListener(this)
-
-        onRefresh()
     }
 
     override fun onStateChanged(state: RequestState) {

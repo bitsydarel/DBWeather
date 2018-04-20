@@ -58,23 +58,12 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
         return@lazy FavoriteLiveAdapter(containerBridge = this)
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
-    private val favoritesObserver: Observer<List<YoutubeLiveModel>> = Observer {
-        favoriteYoutubeAdapter.updateData(newData = it!!)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModel.getRequestState().observe(this, stateObserver)
-
-        manageYoutubeLiveViewModel.getRequestState().observe(this, stateObserver)
-
-        viewModel.getFavoriteYoutubeLives().observe(this, favoritesObserver)
-
+    private val favoritesObserver: Observer<List<YoutubeLiveModel>> = Observer { favorites ->
+        favorites?.let { favoriteYoutubeAdapter.updateData(newData = it) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -97,6 +86,17 @@ class FavoriteYoutubeLivesFragment : BaseFragment(), MVMPVView, YoutubeLiveActio
         }
 
         setupView()
+
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel.getRequestState().observe(this, stateObserver)
+
+        manageYoutubeLiveViewModel.getRequestState().observe(this, stateObserver)
+
+        viewModel.getFavoriteYoutubeLives().observe(this, favoritesObserver)
 
         viewModel.loadFavoritesYoutubeLives()
 

@@ -50,7 +50,7 @@ class ChooseLocationsFragment : BaseFragment(), MVMPVView, ChooseLocationBridge,
     }
 
     private val locationAdapter: ChooseLocationAdapter by lazy {
-        ChooseLocationAdapter(actionBridge = this)
+        return@lazy ChooseLocationAdapter(actionBridge = this)
     }
 
     override val stateObserver: Observer<RequestState> = Observer { state ->

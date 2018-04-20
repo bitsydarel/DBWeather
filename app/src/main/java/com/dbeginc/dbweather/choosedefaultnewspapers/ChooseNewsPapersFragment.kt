@@ -79,6 +79,8 @@ class ChooseNewsPapersFragment : BaseFragment(), NewsPapersManagerBridge, MVMPVV
         searchView?.let {
             it.isSubmitButtonEnabled = false
 
+            it.queryHint = getString(R.string.enter_the_name)
+
             it.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean = false
 

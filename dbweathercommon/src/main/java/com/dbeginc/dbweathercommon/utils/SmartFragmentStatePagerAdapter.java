@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2017 Darel Bitsy
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +30,7 @@ import android.view.ViewGroup;
  */
 public abstract class SmartFragmentStatePagerAdapter<T extends Fragment> extends FragmentStatePagerAdapter {
     // Sparse array to keep track of registered fragments in memory
-    private SparseArray<T> registeredFragments = new SparseArray<>();
+    private final SparseArray<T> registeredFragments = new SparseArray<>();
 
     public SmartFragmentStatePagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -39,7 +39,7 @@ public abstract class SmartFragmentStatePagerAdapter<T extends Fragment> extends
     // Register the fragment when the item is instantiated
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        T fragment = (T) super.instantiateItem(container, position);
+        final T fragment = (T) super.instantiateItem(container, position);
         registeredFragments.put(position, fragment);
         return fragment;
     }
