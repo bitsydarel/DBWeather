@@ -48,20 +48,43 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        binding.mainNavView.setNavigationItemSelectedListener(this)
-
         if (savedState == null) goToWeatherScreen(container = this, layoutId = main_content)
-
-        if (!isNetworkAvailable()) showNetworkNotAvailable()
 
         if (preferences.get().isFirstLaunchOfApplication())
             preferences.get().changeFirstLaunchStatus()
+
     }
 
     override fun onStart() {
         super.onStart()
 
+        binding.mainNavView.setNavigationItemSelectedListener(this)
+
+        preferences.get().run {
+            binding.mainNavView.menu.apply {
+                val weatherSwitch = findItem(R.id.weather_notification_status).actionView as? android.support.v7.widget.SwitchCompat
+
+                weatherSwitch?.let {
+                    it.isChecked = isWeatherNotificationOn()
+                    it.setOnCheckedChangeListener { _, isChecked -> changeWeatherNotificationStatus(enabled = isChecked) }
+                }
+
+                val translationSwitch = findItem(R.id.translate_newspapers).actionView as? android.support.v7.widget.SwitchCompat
+
+                translationSwitch?.let {
+                    it.isChecked = isNewsTranslationOn()
+                    it.setOnCheckedChangeListener { _, isChecked -> changeNewsTranslationStatus(enabled = isChecked) }
+                }
+            }
+        }
+
         DBWeatherExternalContentManager.initialize(applicationContext)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isNetworkAvailable()) showNetworkNotAvailable()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -81,8 +104,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         preferences.get().changeDefaultLocationStatus(true)
+        super.onDestroy()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

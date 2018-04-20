@@ -35,7 +35,8 @@ android {
             it.buildConfigField('String', 'WEATHER_API_KEY', WeatherApiKey)
             it.buildConfigField('String', 'GEONAME_USERNAME', GeoNameUserName)
             it.buildConfigField('String', 'EMAIL_ACCOUNT', EmailAccount)
-            it.buildConfigField('String', 'TRANSLATE_API_KEY', TranslateApiKey)
+            it.buildConfigField('String', 'GOOGLE_TRANSLATE_API_KEY', GoogleTranslateApiKey)
+            it.buildConfigField('String', 'YANDEX_TRANSLATE_API_KEY', YandexTranslateApiKey)
         }
 
         // used by Room, to test migrations

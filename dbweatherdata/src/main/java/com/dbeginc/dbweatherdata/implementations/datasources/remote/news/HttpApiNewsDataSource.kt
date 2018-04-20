@@ -23,8 +23,8 @@ import com.dbeginc.dbweatherdata.BuildConfig
 import com.dbeginc.dbweatherdata.DEFAULT_NETWORK_CACHE_SIZE
 import com.dbeginc.dbweatherdata.NETWORK_CACHE_NAME
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.RemoteNewsDataSource
-import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.GoogleTranslate
 import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.Translator
+import com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator.YandexTranslator
 import com.dbeginc.dbweatherdata.proxies.mappers.toDomain
 import com.dbeginc.dbweatherdata.proxies.remote.news.RemoteArticle
 import com.dbeginc.dbweatherdata.proxies.remote.news.RemoteNewsResponse
@@ -62,7 +62,7 @@ class HttpApiNewsDataSource private constructor(private val translator: Translat
 
             AndroidNetworking.initialize(context, client.build())
 
-            return HttpApiNewsDataSource(translator = GoogleTranslate())
+            return HttpApiNewsDataSource(translator = YandexTranslator())
         }
     }
 
@@ -78,14 +78,19 @@ class HttpApiNewsDataSource private constructor(private val translator: Translat
 
     override fun getTranslatedArticles(request: ArticlesRequest<String>): Single<List<Article>> {
         return getArticlesFromApi(newsPaperId = request.newsPaperId)
-                .map { articles ->
-                    articles.map { article ->
-                        article.apply {
-                            title = translator.translate(title, deviceLanguage)
-                            description = if (description != null) translator.translate(description!!, deviceLanguage) else description
-                        }
-                    }
+                .flattenAsObservable { it }
+                .flatMapSingle { originalArticle ->
+                    translator.translate(text = originalArticle.title, language = deviceLanguage)
+                            .map { translation -> originalArticle.apply { title = translation } }
+                            .flatMap { mapperArticle ->
+                                mapperArticle.description
+                                        ?.let {
+                                            translator.translate(text = it, language = deviceLanguage)
+                                                    .map { translation -> originalArticle.apply { description = translation } }
+                                        } ?: Single.just(mapperArticle)
+                            }
                 }
+                .toList()
                 .map { articles -> articles.map { article -> article.toDomain() } }
     }
 

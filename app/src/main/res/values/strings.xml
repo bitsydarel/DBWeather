@@ -113,4 +113,5 @@
     <string name="newspaper_language">NewsPaper language</string>
     <string name="done">Done</string>
     <string name="please_subscribe_to_3_newspapers">Please subscribe to at least 3 newspapers</string>
+    <string name="enter_the_name">Enter the name</string>
 </resources>

@@ -42,6 +42,8 @@ const val CUSTOM_COUNTRY_CODE = "custom_country_code"
 const val SOURCE_SORTING_PREFERENCES = "source_sorting_preferences"
 const val NEWSPAPER_KEY = "source_key"
 const val ARTICLE_KEY = "article_key"
+const val NEWS_TRANSLATION_STATUS = "news_translation_status"
+const val WEATHER_NOTIFICATION_STATUS = "weather_notification_status"
 /********************** Youtube Constant  *****************************/
 const val YOUTUBE_RECOVERY_DIALOG_REQUEST = 7125
 const val YOUTUBE_LIVE_KEY = "youtube_live_key"

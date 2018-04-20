@@ -24,7 +24,7 @@ ext.versions = [
         architectureComponentPersistence : "1.0.0",
         architectureComponentLifecycle : "1.1.0",
 
-        kotlin_version : '1.2.31',
+        kotlin_version : '1.2.40',
         kotlinCoroutines : '0.22.5',
 
         googleLibraries : '11.6.0',

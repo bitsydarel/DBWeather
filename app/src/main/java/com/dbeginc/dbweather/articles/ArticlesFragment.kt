@@ -48,20 +48,17 @@ import com.dbeginc.dbweathernews.viewmodels.ArticleModel
 class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener {
 
     companion object {
-        private const val NEWSPAPER_ID = "source_id"
-        private const val NEWSPAPER_NAME = "source_name"
+        private const val NEWSPAPER_ID = "newspaper_id"
+        private const val NEWSPAPER_NAME = "newspaper_name"
         private const val PRELOAD_AHEAD_ITEMS = 5
 
-        fun newInstance(sourceId: String, sourceName: String): ArticlesFragment {
+        fun newInstance(newspaperId: String, newspaperName: String): ArticlesFragment {
             val fragment = ArticlesFragment()
 
-            val args = Bundle()
-
-            args.putString(NEWSPAPER_ID, sourceId)
-
-            args.putString(NEWSPAPER_NAME, sourceName)
-
-            fragment.arguments = args
+            fragment.arguments = Bundle().apply {
+                putString(NEWSPAPER_ID, newspaperId)
+                putString(NEWSPAPER_NAME, newspaperName)
+            }
 
             return fragment
         }
@@ -76,20 +73,25 @@ class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRe
         return@lazy ViewModelProviders.of(this, factory.get())[ArticlesViewModel::class.java]
     }
 
-    private val preloader by lazy {
-        RecyclerViewPreloader(this, articlesAdapter, sizeProvider, PRELOAD_AHEAD_ITEMS)
+    private val preloader: RecyclerViewPreloader<String> by lazy {
+        return@lazy RecyclerViewPreloader(
+                this,
+                articlesAdapter,
+                sizeProvider,
+                PRELOAD_AHEAD_ITEMS
+        )
     }
 
     private val articlesAdapter: ArticleAdapter by lazy {
-        ArticleAdapter(containerBridge = this, sizeProvider = sizeProvider)
+        return@lazy ArticleAdapter(containerBridge = this, sizeProvider = sizeProvider)
     }
 
-    private val articlesObserver: Observer<List<ArticleModel>> = Observer {
-        articlesAdapter.updateData(newData = it!!)
+    private val articlesObserver: Observer<List<ArticleModel>> = Observer { articles ->
+        articles?.let { articlesAdapter.updateData(newData = it) }
     }
 
-    override val stateObserver: Observer<RequestState> = Observer {
-        onStateChanged(state = it!!)
+    override val stateObserver: Observer<RequestState> = Observer { state ->
+        state?.let { onStateChanged(state = it) }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -99,6 +101,7 @@ class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRe
 
         viewModel.getArticles().observe(this, articlesObserver)
 
+        onRefresh()
     }
 
     override fun onCreate(savedState: Bundle?) {
@@ -134,7 +137,6 @@ class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRe
         super.onViewCreated(view, savedInstanceState)
 
         setupView()
-
     }
 
     override fun goToArticleDetail(article: ArticleModel) {
@@ -146,7 +148,11 @@ class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRe
         }
     }
 
-    override fun onRefresh() = viewModel.loadArticles(newspaperId = newsPaperId, newspaperName = newsPaperName)
+    override fun onRefresh() {
+        if (preferences.get().isNewsTranslationOn())
+            viewModel.loadTranslatedArticles(newspaperId = newsPaperId, newspaperName = newsPaperName)
+        else viewModel.loadArticles(newspaperId = newsPaperId, newspaperName = newsPaperName)
+    }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
         binding.articlesLayout.isEnabled = verticalOffset == 0
@@ -164,9 +170,6 @@ class ArticlesFragment : BaseFragment(), MVMPVView, ArticleActionBridge, SwipeRe
         binding.articlesList.addOnScrollListener(preloader)
 
         binding.articlesLayout.isEnabled = false
-
-        viewModel.loadArticles(newspaperId = newsPaperId, newspaperName = newsPaperName)
-
     }
 
     override fun onStateChanged(state: RequestState) {

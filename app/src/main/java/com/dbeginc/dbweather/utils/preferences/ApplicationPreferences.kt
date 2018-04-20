@@ -79,4 +79,12 @@ class ApplicationPreferences(private val sharedPreferences: SharedPreferences) {
 
     fun getYoutubeLivesPreferredOrder(): Int = sharedPreferences.getInt(YOUTUBE_LIVES_SORTING_PREFERENCES, NewsPapersViewModel.SORT_BY_NAME)
 
+    fun isNewsTranslationOn(): Boolean = sharedPreferences.getBoolean(NEWS_TRANSLATION_STATUS, false)
+
+    fun isWeatherNotificationOn(): Boolean = sharedPreferences.getBoolean(WEATHER_NOTIFICATION_STATUS, false)
+
+    fun changeNewsTranslationStatus(enabled: Boolean) = sharedPreferences.edit().putBoolean(NEWS_TRANSLATION_STATUS, enabled).apply()
+
+    fun changeWeatherNotificationStatus(enabled: Boolean) = sharedPreferences.edit().putBoolean(WEATHER_NOTIFICATION_STATUS, enabled).apply()
+
 }

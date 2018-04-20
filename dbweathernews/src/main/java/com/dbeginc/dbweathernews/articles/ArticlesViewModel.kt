@@ -52,4 +52,17 @@ class ArticlesViewModel @Inject constructor(private val model: NewsRepository, p
                 .subscribe(_articles::postValue, logger::logError)
                 .addTo(subscriptions)
     }
+
+    fun loadTranslatedArticles(newspaperId: String, newspaperName: String) {
+        model.getTranslatedArticles(ArticlesRequest(newspaperId, newspaperName))
+                .doOnSubscribe { requestState.postValue(RequestState.LOADING) }
+                .doAfterNext { requestState.postValue(RequestState.COMPLETED) }
+                .doOnError { requestState.postValue(RequestState.ERROR) }
+                .map { articles -> articles.map { it.toUi() } }
+                .map { articles -> articles.sortedBy { it.publishedAt }.reversed() }
+                .observeOn(threads.UI)
+                .subscribe(_articles::postValue, logger::logError)
+                .addTo(subscriptions)
+    }
+
 }

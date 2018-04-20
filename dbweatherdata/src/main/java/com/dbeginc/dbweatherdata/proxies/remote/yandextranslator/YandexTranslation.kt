@@ -13,17 +13,14 @@
  *  limitations under the License
  */
 
-package com.dbeginc.dbweatherdata.implementations.datasources.remote.news.translator
+package com.dbeginc.dbweatherdata.proxies.remote.yandextranslator
 
-import android.support.annotation.RestrictTo
-import io.reactivex.Single
+import com.google.gson.annotations.SerializedName
 
-/**
- * Created by darel on 05.10.17.
- *
- * Translator
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-interface Translator {
-    fun translate(text: String, language: String): Single<String>
-}
+data class YandexTranslation(@SerializedName("code")
+                             val code: Int = 0,
+                             @SerializedName("text")
+                             val text: List<String>?,
+                             @SerializedName("lang")
+                             val lang: String? = ""
+)

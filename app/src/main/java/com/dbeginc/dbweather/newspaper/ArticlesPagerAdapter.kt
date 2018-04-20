@@ -37,8 +37,8 @@ class ArticlesPagerAdapter(fragmentManager: FragmentManager) : SmartFragmentStat
         val newsPaper = newsPapers.getValue(position)
 
         return ArticlesFragment.newInstance(
-                sourceId = newsPaper.id,
-                sourceName = newsPaper.name
+                newspaperId = newsPaper.id,
+                newspaperName = newsPaper.name
         )
     }
 

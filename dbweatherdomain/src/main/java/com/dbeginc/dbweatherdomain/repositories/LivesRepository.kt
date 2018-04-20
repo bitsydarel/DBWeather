@@ -43,6 +43,7 @@ interface LivesRepository : Cleanable {
      */
     fun getAllYoutubeLives(): Flowable<List<YoutubeLive>>
 
+    fun findYoutubeLive(possibleName: String): Maybe<List<YoutubeLive>>
 
     /**
      * Created by darel on 20.10.17.
