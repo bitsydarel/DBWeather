@@ -24,6 +24,7 @@ import com.dbeginc.dbweather.di.modules.news.NewsFeatureModule
 import com.dbeginc.dbweather.di.modules.news.NewsFeatureViewModelModule
 import com.dbeginc.dbweather.di.modules.weather.WeatherFeatureModule
 import com.dbeginc.dbweather.di.modules.weather.WeatherFeatureViewModelModule
+import com.dbeginc.dbweather.utils.services.WeatherSyncJob
 import com.dbeginc.dbweathercommon.utils.AppScope
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -50,5 +51,9 @@ import dagger.android.support.DaggerApplication
     AndroidSupportInjectionModule::class])
 interface ApplicationComponent : AndroidInjector<DaggerApplication> {
     @dagger.Component.Builder
-    abstract class Builder : AndroidInjector.Builder<DaggerApplication>()
+    abstract class Builder : AndroidInjector.Builder<DaggerApplication>() {
+        abstract override fun build() : ApplicationComponent
+    }
+
+    fun injectAndroidJob(job: WeatherSyncJob)
 }

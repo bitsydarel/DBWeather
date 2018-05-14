@@ -16,6 +16,7 @@
 package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
+import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.GeonamesItem
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
 import com.google.gson.annotations.SerializedName
 
@@ -26,7 +27,7 @@ import com.google.gson.annotations.SerializedName
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 data class RemoteWeather(
-        @Transient var location: RemoteLocation?,
+        @Transient var location: GeonamesItem?,
         @SerializedName("latitude") val latitude: Double,
         @SerializedName("longitude") val longitude: Double,
         @SerializedName("timezone") val timezone: String,

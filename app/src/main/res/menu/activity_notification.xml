@@ -17,18 +17,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/openFullWeather"
-        android:title="@string/open_full_screen"
-        android:icon="@drawable/ic_fullscreen_white"
-        android:enabled="true"
+    <item android:id="@+id/temperature"
+        android:title=""
         android:orderInCategory="1"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/openFullWeather"
+        android:title="@string/detail"
+        android:icon="@drawable/ic_fullscreen"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/closeWindow"
-        android:title="@string/close_window"
-        android:icon="@drawable/ic_close_white"
-        android:enabled="true"
-        android:orderInCategory="2"
+        android:title="@string/close"
+        android:icon="@drawable/ic_close"
+        android:orderInCategory="3"
         app:showAsAction="ifRoom"/>
 
 </menu>

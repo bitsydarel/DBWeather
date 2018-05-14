@@ -13,20 +13,12 @@
  *  limitations under the License
  */
 
-package com.dbeginc.dbweather.viewmodels
+package com.dbeginc.dbweatherdata.proxies.remote.weather.locations
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import com.google.gson.annotations.SerializedName
 
-/**
- * Created by darel on 22.01.18.
- *
- * Weather notification Model
- */
-@Parcelize
-data class WeatherNotificationModel(
-        val location: String,
-        val temperature: String,
-        val icon: Int,
-        val summary: String
-) : Parcelable
+data class RemoteLocationsTest(@SerializedName("totalResultsCount")
+                               val totalResultsCount: Int = 0,
+                               @SerializedName("geonames")
+                               val geonames: List<GeonamesItem>?
+)

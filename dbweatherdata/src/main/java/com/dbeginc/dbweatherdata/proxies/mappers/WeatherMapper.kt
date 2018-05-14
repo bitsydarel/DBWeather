@@ -17,6 +17,7 @@ package com.dbeginc.dbweatherdata.proxies.mappers
 
 import com.dbeginc.dbweatherdata.proxies.local.weather.*
 import com.dbeginc.dbweatherdata.proxies.remote.weather.*
+import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.GeonamesItem
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
 import com.dbeginc.dbweatherdomain.entities.weather.*
 
@@ -25,6 +26,14 @@ import com.dbeginc.dbweatherdomain.entities.weather.*
  *
  * Type Converter for Data Model to domain Model
  */
+
+internal fun GeonamesItem.toDomain() : Location = Location(
+        name = name,
+        latitude = lat,
+        longitude = lng,
+        countryCode = countryCode,
+        countryName = countryName
+)
 
 internal fun RemoteLocation.toDomain(): Location = Location(
         name = name,

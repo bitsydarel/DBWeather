@@ -17,7 +17,12 @@ package com.dbeginc.dbweather
 
 import android.os.StrictMode
 import com.crashlytics.android.Crashlytics
+import com.dbeginc.dbweather.di.components.ApplicationComponent
 import com.dbeginc.dbweather.di.components.DaggerApplicationComponent
+import com.dbeginc.dbweather.utils.services.DBWeatherJobCreator
+import com.dbeginc.dbweather.utils.services.NewsSyncJob
+import com.dbeginc.dbweather.utils.services.WeatherSyncJob
+import com.evernote.android.job.JobManager
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -32,6 +37,9 @@ import io.fabric.sdk.android.Fabric
  * Class representing the Application class
  */
 class DBWeatherApp : DaggerApplication(), HasActivityInjector {
+    companion object {
+        @Volatile var applicationGraph: ApplicationComponent? = null
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -62,9 +70,27 @@ class DBWeatherApp : DaggerApplication(), HasActivityInjector {
                             .build()
             )
         }
+
+        JobManager.create(this)
+                .addJobCreator(DBWeatherJobCreator()) /* Running after strict mode to catch mistakes */
+                .also {
+                    if (BuildConfig.DEBUG) {
+                        WeatherSyncJob.scheduleForNow()
+                        NewsSyncJob.scheduleForNow()
+
+                    } else {
+                        WeatherSyncJob.schedule()
+                        NewsSyncJob.schedule()
+                    }
+                }
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication>? {
-        return DaggerApplicationComponent.builder().create(this)
+        applicationGraph = DaggerApplicationComponent.builder().let {
+            it.seedInstance(this)
+            it.build()
+        }
+
+        return applicationGraph
     }
 }

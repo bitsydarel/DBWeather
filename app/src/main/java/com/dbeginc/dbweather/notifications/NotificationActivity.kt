@@ -24,7 +24,6 @@ import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.databinding.ActivityNotificationBinding
 import com.dbeginc.dbweather.utils.utility.NOTIFICATION_KEY
 import com.dbeginc.dbweather.utils.utility.goToMainScreen
-import com.dbeginc.dbweather.viewmodels.WeatherNotificationModel
 
 /**
  * Created by Darel Bitsy on 01/02/17.
@@ -34,22 +33,22 @@ import com.dbeginc.dbweather.viewmodels.WeatherNotificationModel
  */
 class NotificationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
-    private lateinit var weatherNotification: WeatherNotificationModel
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_notification)
+        binding = DataBindingUtil.setContentView(
+                this,
+                R.layout.activity_notification
+        )
 
-        weatherNotification = if (savedState == null) intent.getParcelableExtra(NOTIFICATION_KEY)
+        binding.notification = if (savedState == null) intent.getParcelableExtra(NOTIFICATION_KEY)
         else savedState.getParcelable(NOTIFICATION_KEY)
-
-        binding.notification = weatherNotification
 
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putParcelable(NOTIFICATION_KEY, weatherNotification)
+        outState?.putParcelable(NOTIFICATION_KEY, binding.notification)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -57,10 +56,15 @@ class NotificationActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.temperature)?.title = binding.notification?.temperature ?: ""
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.openFullWeather -> goToMainScreen(currentScreen = this)
-            R.id.closeWindow -> finish()
+            R.id.closeWindow -> supportFinishAfterTransition()
         }
         return super.onOptionsItemSelected(item)
     }

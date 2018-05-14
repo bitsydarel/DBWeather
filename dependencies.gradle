@@ -20,11 +20,11 @@ ext.versions = [
         versionName          : "1.6",
         buildTools           : '27.0.3',
         androidSupportLibrary : '27.1.1',
-        androidPluginVersion : '3.1.1',
+        androidPluginVersion : '3.1.2',
         architectureComponentPersistence : "1.0.0",
         architectureComponentLifecycle : "1.1.0",
 
-        kotlin_version : '1.2.40',
+        kotlin_version : '1.2.41',
         kotlinCoroutines : '0.22.5',
 
         googleLibraries : '11.6.0',
@@ -35,7 +35,6 @@ ext.versions = [
         gson: '2.8.2',
         retrofit2 : '2.4.0-SNAPSHOT',
         threetenabp : '1.0.5',
-        evernote_android_job : '1.2.1-SNAPSHOT',
         appache_commons_lang3 : 3.6,
         lottie : '2.2.5',
         bottom_bar : '2.3.1',
@@ -153,7 +152,7 @@ ext.testingLibs = [
 
 ext.otherLibs = [
         threetenabp: "com.jakewharton.threetenabp:threetenabp:$versions.threetenabp",
-        evernote_android_job: "com.evernote:android-job:$versions.evernote_android_job",
+        evernote_android_job: "com.evernote:android-job:1.2.5",
         lottie : "com.airbnb.android:lottie:$versions.lottie",
         bottom_bar: "com.roughike:bottom-bar:$versions.bottom_bar",
         fab : "com.github.clans:fab:1.6.4",

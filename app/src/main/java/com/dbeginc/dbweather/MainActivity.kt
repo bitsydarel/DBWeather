@@ -28,7 +28,6 @@ import android.widget.Toast
 import com.dbeginc.dbweather.R.id.main_content
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityMainBinding
-import com.dbeginc.dbweather.utils.services.DBWeatherExternalContentManager
 import com.dbeginc.dbweather.utils.utility.*
 
 

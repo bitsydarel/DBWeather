@@ -171,7 +171,7 @@ fun Long.toFormattedTime(timeZone: String?) : String {
             .format(format)
 }
 
-private fun String.getId(): Int {
+fun String.getId(): Int {
     return when (this) {
         "clear-night" ->  R.drawable.clear_night
         "rain" ->  R.drawable.rain

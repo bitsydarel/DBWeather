@@ -30,7 +30,7 @@ import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import com.dbeginc.dbweather.R
 import com.dbeginc.dbweather.base.BaseActivity
 import com.dbeginc.dbweather.databinding.ActivityArticleDetailBinding
-import com.dbeginc.dbweather.utils.services.DBWeatherExternalContentManager
+import com.dbeginc.dbweather.utils.utility.DBWeatherExternalContentManager
 import com.dbeginc.dbweather.utils.utility.ARTICLE_KEY
 import com.dbeginc.dbweather.utils.utility.getColorPrimaryDark
 import com.dbeginc.dbweather.utils.utility.snack

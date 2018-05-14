@@ -27,18 +27,16 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
-        android:background="@color/notificationPrimaryLight"
         tools:context=".notifications.NotificationActivity">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/notificationAppBar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:theme="?attr/actionBarStyle"
+            style="@style/Widget.Design.AppBarLayout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -47,56 +45,31 @@
                 android:id="@+id/notificationToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:theme="?attr/toolbarStyle"
-                app:logo="@mipmap/ic_launcher"
+                style="@style/Widget.AppCompat.Toolbar"
+                tools:logo="@drawable/clear_day"
+                tools:title="Ternopil, UA"
+                app:logo="@{Notification.icon}"
                 app:logoDescription="@string/app_name"
                 app:popupTheme="?attr/popupTheme"
-                app:title="@{Notification.title}"/>
+                app:title="@{Notification.location}"
+                app:titleMarginStart="32dp" />
 
         </android.support.design.widget.AppBarLayout>
-
-        <ImageView
-            android:id="@+id/notificationIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:src="@{Notification.icon}"
-            android:contentDescription="@string/weather_icon_content_description"
-            app:layout_constraintTop_toBottomOf="@id/notificationAppBar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/notificationSummary"
-            tools:src="@drawable/clear_day" />
 
         <TextView
             android:id="@+id/notificationSummary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:padding="8dp"
             android:text="@{Notification.summary}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            app:layout_constraintTop_toTopOf="@id/notificationIcon"
-            app:layout_constraintLeft_toRightOf="@id/notificationIcon"
-            app:layout_constraintRight_toRightOf="parent"
-            tools:text="Today in the morning it' will rain." />
-
-        <TextView
-            android:id="@+id/notificationDescription"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="@{Notification.description}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            app:layout_constraintTop_toBottomOf="@id/notificationSummary"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="We recommend to take a parra-pluie.Loppersum est une commune des Pays-Bas, située dans la province de Groningue. Elle compte 11 000 habitants et sa superficie est de 112 km²." />
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textIsSelectable="true"
+            tools:text="Today in the morning it' will rain.\nYou better get your parapluie"
+            app:layout_constraintTop_toBottomOf="@id/notificationAppBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

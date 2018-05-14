@@ -26,5 +26,11 @@ import org.simpleframework.xml.Root
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 @Root(name="geonames", strict=false)
 data class RemoteLocations(
-        @field:ElementList(entry="geoname", inline=true, type=RemoteLocation::class, required=false, empty=false) var locations: MutableList<RemoteLocation> = mutableListOf()
+        @field:ElementList(
+                entry="geoname",
+                inline=true,
+                type=RemoteLocation::class,
+                required=false,
+                empty=false
+        ) var locations: MutableList<RemoteLocation> = mutableListOf()
 )
