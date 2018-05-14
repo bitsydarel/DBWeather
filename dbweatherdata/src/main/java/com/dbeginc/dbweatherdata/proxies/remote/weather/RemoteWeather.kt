@@ -17,7 +17,6 @@ package com.dbeginc.dbweatherdata.proxies.remote.weather
 
 import android.support.annotation.RestrictTo
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.GeonamesItem
-import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocation
 import com.google.gson.annotations.SerializedName
 
 /**

@@ -18,7 +18,6 @@ package com.dbeginc.dbweatherdata.implementations.datasources.remote.weather
 import android.content.Context
 import android.support.annotation.RestrictTo
 import com.androidnetworking.AndroidNetworking
-import com.androidnetworking.error.ANError
 import com.androidnetworking.interceptors.HttpLoggingInterceptor
 import com.dbeginc.dbweatherdata.BuildConfig
 import com.dbeginc.dbweatherdata.DEFAULT_NETWORK_CACHE_SIZE
@@ -27,7 +26,7 @@ import com.dbeginc.dbweatherdata.implementations.datasources.remote.RemoteWeathe
 import com.dbeginc.dbweatherdata.proxies.mappers.toDomain
 import com.dbeginc.dbweatherdata.proxies.remote.weather.RemoteWeather
 import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.GeonamesItem
-import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocationsTest
+import com.dbeginc.dbweatherdata.proxies.remote.weather.locations.RemoteLocations
 import com.dbeginc.dbweatherdomain.entities.requests.weather.WeatherRequest
 import com.dbeginc.dbweatherdomain.entities.weather.Location
 import com.dbeginc.dbweatherdomain.entities.weather.Weather
@@ -115,7 +114,7 @@ class HttpApiWeatherDataSource internal constructor(val locationApiUrl: String, 
                 .addQueryParameter("isNameRequired", true.toString())
                 .addQueryParameter("lang", language)
                 .build()
-                .getObjectSingle(RemoteLocationsTest::class.java)
+                .getObjectSingle(RemoteLocations::class.java)
                 .map { locations -> locations.geonames?.map { it.toDomain() } ?: emptyList() }
     }
 
@@ -136,7 +135,7 @@ class HttpApiWeatherDataSource internal constructor(val locationApiUrl: String, 
                 .addQueryParameter("maxRows", maxRows.toString())
                 .addQueryParameter("lang", language)
                 .build()
-                .getObjectSingle(RemoteLocationsTest::class.java)
+                .getObjectSingle(RemoteLocations::class.java)
                 .map { locations -> locations.geonames ?: emptyList() }
     }
 

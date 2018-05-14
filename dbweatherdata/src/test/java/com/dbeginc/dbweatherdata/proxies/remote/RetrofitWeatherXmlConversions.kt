@@ -16,7 +16,6 @@
 package com.dbeginc.dbweatherdata.proxies.remote
 
 import com.dbeginc.dbweatherdata.getFileAsStringJVM
-import com.dbeginc.dbweatherdata.implementations.datasources.remote.weather.LocationApi
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
