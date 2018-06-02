@@ -56,7 +56,11 @@ Contains Entities based on the Problem Domain, and high level contracts which de
 
 ### dbweathernews:
 
-Contains logic and contracts which define the front end of the News Feed and Live TV features. 
+Contains logic and contracts which define the front end of the News Feed. 
+
+### dbweatherlives:
+
+Contains logic and contracts which define the front end of the Live TV features. 
  
 ### dbweatherweather:
 
@@ -64,7 +68,7 @@ Contains logic and contracts which define the front end of the Weather feature.
 
 ## Project Architecture
 
-DBWeather utilizes a highly modular Clean Architecture which is based on ideas from multiple styles of Architecture, including MVP, MVVM, and MVI. The goal of these principles is to encourage:
+DBWeather utilizes a highly modular Clean Architecture which is based on ideas from multiple styles of Architecture, including MVP, MVVM. The goal of these principles is to encourage:
 - Decoupling/Separation of Concerns by dividing Presentation, Domain, and Data logic/contracts from their respective interfaces. This allows different modules of the project to be changed, without necessitating changes in other modules. 
 - High Legibility due to proper separation of concerns, which leads to descriptive and unambiguous names (Weather, News, etc.).
 
