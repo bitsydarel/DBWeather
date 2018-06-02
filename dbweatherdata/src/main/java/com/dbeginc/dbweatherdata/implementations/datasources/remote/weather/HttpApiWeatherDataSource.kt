@@ -115,7 +115,7 @@ class HttpApiWeatherDataSource internal constructor(val locationApiUrl: String, 
                 .addQueryParameter("lang", language)
                 .build()
                 .getObjectSingle(RemoteLocations::class.java)
-                .map { (geoname) -> geoname.map { it.toDomain() } }
+                .map { (geoname) -> geoname?.map { it.toDomain() } ?: emptyList() }
     }
 
     private fun getLocationByLatAndLong(
