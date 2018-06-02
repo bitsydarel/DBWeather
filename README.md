@@ -18,9 +18,9 @@ Provides localized and detailed Weather reports based on the user's location:
 Provides a feed to current world events and other important news:
 
 <p float="left">
-  <img title="News Feed Feature" alt="News Feed Feature" src="articles.png" hspace="8" width="270" height="480" />
-  <img title="News Detail Feature" alt="News Detail Feature" src="articlesdetail.png" hspace="8" width="270" height="480" /> 
-  <img title="News Feed Feature" alt="News Feed Feature" src="articles2.png" hspace="8" width="270" height="480" />
+  <img title="News Feed Feature"  alt="News Feed Feature" src="articles.png" hspace="8" width="270" height="480" />
+  <img title="News Detail Feature"  alt="News Detail Feature" src="articlesdetail.png" hspace="8" width="270" height="480" /> 
+  <img title="News Feed Feature"  alt="News Feed Feature" src="articles2.png" hspace="8" width="270" height="480" />
 </p>
 
 ### Live TV:
