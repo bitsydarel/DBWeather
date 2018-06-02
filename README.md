@@ -8,9 +8,11 @@ Android multimedia application with weather forecasts, a news feed in every lang
 ### Weather
 
 Provides localized and detailed Weather reports based on the user's location:
-
-<img src="weather.png" alt="Weather Feature" width="270" height="480"/>
-
+<p float="left">
+  <img title="Weather Clear" alt="Weather Clear" src="weather_clear.png" hspace="8" width="270" height="480" />
+  <img title="Weather with rain" alt="Weather with rain" src="weather_rain.png" hspace="8" width="270" height="480" /> 
+  <img title="Weather with rain 2" alt="Weather with rain 2" src="weather_rain2.png" hspace="8" width="270" height="480" />
+</p>
 ### News Feed
 
 Provides a feed to current world events and other important news:
