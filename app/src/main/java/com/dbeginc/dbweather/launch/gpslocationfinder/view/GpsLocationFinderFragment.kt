@@ -35,7 +35,7 @@ import com.dbeginc.dbweather.utils.utility.snack
  *
  * Gps Location Finder
  */
-class GpsLocationFinderFragment : BaseFragment(), GpsLocationFinderView, WithDependencies {
+class GpsLocationFinderFragment : BaseFragment() {
     private val presenter: GpsLocationFinderPresenter = GpsLocationFinderPresenterImpl()
     private lateinit var binding: FragmentGpsLocationFinderBinding
     private lateinit var locationFinder: WeatherLocationManager
