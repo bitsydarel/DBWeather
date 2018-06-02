@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DBWeather.iml" filepath="$PROJECT_DIR$/DBWeather.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dbweathercommon/dbweathercommon.iml" filepath="$PROJECT_DIR$/dbweathercommon/dbweathercommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dbweatherdata/dbweatherdata.iml" filepath="$PROJECT_DIR$/dbweatherdata/dbweatherdata.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dbweatherdomain/dbweatherdomain.iml" filepath="$PROJECT_DIR$/dbweatherdomain/dbweatherdomain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dbweatherlives/dbweatherlives.iml" filepath="$PROJECT_DIR$/dbweatherlives/dbweatherlives.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dbweathernews/dbweathernews.iml" filepath="$PROJECT_DIR$/dbweathernews/dbweathernews.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dbweatherweather/dbweatherweather.iml" filepath="$PROJECT_DIR$/dbweatherweather/dbweatherweather.iml" />
+    </modules>
+  </component>
+</project>

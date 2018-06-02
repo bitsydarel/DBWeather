@@ -23,7 +23,6 @@ kotlin {
 
 android {
     compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
 
     defaultConfig {
         applicationId "com.dbeginc.dbweather"

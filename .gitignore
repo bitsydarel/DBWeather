@@ -6,6 +6,7 @@
 .DS_Store
 /build
 /captures
+/
 .externalNativeBuild
 
 .idea/instapk.xml
