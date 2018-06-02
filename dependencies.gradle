@@ -19,7 +19,7 @@ ext.versions = [
 
         buildTools           : '26.0.3',
         androidSupportLibrary : '26.1.0',
-        androidPluginVersion : '3.0.1',
+        androidPluginVersion : '3.1.2',
         architectureComponentPersistence : "1.0.0",
         architectureComponentLifecycle : "1.1.0",
 

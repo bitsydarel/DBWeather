@@ -19,7 +19,6 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
 
     defaultConfig {
         minSdkVersion versions.minSdk
@@ -37,7 +36,8 @@ android {
             it.buildConfigField('String', 'WEATHER_API_KEY', WeatherApiKey)
             it.buildConfigField('String', 'GEONAME_USERNAME', GeoNameUserName)
             it.buildConfigField('String', 'EMAIL_ACCOUNT', EmailAccount)
-            it.buildConfigField('String', 'TRANSLATE_API_KEY', TranslateApiKey)
+            it.buildConfigField('String', 'GoogleTranslateApiKey', GoogleTranslateApiKey)
+            it.buildConfigField('String', 'YandexTranslateApiKey', YandexTranslateApiKey)
         }
 
         // used by Room, to test migrations
@@ -45,22 +45,6 @@ android {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation":
                                      "$projectDir/schemas".toString()]
-            }
-        }
-    }
-
-    // used by Room, to test migrations
-    sourceSets {
-        sourceSets {
-            test.java { srcDirs += 'src/test/kotlin' }
-
-            androidTest {
-                java { srcDirs += 'src/androidTest/kotlin' }
-                assets { srcDirs += files("$projectDir/schemas".toString()) }
-            }
-
-            main {
-                java { srcDirs += 'src/main/kotlin' }
             }
         }
     }
